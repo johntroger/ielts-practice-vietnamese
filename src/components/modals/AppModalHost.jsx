@@ -223,6 +223,7 @@ export default function AppModalHost({
         <WorkspaceErrorBoundary skillName="IELTS Vocab, Grammar & Spelling">
           <VocabGrammarSpellingModal
             isOpen={Boolean(modals.vocabGrammar)}
+            initialOptions={typeof modals.vocabGrammar === 'object' && modals.vocabGrammar !== null ? modals.vocabGrammar : null}
             onClose={() => closeModal('vocabGrammar')}
             apiKey={apiKey}
             model={model}

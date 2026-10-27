@@ -824,6 +824,155 @@ export default function App() {
     }
   }, [modals.drills]);
 
+  // Dedicated Two-Way URL Routing & Deep-Linking for Vocab, Grammar & Spelling Studio (/vocab-studio & /grammar-studio)
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const checkIsVocabStudioRoute = () => {
+      const pathname = window.location.pathname.toLowerCase().replace(/\/+$/, '');
+      const hash = window.location.hash.toLowerCase();
+      const search = new URLSearchParams(window.location.search);
+
+      const isPathMatch = (
+        pathname === '/vocab-studio' ||
+        pathname.endsWith('/vocab-studio') ||
+        pathname.startsWith('/vocab-studio/') ||
+        pathname === '/grammar-studio' ||
+        pathname.endsWith('/grammar-studio') ||
+        pathname.startsWith('/grammar-studio/') ||
+        pathname === '/spelling-studio' ||
+        pathname.endsWith('/spelling-studio') ||
+        pathname === '/studio' ||
+        pathname.endsWith('/studio') ||
+        pathname === '/thematic-vocab' ||
+        pathname.endsWith('/thematic-vocab') ||
+        pathname === '/cambridge-grammar' ||
+        pathname.endsWith('/cambridge-grammar')
+      );
+
+      const isHashMatch = (
+        hash === '#vocab-studio' ||
+        hash === '#grammar-studio' ||
+        hash === '#spelling-studio' ||
+        hash === '#studio' ||
+        hash.startsWith('#vocab-studio') ||
+        hash.startsWith('#grammar-studio')
+      );
+
+      const modal = search.get('modal');
+      const mode = search.get('mode');
+      const view = search.get('view');
+      const page = search.get('page');
+
+      const isSearchMatch = (
+        modal === 'vocab-studio' || modal === 'vocabGrammar' || modal === 'vocab' || modal === 'grammar' || modal === 'grammar-studio' ||
+        mode === 'vocab-studio' || mode === 'vocab' || mode === 'grammar' || mode === 'grammar-studio' ||
+        view === 'vocab-studio' || view === 'grammar-studio' ||
+        page === 'vocab-studio' || page === 'grammar-studio'
+      );
+
+      return isPathMatch || isHashMatch || isSearchMatch;
+    };
+
+    const extractVocabStudioParams = () => {
+      const pathname = window.location.pathname.toLowerCase().replace(/\/+$/, '');
+      const search = new URLSearchParams(window.location.search);
+      let tab = search.get('tab');
+
+      if (!tab) {
+        if (pathname.includes('/grammar-studio') || pathname.endsWith('/grammar') || pathname.includes('/cambridge-grammar')) {
+          tab = 'grammar';
+        } else if (pathname.includes('/spelling-studio') || pathname.endsWith('/spelling')) {
+          tab = 'spelling';
+        } else if (pathname.includes('/thematic-vocab') || pathname.endsWith('/vocab')) {
+          tab = 'vocab';
+        } else if (pathname.endsWith('/synonyms')) {
+          tab = 'synonyms';
+        }
+      }
+
+      return { tab: tab || undefined };
+    };
+
+    // 1. Direct entry check on mount (e.g. user visits domain.com/vocab-studio)
+    if (checkIsVocabStudioRoute()) {
+      const { tab } = extractVocabStudioParams();
+      openModal('vocabGrammar', tab ? { tab } : true);
+    }
+
+    // 2. Handle browser Back / Forward navigation (popstate & hashchange)
+    const handleLocationChange = () => {
+      const isRouteMatch = checkIsVocabStudioRoute();
+      if (isRouteMatch) {
+        const { tab } = extractVocabStudioParams();
+        openModal('vocabGrammar', tab ? { tab } : true);
+      } else {
+        closeModal('vocabGrammar');
+      }
+    };
+
+    window.addEventListener('popstate', handleLocationChange);
+    window.addEventListener('hashchange', handleLocationChange);
+
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange);
+      window.removeEventListener('hashchange', handleLocationChange);
+    };
+  }, [openModal, closeModal]);
+
+  // Sync address bar when modals.vocabGrammar opens or closes
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const isVocabOpen = Boolean(modals.vocabGrammar);
+    const pathname = window.location.pathname.toLowerCase().replace(/\/+$/, '');
+    const hash = window.location.hash.toLowerCase();
+    const isCurrentlyOnVocabStudioUrl = (
+      pathname === '/vocab-studio' ||
+      pathname.endsWith('/vocab-studio') ||
+      pathname.startsWith('/vocab-studio/') ||
+      pathname === '/grammar-studio' ||
+      pathname.endsWith('/grammar-studio') ||
+      pathname.startsWith('/grammar-studio/') ||
+      pathname === '/spelling-studio' ||
+      pathname.endsWith('/spelling-studio') ||
+      pathname === '/studio' ||
+      pathname.endsWith('/studio') ||
+      pathname === '/thematic-vocab' ||
+      pathname.endsWith('/thematic-vocab') ||
+      pathname === '/cambridge-grammar' ||
+      pathname.endsWith('/cambridge-grammar') ||
+      hash === '#vocab-studio' ||
+      hash === '#grammar-studio' ||
+      hash === '#spelling-studio' ||
+      hash === '#studio' ||
+      hash.startsWith('#vocab-studio') ||
+      hash.startsWith('#grammar-studio')
+    );
+
+    if (isVocabOpen && !isCurrentlyOnVocabStudioUrl) {
+      try {
+        const payloadTab = typeof modals.vocabGrammar === 'object' && modals.vocabGrammar !== null ? modals.vocabGrammar.tab : null;
+        let targetUrl = '/vocab-studio';
+        if (payloadTab && payloadTab !== 'spelling') {
+          targetUrl = `/vocab-studio?tab=${payloadTab}`;
+        }
+        window.history.pushState({ modal: 'vocabGrammar' }, '', targetUrl);
+      } catch (e) {
+        window.location.hash = 'vocab-studio';
+      }
+    } else if (!isVocabOpen && isCurrentlyOnVocabStudioUrl) {
+      try {
+        if (hash.startsWith('#vocab-studio') || hash.startsWith('#grammar-studio') || hash === '#studio') {
+          window.history.pushState(null, '', window.location.pathname + window.location.search);
+        } else {
+          window.history.pushState(null, '', '/');
+        }
+      } catch (e) {
+        window.history.replaceState(null, '', '/');
+      }
+    }
+  }, [modals.vocabGrammar]);
+
   // 5. Automated Content Deduplication & Sanitization & Theme init on startup
   useEffect(() => {
     initTheme();

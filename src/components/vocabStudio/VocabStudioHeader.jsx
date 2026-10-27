@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Zap,
   RefreshCw,
@@ -7,7 +7,9 @@ import {
   X,
   Menu,
   Flame,
-  CheckCircle2
+  CheckCircle2,
+  Share2,
+  Check
 } from 'lucide-react';
 
 export default function VocabStudioHeader({
@@ -22,9 +24,33 @@ export default function VocabStudioHeader({
   onClose,
   masteredCount = 0,
   totalItems = 0,
-  streak = 0
+  streak = 0,
+  activeTab = 'spelling'
 }) {
   const percentage = totalItems > 0 ? Math.round((masteredCount / totalItems) * 100) : 0;
+  const [isCopiedUrl, setIsCopiedUrl] = useState(false);
+
+  const handleCopyShareUrl = () => {
+    try {
+      const origin = typeof window !== 'undefined' ? window.location.origin : 'https://ielts-practice-vietnamese.vercel.app';
+      const tabParam = activeTab && activeTab !== 'spelling' ? `?tab=${activeTab}` : '';
+      const shareUrl = `${origin}/vocab-studio${tabParam}`;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(shareUrl);
+      } else {
+        const input = document.createElement('input');
+        input.value = shareUrl;
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand('copy');
+        document.body.removeChild(input);
+      }
+      setIsCopiedUrl(true);
+      setTimeout(() => setIsCopiedUrl(false), 2200);
+    } catch (e) {
+      console.error('Failed to copy studio URL:', e);
+    }
+  };
 
   return (
     <header className="px-4 sm:px-6 py-3 border-b border-[#e5e9ea] bg-[#f7f5ef] text-[#0f172a] flex items-center justify-between gap-3 shrink-0 z-30">
@@ -93,6 +119,34 @@ export default function VocabStudioHeader({
           <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin text-[#27c4b5]' : 'text-slate-500'}`} />
           <span className="hidden sm:inline">
             {isSyncing ? (isEn ? 'Syncing...' : 'Đang sync...') : (isEn ? 'Sync' : 'Đồng bộ')}
+          </span>
+        </button>
+
+        {/* Copy Direct URL */}
+        <button
+          type="button"
+          onClick={handleCopyShareUrl}
+          className={`flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl font-bold text-xs border transition-all cursor-pointer shadow-2xs ${
+            isCopiedUrl
+              ? 'bg-[#004646] text-[#27c4b5] border-[#004646]'
+              : 'bg-white hover:bg-slate-50 text-slate-700 border-[#d9e3e4]'
+          }`}
+          title={
+            isCopiedUrl
+              ? (isEn ? "URL Copied to clipboard! (/vocab-studio)" : "Đã sao chép link! (/vocab-studio)")
+              : (isEn ? "Copy direct URL to this Studio (/vocab-studio)" : "Sao chép link trực tiếp (/vocab-studio)")
+          }
+          aria-label={isEn ? "Copy Direct URL" : "Sao chép liên kết"}
+        >
+          {isCopiedUrl ? (
+            <Check className="w-3.5 h-3.5 text-[#27c4b5]" />
+          ) : (
+            <Share2 className="w-3.5 h-3.5 text-slate-500" />
+          )}
+          <span className="hidden sm:inline">
+            {isCopiedUrl
+              ? (isEn ? 'Copied!' : 'Đã chép link!')
+              : (isEn ? 'Share Link' : 'Chia sẻ link')}
           </span>
         </button>
 

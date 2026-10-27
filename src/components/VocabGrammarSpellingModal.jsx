@@ -32,12 +32,30 @@ export default function VocabGrammarSpellingModal({
   currentUser,
   masteredIds = [],
   onToggleMastered,
-  onOpenAuth
+  onOpenAuth,
+  initialOptions
 }) {
   const { t, isEn } = useTranslation();
 
+  const validTabs = ['spelling', 'grammar', 'vocab', 'synonyms'];
+
   // Active Track: 'spelling' | 'grammar' | 'vocab' | 'synonyms'
   const [activeTab, setActiveTab] = useState(() => {
+    if (initialOptions?.tab && validTabs.includes(initialOptions.tab)) {
+      return initialOptions.tab;
+    }
+    if (typeof window !== 'undefined') {
+      const search = new URLSearchParams(window.location.search);
+      const tabParam = search.get('tab');
+      if (tabParam && validTabs.includes(tabParam)) {
+        return tabParam;
+      }
+      const pathname = window.location.pathname.toLowerCase();
+      if (pathname.includes('/grammar-studio') || pathname.endsWith('/grammar')) return 'grammar';
+      if (pathname.includes('/spelling-studio') || pathname.endsWith('/spelling')) return 'spelling';
+      if (pathname.includes('/thematic-vocab') || pathname.endsWith('/vocab')) return 'vocab';
+      if (pathname.endsWith('/synonyms')) return 'synonyms';
+    }
     try {
       return localStorage.getItem('ielts_vocab_studio_active_tab') || 'spelling';
     } catch (e) {
@@ -45,10 +63,29 @@ export default function VocabGrammarSpellingModal({
     }
   });
 
+  // Sync activeTab if initialOptions updates externally
+  useEffect(() => {
+    if (initialOptions?.tab && validTabs.includes(initialOptions.tab)) {
+      setActiveTab(initialOptions.tab);
+    }
+  }, [initialOptions?.tab]);
+
   const handleSelectTab = (tabId) => {
     setActiveTab(tabId);
     try {
       localStorage.setItem('ielts_vocab_studio_active_tab', tabId);
+      if (typeof window !== 'undefined') {
+        const pathname = window.location.pathname.toLowerCase();
+        if (pathname.includes('vocab-studio') || pathname.includes('grammar-studio') || pathname.includes('spelling-studio')) {
+          const currentUrl = new URL(window.location.href);
+          if (tabId === 'spelling') {
+            currentUrl.searchParams.delete('tab');
+          } else {
+            currentUrl.searchParams.set('tab', tabId);
+          }
+          window.history.replaceState(window.history.state, '', currentUrl.pathname + currentUrl.search);
+        }
+      }
     } catch (e) {}
   };
 
@@ -487,6 +524,7 @@ export default function VocabGrammarSpellingModal({
           masteredCount={allMasteredCount}
           totalItems={totalAllStudioItems}
           streak={streak}
+          activeTab={activeTab}
         />
 
         {/* 2-COLUMN BODY */}
