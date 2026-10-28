@@ -169,7 +169,7 @@ export default function VocabStudioHeader({
         <button
           type="button"
           onClick={onClose}
-          className="p-2 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-xl text-slate-400 hover:text-slate-800 hover:bg-rose-50 hover:border-rose-200 transition-colors cursor-pointer border border-transparent"
+          className="p-2 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl text-slate-400 hover:text-slate-800 hover:bg-rose-50 hover:border-rose-200 transition-colors cursor-pointer border border-transparent"
           aria-label={isEn ? "Close" : "Đóng"}
         >
           <X className="w-4.5 h-4.5" />

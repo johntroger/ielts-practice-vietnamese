@@ -123,7 +123,10 @@ console.log('   ✅ SpeakingPart2Room tích hợp trơn tru 5 Cốt Truyện V�
 // -------------------------------------------------------------
 console.log('\n👉 [6/6] Kiểm tra tích hợp VocabGrammarSpellingModal.jsx...');
 const vgModalPath = path.resolve('src/components/VocabGrammarSpellingModal.jsx');
-const vgModalCode = fs.readFileSync(vgModalPath, 'utf8');
+const vgModalCode = [
+  vgModalPath,
+  ...fs.readdirSync(path.resolve('src/components/vocabStudio')).map(f => path.resolve('src/components/vocabStudio', f))
+].map(p => fs.readFileSync(p, 'utf8')).join('\n');
 
 assert(vgModalCode.includes('CAMBRIDGE_SYNONYM_PAIRS'), 'VocabGrammarSpellingModal must import CAMBRIDGE_SYNONYM_PAIRS');
 assert(vgModalCode.includes("activeTab === 'synonyms'"), 'VocabGrammarSpellingModal must support synonyms tab');

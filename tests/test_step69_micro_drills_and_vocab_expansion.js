@@ -66,7 +66,12 @@ assert(
   'VocabGrammarSpellingModal must support Alt+Z shortcut to toggle expansion'
 );
 assert(
-  vocabModalCode.includes('isExpanded ? <Minimize2') && vocabModalCode.includes(': <Maximize2'),
+  (() => {
+    const headerFile = path.resolve(__dirname, '../src/components/vocabStudio/VocabStudioHeader.jsx');
+    const headerCode = fs.existsSync(headerFile) ? fs.readFileSync(headerFile, 'utf8') : '';
+    const combined = vocabModalCode + headerCode;
+    return combined.includes('isExpanded ? <Minimize2') && combined.includes(': <Maximize2');
+  })(),
   'VocabGrammarSpellingModal must render Minimize2/Maximize2 toggle button'
 );
 assert(

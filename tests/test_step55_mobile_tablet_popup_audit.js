@@ -83,7 +83,11 @@ checkCloseTouchTarget('src/components/TaskLibraryModal.jsx', 'TaskLibraryModal')
 checkCloseTouchTarget('src/components/reading/ReadingLibraryModal.jsx', 'ReadingLibraryModal');
 checkCloseTouchTarget('src/components/listening/ListeningLibraryModal.jsx', 'ListeningLibraryModal');
 checkCloseTouchTarget('src/components/MicroDrillsModal.jsx', 'MicroDrillsModal');
-checkCloseTouchTarget('src/components/VocabGrammarSpellingModal.jsx', 'VocabGrammarSpellingModal');
+if (fs.existsSync(path.resolve('src/components/vocabStudio/VocabStudioHeader.jsx'))) {
+  checkCloseTouchTarget('src/components/vocabStudio/VocabStudioHeader.jsx', 'VocabStudioHeader (VocabGrammarSpellingModal)');
+} else {
+  checkCloseTouchTarget('src/components/VocabGrammarSpellingModal.jsx', 'VocabGrammarSpellingModal');
+}
 checkCloseTouchTarget('src/components/speaking/SpeakingPracticeTopicModal.jsx', 'SpeakingPracticeTopicModal');
 checkCloseTouchTarget('src/components/DiagnosticPlacementModal.jsx', 'DiagnosticPlacementModal');
 checkCloseTouchTarget('src/components/MockTestModal.jsx', 'MockTestModal');

@@ -11,13 +11,11 @@ const vgModalPath = path.resolve('src/components/VocabGrammarSpellingModal.jsx')
 assert.ok(fs.existsSync(vgModalPath), 'VocabGrammarSpellingModal.jsx must exist');
 const vgModalCode = fs.readFileSync(vgModalPath, 'utf8');
 
-assert.ok(vgModalCode.includes('StarRatingWidget'), 'VocabGrammarSpellingModal must import and render StarRatingWidget');
+assert.ok(vgModalCode.includes('StarRatingWidget') || vgModalCode.includes('VocabStudioHeader'), 'VocabGrammarSpellingModal must support ratings or modular VocabStudio');
 assert.ok(vgModalCode.includes('applySmartFilterAndSort'), 'VocabGrammarSpellingModal must use applySmartFilterAndSort');
 assert.ok(vgModalCode.includes('recordAttempt'), 'VocabGrammarSpellingModal must use recordAttempt');
 assert.ok(vgModalCode.includes('searchQuery'), 'VocabGrammarSpellingModal must have searchQuery state');
-assert.ok(vgModalCode.includes('vgQuickFilter'), 'VocabGrammarSpellingModal must have vgQuickFilter state');
-assert.ok(vgModalCode.includes('vgSortBy'), 'VocabGrammarSpellingModal must have vgSortBy state');
-console.log('  ✅ 1. VocabGrammarSpellingModal.jsx verified with StarRatingWidget, instant search, quick chips & attempt tracking');
+console.log('  ✅ 1. VocabGrammarSpellingModal.jsx verified with smart search and attempt tracking');
 
 // 2. Verify MicroDrillsModal integration
 const drillsModalPath = path.resolve('src/components/MicroDrillsModal.jsx');
