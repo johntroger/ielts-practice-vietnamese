@@ -53,9 +53,9 @@ export default function VocabStudioHeader({
   };
 
   return (
-    <header className="px-4 sm:px-6 py-3 border-b border-[#e5e9ea] bg-[#f7f5ef] text-[#0f172a] flex items-center justify-between gap-3 shrink-0 z-30">
+    <header className="px-3 sm:px-6 py-2.5 sm:py-3 border-b border-[#e5e9ea] bg-[#f7f5ef] text-[#0f172a] flex items-center justify-between gap-2 sm:gap-3 shrink-0 z-30">
       {/* Left: Clean Brand Logo & Title */}
-      <div className="flex items-center space-x-3 min-w-0">
+      <div className="flex items-center space-x-2.5 sm:space-x-3 min-w-0">
         <button
           type="button"
           onClick={onToggleMobileSidebar}
@@ -67,20 +67,20 @@ export default function VocabStudioHeader({
         </button>
 
         {/* Wordmark logo style ForumFlash */}
-        <div className="flex items-center space-x-2.5">
-          <div className="w-8 h-8 rounded-xl bg-[#004646] flex items-center justify-center text-[#27c4b5] font-black shadow-xs shrink-0">
-            <Zap className="w-4 h-4 fill-current" />
+        <div className="flex items-center space-x-2 sm:space-x-2.5 min-w-0">
+          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-[#004646] flex items-center justify-center text-[#27c4b5] font-black shadow-xs shrink-0">
+            <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-current" />
           </div>
-          <div>
-            <div className="flex items-center space-x-2">
-              <span className="text-sm sm:text-base font-black tracking-tight text-[#004646]">
+          <div className="min-w-0">
+            <div className="flex items-center space-x-1.5 sm:space-x-2">
+              <span className="text-sm sm:text-base font-black tracking-tight text-[#004646] truncate">
                 IELTS Studio<span className="text-[#27c4b5]">.</span>
               </span>
-              <span className="hidden sm:inline-block text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#004646]/10 text-[#004646] border border-[#004646]/20">
+              <span className="hidden sm:inline-block text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#004646]/10 text-[#004646] border border-[#004646]/20 shrink-0">
                 Cambridge Exam Prep
               </span>
             </div>
-            <p className="text-[11px] text-slate-500 hidden md:block">
+            <p className="text-[11px] text-slate-500 hidden md:block truncate">
               {isEn ? 'Spelling Traps, Grammar Scaffolding & Active Recall' : 'Bẫy chính tả, Ngữ pháp điểm tựa & Phản xạ từ vựng'}
             </p>
           </div>
@@ -88,7 +88,7 @@ export default function VocabStudioHeader({
       </div>
 
       {/* Right: Minimalist Tools */}
-      <div className="flex items-center space-x-2 sm:space-x-3 shrink-0">
+      <div className="flex items-center space-x-1.5 sm:space-x-3 shrink-0">
         {/* Streak Pill */}
         {streak > 1 && (
           <div className="hidden sm:flex items-center space-x-1.5 px-3 py-1 rounded-full bg-amber-50 text-amber-800 border border-amber-200 text-xs font-black">
@@ -108,12 +108,12 @@ export default function VocabStudioHeader({
           </span>
         </div>
 
-        {/* Cloud Sync */}
+        {/* Cloud Sync - Hidden on small mobile to save space, synced automatically */}
         <button
           type="button"
           onClick={onManualSync}
           disabled={isSyncing}
-          className="flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs border border-[#d9e3e4] transition-all cursor-pointer disabled:opacity-50 shadow-2xs"
+          className="hidden sm:flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs border border-[#d9e3e4] transition-all cursor-pointer disabled:opacity-50 shadow-2xs"
           title={isEn ? "Sync with Cloud" : "Đồng bộ đám mây"}
         >
           <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin text-[#27c4b5]' : 'text-slate-500'}`} />
@@ -126,7 +126,7 @@ export default function VocabStudioHeader({
         <button
           type="button"
           onClick={handleCopyShareUrl}
-          className={`flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl font-bold text-xs border transition-all cursor-pointer shadow-2xs ${
+          className={`flex items-center space-x-1.5 px-2 sm:px-3 py-1.5 rounded-xl font-bold text-xs border transition-all cursor-pointer shadow-2xs min-h-[36px] ${
             isCopiedUrl
               ? 'bg-[#004646] text-[#27c4b5] border-[#004646]'
               : 'bg-white hover:bg-slate-50 text-slate-700 border-[#d9e3e4]'
@@ -150,11 +150,11 @@ export default function VocabStudioHeader({
           </span>
         </button>
 
-        {/* Fullscreen Toggle */}
+        {/* Fullscreen Toggle - Hidden on mobile since modal is already edge-to-edge */}
         <button
           type="button"
           onClick={onToggleExpanded}
-          className={`p-2 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-xl transition-all cursor-pointer ${
+          className={`hidden sm:flex p-2 min-w-[36px] min-h-[36px] items-center justify-center rounded-xl transition-all cursor-pointer ${
             isExpanded
               ? 'bg-[#004646] text-white shadow-xs'
               : 'text-slate-600 hover:text-slate-900 hover:bg-white bg-white/70 border border-[#d9e3e4]'

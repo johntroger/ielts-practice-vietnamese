@@ -105,35 +105,35 @@ export default function SpellingDemonStage({
     : dictationInput.trim().toLowerCase() === trap.correct.toLowerCase();
 
   return (
-    <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 flex flex-col justify-between">
-      <div className="max-w-3xl mx-auto w-full space-y-6">
+    <div className="flex-1 overflow-y-auto p-3 sm:p-6 lg:p-8 flex flex-col justify-between">
+      <div className="max-w-3xl mx-auto w-full space-y-4 sm:space-y-6">
         {/* UNIT OVERVIEW BANNER (ForumFlash style) */}
-        <div className="bg-white rounded-2xl border border-[#e5e9ea] p-4 sm:p-5 flex flex-wrap items-center justify-between gap-3 shadow-2xs">
-          <div className="flex items-center space-x-3.5">
-            <span className="px-3 py-1.5 rounded-xl bg-[#004646] text-[#27c4b5] font-black text-xs tracking-wider">
+        <div className="bg-white rounded-2xl border border-[#e5e9ea] p-3.5 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
+          <div className="flex items-start sm:items-center space-x-3 min-w-0">
+            <span className="px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-[#004646] text-[#27c4b5] font-black text-[11px] sm:text-xs tracking-wider shrink-0 mt-0.5 sm:mt-0">
               TRAP #{String(currentIndex + 1).padStart(2, '0')}
             </span>
-            <div>
-              <div className="flex items-center space-x-2">
-                <h3 className="font-extrabold text-sm sm:text-base text-slate-800">
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center flex-wrap gap-1.5">
+                <h3 className="font-extrabold text-sm sm:text-base text-slate-800 leading-snug">
                   {trap.category || (isEn ? 'Spelling Trap' : 'Bẫy chính tả')}
                 </h3>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200">
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200 shrink-0 whitespace-nowrap">
                   Band {trap.bandLevel || '6.5'}
                 </span>
               </div>
-              <p className="text-xs text-slate-500">
-                {isEn ? `${totalItems} high-frequency Cambridge Listening demons` : `${totalItems} từ sát thủ trong Cambridge Listening`}
+              <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5">
+                {isEn ? `${totalItems} Cambridge Listening demons` : `${totalItems} từ sát thủ trong Listening`}
               </p>
             </div>
           </div>
 
           {/* Quick Actions */}
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1.5 sm:space-x-2 self-end sm:self-auto shrink-0">
             <button
               type="button"
               onClick={handlePlayAudio}
-              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl font-bold text-xs border transition-all cursor-pointer shadow-2xs ${
+              className={`flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl font-bold text-xs border transition-all cursor-pointer shadow-2xs ${
                 isAudioPlaying
                   ? 'bg-[#27c4b5] text-[#003838] border-[#27c4b5] animate-pulse'
                   : 'bg-white hover:bg-slate-50 text-slate-700 border-[#d9e3e4]'
@@ -151,7 +151,7 @@ export default function SpellingDemonStage({
                   meaning: trap.explanation || trap.rule,
                   tag: 'Spelling Trap'
                 })}
-                className="p-2 rounded-xl bg-white hover:bg-slate-50 border border-[#d9e3e4] text-slate-600 hover:text-amber-600 transition cursor-pointer shadow-2xs"
+                className="p-1.5 sm:p-2 rounded-xl bg-white hover:bg-slate-50 border border-[#d9e3e4] text-slate-600 hover:text-amber-600 transition cursor-pointer shadow-2xs"
                 title={isEn ? "Save to notebook" : "Lưu vào sổ tay"}
               >
                 <Bookmark className="w-4 h-4" />
@@ -161,7 +161,7 @@ export default function SpellingDemonStage({
             <button
               type="button"
               onClick={() => onToggleMastered(trap.id)}
-              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl font-bold text-xs border transition cursor-pointer shadow-2xs ${
+              className={`flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl font-bold text-xs border transition cursor-pointer shadow-2xs ${
                 isMastered
                   ? 'bg-emerald-600 text-white border-emerald-600'
                   : 'bg-white hover:bg-slate-50 text-slate-600 border-[#d9e3e4]'
@@ -174,29 +174,33 @@ export default function SpellingDemonStage({
         </div>
 
         {/* MODE SWITCHER (Quiz vs Dictation) */}
-        <div className="flex items-center justify-between bg-white p-1.5 rounded-2xl border border-[#e5e9ea] shadow-2xs">
-          <div className="flex items-center space-x-1">
+        <div className="grid grid-cols-2 sm:flex items-center sm:justify-between gap-1 sm:gap-0 bg-white p-1.5 rounded-2xl border border-[#e5e9ea] shadow-2xs">
+          <div className="col-span-2 sm:col-span-1 grid grid-cols-2 sm:flex items-center gap-1 sm:space-x-1">
             <button
               type="button"
               onClick={() => { setDrillMode('quiz'); setIsChecked(false); }}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${
+              className={`py-2 px-2.5 sm:py-1.5 sm:px-3 rounded-xl text-xs font-bold transition cursor-pointer flex items-center justify-center space-x-1 ${
                 drillMode === 'quiz'
                   ? 'bg-[#004646] text-white shadow-xs'
                   : 'text-slate-600 hover:bg-slate-100'
               }`}
             >
-              🎯 {isEn ? 'Recognition Quiz' : 'Trắc nghiệm nhận diện'}
+              <span>🎯</span>
+              <span className="truncate">{isEn ? 'Quiz' : 'Trắc nghiệm'}</span>
+              <span className="hidden sm:inline">{isEn ? ' Recognition' : ' nhận diện'}</span>
             </button>
             <button
               type="button"
               onClick={() => { setDrillMode('dictation'); setIsChecked(false); handlePlayAudio(); }}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${
+              className={`py-2 px-2.5 sm:py-1.5 sm:px-3 rounded-xl text-xs font-bold transition cursor-pointer flex items-center justify-center space-x-1 ${
                 drillMode === 'dictation'
                   ? 'bg-rose-600 text-white shadow-xs'
                   : 'text-slate-600 hover:bg-slate-100'
               }`}
             >
-              🎧 {isEn ? 'Exam Dictation' : 'Chép chính tả phòng thi'}
+              <span>🎧</span>
+              <span className="truncate">{isEn ? 'Dictation' : 'Chép chính tả'}</span>
+              <span className="hidden sm:inline">{isEn ? ' Exam' : ' phòng thi'}</span>
             </button>
           </div>
 
@@ -381,27 +385,27 @@ export default function SpellingDemonStage({
       </div>
 
       {/* STICKY BOTTOM ACTION BAR */}
-      <div className="max-w-3xl mx-auto w-full pt-6 mt-4 border-t border-[#e5e9ea] flex items-center justify-between gap-3">
+      <div className="max-w-3xl mx-auto w-full pt-4 sm:pt-6 mt-3 sm:mt-4 border-t border-[#e5e9ea] flex items-center justify-between gap-2 sm:gap-3 shrink-0">
         <button
           type="button"
           onClick={onPrev}
           disabled={currentIndex === 0}
-          className="flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-white hover:bg-slate-50 disabled:opacity-30 border border-[#d9e3e4] text-xs font-bold text-slate-700 transition cursor-pointer shadow-2xs"
+          className="flex items-center space-x-1.5 px-3 sm:px-4 py-2 rounded-xl bg-white hover:bg-slate-50 disabled:opacity-30 border border-[#d9e3e4] text-xs font-bold text-slate-700 transition cursor-pointer shadow-2xs"
         >
           <ArrowLeft className="w-4 h-4" />
-          <span>{isEn ? 'Previous' : 'Câu trước'}</span>
+          <span>{isEn ? 'Previous' : 'Trước'}</span>
         </button>
 
-        <div className="text-xs font-bold text-slate-400 hidden sm:block">
+        <div className="text-xs font-bold text-slate-500 px-2.5 py-1 rounded-lg bg-white border border-[#e5e9ea]">
           {currentIndex + 1} / {totalItems}
         </div>
 
         <button
           type="button"
           onClick={onNext}
-          className="flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-[#004646] hover:bg-[#003838] text-white text-xs font-extrabold transition cursor-pointer shadow-xs"
+          className="flex items-center space-x-1.5 sm:space-x-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl bg-[#004646] hover:bg-[#003838] text-white text-xs font-extrabold transition cursor-pointer shadow-xs"
         >
-          <span>{isEn ? 'Next Trap' : 'Câu tiếp theo'}</span>
+          <span>{isEn ? 'Next Trap' : 'Câu tiếp'}</span>
           <ArrowRight className="w-4 h-4" />
         </button>
       </div>

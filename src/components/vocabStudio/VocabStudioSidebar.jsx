@@ -86,7 +86,7 @@ export default function VocabStudioSidebar({
 
       {/* Main Sidebar Container */}
       <aside
-        className={`fixed lg:static top-0 left-0 bottom-0 z-50 lg:z-auto w-[300px] sm:w-[320px] shrink-0 bg-[#fffdfa] border-r border-[#e5e9ea] flex flex-col h-full transition-transform duration-200 ease-out ${
+        className={`fixed lg:static top-0 left-0 bottom-0 z-50 lg:z-auto w-[280px] sm:w-[320px] max-w-[85vw] shrink-0 bg-[#fffdfa] border-r border-[#e5e9ea] flex flex-col h-full transition-transform duration-200 ease-out shadow-2xl lg:shadow-none ${
           isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         }`}
       >

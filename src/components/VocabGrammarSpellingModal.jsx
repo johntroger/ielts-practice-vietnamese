@@ -451,6 +451,7 @@ export default function VocabGrammarSpellingModal({
       id: 'spelling',
       icon: '🎯',
       label: isEn ? 'Spelling Traps' : 'Bẫy chính tả',
+      shortLabel: isEn ? 'Spelling' : 'Chính tả',
       kicker: isEn ? '• 100 LISTENING SPELLING DEMONS' : '• LỘ TRÌNH 100 BẪY CHÍNH TẢ',
       title: isEn ? 'Listening Spelling Demons' : '100 Bẫy Chính Tả Listening',
       description: isEn
@@ -461,6 +462,7 @@ export default function VocabGrammarSpellingModal({
       id: 'grammar',
       icon: '🏛️',
       label: isEn ? 'Grammar' : 'Ngữ pháp',
+      shortLabel: isEn ? 'Grammar' : 'Ngữ pháp',
       kicker: isEn ? '• GRAMMAR ARCHITECTURE & SCAFFOLDING' : '• LỘ TRÌNH NGỮ PHÁP ĐIỂM TỰA',
       title: isEn ? 'Grammar Architecture' : 'Ngữ Pháp Điểm Tựa Band 7.5+',
       description: isEn
@@ -471,6 +473,7 @@ export default function VocabGrammarSpellingModal({
       id: 'vocab',
       icon: '📖',
       label: isEn ? 'Thematic Vocab' : 'Từ vựng chủ đề',
+      shortLabel: isEn ? 'Vocab' : 'Từ vựng',
       kicker: isEn ? '• THEMATIC ACTIVE RECALL' : '• TỪ VỰNG THEMATIC & COLLOCATIONS',
       title: getLocalizedDeckTopicName(currentDeck, isEn),
       description: isEn
@@ -481,6 +484,7 @@ export default function VocabGrammarSpellingModal({
       id: 'synonyms',
       icon: '🔄',
       label: isEn ? 'Paraphrase' : 'Paraphrase',
+      shortLabel: isEn ? 'Synonyms' : 'Đồng nghĩa',
       kicker: isEn ? '• CAMBRIDGE READING PARAPHRASE' : '• LỘ TRÌNH PARAPHRASE READING',
       title: isEn ? 'Cambridge Paraphrase Hunter' : '50 Cặp Paraphrase Cambridge',
       description: isEn
@@ -501,14 +505,14 @@ export default function VocabGrammarSpellingModal({
   return (
     <div
       className={`fixed inset-0 z-50 flex items-center justify-center overflow-hidden transition-all duration-200 ${
-        isExpanded ? 'p-0 bg-slate-950' : 'p-1 sm:p-2 lg:p-4 bg-slate-900/60 backdrop-blur-xs'
+        isExpanded ? 'p-0 bg-slate-950' : 'p-0 sm:p-2 lg:p-4 bg-slate-900/60 backdrop-blur-xs'
       }`}
     >
       <div
-        className={`bg-[#f7f5ef] shadow-2xl border border-[#d9e3e4] flex flex-col overflow-hidden overscroll-contain transition-all duration-200 ${
+        className={`bg-[#f7f5ef] shadow-2xl border-0 sm:border border-[#d9e3e4] flex flex-col overflow-hidden overscroll-contain transition-all duration-200 ${
           isExpanded
             ? 'w-full h-[100dvh] max-w-none max-h-none rounded-none'
-            : 'rounded-2xl sm:rounded-3xl w-full max-w-[98vw] 2xl:max-w-[1550px] h-[96dvh] max-h-[96dvh]'
+            : 'rounded-none sm:rounded-3xl w-full max-w-[100vw] 2xl:max-w-[1550px] h-[100dvh] sm:h-[96dvh] max-h-[100dvh] sm:max-h-[96dvh]'
         }`}
       >
         {/* GLOBAL MINIMALIST HEADER */}
@@ -563,24 +567,24 @@ export default function VocabGrammarSpellingModal({
           {/* RIGHT WORKSPACE / HERO STAGE */}
           <main className="flex-1 flex flex-col overflow-hidden min-w-0 bg-[#f7f5ef]">
             {/* HERO HEADER & SEGMENTED TRACK SWITCHER (ForumFlash style!) */}
-            <div className="px-4 sm:px-8 pt-5 pb-3.5 bg-[#f7f5ef] border-b border-[#e5e9ea] flex flex-wrap items-center justify-between gap-3.5 shrink-0">
-              <div>
+            <div className="px-3.5 sm:px-8 pt-3 sm:pt-5 pb-2.5 sm:pb-3.5 bg-[#f7f5ef] border-b border-[#e5e9ea] flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3.5 shrink-0">
+              <div className="min-w-0">
                 <div className="flex items-center space-x-2">
-                  <span className="w-2 h-2 rounded-full bg-[#27c4b5]" />
-                  <span className="text-[10px] font-black uppercase tracking-widest text-[#004646]">
+                  <span className="w-2 h-2 rounded-full bg-[#27c4b5] shrink-0" />
+                  <span className="text-[10px] font-black uppercase tracking-wider text-[#004646] truncate">
                     {currentTrackInfo.kicker}
                   </span>
                 </div>
-                <h1 className="text-xl sm:text-2xl font-black text-[#004646] tracking-tight mt-0.5">
+                <h1 className="text-lg sm:text-2xl font-black text-[#004646] tracking-tight mt-0.5 leading-snug">
                   {currentTrackInfo.title}
                 </h1>
-                <p className="text-xs text-slate-500 mt-0.5 max-w-xl">
+                <p className="text-xs text-slate-500 mt-0.5 max-w-xl hidden sm:block">
                   {currentTrackInfo.description}
                 </p>
               </div>
 
-              {/* SEGMENTED TRACK SWITCHER (Pill buttons: [ Spelling | Grammar | Vocab | Paraphrase ]) */}
-              <div className="flex items-center space-x-1 bg-white p-1 rounded-2xl border border-[#d9e3e4] shadow-2xs">
+              {/* SEGMENTED TRACK SWITCHER (Equal 4-col grid on mobile, row on tablet/desktop) */}
+              <div className="w-full sm:w-auto grid grid-cols-4 sm:flex items-center gap-1 bg-white p-1 rounded-2xl border border-[#d9e3e4] shadow-2xs shrink-0">
                 {tracksCatalog.map(trk => {
                   const isActive = activeTab === trk.id;
                   return (
@@ -588,14 +592,17 @@ export default function VocabGrammarSpellingModal({
                       key={trk.id}
                       type="button"
                       onClick={() => handleSelectTab(trk.id)}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center space-x-1.5 ${
+                      className={`px-2 sm:px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center space-x-1 sm:space-x-1.5 ${
                         isActive
                           ? 'bg-[#004646] text-white shadow-xs'
                           : 'text-slate-600 hover:bg-slate-100'
                       }`}
                     >
-                      <span>{trk.icon}</span>
-                      <span className="hidden md:inline">{trk.label}</span>
+                      <span className="text-xs sm:text-sm shrink-0">{trk.icon}</span>
+                      <span className="text-[11px] sm:text-xs truncate">
+                        <span className="sm:hidden">{trk.shortLabel}</span>
+                        <span className="hidden sm:inline">{trk.label}</span>
+                      </span>
                     </button>
                   );
                 })}
