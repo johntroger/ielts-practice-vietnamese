@@ -6,15 +6,20 @@ import {
   CheckCircle2,
   XCircle,
   ArrowRight,
-  ArrowLeft
+  ArrowLeft,
+  ChevronDown
 } from 'lucide-react';
 import { getLocalizedGrammarItem, getLocalizedGrammarPrompt } from '../../utils/vocabLocalization';
+import QuickJumpDropdown from './QuickJumpDropdown';
 
 export default function GrammarArchitectureStage({
   isEn,
   grammarItem,
   currentIndex,
   totalItems,
+  allItems = [],
+  onSelectIndex,
+  masteredIds = [],
   onPrev,
   onNext,
   isMastered,
@@ -34,6 +39,7 @@ export default function GrammarArchitectureStage({
   const [selectedDrillChoice, setSelectedDrillChoice] = useState(null);
   const [isDrillChecked, setIsDrillChecked] = useState(false);
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
+  const [isQuickJumpOpen, setIsQuickJumpOpen] = useState(false);
 
   useEffect(() => {
     setSelectedDrillChoice(null);
@@ -68,23 +74,39 @@ export default function GrammarArchitectureStage({
     <div className="flex-1 overflow-y-auto p-3 sm:p-6 lg:p-8 flex flex-col justify-between">
       <div className="max-w-3xl mx-auto w-full space-y-4 sm:space-y-6">
         {/* UNIT OVERVIEW BANNER */}
-        <div className="bg-white rounded-2xl border border-[#e5e9ea] p-3.5 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
-          <div className="flex items-start sm:items-center space-x-3 min-w-0">
-            <span className="px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-[#004646] text-[#27c4b5] font-black text-[11px] sm:text-xs tracking-wider shrink-0 mt-0.5 sm:mt-0">
-              RULE #{String(currentIndex + 1).padStart(2, '0')}
-            </span>
+        <div className="bg-white rounded-2xl border border-[#e5e9ea] p-3.5 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs relative">
+          <div className="flex items-start sm:items-center space-x-3 min-w-0 flex-1">
+            <button
+              type="button"
+              onClick={() => setIsQuickJumpOpen(prev => !prev)}
+              className="px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-[#004646] hover:bg-[#003838] text-[#27c4b5] font-black text-[11px] sm:text-xs tracking-wider shrink-0 mt-0.5 sm:mt-0 flex items-center space-x-1 cursor-pointer transition-colors shadow-xs"
+              title={isEn ? "Select grammar rule" : "Chọn bài học nhanh"}
+            >
+              <span>RULE #{String(currentIndex + 1).padStart(2, '0')}</span>
+              <ChevronDown className={`w-3.5 h-3.5 text-[#27c4b5] transition-transform duration-200 ${isQuickJumpOpen ? 'rotate-180' : ''}`} />
+            </button>
+
             <div className="min-w-0 flex-1">
-              <div className="flex items-center flex-wrap gap-1.5">
-                <h3 className="font-extrabold text-sm sm:text-base text-slate-800 leading-snug">
-                  {loc.title}
-                </h3>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 shrink-0 whitespace-nowrap">
-                  {loc.bandTarget || `Band ${loc.bandLevel || '7.0+'}`}
-                </span>
-              </div>
-              <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5">
-                {isEn ? `${totalItems} Cambridge architectures` : `${totalItems} kiến trúc ngữ pháp ghi điểm`}
-              </p>
+              <button
+                type="button"
+                onClick={() => setIsQuickJumpOpen(prev => !prev)}
+                className="text-left group cursor-pointer block w-full"
+                title={isEn ? "Select grammar rule" : "Chọn bài học nhanh"}
+              >
+                <div className="flex items-center flex-wrap gap-1.5">
+                  <h3 className="font-extrabold text-sm sm:text-base text-slate-800 leading-snug group-hover:text-[#004646] transition-colors flex items-center space-x-1">
+                    <span>{loc.title}</span>
+                    <ChevronDown className={`w-3.5 h-3.5 text-slate-400 group-hover:text-[#004646] shrink-0 transition-transform duration-200 ${isQuickJumpOpen ? 'rotate-180' : ''}`} />
+                  </h3>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 shrink-0 whitespace-nowrap">
+                    {loc.bandTarget || `Band ${loc.bandLevel || '7.0+'}`}
+                  </span>
+                </div>
+                <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5 group-hover:text-[#004646] transition-colors flex items-center space-x-1">
+                  <span>{isEn ? `${totalItems} Cambridge architectures` : `${totalItems} kiến trúc ngữ pháp`}</span>
+                  <span className="text-[#27c4b5] font-bold">• {isEn ? 'Click to jump' : 'Bấm để chọn bài'}</span>
+                </p>
+              </button>
             </div>
           </div>
 
@@ -131,6 +153,23 @@ export default function GrammarArchitectureStage({
               <span>{isMastered ? (isEn ? 'Mastered' : 'Đã thuộc') : (isEn ? 'Mark Mastered' : 'Chưa thuộc')}</span>
             </button>
           </div>
+
+          {/* Quick Jump Dropdown Menu */}
+          {isQuickJumpOpen && (
+            <QuickJumpDropdown
+              isOpen={isQuickJumpOpen}
+              onClose={() => setIsQuickJumpOpen(false)}
+              items={allItems}
+              currentIndex={currentIndex}
+              onSelectIndex={(idx) => {
+                if (onSelectIndex) onSelectIndex(idx);
+                setIsQuickJumpOpen(false);
+              }}
+              masteredIds={masteredIds}
+              isEn={isEn}
+              type="grammar"
+            />
+          )}
         </div>
 
         {/* TWO-PHASE SELECTOR (Bulletproof Grid Layout for all screen widths) */}

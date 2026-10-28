@@ -616,6 +616,9 @@ export default function VocabGrammarSpellingModal({
                 trap={currentSpellingItem}
                 currentIndex={currentSpellingIdx}
                 totalItems={localizedSpellingList.length}
+                allItems={localizedSpellingList}
+                onSelectIndex={setCurrentSpellingIdx}
+                masteredIds={masteredIds}
                 onPrev={handlePrevItem}
                 onNext={handleNextItem}
                 isMastered={currentSpellingItem ? masteredIds.includes(currentSpellingItem.id) : false}
@@ -631,6 +634,9 @@ export default function VocabGrammarSpellingModal({
                 grammarItem={currentGrammarItem}
                 currentIndex={currentGrammarIdx}
                 totalItems={localizedGrammarList.length}
+                allItems={localizedGrammarList}
+                onSelectIndex={setCurrentGrammarIdx}
+                masteredIds={masteredIds}
                 onPrev={handlePrevItem}
                 onNext={handleNextItem}
                 isMastered={currentGrammarItem ? masteredIds.includes(currentGrammarItem.id) : false}
@@ -647,6 +653,9 @@ export default function VocabGrammarSpellingModal({
                 card={currentVocabCard}
                 currentIndex={currentCardIdx}
                 totalItems={filteredCards.length}
+                allItems={filteredCards}
+                onSelectIndex={setCurrentCardIdx}
+                masteredIds={masteredIds}
                 onPrev={handlePrevItem}
                 onNext={handleNextItem}
                 isMastered={currentVocabCard ? masteredIds.includes(currentVocabCard.id) : false}
@@ -663,9 +672,11 @@ export default function VocabGrammarSpellingModal({
                 allPairs={filteredSynonymsList}
                 currentIndex={currentSynonymIdx}
                 totalItems={filteredSynonymsList.length}
+                allItems={filteredSynonymsList}
+                onSelectIndex={setCurrentSynonymIdx}
+                masteredIds={masteredIds}
                 onPrev={handlePrevItem}
                 onNext={handleNextItem}
-                onSelectIndex={setCurrentSynonymIdx}
                 isMastered={currentSynonymPair ? masteredIds.includes(currentSynonymPair.id) : false}
                 onToggleMastered={handleToggleMasteredItem}
                 onSaveToNotebook={onSaveToNotebook}

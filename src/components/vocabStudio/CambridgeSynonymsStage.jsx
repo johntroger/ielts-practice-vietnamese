@@ -8,24 +8,31 @@ import {
   Volume2,
   Sparkles,
   Grid,
-  Lightbulb
+  Lightbulb,
+  ChevronDown
 } from 'lucide-react';
+import QuickJumpDropdown from './QuickJumpDropdown';
 
 export default function CambridgeSynonymsStage({
   isEn,
   pair,
   allPairs = [],
+  allItems = [],
   currentIndex,
   totalItems,
   onPrev,
   onNext,
   onSelectIndex,
+  masteredIds = [],
   isMastered,
   onToggleMastered,
   onSaveToNotebook
 }) {
   const [viewMode, setViewMode] = useState('spotlight'); // 'spotlight' or 'grid'
   const [copied, setCopied] = useState(false);
+  const [isQuickJumpOpen, setIsQuickJumpOpen] = useState(false);
+
+  const resolvedPairs = allItems && allItems.length > 0 ? allItems : allPairs;
 
   if (!pair) return null;
 
@@ -50,18 +57,36 @@ export default function CambridgeSynonymsStage({
     <div className="flex-1 overflow-y-auto p-3 sm:p-6 lg:p-8 flex flex-col justify-between">
       <div className="max-w-3xl mx-auto w-full space-y-4 sm:space-y-6">
         {/* UNIT OVERVIEW BANNER (ForumFlash style) */}
-        <div className="bg-white rounded-2xl border border-[#e5e9ea] p-3.5 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
-          <div className="flex items-start sm:items-center space-x-3 min-w-0">
-            <span className="px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-[#004646] text-[#27c4b5] font-black text-[11px] sm:text-xs tracking-wider shrink-0 mt-0.5 sm:mt-0">
-              PAIR #{String(currentIndex + 1).padStart(2, '0')}
-            </span>
+        <div className="bg-white rounded-2xl border border-[#e5e9ea] p-3.5 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs relative">
+          <div className="flex items-start sm:items-center space-x-3 min-w-0 flex-1">
+            <button
+              type="button"
+              onClick={() => setIsQuickJumpOpen(prev => !prev)}
+              className="px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-[#004646] hover:bg-[#003838] text-[#27c4b5] font-black text-[11px] sm:text-xs tracking-wider shrink-0 mt-0.5 sm:mt-0 flex items-center space-x-1 cursor-pointer transition-colors shadow-xs"
+              title={isEn ? "Select paraphrase pair" : "Chọn cặp paraphrase khác"}
+            >
+              <span>PAIR #{String(currentIndex + 1).padStart(2, '0')}</span>
+              <ChevronDown className={`w-3.5 h-3.5 text-[#27c4b5] transition-transform duration-200 ${isQuickJumpOpen ? 'rotate-180' : ''}`} />
+            </button>
+
             <div className="min-w-0 flex-1">
-              <h3 className="font-extrabold text-sm sm:text-base text-slate-800 leading-snug">
-                {pair.category || (isEn ? 'Cambridge Paraphrase' : 'Chuyên đề Paraphrase')}
-              </h3>
-              <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5">
-                {isEn ? `${totalItems} Cambridge keyword transformations` : `${totalItems} cặp biến đổi từ khóa Reading`}
-              </p>
+              <button
+                type="button"
+                onClick={() => setIsQuickJumpOpen(prev => !prev)}
+                className="text-left group cursor-pointer block w-full"
+                title={isEn ? "Select paraphrase pair" : "Chọn cặp paraphrase khác"}
+              >
+                <div className="flex items-center flex-wrap gap-1.5">
+                  <h3 className="font-extrabold text-sm sm:text-base text-slate-800 leading-snug group-hover:text-[#004646] transition-colors flex items-center space-x-1">
+                    <span>{pair.category || (isEn ? 'Cambridge Paraphrase' : 'Chuyên đề Paraphrase')}</span>
+                    <ChevronDown className={`w-3.5 h-3.5 text-slate-400 group-hover:text-[#004646] shrink-0 transition-transform duration-200 ${isQuickJumpOpen ? 'rotate-180' : ''}`} />
+                  </h3>
+                </div>
+                <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5 group-hover:text-[#004646] transition-colors flex items-center space-x-1">
+                  <span>{isEn ? `${totalItems} Cambridge keyword transformations` : `${totalItems} cặp biến đổi từ khóa Reading`}</span>
+                  <span className="text-[#27c4b5] font-bold">• {isEn ? 'Click to jump' : 'Bấm để chọn bài'}</span>
+                </p>
+              </button>
             </div>
           </div>
 
@@ -104,6 +129,23 @@ export default function CambridgeSynonymsStage({
               <span>{isMastered ? (isEn ? 'Mastered' : 'Đã thuộc') : (isEn ? 'Mark Mastered' : 'Chưa thuộc')}</span>
             </button>
           </div>
+
+          {/* Quick Jump Dropdown Menu */}
+          {isQuickJumpOpen && (
+            <QuickJumpDropdown
+              isOpen={isQuickJumpOpen}
+              onClose={() => setIsQuickJumpOpen(false)}
+              items={resolvedPairs}
+              currentIndex={currentIndex}
+              onSelectIndex={(idx) => {
+                if (onSelectIndex) onSelectIndex(idx);
+                setIsQuickJumpOpen(false);
+              }}
+              masteredIds={masteredIds}
+              isEn={isEn}
+              type="synonyms"
+            />
+          )}
         </div>
 
         {/* ROADMAP CONNECTED STEP: (01 HỌC) ------> MAIN CARD */}
