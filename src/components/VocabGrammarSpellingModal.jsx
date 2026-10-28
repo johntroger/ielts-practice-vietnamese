@@ -175,7 +175,10 @@ export default function VocabGrammarSpellingModal({
       list = list.filter(item => item.bandLevel === '7.0' || item.bandLevel === '7.5');
     }
 
-    if (selectedSpellingCategory !== 'all') {
+    if (selectedSpellingCategory === 'topics') {
+      const demonCategories = ['Double Letters', 'Vowel Traps', 'Silent Letters', 'Plural Demons', 'Campus & Jobs'];
+      list = list.filter(item => !demonCategories.includes(item.category));
+    } else if (selectedSpellingCategory !== 'all') {
       list = list.filter(item => item.category === selectedSpellingCategory);
     }
 
@@ -543,11 +546,12 @@ export default function VocabGrammarSpellingModal({
             onSearchChange={setSearchQuery}
             spellingCategories={[
               { id: 'all', label: isEn ? 'All' : 'Tất cả' },
-              { id: 'Environment', label: isEn ? 'Environment' : 'Môi trường' },
-              { id: 'Society & Law', label: isEn ? 'Society' : 'Xã hội' },
-              { id: 'Academic Register', label: isEn ? 'Academic' : 'Học thuật' },
-              { id: 'Task 1 Data', label: isEn ? 'Task 1 Data' : 'Số liệu T1' },
-              { id: 'Task 1 & 2 Core', label: isEn ? 'Task 1 & 2 Core' : 'Trọng tâm' }
+              { id: 'Double Letters', label: isEn ? 'Double Letters' : 'Chữ kép' },
+              { id: 'Vowel Traps', label: isEn ? 'Vowel Traps' : 'Bẫy nguyên âm' },
+              { id: 'Silent Letters', label: isEn ? 'Silent Letters' : 'Chữ câm' },
+              { id: 'Plural Demons', label: isEn ? 'Plural Demons' : 'Số nhiều' },
+              { id: 'Campus & Jobs', label: isEn ? 'Campus & Jobs' : 'Trường & Việc làm' },
+              { id: 'topics', label: isEn ? 'Topic Words' : 'Theo chủ đề' }
             ]}
             selectedSpellingCategory={selectedSpellingCategory}
             onSelectSpellingCategory={setSelectedSpellingCategory}

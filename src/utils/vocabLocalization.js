@@ -317,7 +317,7 @@ export function getLocalizedGrammarTitle(title, isEn = false) {
     const match = cleaned.match(/\(([^)]+)\)/);
     if (match && match[1]) {
       const inside = match[1].trim();
-      if (!vnRegex.test(inside) && inside.length > 3) {
+      if (!vnRegex.test(inside) && inside.length > 3 && !/^band\b|^\d/i.test(inside)) {
         return inside.replace(/^Unit\s+\d+:\s*/i, '');
       }
     }

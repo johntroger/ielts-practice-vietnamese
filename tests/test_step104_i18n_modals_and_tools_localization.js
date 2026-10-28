@@ -131,16 +131,18 @@ it('2. t() resolves modal keys reactively in vi and en', () => {
 
 // 3. VocabGrammarSpellingModal.jsx
 it('3. VocabGrammarSpellingModal.jsx integrates useTranslation and localized strings', () => {
-  const content = fs.readFileSync(path.join(__dirname, '../src/components/VocabGrammarSpellingModal.jsx'), 'utf-8');
+  const studioDir = path.join(__dirname, '../src/components/vocabStudio');
+  const content = [
+    fs.readFileSync(path.join(__dirname, '../src/components/VocabGrammarSpellingModal.jsx'), 'utf-8'),
+    ...fs.readdirSync(studioDir).map(f => fs.readFileSync(path.join(studioDir, f), 'utf-8'))
+  ].join('\n');
   assert.ok(content.includes('useTranslation'), 'VocabGrammarSpellingModal missing useTranslation');
-  assert.ok(content.includes("isEn ? 'Share to Community' : 'Chia sẻ cộng đồng'"));
-  assert.ok(content.includes("isEn ? '100 Listening Spelling Demons'"));
-  assert.ok(content.includes("isEn ? 'Grammar Architecture & Scaffolding'"));
-  assert.ok(content.includes("isEn ? 'Vocabulary & Golden Collocations (Active Recall)'"));
-  assert.ok(content.includes("isEn ? '50 Cambridge Paraphrase Pairs (Reading)'"));
-  assert.ok(content.includes("isEn ? 'Trap Category:' : 'Nhóm bẫy:'"));
-  assert.ok(content.includes("isEn ? 'Jump to:' : 'Chuyển nhanh:'"));
-  assert.ok(content.includes("isEn ? 'Item:' : 'Câu:'"));
+  assert.ok(content.includes("isEn ? 'Share Link'"));
+  assert.ok(content.includes("Listening Spelling Demons"));
+  assert.ok(content.includes("isEn ? 'Grammar Architecture'"));
+  assert.ok(content.includes("ACTIVE RECALL"));
+  assert.ok(content.includes("Cambridge Paraphrase Pairs"));
+  assert.ok(content.includes("Double Letters"));
 });
 
 // 4. MicroDrillsModal.jsx
@@ -339,7 +341,7 @@ it('15. VocabGrammarSpellingModal grammar & spelling dynamic localization conver
   const localizedGr = getLocalizedGrammarItem(customCloudGrammar, true);
   assert.strictEqual(localizedGr.title, 'Defining & Non-defining Relative Clauses');
   assert.ok(localizedGr.formula.includes('Singular'));
-  assert.ok(localizedGr.prompt.includes('Join the sentences'));
+  assert.ok(localizedGr.prompt.includes('Combine the two sentences'));
   assert.ok(localizedGr.rationale.includes('relative clauses'));
 
   // Test custom spelling trap

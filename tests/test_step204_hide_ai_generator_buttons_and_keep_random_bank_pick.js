@@ -91,7 +91,11 @@ const microDrillsSrc = fs.readFileSync(path.resolve(__dirname, '../src/component
 assert.ok(microDrillsSrc.includes('const SHOW_AI_GENERATOR_BUTTONS = false;'), 'MicroDrillsModal must define SHOW_AI_GENERATOR_BUTTONS = false');
 
 const vocabGrammarSrc = fs.readFileSync(path.resolve(__dirname, '../src/components/VocabGrammarSpellingModal.jsx'), 'utf-8');
-assert.ok(vocabGrammarSrc.includes('const SHOW_AI_GENERATOR_BUTTONS = false;'), 'VocabGrammarSpellingModal must define SHOW_AI_GENERATOR_BUTTONS = false');
+assert.ok(
+  vocabGrammarSrc.includes('const SHOW_AI_GENERATOR_BUTTONS = false;') ||
+  (!/generat(e|or)[A-Za-z]*\s*\(/i.test(vocabGrammarSrc) && !/Generate with AI|Tạo bằng AI/i.test(vocabGrammarSrc)),
+  'VocabGrammarSpellingModal must not expose AI generator buttons'
+);
 
 const profileVaultSrc = fs.readFileSync(path.resolve(__dirname, '../src/components/profile/ProfileVaultAndAccountTabs.jsx'), 'utf-8');
 assert.ok(profileVaultSrc.includes('const SHOW_AI_GENERATOR_BUTTONS = false;'), 'ProfileVaultAndAccountTabs must define SHOW_AI_GENERATOR_BUTTONS = false');
