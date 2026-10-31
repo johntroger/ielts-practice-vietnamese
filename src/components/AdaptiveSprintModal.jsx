@@ -26,6 +26,7 @@ import {
   getSprintStats
 } from '../services/sprintCoachService';
 import { useTranslation } from '../i18n/LanguageContext';
+import HeadingInfoTip from './common/HeadingInfoTip';
 
 export default function AdaptiveSprintModal({
   isOpen,
@@ -179,16 +180,19 @@ export default function AdaptiveSprintModal({
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <h2 className="text-base sm:text-lg font-black text-white">
-                  {t('modals.sprint.title')}
+                <h2 className="text-base sm:text-lg font-black text-white flex items-center">
+                  <span>{t('modals.sprint.title')}</span>
+                  <HeadingInfoTip
+                    content={t('modals.sprint.subtitle')}
+                    title={t('modals.sprint.title')}
+                    dark={true}
+                    isEn={isEn}
+                  />
                 </h2>
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-rose-500/20 text-rose-300 border border-rose-500/30">
                   {t('modals.sprint.badgeDaily', isEn ? 'Daily Sprint' : 'Sprint Hàng Ngày')}
                 </span>
               </div>
-              <p className="text-xs text-slate-400">
-                {t('modals.sprint.subtitle')}
-              </p>
             </div>
           </div>
 

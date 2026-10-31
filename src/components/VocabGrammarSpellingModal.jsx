@@ -23,6 +23,7 @@ import SpellingDemonStage from './vocabStudio/SpellingDemonStage';
 import GrammarArchitectureStage from './vocabStudio/GrammarArchitectureStage';
 import ThematicVocabStage from './vocabStudio/ThematicVocabStage';
 import CambridgeSynonymsStage from './vocabStudio/CambridgeSynonymsStage';
+import HeadingInfoTip from './common/HeadingInfoTip';
 
 export default function VocabGrammarSpellingModal({
   isOpen,
@@ -579,12 +580,16 @@ export default function VocabGrammarSpellingModal({
                     {currentTrackInfo.kicker}
                   </span>
                 </div>
-                <h1 className="text-lg sm:text-2xl font-black text-[#004646] tracking-tight mt-0.5 leading-snug">
-                  {currentTrackInfo.title}
+                <h1 className="text-lg sm:text-2xl font-black text-[#004646] tracking-tight mt-0.5 leading-snug flex items-center">
+                  <span>{currentTrackInfo.title}</span>
+                  {currentTrackInfo.description && (
+                    <HeadingInfoTip
+                      content={currentTrackInfo.description}
+                      title={currentTrackInfo.title}
+                      isEn={isEn}
+                    />
+                  )}
                 </h1>
-                <p className="text-xs text-slate-500 mt-0.5 max-w-xl hidden sm:block">
-                  {currentTrackInfo.description}
-                </p>
               </div>
 
               {/* SEGMENTED TRACK SWITCHER (Equal 4-col grid on mobile, row on tablet/desktop) */}

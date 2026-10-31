@@ -55,6 +55,7 @@ import { fetchPublicDrills, savePublicDrill, deletePublicDrill } from '../servic
 import { speakText, stopSpeech, playChimeTone } from '../utils/speechAudio';
 import MicroDrillAudioBar from './listening/MicroDrillAudioBar';
 import StarRatingWidget from './common/StarRatingWidget';
+import HeadingInfoTip from './common/HeadingInfoTip';
 import { recordAttempt, applySmartFilterAndSort } from '../services/ratingPopularityService';
 import ManualMicroDrillModal from './ManualMicroDrillModal';
 import {
@@ -1464,10 +1465,20 @@ export default function MicroDrillsModal({
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex items-center space-x-1.5 min-w-0">
-                <h2 className="text-sm sm:text-base md:text-xl font-bold truncate">
-                  {isEn 
-                    ? t('modals.microDrills.title', null, 'Targeted Reflex Studio (Micro-Drills)') 
-                    : t('modals.microDrills.title', null, 'Phòng Luyện Bổ Trợ (Micro-Drills)')}
+                <h2 className="text-sm sm:text-base md:text-xl font-bold truncate flex items-center">
+                  <span>
+                    {isEn 
+                      ? t('modals.microDrills.title', null, 'Targeted Reflex Studio (Micro-Drills)') 
+                      : t('modals.microDrills.title', null, 'Phòng Luyện Bổ Trợ (Micro-Drills)')}
+                  </span>
+                  <HeadingInfoTip
+                    content={isEn 
+                      ? t('modals.microDrills.subtitle', null, 'Sharpen language reflexes and conquer classic trap patterns before test day') 
+                      : t('modals.microDrills.subtitle', null, 'Rèn luyện phản xạ ngôn ngữ, phá các bẫy tư duy kinh điển trước khi bước vào phòng thi thật')}
+                    title={isEn ? "Targeted Reflex Studio" : "Phòng Luyện Bổ Trợ Phản Xạ"}
+                    dark={true}
+                    isEn={isEn}
+                  />
                 </h2>
                 <span className="hidden sm:inline-block px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-extrabold uppercase tracking-wide shrink-0">
                   {isEn 
@@ -1475,11 +1486,6 @@ export default function MicroDrillsModal({
                     : t('modals.microDrills.multiSkillBadge', null, 'Đa Kỹ Năng')}
                 </span>
               </div>
-              <p className="text-xs text-slate-400 mt-0.5 hidden md:block truncate">
-                {isEn 
-                  ? t('modals.microDrills.subtitle', null, 'Sharpen language reflexes and conquer classic trap patterns before test day') 
-                  : t('modals.microDrills.subtitle', null, 'Rèn luyện phản xạ ngôn ngữ, phá các bẫy tư duy kinh điển trước khi bước vào phòng thi thật')}
-              </p>
             </div>
           </div>
 

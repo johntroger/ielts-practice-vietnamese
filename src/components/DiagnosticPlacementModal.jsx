@@ -23,6 +23,7 @@ import {
   evaluateDiagnosticTest, 
   generate30DayStudyPlan 
 } from '../utils/diagnosticPlacementEngine';
+import HeadingInfoTip from './common/HeadingInfoTip';
 import { idbSet, idbGet, STORES } from '../utils/indexedDbStorage';
 import { safeGet, safeSet } from '../utils/storageService';
 import { useTranslation } from '../i18n/LanguageContext';
@@ -234,15 +235,17 @@ export default function DiagnosticPlacementModal({
               <Award className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-base sm:text-lg font-black text-slate-900 flex items-center gap-1.5">
+              <h2 className="text-base sm:text-lg font-black text-slate-900 flex items-center gap-1.5 flex-wrap">
                 <span>{t('modals.diagnostic.title')}</span>
                 <span className="hidden sm:inline-block px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-700">
                   {t('modals.diagnostic.cambridgeBadge', 'Cambridge Diagnostic')}
                 </span>
+                <HeadingInfoTip
+                  content={t('modals.diagnostic.subtitle')}
+                  title={t('modals.diagnostic.title')}
+                  isEn={isEn}
+                />
               </h2>
-              <p className="text-xs text-slate-500 hidden sm:block">
-                {t('modals.diagnostic.subtitle')}
-              </p>
             </div>
           </div>
 

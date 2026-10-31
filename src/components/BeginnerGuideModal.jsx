@@ -21,6 +21,7 @@ import {
   Check
 } from 'lucide-react';
 import { useTranslation } from '../i18n';
+import HeadingInfoTip from './common/HeadingInfoTip';
 import { safeSet } from '../utils/storageService';
 
 export default function BeginnerGuideModal({
@@ -180,14 +181,17 @@ export default function BeginnerGuideModal({
             <span className="text-base leading-none">🌱</span>
             <span>{isEn ? "Beginner Foundation Hub" : "Trung Tâm Khởi Động Cho Người Mới Bắt Đầu"}</span>
           </div>
-          <h2 className="text-lg sm:text-2xl font-black text-white leading-tight">
-            {isEn ? "Feeling Overwhelmed? Start Here!" : "Chưa Có Nền Tảng? Đừng Lo, Hãy Bắt Đầu Từ Đây!"}
+          <h2 className="text-lg sm:text-2xl font-black text-white leading-tight flex items-center flex-wrap">
+            <span>{isEn ? "Feeling Overwhelmed? Start Here!" : "Chưa Có Nền Tảng? Đừng Lo, Hãy Bắt Đầu Từ Đây!"}</span>
+            <HeadingInfoTip
+              content={isEn
+                ? "You do NOT need to write a 250-word essay immediately. Follow this gentle 4-step path to build vocabulary and confidence naturally."
+                : "Bạn không cần viết ngay một bài luận 250 từ! Hãy làm quen với các bài tập ngắn 90 giây để tích lũy phản xạ và từ vựng tự nhiên nhất."}
+              title={isEn ? "Beginner Foundation Hub" : "Trung Tâm Khởi Động"}
+              dark={true}
+              isEn={isEn}
+            />
           </h2>
-          <p className="text-xs sm:text-sm text-emerald-100 mt-1 sm:mt-1.5 leading-relaxed max-w-xl">
-            {isEn
-              ? "You do NOT need to write a 250-word essay immediately. Follow this gentle 4-step path to build vocabulary and confidence naturally."
-              : "Bạn không cần viết ngay một bài luận 250 từ! Hãy làm quen với các bài tập ngắn 90 giây để tích lũy phản xạ và từ vựng tự nhiên nhất."}
-          </p>
 
           {/* Navigation Tabs with Dropbox */}
           <div className="flex items-center gap-2 mt-4 pt-3 border-t border-white/20 relative z-30 overflow-visible">

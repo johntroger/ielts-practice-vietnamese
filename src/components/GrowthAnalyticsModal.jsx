@@ -10,6 +10,7 @@ import {
   SKILL_PRESCRIPTIONS_EN
 } from '../services/growthPredictorService.js';
 import { useTranslation } from '../i18n/LanguageContext';
+import HeadingInfoTip from './common/HeadingInfoTip';
 
 export default function GrowthAnalyticsModal({
   isOpen,
@@ -59,10 +60,13 @@ export default function GrowthAnalyticsModal({
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-purple-500/20 text-purple-300 border border-purple-500/30 shrink-0">
                   Cambridge AI
                 </span>
+                <HeadingInfoTip
+                  content={t('modals.analytics.subtitle')}
+                  title={t('modals.analytics.title', null, 'Dự Báo Tăng Trưởng')}
+                  dark={true}
+                  isEn={isEn}
+                />
               </h2>
-              <p className="text-xs text-slate-400 truncate">
-                {t('modals.analytics.subtitle')}
-              </p>
             </div>
           </div>
           <button

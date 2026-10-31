@@ -44,6 +44,7 @@ import {
   getFeatureGitBookUrl,
   getLocalizedFeature
 } from '../core/featureRegistry';
+import HeadingInfoTip from './common/HeadingInfoTip';
 import { openModal as storeOpenModal } from '../core/modalStore';
 import { useTranslation } from '../i18n';
 
@@ -197,17 +198,20 @@ export default function FeaturesGuideModal({
               </div>
               <div className="min-w-0">
                 <div className="flex items-center space-x-1.5 sm:space-x-2">
-                  <h2 className="text-sm sm:text-base lg:text-lg font-black tracking-tight text-white truncate">
-                    {isEn ? 'Help Center & Feature Guide' : 'Trung Tâm Trợ Giúp & Tính Năng'}
+                  <h2 className="text-sm sm:text-base lg:text-lg font-black tracking-tight text-white truncate flex items-center">
+                    <span>{isEn ? 'Help Center & Feature Guide' : 'Trung Tâm Trợ Giúp & Tính Năng'}</span>
+                    <HeadingInfoTip
+                      content={isEn ? 'Instant reference manual & 1-click launcher for Cambridge IELTS preparation tools' : 'Tài liệu tra cứu tức thì & phóng nhanh công cụ luyện thi IELTS Cambridge'}
+                      title={isEn ? 'Help Center' : 'Trung Tâm Trợ Giúp'}
+                      dark={true}
+                      isEn={isEn}
+                    />
                   </h2>
                   <span className="hidden md:inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-500/20 border border-red-500/40 text-red-400 text-[10px] font-bold uppercase tracking-wider shrink-0">
                     <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse"></span>
                     {isEn ? 'Live Updated' : 'Tự Động Cập Nhật'}
                   </span>
                 </div>
-                <p className="text-[11px] text-slate-400 hidden sm:block truncate">
-                  {isEn ? 'Instant reference manual & 1-click launcher for Cambridge IELTS preparation tools' : 'Tài liệu tra cứu tức thì & phóng nhanh công cụ luyện thi IELTS Cambridge'}
-                </p>
               </div>
             </div>
 

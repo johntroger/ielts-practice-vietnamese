@@ -29,6 +29,7 @@ import { TASK1_TYPES, TASK2_TYPES } from '../data/topics';
 import TaskImageUploader from './TaskImageUploader';
 import StarRatingWidget from './common/StarRatingWidget';
 import SmartContentFilterBar from './common/SmartContentFilterBar';
+import HeadingInfoTip from './common/HeadingInfoTip';
 import { applySmartFilterAndSort, recordAttempt } from '../services/ratingPopularityService';
 import { isOwnerUser, OWNER_MEDIA_RESTRICTION_MESSAGE, OWNER_EMAIL } from '../utils/userPermissions';
 import { useTranslation } from '../i18n';
@@ -443,12 +444,15 @@ export default function TaskLibraryModal({
               <BookOpen className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
             <div className="min-w-0">
-              <h2 className="text-base sm:text-xl font-bold truncate">
-                {t('modals.library.title', null, 'Kho Đề Thi & Quản Lý Tài Liệu')}
+              <h2 className="text-base sm:text-xl font-bold truncate flex items-center">
+                <span>{t('modals.library.title', null, 'Kho Đề Thi & Quản Lý Tài Liệu')}</span>
+                <HeadingInfoTip
+                  content={t('modals.library.subtitle', null, 'Chọn đề làm bài, nạp thêm tài liệu cá nhân hoặc sao lưu kho đề')}
+                  title={t('modals.library.title', null, 'Kho Đề Thi')}
+                  dark={true}
+                  isEn={isEn}
+                />
               </h2>
-              <p className="text-xs text-slate-400 hidden sm:block truncate">
-                {t('modals.library.subtitle', null, 'Chọn đề làm bài, nạp thêm tài liệu cá nhân hoặc sao lưu kho đề')}
-              </p>
             </div>
           </div>
 

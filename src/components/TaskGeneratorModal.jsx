@@ -20,6 +20,7 @@ import { IELTS_TOPICS, TASK1_TYPES, TASK2_TYPES, TIME_FRAME_TYPES } from '../dat
 import { generateNewTask } from '../services/geminiService';
 import TaskImageUploader from './TaskImageUploader';
 import { isOwnerUser, OWNER_MEDIA_RESTRICTION_MESSAGE, OWNER_EMAIL } from '../utils/userPermissions';
+import HeadingInfoTip from './common/HeadingInfoTip';
 import { useTranslation } from '../i18n';
 
 const getQuickManualTemplates = (isEn) => ({
@@ -293,11 +294,20 @@ export default function TaskGeneratorModal({
               )}
             </div>
             <div>
-              <div className="flex items-center space-x-2">
-                <h3 className="font-black text-slate-900 text-sm sm:text-base tracking-tight">
-                  {generatorMode === 'manual' 
-                    ? (isEn ? 'Manual Writing Task Entry' : 'Nạp Đề Writing Thủ Công') 
-                    : (isEn ? 'AI Automatic Task Generator' : 'AI Sinh Đề Mới Tự Động')}
+              <div className="flex items-center space-x-2 flex-wrap">
+                <h3 className="font-black text-slate-900 text-sm sm:text-base tracking-tight flex items-center">
+                  <span>
+                    {generatorMode === 'manual' 
+                      ? (isEn ? 'Manual Writing Task Entry' : 'Nạp Đề Writing Thủ Công') 
+                      : (isEn ? 'AI Automatic Task Generator' : 'AI Sinh Đề Mới Tự Động')}
+                  </span>
+                  <HeadingInfoTip
+                    content={generatorMode === 'manual'
+                      ? (isEn ? 'Input tasks from Cambridge books, actual exam photos, or personal study materials' : 'Tự nạp đề từ sách Cambridge, ảnh chụp đề thi thật hoặc tài liệu cá nhân')
+                      : (isEn ? 'Up-to-date IELTS Writing 2025–2026 test trends with dynamic interactive charts' : 'Cập nhật xu hướng thi thật IELTS Writing 2025–2026 với biểu đồ sống')}
+                    title={generatorMode === 'manual' ? (isEn ? 'Manual Task Entry' : 'Nạp Đề Thủ Công') : (isEn ? 'AI Generator' : 'AI Sinh Đề')}
+                    isEn={isEn}
+                  />
                 </h3>
                 <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider ${
                   generatorMode === 'manual'
@@ -307,11 +317,6 @@ export default function TaskGeneratorModal({
                   {generatorMode === 'manual' ? (isEn ? '✍️ Manual' : '✍️ Thủ công') : (isEn ? '🤖 AI Engine' : '🤖 AI Engine')}
                 </span>
               </div>
-              <p className="text-[11px] text-slate-500">
-                {generatorMode === 'manual'
-                  ? (isEn ? 'Input tasks from Cambridge books, actual exam photos, or personal study materials' : 'Tự nạp đề từ sách Cambridge, ảnh chụp đề thi thật hoặc tài liệu cá nhân')
-                  : (isEn ? 'Up-to-date IELTS Writing 2025–2026 test trends with dynamic interactive charts' : 'Cập nhật xu hướng thi thật IELTS Writing 2025–2026 với biểu đồ sống')}
-              </p>
             </div>
           </div>
           <button 

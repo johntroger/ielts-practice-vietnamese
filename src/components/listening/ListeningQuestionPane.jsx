@@ -20,6 +20,7 @@ import {
   ExternalLink
 } from 'lucide-react';
 import DistractorTrapExplainer from '../DistractorTrapExplainer';
+import HeadingInfoTip from '../common/HeadingInfoTip';
 import { getTheoryContext, openTheoryModalWithContext } from '../../services/theoryContextService';
 import { useTranslation } from '../../i18n';
 
@@ -580,10 +581,18 @@ export default function ListeningQuestionPane({
               }`}
             >
               {/* Group Header & Instructions */}
-              <div className="mb-4 pb-3 border-b border-slate-100">
+              <div className="mb-4 pb-2.5 border-b border-slate-100">
                 <div className="flex items-center justify-between gap-2">
-                  <h4 className={`font-bold text-slate-900 ${fontSizeClasses.heading} ${contrastTheme === 'dark' ? 'text-white' : ''}`}>
-                    {group.title}
+                  <h4 className={`font-bold text-slate-900 flex items-center flex-wrap ${fontSizeClasses.heading} ${contrastTheme === 'dark' ? 'text-white' : ''}`}>
+                    <span>{group.title}</span>
+                    {group.instruction && (
+                      <HeadingInfoTip
+                        content={group.instruction}
+                        title={isEn ? "Instructions & Guidelines" : "Hướng Dẫn Làm Bài & Giới Hạn Từ"}
+                        dark={contrastTheme === 'dark'}
+                        isEn={isEn}
+                      />
+                    )}
                   </h4>
                   {wordLimit && (
                     <span className="px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 text-[11px] font-semibold">
@@ -591,10 +600,6 @@ export default function ListeningQuestionPane({
                     </span>
                   )}
                 </div>
-
-                <p className={`mt-1.5 whitespace-pre-line font-serif italic text-slate-600 ${fontSizeClasses.body} ${contrastTheme === 'dark' ? 'text-slate-300' : ''}`}>
-                  {group.instruction}
-                </p>
 
                 {group.headerTitle && (
                   <div className="mt-3 px-3 py-1.5 rounded-lg bg-red-50 text-red-700 text-xs font-black tracking-wider uppercase inline-block border border-red-200">

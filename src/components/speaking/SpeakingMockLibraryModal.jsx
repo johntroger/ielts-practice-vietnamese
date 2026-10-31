@@ -5,6 +5,7 @@ import {
   BookOpen, Filter, ArrowRight, Check
 } from 'lucide-react';
 import { useTranslation } from '../../i18n';
+import HeadingInfoTip from '../common/HeadingInfoTip';
 
 export default function SpeakingMockLibraryModal({
   isOpen,
@@ -76,18 +77,21 @@ export default function SpeakingMockLibraryModal({
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <h2 className="text-base sm:text-lg font-black text-white tracking-tight">
-                  {isEn ? 'Speaking Mock Test Library' : 'Kho Đề Thi Thử IELTS Speaking'}
+                <h2 className="text-base sm:text-lg font-black text-white tracking-tight flex items-center">
+                  <span>{isEn ? 'Speaking Mock Test Library' : 'Kho Đề Thi Thử IELTS Speaking'}</span>
+                  <HeadingInfoTip
+                    content={isEn 
+                      ? 'Official Cambridge standards, customized practice packs & AI-generated topics' 
+                      : 'Đề thi chuẩn Cambridge, đề luyện tập thủ công & đề thi AI tự sinh'}
+                    title={isEn ? 'Speaking Mock Library' : 'Kho Đề Speaking'}
+                    dark={true}
+                    isEn={isEn}
+                  />
                 </h2>
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-purple-500/20 text-purple-300 border border-purple-500/30">
                   {allMockPacks.length} {isEn ? 'Packs' : 'Bộ Đề'}
                 </span>
               </div>
-              <p className="text-xs text-slate-400">
-                {isEn 
-                  ? 'Official Cambridge standards, customized practice packs & AI-generated topics' 
-                  : 'Đề thi chuẩn Cambridge, đề luyện tập thủ công & đề thi AI tự sinh'}
-              </p>
             </div>
           </div>
 

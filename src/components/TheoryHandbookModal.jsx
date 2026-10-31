@@ -10,6 +10,7 @@ import { THEORY_HANDBOOK } from '../data/theoryHandbook';
 import { GITBOOK_DOCS_BASE_URL } from '../core/featureRegistry';
 import { useTranslation } from '../i18n';
 import { THEORY_I18N_EN } from '../services/theoryContextService';
+import HeadingInfoTip from './common/HeadingInfoTip';
 import { getLocalizedArticle, getLocalizedStage } from '../data/theoryHandbook/theoryLocalizationHelper';
 
 // Helper to render bold, italic, code and inline highlights
@@ -701,8 +702,17 @@ export default function TheoryHandbookModal({
                   {isEn ? '• Official Cambridge Strategy Library' : '• Thư viện chiến thuật chuẩn khảo thí Cambridge'}
                 </span>
               </div>
-              <h2 className="text-sm sm:text-lg lg:text-xl font-bold mt-0.5 truncate">{headerMeta.title}</h2>
-              <p className="text-xs text-slate-400 line-clamp-1">{headerMeta.subtitle}</p>
+              <h2 className="text-sm sm:text-lg lg:text-xl font-bold mt-0.5 truncate flex items-center">
+                <span>{headerMeta.title}</span>
+                {headerMeta.subtitle && (
+                  <HeadingInfoTip
+                    content={headerMeta.subtitle}
+                    title={headerMeta.title}
+                    dark={true}
+                    isEn={isEn}
+                  />
+                )}
+              </h2>
             </div>
           </div>
           <div className="flex items-center space-x-2 shrink-0 ml-2">

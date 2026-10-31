@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Sparkles, Compass, Check, Copy, X, Lightbulb, ArrowRight, ExternalLink, BookOpen, Layers } from 'lucide-react';
 import { callGeminiApi } from '../services/geminiService';
 import { getGitBookBaseUrl } from '../core/featureRegistry';
+import HeadingInfoTip from './common/HeadingInfoTip';
 import { useTranslation } from '../i18n';
 
 export default function IdeaMatrixModal({ isOpen, onClose, promptText, onInsertToOutline, apiKey, model }) {
@@ -326,16 +327,19 @@ Return ONLY valid JSON in this schema:
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <h2 className="text-base sm:text-lg font-black text-white">
-                  {isEn ? 'Task 2 Ideation Matrix' : 'Kho Lăng Kính Ý Tưởng Task 2 (Ideation Matrix)'}
+                <h2 className="text-base sm:text-lg font-black text-white flex items-center">
+                  <span>{isEn ? 'Task 2 Ideation Matrix' : 'Kho Lăng Kính Ý Tưởng Task 2 (Ideation Matrix)'}</span>
+                  <HeadingInfoTip
+                    content={isEn ? 'Overcome ideation blocks with the 6 P.E.S.T.L.E lenses or 4 multi-dimensional Stakeholder perspectives' : 'Đập tan bế tắc ý tưởng bằng 6 lăng kính P.E.S.T.L.E hoặc 4 góc nhìn Stakeholder đa chiều'}
+                    title={isEn ? 'Ideation Matrix' : 'Lăng Kính Ý Tưởng'}
+                    dark={true}
+                    isEn={isEn}
+                  />
                 </h2>
                 <span className="hidden sm:inline-block px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
                   {isEn ? 'Band 8.0+ Standard' : 'Chuẩn Band 8.0+'}
                 </span>
               </div>
-              <p className="text-xs text-slate-400">
-                {isEn ? 'Overcome ideation blocks with the 6 P.E.S.T.L.E lenses or 4 multi-dimensional Stakeholder perspectives' : 'Đập tan bế tắc ý tưởng bằng 6 lăng kính P.E.S.T.L.E hoặc 4 góc nhìn Stakeholder đa chiều'}
-              </p>
             </div>
           </div>
           

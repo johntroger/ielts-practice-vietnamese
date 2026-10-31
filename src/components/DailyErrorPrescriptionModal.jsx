@@ -15,6 +15,7 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { useTranslation } from '../i18n';
+import HeadingInfoTip from './common/HeadingInfoTip';
 import { generateDailyPrescription, recordPrescriptionCompletion } from '../services/prescriptionService';
 
 export default function DailyErrorPrescriptionModal({
@@ -83,16 +84,18 @@ export default function DailyErrorPrescriptionModal({
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <h2 className="text-sm sm:text-lg font-black text-slate-900 tracking-tight truncate">
-                  {isEn ? 'Daily Error Prescription' : 'Đơn Thuốc Sửa Lỗi Mỗi Ngày'}
+                <h2 className="text-sm sm:text-lg font-black text-slate-900 tracking-tight truncate flex items-center">
+                  <span>{isEn ? 'Daily Error Prescription' : 'Đơn Thuốc Sửa Lỗi Mỗi Ngày'}</span>
+                  <HeadingInfoTip
+                    content={isEn ? 'Targeted loop to eliminate classic mistakes & Cambridge grammar traps' : 'Vòng lặp khắc phục lỗi sai kinh điển & bẫy ngữ pháp Cambridge'}
+                    title={isEn ? 'Daily Error Prescription' : 'Đơn Thuốc Sửa Lỗi'}
+                    isEn={isEn}
+                  />
                 </h2>
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-rose-100 text-rose-800 shrink-0">
                   {isEn ? '3-Min SRS' : 'SRS 3 Phút'}
                 </span>
               </div>
-              <p className="text-xs text-slate-500 font-medium">
-                {isEn ? 'Targeted loop to eliminate classic mistakes & Cambridge grammar traps' : 'Vòng lặp khắc phục lỗi sai kinh điển & bẫy ngữ pháp Cambridge'}
-              </p>
             </div>
           </div>
 

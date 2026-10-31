@@ -19,6 +19,7 @@ import {
   Maximize2
 } from 'lucide-react';
 import ImageViewerModal from '../ImageViewerModal';
+import HeadingInfoTip from '../common/HeadingInfoTip';
 import { explainReadingQuestion } from '../../services/geminiService';
 import DistractorTrapExplainer from '../DistractorTrapExplainer';
 import { evaluateQuestionAnswer } from '../../services/answerEvaluationService';
@@ -912,23 +913,25 @@ export default function QuestionPane({
       {questionGroups.map((group, idx) => (
         <div key={group.id || idx} className="space-y-4">
           {/* Group Header Card */}
-          <div className={`p-4 rounded-2xl border shadow-2xs space-y-2 transition-colors duration-150 ${ts.headerCard}`}>
+          <div className={`p-3.5 sm:p-4 rounded-2xl border shadow-2xs space-y-2 transition-colors duration-150 ${ts.headerCard}`}>
             <div className="flex items-center justify-between">
-              <span className={`text-xs font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-md border ${ts.badge}`}>
-                Questions {group.questions[0]?.order || group.questions[0]?.questionNumber} - {group.questions[group.questions.length - 1]?.order || group.questions[group.questions.length - 1]?.questionNumber}
-              </span>
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className={`text-xs font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-md border ${ts.badge}`}>
+                  Questions {group.questions[0]?.order || group.questions[0]?.questionNumber} - {group.questions[group.questions.length - 1]?.order || group.questions[group.questions.length - 1]?.questionNumber}
+                </span>
+                <HeadingInfoTip
+                  content={[
+                    isEn ? (group.instructionEn || group.instruction || group.instructions) : (group.instruction || group.instructions || group.instructionEn),
+                    group.extraNotes
+                  ].filter(Boolean).join('\n\n')}
+                  title={isEn ? "Reading Instructions & Notes" : "Hướng Dẫn Phần Đọc & Ghi Chú"}
+                  isEn={isEn}
+                />
+              </div>
               <span className={`text-[11px] font-semibold ${ts.meta}`}>
                 {group.questions.length} {group.questions.length > 1 ? 'questions' : 'question'}
               </span>
             </div>
-            <h4 className={`text-sm font-bold whitespace-pre-line leading-snug ${ts.instruction}`}>
-              {isEn ? (group.instructionEn || group.instruction || group.instructions) : (group.instruction || group.instructions || group.instructionEn)}
-            </h4>
-            {group.extraNotes && (
-              <p className={`text-xs italic ${ts.note}`}>
-                {group.extraNotes}
-              </p>
-            )}
             {(() => {
               const theoryCtx = getTheoryContext({
                 skill: 'reading',

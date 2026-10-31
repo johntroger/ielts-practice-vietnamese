@@ -28,6 +28,7 @@ import ArenaRelativeLeaderboard from './ArenaRelativeLeaderboard.jsx';
 import ArenaSprintSummaryModal from './ArenaSprintSummaryModal.jsx';
 import ArenaLeaguePromotionModal from './ArenaLeaguePromotionModal.jsx';
 import PublicLearnerProfileModal from './PublicLearnerProfileModal.jsx';
+import HeadingInfoTip from '../common/HeadingInfoTip.jsx';
 import LevelUpCelebrationModal from './LevelUpCelebrationModal.jsx';
 import ArenaDifficultySelector from './ArenaDifficultySelector.jsx';
 import { isAnswerAcceptable, isNearMissAnswer } from '../../services/gamification/cambridgeAnswerValidator.js';
@@ -1183,14 +1184,17 @@ export default function AtlasEnglishArenaModal({
                       🏰
                     </div>
                     <div className="flex flex-col gap-1 max-w-lg">
-                      <h2 className="text-lg sm:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-rose-300 to-purple-300">
-                        {isEn ? 'Tower of Babel' : 'Tháp Babel'}
+                      <h2 className="text-lg sm:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-rose-300 to-purple-300 flex items-center justify-center">
+                        <span>{isEn ? 'Tower of Babel' : 'Tháp Babel'}</span>
+                        <HeadingInfoTip
+                          content={isEn
+                            ? '10-floor roguelite ascension. Collect relics, survive chambers, and defeat Floor 10 Boss.'
+                            : 'Chiến dịch leo 10 tầng tháp cổ: tích lũy cổ vật, sinh tồn và diệt Trùm Tầng 10.'}
+                          title={isEn ? 'Tower of Babel' : 'Tháp Babel'}
+                          dark={true}
+                          isEn={isEn}
+                        />
                       </h2>
-                      <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                        {isEn
-                          ? '10-floor roguelite ascension. Collect relics, survive chambers, and defeat Floor 10 Boss.'
-                          : 'Chiến dịch leo 10 tầng tháp cổ: tích lũy cổ vật, sinh tồn và diệt Trùm Tầng 10.'}
-                      </p>
                     </div>
 
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full max-w-md my-1 text-xs">
@@ -1252,13 +1256,15 @@ export default function AtlasEnglishArenaModal({
                     </button>
                   </div>
 
-                  <h2 className="text-sm sm:text-xl lg:text-2xl font-black text-slate-100 leading-tight sm:leading-snug tracking-tight">
-                    {t('arena.heroTitle')}
+                  <h2 className="text-sm sm:text-xl lg:text-2xl font-black text-slate-100 leading-tight sm:leading-snug tracking-tight flex items-center justify-center">
+                    <span>{t('arena.heroTitle')}</span>
+                    <HeadingInfoTip
+                      content={t('arena.heroDescription')}
+                      title={t('arena.heroTitle')}
+                      dark={true}
+                      isEn={isEn}
+                    />
                   </h2>
-
-                  <p className="text-xs text-slate-400 font-sans hidden sm:block line-clamp-1">
-                    {t('arena.heroDescription')}
-                  </p>
 
                   <div className="grid grid-cols-3 gap-2 pt-0.5">
                     <div className="bg-slate-900/80 border border-slate-800 rounded-lg py-1.5 px-2 text-center shadow-xs">
