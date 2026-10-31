@@ -144,6 +144,18 @@ export default function AtlasEnglishArenaModal({
     return ARENA_IELTS_TOPICS[idx] || ARENA_IELTS_TOPICS[0];
   });
 
+  // Atlas Treasury Wallet & Modal State
+  const [isTreasuryOpen, setIsTreasuryOpen] = useState(false);
+  const [walletBalance, setWalletBalance] = useState(() => getWallet());
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const handleFocus = () => setWalletBalance(getWallet());
+      window.addEventListener('focus', handleFocus);
+      return () => window.removeEventListener('focus', handleFocus);
+    }
+  }, []);
+
   const [selectedPerks, setSelectedPerks] = useState(() => {
     const primary = safeGet(ARENA_STORAGE_KEYS.EQUIPPED_PERK, 'none');
     const secondary = safeGet('ielts_arena_secondary_perk', 'none');
@@ -191,19 +203,6 @@ export default function AtlasEnglishArenaModal({
       }
     }
   }, [selectedPerks]);
-
-  const handleConsumeAegisElixir = useCallback(() => {
-    const qty = getInventoryItemQuantity('item_aegis_elixir');
-    if (qty > 0 && (sprint.shieldState?.shields || 0) <= 1) {
-      const consumed = consumeInventoryItem('item_aegis_elixir', 1);
-      if (consumed) {
-        sprint.consumeAegisElixir?.();
-        setWalletBalance(getWallet());
-        playArenaSfx('victory');
-        triggerHaptic('loot');
-      }
-    }
-  }, [sprint]);
 
   // Mobile Tab Navigation State: 'match' | 'leaderboard'
   const [activeMobileTab, setActiveMobileTab] = useState('match');
@@ -359,6 +358,19 @@ export default function AtlasEnglishArenaModal({
     }
   });
 
+  const handleConsumeAegisElixir = useCallback(() => {
+    const qty = getInventoryItemQuantity('item_aegis_elixir');
+    if (qty > 0 && (sprint.shieldState?.shields || 0) <= 1) {
+      const consumed = consumeInventoryItem('item_aegis_elixir', 1);
+      if (consumed) {
+        sprint.consumeAegisElixir?.();
+        setWalletBalance(getWallet());
+        playArenaSfx('victory');
+        triggerHaptic('loot');
+      }
+    }
+  }, [sprint]);
+
   // Game Mode State: 'blitz' (3-Min Quick Run) | 'tower' (Roguelite Expedition) | 'realms' (4 Skill Realms)
   const [gameMode, setGameMode] = useState(() => safeGet('ielts_arena_game_mode', 'blitz'));
   const [towerRun, setTowerRun] = useState(() => getActiveTowerRun());
@@ -376,19 +388,6 @@ export default function AtlasEnglishArenaModal({
   const [activeRealmId, setActiveRealmId] = useState(SKILL_REALM_IDS.LISTENING);
   const [activeGate, setActiveGate] = useState(null);
   const [gateSummaryResult, setGateSummaryResult] = useState(null);
-
-  // Atlas Treasury Wallet & Modal State
-  const [isTreasuryOpen, setIsTreasuryOpen] = useState(false);
-  const [walletBalance, setWalletBalance] = useState(() => getWallet());
-
-  useEffect(() => {
-    const handleWalletChange = (updated) => {
-      if (updated) setWalletBalance(updated);
-    };
-    if (typeof window !== 'undefined') {
-      window.addEventListener('focus', () => setWalletBalance(getWallet()));
-    }
-  }, []);
 
   // Tower Actions (Declared after sprint is initialized)
   const handleStartNewTowerExpedition = useCallback(() => {
