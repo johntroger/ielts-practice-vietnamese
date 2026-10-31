@@ -9,6 +9,7 @@ import { safeGet, safeSet } from '../../utils/storageService.js';
 import { getLocalDateKey } from '../../utils/dateHelper.js';
 import { addStreakShield } from './atlasStreakShieldService.js';
 import { activateSurge } from './atlasSurgeService.js';
+import { addGold, addDiamonds } from './atlasWalletService.js';
 
 export const DAILY_QUESTS_STORAGE_KEY = 'atlas_daily_sprints_data';
 
@@ -153,8 +154,14 @@ export function claimAtlasKnowledgeVault() {
   // Activate 15-minute 2x XP Surge
   activateSurge(15);
 
+  // Award Currency: +100 Scholastic Gold + 10 Atlas Diamonds
+  addGold(100, 'Claimed Atlas Knowledge Vault', false);
+  addDiamonds(10, 'Daily Quests Complete Vault');
+
   const reward = {
     bonusXp: 120,
+    bonusGold: 100,
+    bonusDiamonds: 10,
     hasShield: isShieldAwarded,
     shieldsRemaining: shieldsAdded,
     hasSurge: true,

@@ -48,6 +48,15 @@ import { triggerHaptic } from '../../utils/hapticHelper.js';
 import ArenaGhostDuelBar from './ArenaGhostDuelBar.jsx';
 import ArenaWorldBossCard from './ArenaWorldBossCard.jsx';
 import AtlasDailySprintCard from './AtlasDailySprintCard.jsx';
+import AtlasTreasuryModal from './AtlasTreasuryModal.jsx';
+import { 
+  getWallet, 
+  addGold, 
+  addDiamonds, 
+  getInventoryItemQuantity,
+  consumeInventoryItem,
+  checkAndApplyRetroactiveBackfill 
+} from '../../services/gamification/atlasWalletService.js';
 import { getStreakShieldData, evaluateStreakProtection } from '../../services/gamification/atlasStreakShieldService.js';
 import { recordDailyQuestProgress, QUEST_TYPES } from '../../services/gamification/atlasDailyQuestService.js';
 import { isSurgeActive, getSurgeRemainingSeconds, formatSurgeTimer } from '../../services/gamification/atlasSurgeService.js';
@@ -135,9 +144,66 @@ export default function AtlasEnglishArenaModal({
     return ARENA_IELTS_TOPICS[idx] || ARENA_IELTS_TOPICS[0];
   });
 
-  const [selectedPerk, setSelectedPerk] = useState(() => 
-    safeGet(ARENA_STORAGE_KEYS.EQUIPPED_PERK, 'none')
-  );
+  const [selectedPerks, setSelectedPerks] = useState(() => {
+    const primary = safeGet(ARENA_STORAGE_KEYS.EQUIPPED_PERK, 'none');
+    const secondary = safeGet('ielts_arena_secondary_perk', 'none');
+    const list = [];
+    if (primary && primary !== 'none') list.push(primary);
+    if (secondary && secondary !== 'none' && secondary !== primary) list.push(secondary);
+    return list;
+  });
+
+  const selectedPerk = selectedPerks[0] || 'none';
+
+  const hasDualPerkSlot = useMemo(() => {
+    return getInventoryItemQuantity('item_dual_perk_slot') > 0;
+  }, [walletBalance, isOpen]);
+
+  const handleTogglePerk = useCallback((perkId) => {
+    triggerHaptic('chipTap');
+    const hasDual = getInventoryItemQuantity('item_dual_perk_slot') > 0;
+    if (!hasDual) {
+      if (selectedPerks.includes(perkId)) {
+        setSelectedPerks([]);
+        safeSet(ARENA_STORAGE_KEYS.EQUIPPED_PERK, 'none');
+        safeSet('ielts_arena_secondary_perk', 'none');
+      } else {
+        setSelectedPerks([perkId]);
+        safeSet(ARENA_STORAGE_KEYS.EQUIPPED_PERK, perkId);
+        safeSet('ielts_arena_secondary_perk', 'none');
+      }
+    } else {
+      if (selectedPerks.includes(perkId)) {
+        const next = selectedPerks.filter(p => p !== perkId);
+        setSelectedPerks(next);
+        safeSet(ARENA_STORAGE_KEYS.EQUIPPED_PERK, next[0] || 'none');
+        safeSet('ielts_arena_secondary_perk', next[1] || 'none');
+      } else {
+        let next;
+        if (selectedPerks.length < 2) {
+          next = [...selectedPerks, perkId];
+        } else {
+          next = [selectedPerks[1], perkId];
+        }
+        setSelectedPerks(next);
+        safeSet(ARENA_STORAGE_KEYS.EQUIPPED_PERK, next[0] || 'none');
+        safeSet('ielts_arena_secondary_perk', next[1] || 'none');
+      }
+    }
+  }, [selectedPerks]);
+
+  const handleConsumeAegisElixir = useCallback(() => {
+    const qty = getInventoryItemQuantity('item_aegis_elixir');
+    if (qty > 0 && (sprint.shieldState?.shields || 0) <= 1) {
+      const consumed = consumeInventoryItem('item_aegis_elixir', 1);
+      if (consumed) {
+        sprint.consumeAegisElixir?.();
+        setWalletBalance(getWallet());
+        playArenaSfx('victory');
+        triggerHaptic('loot');
+      }
+    }
+  }, [sprint]);
 
   // Mobile Tab Navigation State: 'match' | 'leaderboard'
   const [activeMobileTab, setActiveMobileTab] = useState('match');
@@ -197,7 +263,17 @@ export default function AtlasEnglishArenaModal({
 
   // Evaluate weekly league rollover upon opening modal
   useEffect(() => {
-    if (!isOpen || !leaderboardData?.leaderboard?.length) return;
+    if (!isOpen) return;
+
+    // Trigger one-time retroactive backfill for veteran learners
+    if (leaderboardData?.userWeeklyXp !== undefined) {
+      const currentLevel = calculateLevelFromXp(leaderboardData.userWeeklyXp || 0);
+      const realmsProg = getSkillRealmsProgress();
+      const masteredOrPassed = Object.values(realmsProg?.gates || {}).filter(g => (g.stars || 0) >= 1).length;
+      checkAndApplyRetroactiveBackfill(currentLevel, masteredOrPassed);
+    }
+
+    if (!leaderboardData?.leaderboard?.length) return;
     const currentWeekKey = getIsoWeekKey();
     const lastEvaluatedWeek = safeGet(ARENA_STORAGE_KEYS.LAST_EVALUATED_WEEK, '');
 
@@ -253,12 +329,30 @@ export default function AtlasEnglishArenaModal({
         const updated = await fetchRealLeaderboard(currentUser);
         setLeaderboardData(updated);
 
+        // Award Blitz Gold (Subject to 500 Daily Soft Cap)
+        const earnedGold = (summary.score || 0) * 8 + (summary.longestStreak || 0) * 2;
+        if (earnedGold > 0) {
+          addGold(earnedGold, `Completed Blitz Sprint (${summary.score} correct)`, true);
+        }
+
+        // Award 1 Diamond if 100% perfect accuracy (minimum 5 questions)
+        if (summary.score >= 5 && summary.totalQuestions >= 5 && summary.score === summary.totalQuestions) {
+          addDiamonds(1, 'Perfect Blitz Accuracy (100%)');
+        }
+
         if (newLevel > oldLevel) {
           playChime();
+          // Award Level Up Diamonds: 15 per level + 50 tier bonus if crossing tiers
+          const levelsGained = newLevel - oldLevel;
+          const tierInfo = getLevelTierInfo(newLevel);
+          const isTierMilestone = [11, 26, 46, 71, 91].includes(newLevel);
+          const diamondReward = levelsGained * 15 + (isTierMilestone ? 50 : 0);
+          addDiamonds(diamondReward, `Level Up to Lv.${newLevel}`);
+
           setLevelUpData({
             oldLevel,
             newLevel,
-            tier: getLevelTierInfo(newLevel)
+            tier: tierInfo
           });
         }
       }
@@ -283,6 +377,19 @@ export default function AtlasEnglishArenaModal({
   const [activeGate, setActiveGate] = useState(null);
   const [gateSummaryResult, setGateSummaryResult] = useState(null);
 
+  // Atlas Treasury Wallet & Modal State
+  const [isTreasuryOpen, setIsTreasuryOpen] = useState(false);
+  const [walletBalance, setWalletBalance] = useState(() => getWallet());
+
+  useEffect(() => {
+    const handleWalletChange = (updated) => {
+      if (updated) setWalletBalance(updated);
+    };
+    if (typeof window !== 'undefined') {
+      window.addEventListener('focus', () => setWalletBalance(getWallet()));
+    }
+  }, []);
+
   // Tower Actions (Declared after sprint is initialized)
   const handleStartNewTowerExpedition = useCallback(() => {
     const newRun = startNewTowerRun(selectedDifficulty);
@@ -292,11 +399,16 @@ export default function AtlasEnglishArenaModal({
   }, [selectedDifficulty, playChime]);
 
   const handleAbandonTowerRun = useCallback(() => {
+    if (towerRun && (towerRun.gold || 0) > 0) {
+      // Convert 25% of Tower Expedition Gold into Global Scholastic Gold
+      const convertedGold = Math.max(10, Math.floor((towerRun.gold || 0) * 0.25));
+      addGold(convertedGold, 'Tower of Babel Expedition Bounty (25% Conversion)', false);
+    }
     saveActiveTowerRun(null);
     setTowerRun(null);
     setActiveTowerFloor(null);
     setTowerBossState(null);
-  }, []);
+  }, [towerRun]);
 
   const handleEnterTowerFloor = useCallback((floor, isReplay = false) => {
     if (!floor) return;
@@ -495,6 +607,13 @@ export default function AtlasEnglishArenaModal({
         };
         saveActiveTowerRun(updated);
         setTowerRun(updated);
+        if (updated.isCompleted) {
+          // Tower of Babel Conquered (Floor 10 Boss Defeated)!
+          addDiamonds(10, 'Defeated Tower of Babel Grand Boss');
+          const convertedExpeditionGold = Math.max(50, Math.floor((updated.gold || 0) * 0.5));
+          addGold(convertedExpeditionGold, 'Tower of Babel Ascension Victory (50% Conversion)', false);
+        }
+
         if (activeTowerFloor.dropsRelic && !activeTowerFloor.isReplay) {
           const owned = (updated.relics || []).map(r => r.id);
           const picks = generateThreeRandomRelics(owned);
@@ -574,6 +693,15 @@ export default function AtlasEnglishArenaModal({
       });
       setGateSummaryResult(outcome);
       setRealmsProgress(getSkillRealmsProgress());
+
+      // Award Gate Completion Gold & Diamonds
+      if (outcome.rewardGold > 0) {
+        addGold(outcome.rewardGold, `Gate Passed: ${activeGate.titleEn || activeGate.id}`, false);
+      }
+      if (outcome.starsAwarded === 3 && outcome.isNewlyMastered) {
+        addDiamonds(3, `3-Star Mastery: ${activeGate.titleEn || activeGate.id}`);
+      }
+
       if (outcome.finalXp > 0) {
         submitRealSprintScore({
           currentUser,
@@ -894,6 +1022,28 @@ export default function AtlasEnglishArenaModal({
                     )}
                   </div>
 
+                  {/* Interactive Treasury Currency Pill */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setWalletBalance(getWallet());
+                      setIsTreasuryOpen(true);
+                      triggerHaptic('chipTap');
+                    }}
+                    className="flex items-center gap-1.5 px-2 sm:px-2.5 py-1 bg-gradient-to-r from-amber-500/10 via-slate-800 to-cyan-500/10 hover:border-amber-400/50 border border-slate-700/80 rounded-lg text-xs font-mono font-black transition-all cursor-pointer shadow-xs active:scale-95"
+                    title={isEn ? "Open Atlas Treasury & Store" : "Mở Kho Báu & Cửa Hàng Atlas"}
+                  >
+                    <span className="flex items-center gap-1 text-amber-300">
+                      <span className="text-[11px]">🪙</span>
+                      <span>{walletBalance.gold || 0}</span>
+                    </span>
+                    <span className="text-slate-600 font-sans">|</span>
+                    <span className="flex items-center gap-1 text-cyan-300">
+                      <span className="text-[11px]">💎</span>
+                      <span>{walletBalance.diamonds || 0}</span>
+                    </span>
+                  </button>
+
                   {/* 1-Click Share Direct /atlas-arena URL */}
                   <button
                     type="button"
@@ -1138,38 +1288,49 @@ export default function AtlasEnglishArenaModal({
                     currentTopic={currentTopic}
                   />
 
-                  {/* Compact Tactical Perk Selector (Select 1 of 4) */}
+                  {/* Compact Tactical Perk Selector (Select 1 of 4, or up to 2 if Dual-Perk Slot owned) */}
                   <div className="flex flex-col gap-1 pt-0.5">
                     <div className="flex items-center justify-between text-[11px] font-bold text-slate-300">
                       <span className="flex items-center gap-1.5 uppercase tracking-wider text-indigo-300">
                         <span>⚡</span>
                         <span>{isEn ? 'Perk:' : 'Bổ Trợ:'}</span>
+                        {hasDualPerkSlot && (
+                          <span className="px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[9px] font-black uppercase tracking-wider">
+                            {isEn ? 'Dual-Slot Active' : '2 Ô Bổ Trợ'}
+                          </span>
+                        )}
                       </span>
                       <span className="text-[10px] text-slate-400 font-normal">
-                        {isEn ? getPerkById(selectedPerk).descEn : getPerkById(selectedPerk).descVi}
+                        {selectedPerks.length === 0
+                          ? (isEn ? 'None equipped' : 'Chưa trang bị')
+                          : selectedPerks.map(p => isEn ? getPerkById(p).nameEn : getPerkById(p).nameVi).join(' + ')}
                       </span>
                     </div>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
                       {ARENA_PERK_LIST.map((perk) => {
-                        const isSelected = selectedPerk === perk.id;
+                        const perkIdx = selectedPerks.indexOf(perk.id);
+                        const isSelected = perkIdx !== -1;
                         return (
                           <button
                             key={perk.id}
                             type="button"
-                            onClick={() => {
-                              setSelectedPerk(perk.id);
-                              safeSet(ARENA_STORAGE_KEYS.EQUIPPED_PERK, perk.id);
-                              triggerHaptic('chipTap');
-                            }}
-                            className={`flex items-center gap-1.5 py-1.5 px-2 rounded-lg border text-left transition-all cursor-pointer select-none text-[11px] font-bold ${
+                            onClick={() => handleTogglePerk(perk.id)}
+                            className={`flex items-center justify-between py-1.5 px-2 rounded-lg border text-left transition-all cursor-pointer select-none text-[11px] font-bold ${
                               isSelected
                                 ? 'bg-indigo-600/30 border-indigo-400 text-white ring-1 ring-indigo-500/50 shadow-xs'
                                 : 'bg-slate-900/60 border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700'
                             }`}
                             title={isEn ? perk.descEn : perk.descVi}
                           >
-                            <span className="text-sm shrink-0">{perk.icon}</span>
-                            <span className="truncate">{isEn ? perk.nameEn : perk.nameVi}</span>
+                            <div className="flex items-center gap-1.5 min-w-0">
+                              <span className="text-sm shrink-0">{perk.icon}</span>
+                              <span className="truncate">{isEn ? perk.nameEn : perk.nameVi}</span>
+                            </div>
+                            {isSelected && hasDualPerkSlot && (
+                              <span className="ml-1 text-[9px] px-1 py-0.2 rounded bg-indigo-500 text-white font-mono font-black shrink-0">
+                                #{perkIdx + 1}
+                              </span>
+                            )}
                           </button>
                         );
                       })}
@@ -1415,9 +1576,13 @@ export default function AtlasEnglishArenaModal({
                     isSkipped={sprint.isSkipped}
                     nearMissState={sprint.nearMissState}
                     equippedPerk={sprint.equippedPerk}
+                    equippedPerks={sprint.equippedPerks || selectedPerks}
+                    usedPerks={sprint.usedPerks || []}
+                    shieldState={sprint.shieldState}
                     isPerkUsed={sprint.isPerkUsed}
                     eliminatedOptions={sprint.eliminatedOptions}
                     onActivatePerk={sprint.activatePerk}
+                    onConsumeAegisElixir={handleConsumeAegisElixir}
                     onSelectOption={handleSelectOption}
                     onCheckAnswer={handleCheckAnswer}
                     onSubmitAnswer={handleCheckAnswer}
@@ -1575,6 +1740,17 @@ export default function AtlasEnglishArenaModal({
             isOpen={Boolean(weeklyTransition)}
             transition={weeklyTransition}
             onClose={() => setWeeklyTransition(null)}
+          />
+        )}
+
+        {/* Atlas Treasury Modal (Gold & Diamonds Store) */}
+        {isTreasuryOpen && (
+          <AtlasTreasuryModal
+            isOpen={isTreasuryOpen}
+            onClose={() => {
+              setIsTreasuryOpen(false);
+              setWalletBalance(getWallet());
+            }}
           />
         )}
 

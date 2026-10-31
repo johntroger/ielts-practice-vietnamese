@@ -102,6 +102,15 @@ export default function LevelUpCelebrationModal({
           </span>
 
           <div className="flex items-center gap-2.5 text-slate-200">
+            <div className="w-5 h-5 rounded-md bg-cyan-500/20 text-cyan-300 flex items-center justify-center shrink-0">
+              <Sparkles className="w-3.5 h-3.5" />
+            </div>
+            <span className="font-bold text-cyan-300 font-mono">
+              +{15 + ([11, 26, 46, 71, 91].includes(newLevel) ? 50 : 0)} 💎 {isEn ? 'Atlas Diamonds Awarded' : 'Kim Cương Atlas'}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2.5 text-slate-200">
             <div className="w-5 h-5 rounded-md bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
               <ShieldCheck className="w-3.5 h-3.5" />
             </div>

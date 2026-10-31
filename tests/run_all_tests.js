@@ -214,7 +214,8 @@ const testSuites = [
   { name: 'Step 205: Cambridge Tower of Babel Roguelite Expedition Engine', file: 'tests/test_step205_arena_tower_of_babel_roguelite_engine.js' },
   { name: 'Step 206: Atlas Streak Shield, Daily Sprints & Harmonic Audio', file: 'tests/test_step166_atlas_streak_shield_and_daily_sprints.js' },
   { name: 'Step 207: Atlas Sprint Surge, Mistake Recovery & 30-Learner Cohorts', file: 'tests/test_step167_atlas_sprint_surge_and_mistake_recovery.js' },
-  { name: 'Step 208: 4 Skill Realms & Gate Progression System', file: 'tests/test_step208_arena_4_skills_rooms_and_gates.js' }
+  { name: 'Step 208: 4 Skill Realms & Gate Progression System', file: 'tests/test_step208_arena_4_skills_rooms_and_gates.js' },
+  { name: 'Step 209: Atlas Treasury Dual-Currency Wallet & Economy Engine', file: 'tests/test_step209_atlas_treasury_wallet_and_currency_economy.js' }
 ];
 
 console.log('===============================================================');

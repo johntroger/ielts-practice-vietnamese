@@ -7,6 +7,7 @@ import { ARENA_DIFFICULTY_CONFIG, ARENA_IELTS_TOPICS } from '../../utils/arenaSt
 import { getLocalizedArenaQuestion } from '../../data/arenaQuestionTranslations.js';
 import { triggerHaptic } from '../../utils/hapticHelper.js';
 import { getPerkById } from '../../services/gamification/tacticalPerksService.js';
+import { getInventoryItemQuantity } from '../../services/gamification/atlasWalletService.js';
 
 /**
  * Renders question prompt with distinct bold styling for statements, quotes, and target terms.
@@ -170,9 +171,13 @@ export default function ArenaQuestionCard({
   isSkipped = false,
   nearMissState = null,
   equippedPerk = 'none',
+  equippedPerks = [],
+  usedPerks = [],
   isPerkUsed = false,
+  shieldState = null,
   eliminatedOptions = [],
   onActivatePerk,
+  onConsumeAegisElixir,
   onSelectOption,
   onCheckAnswer,
   onSubmitAnswer,
@@ -227,13 +232,19 @@ export default function ArenaQuestionCard({
             </span>
           )}
 
-          {equippedPerk && equippedPerk !== 'none' && (
-            <span className={`text-xs font-bold tracking-wider px-2.5 py-1 rounded-lg border shadow-xs flex items-center gap-1.5 ${perkInfo.badgeColor}`}>
-              <span>{perkInfo.icon}</span>
-              <span>{isEn ? perkInfo.nameEn : perkInfo.nameVi}</span>
-              {isPerkUsed && <span className="opacity-60 text-[10px]">({isEn ? 'Used' : 'Đã dùng'})</span>}
-            </span>
-          )}
+          {((equippedPerks && equippedPerks.length > 0) ? equippedPerks : [equippedPerk])
+            .filter(p => p && p !== 'none')
+            .map(pId => {
+              const pInfo = getPerkById(pId);
+              const isUsed = usedPerks?.includes(pId) || (isPerkUsed && pId === equippedPerk);
+              return (
+                <span key={pId} className={`text-xs font-bold tracking-wider px-2.5 py-1 rounded-lg border shadow-xs flex items-center gap-1.5 ${pInfo.badgeColor}`}>
+                  <span>{pInfo.icon}</span>
+                  <span>{isEn ? pInfo.nameEn : pInfo.nameVi}</span>
+                  {isUsed && <span className="opacity-60 text-[10px]">({isEn ? 'Used' : 'Đã dùng'})</span>}
+                </span>
+              );
+            })}
 
           {question.isBossQuestion && (
             <span className="text-xs font-black tracking-wider px-2.5 py-1 rounded-lg bg-gradient-to-r from-amber-500/30 via-purple-600/30 to-amber-500/30 text-amber-300 border border-amber-400/60 flex items-center gap-1.5 shadow-sm shadow-amber-500/20 animate-pulse">
@@ -472,27 +483,51 @@ export default function ArenaQuestionCard({
                 <span>{t('arena.skipQuestion') || (isEn ? 'Skip' : 'Bỏ Qua')}</span>
               </button>
 
-              {/* Active Perk Trigger Button */}
-              {equippedPerk && equippedPerk !== 'none' && equippedPerk !== 'titan_armor' && !isPerkUsed && !(equippedPerk === 'oracle_insight' && isTextInput) && (
+              {/* Active Perk Trigger Buttons (Single or Dual) */}
+              {((equippedPerks && equippedPerks.length > 0) ? equippedPerks : [equippedPerk])
+                .filter(p => p && p !== 'none' && p !== 'titan_armor')
+                .filter(p => !(usedPerks?.includes(p) || (isPerkUsed && p === equippedPerk)))
+                .filter(p => !(p === 'oracle_insight' && isTextInput))
+                .map(pId => {
+                  const pInfo = getPerkById(pId);
+                  return (
+                    <button
+                      key={pId}
+                      type="button"
+                      onClick={() => {
+                        triggerHaptic('combo');
+                        onActivatePerk?.(pId);
+                      }}
+                      className={`flex items-center gap-1.5 px-3 sm:px-3.5 py-2 sm:py-2.5 rounded-xl border font-bold text-xs sm:text-sm transition-all cursor-pointer select-none active:scale-95 shadow-md ${
+                        pId === 'chronos_freeze'
+                          ? 'border-amber-400/80 bg-gradient-to-r from-amber-600/30 to-amber-500/20 text-amber-200 hover:bg-amber-500/30 ring-1 ring-amber-400/50 animate-pulse'
+                          : 'border-purple-400/80 bg-gradient-to-r from-purple-600/30 to-indigo-500/20 text-purple-200 hover:bg-purple-500/30 ring-1 ring-purple-400/50 animate-pulse'
+                      }`}
+                      title={isEn ? pInfo.descEn : pInfo.descVi}
+                    >
+                      <span>{pInfo.icon}</span>
+                      <span>
+                        {pId === 'chronos_freeze'
+                          ? (isEn ? 'Freeze (+15s)' : 'Đóng Băng (+15s)')
+                          : (isEn ? 'Eliminate Trap' : 'Triệt Tiêu Bẫy')}
+                      </span>
+                    </button>
+                  );
+                })}
+
+              {/* Emergency Aegis Shield Elixir (Consumable) */}
+              {shieldState && (shieldState.shields || 0) <= 1 && onConsumeAegisElixir && getInventoryItemQuantity('item_aegis_elixir') > 0 && (
                 <button
                   type="button"
                   onClick={() => {
-                    triggerHaptic('combo');
-                    onActivatePerk?.();
+                    triggerHaptic('loot');
+                    onConsumeAegisElixir();
                   }}
-                  className={`flex items-center gap-1.5 px-3 sm:px-3.5 py-2 sm:py-2.5 rounded-xl border font-bold text-xs sm:text-sm transition-all cursor-pointer select-none active:scale-95 shadow-md ${
-                    equippedPerk === 'chronos_freeze'
-                      ? 'border-amber-400/80 bg-gradient-to-r from-amber-600/30 to-amber-500/20 text-amber-200 hover:bg-amber-500/30 ring-1 ring-amber-400/50 animate-pulse'
-                      : 'border-purple-400/80 bg-gradient-to-r from-purple-600/30 to-indigo-500/20 text-purple-200 hover:bg-purple-500/30 ring-1 ring-purple-400/50 animate-pulse'
-                  }`}
-                  title={isEn ? perkInfo.descEn : perkInfo.descVi}
+                  className="flex items-center gap-1.5 px-3 sm:px-3.5 py-2 sm:py-2.5 rounded-xl border border-rose-400/80 bg-gradient-to-r from-rose-600/30 to-pink-500/20 text-rose-200 hover:bg-rose-500/30 ring-1 ring-rose-400/60 animate-bounce font-black text-xs sm:text-sm transition-all cursor-pointer select-none active:scale-95 shadow-md"
+                  title={isEn ? "Drink Aegis Elixir to restore +1 Shield" : "Uống Đan Dược để hồi +1 Khiên"}
                 >
-                  <span>{perkInfo.icon}</span>
-                  <span>
-                    {equippedPerk === 'chronos_freeze'
-                      ? (isEn ? 'Freeze (+15s)' : 'Đóng Băng (+15s)')
-                      : (isEn ? 'Eliminate Trap' : 'Triệt Tiêu Bẫy')}
-                  </span>
+                  <span>🧪</span>
+                  <span>{isEn ? 'Drink Elixir (+1 🛡️)' : 'Uống Đan Dược (+1 🛡️)'}</span>
                 </button>
               )}
             </div>

@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { Trophy, Flame, ArrowUp, ArrowDown, ShieldCheck, Sparkles, UserCheck, Shield, ChevronRight } from 'lucide-react';
 import { useTranslation } from '../../i18n';
 import { computeGhostRivalPacing } from '../../services/gamification/leagueEngine.js';
+import { getInventoryItemQuantity } from '../../services/gamification/atlasWalletService.js';
 
 /**
  * src/components/arena/ArenaRelativeLeaderboard.jsx
@@ -137,6 +138,8 @@ export default function ArenaRelativeLeaderboard({
 
             const isPromotion = totalCount >= 5 && rank <= promoThreshold;
             const isRelegation = totalCount >= 5 && rank >= relThreshold;
+            const hasTitanGoldFrame = isUser && getInventoryItemQuantity('item_titan_gold_frame') > 0;
+            const hasLexicalTitle = isUser && getInventoryItemQuantity('item_title_lexical_alchemist') > 0;
 
             let rowStyle = 'border-slate-800/80 bg-slate-800/40 hover:bg-slate-800/80 hover:border-indigo-500/50';
             if (isOwner && isUser) {
@@ -188,7 +191,11 @@ export default function ArenaRelativeLeaderboard({
                     </span>
 
                     {/* Glowing Frame Avatar */}
-                    <div className={`relative w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-slate-800 overflow-hidden shrink-0 shadow-sm ring-2 ${titanTier.ringColor} transition-transform group-hover:scale-105`}>
+                    <div className={`relative w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-slate-800 overflow-hidden shrink-0 shadow-sm transition-transform group-hover:scale-105 ${
+                      hasTitanGoldFrame
+                        ? 'ring-2 ring-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.6)]'
+                        : `ring-2 ${titanTier.ringColor}`
+                    }`}>
                       <img
                         src={rival.avatar_url || `https://api.dicebear.com/7.x/bottts/svg?seed=${rival.display_name}`}
                         alt={rival.display_name}
@@ -223,6 +230,12 @@ export default function ArenaRelativeLeaderboard({
                             {isEn ? 'YOU' : 'BẠN'}
                           </span>
                         ) : null}
+
+                        {hasLexicalTitle && (
+                          <span className="text-[9px] bg-purple-500/20 text-purple-300 border border-purple-500/40 px-1.5 py-0.2 rounded font-black tracking-wide shrink-0 whitespace-nowrap">
+                            ✨ {isEn ? 'Lexical Alchemist' : 'Giả Kim Từ Vựng'}
+                          </span>
+                        )}
                       </div>
 
                       <div className="flex items-center gap-1 text-[9px] sm:text-[10px] text-slate-400 min-w-0 truncate">

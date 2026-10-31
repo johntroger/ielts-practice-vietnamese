@@ -76,6 +76,8 @@ export const INITIAL_SPRINT_STATE = {
   difficulty: 'medium',
   isAudioSprint: false,
   equippedPerk: 'none',
+  equippedPerks: [],
+  usedPerks: [],
   isPerkUsed: false,
   eliminatedOptions: [],
   isBossCleared: false,
@@ -306,8 +308,14 @@ export function startSprintAction(questions = [], duration = INITIAL_SPRINT_TIME
     options.isAudioSprint ||
     (Array.isArray(questions) && questions.length > 0 && questions.every(q => q && (q.audioUrl || q.isR2Audio)))
   );
-  const equippedPerk = options.equippedPerk || safeGet(ARENA_STORAGE_KEYS.EQUIPPED_PERK, 'none');
-  const extraShields = equippedPerk === 'titan_armor' ? 1 : 0;
+  const equippedPerks = Array.isArray(options.equippedPerks) && options.equippedPerks.length > 0
+    ? options.equippedPerks
+    : (options.equippedPerk && options.equippedPerk !== 'none'
+        ? [options.equippedPerk]
+        : [safeGet(ARENA_STORAGE_KEYS.EQUIPPED_PERK, 'none')]
+      ).filter(p => p && p !== 'none');
+  const equippedPerk = equippedPerks[0] || options.equippedPerk || safeGet(ARENA_STORAGE_KEYS.EQUIPPED_PERK, 'none');
+  const extraShields = (equippedPerks.includes('titan_armor') || equippedPerk === 'titan_armor') ? 1 : 0;
   const activeGhostDuel = options.ghostDuel !== undefined ? options.ghostDuel : getActiveGhostDuel();
 
   return {
@@ -319,6 +327,8 @@ export function startSprintAction(questions = [], duration = INITIAL_SPRINT_TIME
     difficulty,
     isAudioSprint,
     equippedPerk,
+    equippedPerks,
+    usedPerks: [],
     isPerkUsed: false,
     eliminatedOptions: [],
     shieldState: createSprintShieldState(extraShields),
@@ -604,22 +614,37 @@ export function retrySprintAction(state) {
   };
 }
 
-export function activatePerkAction(state) {
-  if (state.phase !== ARENA_SPRINT_PHASES.ACTIVE || state.isAnswerChecked || state.isPerkUsed) {
+export function activatePerkAction(state, specificPerkId = null) {
+  if (state.phase !== ARENA_SPRINT_PHASES.ACTIVE || state.isAnswerChecked) {
     return state;
   }
 
-  const perkId = state.equippedPerk;
-  if (!perkId || perkId === 'none' || perkId === 'titan_armor') {
+  const equippedList = Array.isArray(state.equippedPerks) && state.equippedPerks.length > 0
+    ? state.equippedPerks
+    : (state.equippedPerk && state.equippedPerk !== 'none' ? [state.equippedPerk] : []);
+
+  const usedList = Array.isArray(state.usedPerks) ? state.usedPerks : (state.isPerkUsed ? [state.equippedPerk] : []);
+
+  let perkId = specificPerkId;
+  if (!perkId) {
+    perkId = equippedList.find(p => p !== 'titan_armor' && p !== 'none' && !usedList.includes(p));
+  }
+
+  if (!perkId || perkId === 'none' || perkId === 'titan_armor' || usedList.includes(perkId)) {
     return state;
   }
+
+  const nextUsedList = [...usedList, perkId];
+  const activeEquippedCount = equippedList.filter(p => p !== 'titan_armor' && p !== 'none').length;
+  const isAllUsed = nextUsedList.length >= Math.max(1, activeEquippedCount);
 
   if (perkId === 'chronos_freeze') {
     // Add 15 seconds to remaining time
     const addedTime = 15;
     return {
       ...state,
-      isPerkUsed: true,
+      usedPerks: nextUsedList,
+      isPerkUsed: isAllUsed,
       timeRemaining: Math.min((state.duration || INITIAL_SPRINT_TIMER_SECONDS) + 30, state.timeRemaining + addedTime)
     };
   }
@@ -648,12 +673,34 @@ export function activatePerkAction(state) {
 
     return {
       ...state,
-      isPerkUsed: true,
+      usedPerks: nextUsedList,
+      isPerkUsed: isAllUsed,
       eliminatedOptions: [...(state.eliminatedOptions || []), eliminatedIdx]
     };
   }
 
   return state;
+}
+
+/**
+ * Restores 1 emergency tactical shield if currently down to <= 1 shield.
+ */
+export function consumeAegisElixirAction(state) {
+  if (state.phase !== ARENA_SPRINT_PHASES.ACTIVE || state.isAnswerChecked) {
+    return state;
+  }
+  const currentShields = state.shieldState?.shields || 0;
+  const maxShields = state.shieldState?.maxShields || 3;
+  if (currentShields > 1 || currentShields >= maxShields) {
+    return state;
+  }
+  return {
+    ...state,
+    shieldState: {
+      ...state.shieldState,
+      shields: Math.min(maxShields, currentShields + 1)
+    }
+  };
 }
 
 export function finishSprintAction(state, user = null) {
@@ -914,20 +961,27 @@ export function useArenaSprintEngine({ user = null, onSprintEnd = null } = {}) {
     setState(prev => setUserInputTextAction(prev, text));
   }, []);
 
-  const activatePerk = useCallback(() => {
+  const activatePerk = useCallback((perkId = null) => {
     setState(prev => {
-      const next = activatePerkAction(prev);
-      if (next.isPerkUsed && !prev.isPerkUsed) {
-        if (prev.equippedPerk === 'chronos_freeze' && next.timeRemaining > prev.timeRemaining) {
+      const next = activatePerkAction(prev, perkId);
+      const prevUsedCount = (prev.usedPerks || []).length;
+      const nextUsedCount = (next.usedPerks || []).length;
+      if (nextUsedCount > prevUsedCount) {
+        const activatedPerkId = next.usedPerks[next.usedPerks.length - 1];
+        if (activatedPerkId === 'chronos_freeze' && next.timeRemaining > prev.timeRemaining) {
           if (startTimeRef.current) {
             const addedMs = (next.timeRemaining - prev.timeRemaining) * 1000;
             startTimeRef.current += addedMs;
           }
         }
-        emit('arena:perk_activated', { perkId: prev.equippedPerk });
+        emit('arena:perk_activated', { perkId: activatedPerkId });
       }
       return next;
     });
+  }, []);
+
+  const consumeAegisElixir = useCallback(() => {
+    setState(prev => consumeAegisElixirAction(prev));
   }, []);
 
   return {
@@ -940,6 +994,7 @@ export function useArenaSprintEngine({ user = null, onSprintEnd = null } = {}) {
     nextQuestion,
     retrySprint,
     resetSprint,
-    activatePerk
+    activatePerk,
+    consumeAegisElixir
   };
 }

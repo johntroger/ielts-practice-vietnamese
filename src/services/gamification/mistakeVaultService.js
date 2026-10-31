@@ -115,6 +115,28 @@ export function resolveMistake(questionId) {
 }
 
 /**
+ * Pardons (resolves) up to `count` unresolved mistakes via Pardon Scroll.
+ * @param {number} count 
+ * @returns {number} Number of mistakes successfully pardoned
+ */
+export function pardonMistakes(count = 2) {
+  const current = getStoredMistakes();
+  const unresolved = current.filter(m => !m.resolved);
+  if (unresolved.length === 0) return 0;
+
+  const toPardonIds = new Set(unresolved.slice(0, count).map(m => m.id));
+  const updated = current.map(m => {
+    if (toPardonIds.has(m.id)) {
+      return { ...m, resolved: true, resolvedAt: Date.now(), pardoned: true };
+    }
+    return m;
+  });
+
+  safeSet(MISTAKE_VAULT_STORAGE_KEY, updated);
+  return toPardonIds.size;
+}
+
+/**
  * Removes resolved mistakes from the vault.
  * @returns {Array<Object>} Remaining unresolved mistakes
  */
