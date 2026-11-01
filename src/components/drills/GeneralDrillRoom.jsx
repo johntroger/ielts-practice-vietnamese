@@ -76,9 +76,7 @@ export default function GeneralDrillRoom({
           {/* Options */}
           <div className="space-y-2">
             <label className="text-xs font-bold text-slate-700 block">
-              {isEn 
-                ? `Based on context, what does "${currentVocab.targetWord}" mean?` 
-                : `Dựa vào ngữ cảnh, từ "${currentVocab.targetWord}" có nghĩa là gì?`}
+              Based on context, what does "{currentVocab.targetWord}" mean?
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               {currentVocab.options.map((opt, idx) => {

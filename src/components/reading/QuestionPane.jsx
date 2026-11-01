@@ -921,7 +921,7 @@ export default function QuestionPane({
                 </span>
                 <HeadingInfoTip
                   content={[
-                    isEn ? (group.instructionEn || group.instruction || group.instructions) : (group.instruction || group.instructions || group.instructionEn),
+                    group.instructionEn || group.instruction || group.instructions,
                     group.extraNotes
                   ].filter(Boolean).join('\n\n')}
                   title={isEn ? "Reading Instructions & Notes" : "Hướng Dẫn Phần Đọc & Ghi Chú"}

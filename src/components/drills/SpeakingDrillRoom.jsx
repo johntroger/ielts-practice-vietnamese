@@ -679,7 +679,7 @@ export default function SpeakingDrillRoom({
                     )}
 
                     <div className="text-sm sm:text-base font-semibold text-rose-200">
-                      {isEn && currentSpeakingColloc.promptEn ? currentSpeakingColloc.promptEn : (isEn ? getLocalizedDrillExplanation(currentSpeakingColloc.prompt, true) : currentSpeakingColloc.prompt)}
+                      {currentSpeakingColloc.promptEn || currentSpeakingColloc.prompt}
                     </div>
 
                     <div className="text-base sm:text-lg font-bold text-white font-serif p-3 rounded-xl bg-white/10 border border-white/20">

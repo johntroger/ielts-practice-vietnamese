@@ -6034,16 +6034,21 @@ export function hydrateArenaQuestionsWithMetadata(rawQuestions = []) {
   return (rawQuestions || []).map(q => {
     const r2Meta = R2_AUDIO_METADATA_BY_ID[q.id] || {};
     const merged = { ...q, ...r2Meta };
-    const trans = ARENA_QUESTION_TRANSLATIONS[merged.id];
-    if (!trans) return merged;
+    const trans = ARENA_QUESTION_TRANSLATIONS[merged.id] || {};
     return {
       ...merged,
-      promptVi: merged.prompt,
-      contextVi: merged.context,
-      explanationVi: merged.explanation,
-      promptEn: trans.promptEn || merged.prompt,
-      contextEn: trans.contextEn || merged.context,
-      explanationEn: trans.explanationEn || merged.explanation
+      prompt: trans.promptEn || merged.promptEn || merged.prompt,
+      promptEn: trans.promptEn || merged.promptEn || merged.prompt,
+      promptVi: merged.promptVi || merged.prompt,
+      context: trans.contextEn || merged.contextEn || merged.context,
+      contextEn: trans.contextEn || merged.contextEn || merged.context,
+      contextVi: merged.contextVi || merged.context,
+      options: trans.optionsEn || merged.optionsEn || merged.options,
+      optionsEn: trans.optionsEn || merged.optionsEn || merged.options,
+      optionsVi: merged.optionsVi || merged.options,
+      correctAnswer: trans.correctAnswerEn || merged.correctAnswerEn || merged.correctAnswer,
+      explanationVi: merged.explanationVi || merged.explanation,
+      explanationEn: trans.explanationEn || merged.explanationEn || merged.explanation
     };
   });
 }

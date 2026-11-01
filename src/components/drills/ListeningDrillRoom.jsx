@@ -366,11 +366,9 @@ export default function ListeningDrillRoom({
                   <div className="p-4 rounded-xl bg-indigo-50/70 border border-indigo-200 text-xs text-indigo-950 space-y-1">
                     <p className="font-bold">{isEn ? 'Task Prompt:' : 'Đề bài yêu cầu:'}</p>
                     <p className="text-slate-700">
-                      {isEn && currentSpelling.questionPromptEn 
-                        ? currentSpelling.questionPromptEn 
-                        : (isEn && currentSpelling.questionPrompt 
-                            ? getLocalizedDrillExplanation(currentSpelling.questionPrompt, true) 
-                            : (currentSpelling.questionPrompt || (isEn ? 'Listen to the native speaker and type the correct keyword or numbers into the box below.' : 'Nghe người bản xứ đọc / đánh vần và gõ lại đúng từ khóa hoặc con số vào ô bên dưới.')))}
+                      {currentSpelling.questionPromptEn 
+                        || currentSpelling.questionPrompt 
+                        || 'Listen to the native speaker and type the correct keyword or numbers into the box below.'}
                     </p>
                     {currentSpelling.trapNote && (
                       <p className="text-indigo-700 font-medium pt-1 border-t border-indigo-200/60">
@@ -561,7 +559,7 @@ export default function ListeningDrillRoom({
                   </div>
 
                   <div className="space-y-2">
-                    <p className="text-xs font-bold text-slate-900">{isEn && currentDistractor.questionEn ? currentDistractor.questionEn : (isEn ? getLocalizedDrillExplanation(currentDistractor.question, true) : currentDistractor.question)}</p>
+                    <p className="text-xs font-bold text-slate-900">{currentDistractor.questionEn || getLocalizedDrillExplanation(currentDistractor.question, true) || currentDistractor.question}</p>
                     <div className="space-y-2">
                       {currentDistractor.options.map(opt => (
                         <button
@@ -738,7 +736,7 @@ export default function ListeningDrillRoom({
                   </div>
 
                   <div className="space-y-2">
-                    <p className="text-xs font-bold text-slate-900">{isEn && currentMap.questionEn ? currentMap.questionEn : (isEn ? getLocalizedDrillExplanation(currentMap.question, true) : currentMap.question)}</p>
+                    <p className="text-xs font-bold text-slate-900">{currentMap.questionEn || getLocalizedDrillExplanation(currentMap.question, true) || currentMap.question}</p>
                     <div className="space-y-2">
                       {currentMap.options.map(opt => (
                         <button
@@ -907,7 +905,7 @@ export default function ListeningDrillRoom({
                   </div>
 
                   <div className="space-y-2">
-                    <p className="text-xs font-bold text-slate-900">{isEn && currentSign.questionEn ? currentSign.questionEn : (isEn ? getLocalizedDrillExplanation(currentSign.question, true) : currentSign.question)}</p>
+                    <p className="text-xs font-bold text-slate-900">{currentSign.questionEn || getLocalizedDrillExplanation(currentSign.question, true) || currentSign.question}</p>
                     <div className="space-y-2">
                       {currentSign.options.map(opt => (
                         <button
@@ -1043,11 +1041,11 @@ export default function ListeningDrillRoom({
                   <div className="p-4 rounded-xl bg-teal-50/70 border border-teal-200 text-xs text-teal-950 space-y-1">
                     <p className="font-bold">{isEn ? 'Task Prompt & Note Sentence:' : 'Đề bài & Câu ghi chú cần điền:'}</p>
                     <p className="text-slate-800 text-xs sm:text-sm font-medium leading-relaxed">
-                      {isEn && currentForm.questionPromptEn
-                        ? currentForm.questionPromptEn
-                        : (isEn && currentForm.promptEn
-                            ? currentForm.promptEn
-                            : (isEn ? (currentForm.questionPrompt || currentForm.prompt || 'Listen to the audio and fill in the missing word or phrase.') : (currentForm.questionPrompt || currentForm.prompt || 'Lắng nghe audio và điền từ hoặc cụm từ còn thiếu.')))}
+                      {currentForm.questionPromptEn
+                        || currentForm.promptEn
+                        || currentForm.questionPrompt
+                        || currentForm.prompt
+                        || 'Listen to the audio and fill in the missing word or phrase.'}
                     </p>
                     {currentForm.trapNote && (
                       <p className="text-teal-700 font-medium pt-1 border-t border-teal-200/60">

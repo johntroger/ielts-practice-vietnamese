@@ -1279,6 +1279,12 @@ const KNOWN_OPTION_TRANSLATIONS = {
  */
 export function getLocalizedVocabOption(optionOrText, isEn = false) {
   if (!optionOrText) return '';
+
+  // Rule: When an explicit authentic English option exists, always prefer it in both modes
+  if (typeof optionOrText === 'object' && optionOrText.textEn) {
+    return optionOrText.textEn;
+  }
+
   const rawText = typeof optionOrText === 'object'
     ? (isEn && optionOrText.textEn ? optionOrText.textEn : optionOrText.text)
     : optionOrText;

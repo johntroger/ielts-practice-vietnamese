@@ -315,18 +315,21 @@ export default function ListeningQuestionPane({
       }
 
       const id = rawGroup.id || `qg-${partData.partNumber || 1}-${gIdx + 1}`;
-      const title = (isEn ? (rawGroup.titleEn || rawGroup.groupTitleEn) : (rawGroup.titleVi || rawGroup.groupTitleVi))
+      // Rule: Questions / Exam items must ALWAYS be in authentic English across both English and Vietnamese modes
+      const title = rawGroup.titleEn
+        || rawGroup.groupTitleEn
         || rawGroup.title
         || rawGroup.groupTitle
-        || (isEn ? `Questions (Part ${partData.partNumber || 1})` : `Câu hỏi (Phần ${partData.partNumber || 1})`);
-      const instruction = (isEn ? (rawGroup.instructionEn || rawGroup.groupInstructionEn) : (rawGroup.instructionVi || rawGroup.groupInstructionVi))
+        || `Questions (Part ${partData.partNumber || 1})`;
+      const instruction = rawGroup.instructionEn
+        || rawGroup.groupInstructionEn
         || rawGroup.instruction
-        || (isEn ? partData.instructionEn : partData.instructionVi)
+        || partData.instructionEn
         || partData.instruction
         || '';
 
-      // Normalize group-level options (for matching / options box)
-      let options = rawGroup.options || rawGroup.optionsPool;
+      // Normalize group-level options (for matching / options box) - ALWAYS authentic English
+      let options = rawGroup.optionsEn || rawGroup.options || rawGroup.optionsPool;
       if (options && Array.isArray(options)) {
         options = options.map((opt, oIdx) => {
           if (typeof opt === 'string') {
@@ -338,7 +341,7 @@ export default function ListeningQuestionPane({
           }
           return {
             key: (opt.key || opt.id || opt.letter || String.fromCharCode(65 + oIdx)).toUpperCase(),
-            text: (isEn ? (opt.textEn || opt.text) : (opt.textVi || opt.text)) || opt.text || opt.label || ''
+            text: opt.textEn || opt.text || opt.label || ''
           };
         });
       }
@@ -358,17 +361,17 @@ export default function ListeningQuestionPane({
         }
       }
 
-      // Normalize questions
+      // Normalize questions - ALWAYS authentic English question stems, prefixes, suffixes, options
       const questions = (rawGroup.questions || []).map((rawQ, qIdx) => {
         const order = rawQ.order ?? rawQ.number ?? rawQ.questionNumber ?? (qIdx + 1);
         const qId = rawQ.id || `q-${order}`;
         
-        let questionText = (isEn ? rawQ.questionTextEn : rawQ.questionTextVi) || rawQ.questionText || '';
-        let prefixText = (isEn ? (rawQ.prefixTextEn || rawQ.prefixEn) : (rawQ.prefixTextVi || rawQ.prefixVi));
-        let suffixText = (isEn ? (rawQ.suffixTextEn || rawQ.suffixEn) : (rawQ.suffixTextVi || rawQ.suffixVi));
+        let questionText = rawQ.questionTextEn || rawQ.questionText || '';
+        let prefixText = rawQ.prefixTextEn || rawQ.prefixEn || rawQ.prefixText || rawQ.prefix;
+        let suffixText = rawQ.suffixTextEn || rawQ.suffixEn || rawQ.suffixText || rawQ.suffix;
 
-        if (!prefixText && !suffixText && !isEn && rawQ.questionTextVi) {
-          const blankMatch = rawQ.questionTextVi.split(/\[\d+\]\s*\.{2,}|\[\d+\]|_{2,}|\.{3,}/);
+        if (!prefixText && !suffixText && rawQ.questionTextEn) {
+          const blankMatch = rawQ.questionTextEn.split(/\[\d+\]\s*\.{2,}|\[\d+\]|_{2,}|\.{3,}/);
           if (blankMatch.length >= 2) {
             prefixText = blankMatch[0].trim();
             suffixText = blankMatch.slice(1).join('').trim();
@@ -389,8 +392,8 @@ export default function ListeningQuestionPane({
           }
         }
 
-        // Options normalization
-        let qOptions = rawQ.options || rawQ.optionsEn || (isEn ? rawQ.optionsEn : rawQ.optionsVi);
+        // Options normalization - ALWAYS authentic English options
+        let qOptions = rawQ.optionsEn || rawQ.options;
         if (qOptions && Array.isArray(qOptions)) {
           qOptions = qOptions.map((opt, oIdx) => {
             if (typeof opt === 'string') {
@@ -402,7 +405,7 @@ export default function ListeningQuestionPane({
             }
             return {
               key: (opt.key || opt.letter || opt.id || String.fromCharCode(65 + oIdx)).toUpperCase(),
-              text: (isEn ? (opt.textEn || opt.text) : (opt.textVi || opt.text)) || opt.text || '',
+              text: opt.textEn || opt.text || '',
               textEn: opt.textEn || opt.text || ''
             };
           });
@@ -909,7 +912,7 @@ export default function ListeningQuestionPane({
                                   {opt.key}
                                 </span>
                                 <span className={`flex-1 leading-snug ${fontSizeClasses.body}`}>
-                                  {isEn && opt.textEn ? opt.textEn : opt.text}
+                                  {opt.textEn || opt.text}
                                 </span>
                               </button>
                             );
@@ -1543,7 +1546,7 @@ export default function ListeningQuestionPane({
                                 <span className="w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs bg-slate-100 text-slate-700">
                                   {opt.key}
                                 </span>
-                                <span className={fontSizeClasses.body}>{isEn && opt.textEn ? opt.textEn : opt.text}</span>
+                                <span className={fontSizeClasses.body}>{opt.textEn || opt.text}</span>
                               </button>
                             ))}
                           </div>
