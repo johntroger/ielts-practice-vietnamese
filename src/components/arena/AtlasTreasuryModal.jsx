@@ -142,8 +142,12 @@ export default function AtlasTreasuryModal({ isOpen, onClose }) {
         {/* Header Bar */}
         <div className="flex items-center justify-between p-3.5 sm:p-4 border-b border-slate-800 bg-slate-950/60 shrink-0">
           <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-indigo-600 flex items-center justify-center text-lg sm:text-xl shadow-md shrink-0">
-              🏛️
+            <div className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-xl overflow-hidden border border-amber-400/80 shadow-md ring-1 ring-indigo-500/50 shrink-0">
+              <img 
+                src="/mascot/atli_hero.jpg" 
+                alt="Atli Treasury Keeper" 
+                className="w-full h-full object-cover"
+              />
             </div>
             <div className="min-w-0">
               <h2 className="text-sm sm:text-base font-black tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-indigo-200 to-purple-300 truncate">

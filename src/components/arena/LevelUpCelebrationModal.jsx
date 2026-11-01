@@ -60,16 +60,24 @@ export default function LevelUpCelebrationModal({
           <X className="w-5 h-5" />
         </button>
 
-        {/* Triumphant Level-Up Badge Icon */}
+        {/* Atli Triumphant Level-Up Mascot & Halo */}
         <div className="relative mt-2">
           {/* Animated Glow Halo */}
-          <div className="absolute inset-0 rounded-3xl blur-xl bg-gradient-to-tr from-amber-400 via-indigo-500 to-purple-600 opacity-70 animate-pulse" />
+          <div className="absolute inset-0 rounded-3xl blur-2xl bg-gradient-to-tr from-amber-400 via-indigo-500 to-purple-600 opacity-70 animate-pulse" />
           
-          <div className={`relative w-24 h-24 rounded-3xl bg-slate-900 border-2 border-amber-400/80 flex flex-col items-center justify-center shadow-2xl ring-4 ${titanTier.ringColor}`}>
-            <Crown className="w-6 h-6 text-amber-400 mb-0.5 animate-bounce" />
-            <span className="text-2xl font-black font-mono text-white tracking-wider">
-              Lv.{newLevel}
-            </span>
+          <div className={`relative w-28 h-28 sm:w-32 sm:h-32 rounded-3xl overflow-hidden bg-slate-900 border-2 border-amber-400/90 shadow-2xl ring-4 ${titanTier.ringColor} transition-transform transform hover:scale-105`}>
+            <img 
+              src="/mascot/atli_victory.jpg" 
+              alt="Atli Level Up" 
+              className="w-full h-full object-cover"
+            />
+            {/* Lv Badge pill on bottom of mascot */}
+            <div className="absolute bottom-1.5 inset-x-2 bg-slate-950/85 backdrop-blur-md border border-amber-400/60 rounded-lg py-0.5 text-center flex items-center justify-center gap-1 shadow-md">
+              <Crown className="w-3.5 h-3.5 text-amber-400" />
+              <span className="text-xs font-black font-mono text-white tracking-wider">
+                Lv.{newLevel}
+              </span>
+            </div>
           </div>
         </div>
 

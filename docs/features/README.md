@@ -1,7 +1,8 @@
 # 🚀 Trung Tâm Hướng Dẫn & Tính Năng Nền Tảng (Feature Matrix)
 
 > **Cập nhật tự động**: Trang tài liệu này được đồng bộ trực tiếp từ Codebase (`src/core/featureRegistry.js`).  
-> **Tổng số tính năng hiện có**: **45 tính năng chuyên sâu** | **Phiên bản mới nhất**: `v3.0 (2026 Edition)`
+> **Tổng số tính năng hiện có**: **45 tính năng chuyên sâu** | **Phiên bản mới nhất**: `v3.5 (2026 Edition)`  
+> 📄 **Hồ sơ toàn cảnh dự án & Cách vận hành**: [Xem Hồ Sơ Dự Án & Kiến Trúc Vận Hành (Project Whitepaper) ↗](../project-whitepaper.md)
 
 ---
 

@@ -62,17 +62,16 @@ export default function ArenaSprintSummaryModal({
 
   return (
     <div className="w-full max-w-xl mx-auto bg-slate-900 border border-slate-800 rounded-3xl p-4 sm:p-5 text-white shadow-2xl flex flex-col items-center gap-3.5 text-center animate-fade-in max-h-[92vh] overflow-y-auto">
-      {/* Icon Badge */}
-      <div className={`w-13 h-13 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center shadow-lg ${
-        summary.isBossCleared
-          ? 'bg-gradient-to-br from-amber-500/30 to-purple-600/30 border border-amber-400/60 text-amber-300 shadow-amber-500/20'
-          : 'bg-amber-500/20 border border-amber-500/40 text-amber-400 shadow-amber-500/10'
-      }`}>
-        {summary.isBossCleared ? (
-          <Crown className="w-7 h-7 animate-bounce" />
-        ) : (
-          <Award className="w-7 h-7" />
-        )}
+      {/* Atli Celebratory Mascot */}
+      <div className="relative my-1">
+        <div className="absolute inset-0 rounded-2xl blur-lg bg-gradient-to-tr from-amber-400 via-indigo-500 to-purple-600 opacity-60 animate-pulse" />
+        <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border-2 border-amber-400/80 shadow-xl ring-2 ring-indigo-500/40">
+          <img 
+            src={summary.isDefeated ? "/mascot/atli_hero.jpg" : "/mascot/atli_victory.jpg"} 
+            alt="Atli Mascot" 
+            className="w-full h-full object-cover"
+          />
+        </div>
       </div>
 
       {/* Header */}

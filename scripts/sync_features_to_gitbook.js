@@ -16,12 +16,14 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { FEATURE_REGISTRY, FEATURE_CATEGORIES, SKILL_DEFINITIONS } from '../src/core/featureRegistry.js';
+import { getWhitepaperData } from '../src/core/projectWhitepaperData.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const ROOT_DIR = path.resolve(__dirname, '..');
 const DOCS_DIR = path.resolve(ROOT_DIR, 'docs');
+const DOCS_EN_DIR = path.resolve(ROOT_DIR, 'docs-en');
 const FEATURES_DIR = path.resolve(DOCS_DIR, 'features');
 
 // Đảm bảo thư mục docs/features tồn tại
@@ -91,7 +93,8 @@ function generateFeaturesHub() {
   let md = `# 🚀 Trung Tâm Hướng Dẫn & Tính Năng Nền Tảng (Feature Matrix)
 
 > **Cập nhật tự động**: Trang tài liệu này được đồng bộ trực tiếp từ Codebase (\`src/core/featureRegistry.js\`).  
-> **Tổng số tính năng hiện có**: **${totalFeatures} tính năng chuyên sâu** | **Phiên bản mới nhất**: \`v3.0 (2026 Edition)\`
+> **Tổng số tính năng hiện có**: **${totalFeatures} tính năng chuyên sâu** | **Phiên bản mới nhất**: \`v3.5 (2026 Edition)\`  
+> 📄 **Hồ sơ toàn cảnh dự án & Cách vận hành**: [Xem Hồ Sơ Dự Án & Kiến Trúc Vận Hành (Project Whitepaper) ↗](../project-whitepaper.md)
 
 ---
 

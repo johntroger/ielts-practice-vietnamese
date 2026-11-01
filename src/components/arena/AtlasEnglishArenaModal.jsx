@@ -978,8 +978,12 @@ export default function AtlasEnglishArenaModal({
             <div className="sticky top-0 z-30 w-full shrink-0 shadow-md">
               <header className="w-full bg-slate-900/95 backdrop-blur-md border-b border-slate-800 px-3 sm:px-6 py-2 sm:py-2.5 flex items-center justify-between">
                 <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-                  <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center text-white shadow-md shadow-indigo-600/30 shrink-0">
-                    <Swords className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <div className="relative w-8 h-8 sm:w-9 sm:h-9 rounded-xl overflow-hidden border border-amber-400/80 shadow-md shadow-indigo-600/30 shrink-0 ring-1 ring-indigo-500/50">
+                    <img 
+                      src="/mascot/atli_hero.jpg" 
+                      alt="Atli" 
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                   <div className="min-w-0">
                     <h1 className="text-xs sm:text-base font-black tracking-wide bg-gradient-to-r from-white via-indigo-200 to-indigo-400 bg-clip-text text-transparent leading-snug truncate">
@@ -1254,6 +1258,35 @@ export default function AtlasEnglishArenaModal({
                       <span>🔥 {isEn ? 'Boss Raid' : 'Săn Boss'}</span>
                       <span>→</span>
                     </button>
+                  </div>
+
+                  {/* Atli Mascot Companion Card */}
+                  <div className="flex items-center gap-2.5 sm:gap-3 p-2.5 sm:p-3 bg-gradient-to-r from-indigo-950/80 via-slate-900/90 to-purple-950/70 border border-indigo-500/40 rounded-2xl shadow-lg relative overflow-hidden group">
+                    <div className="relative w-12 h-12 sm:w-14 sm:h-14 rounded-2xl overflow-hidden shrink-0 border-2 border-amber-400/80 shadow-md ring-2 ring-indigo-500/40 group-hover:scale-105 transition-transform duration-300">
+                      <img 
+                        src="/mascot/atli_hero.jpg" 
+                        alt="Atli" 
+                        className="w-full h-full object-cover"
+                      />
+                      <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-400 rounded-full border border-slate-950 shadow-xs" title="Atli Companion Online" />
+                    </div>
+
+                    <div className="flex flex-col min-w-0 flex-1">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="text-xs sm:text-sm font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-yellow-200 to-indigo-300">
+                          Atli • {isEn ? 'Little Titan' : 'Tiểu Titan'}
+                        </span>
+                        <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-300 font-bold uppercase tracking-wider border border-amber-500/30">
+                          Mascot
+                        </span>
+                      </div>
+                      <p className="text-[11px] sm:text-xs text-slate-300 leading-snug mt-0.5">
+                        {streak >= 3
+                          ? (isEn ? `🔥 ${streak}-day streak! Keep up the momentum, Scholar!` : `🔥 Chuỗi ${streak} ngày rực lửa! Hãy cùng Atli giữ vững phong độ!`)
+                          : (isEn ? "Ready for a 3-minute blitz? Every correct answer boosts your IELTS Band!" : "Sẵn sàng cho 3 phút tốc chiến chưa? Mỗi câu đúng sẽ gia tăng điểm Band của bạn!")
+                        }
+                      </p>
+                    </div>
                   </div>
 
                   <h2 className="text-sm sm:text-xl lg:text-2xl font-black text-slate-100 leading-tight sm:leading-snug tracking-tight flex items-center justify-center">
