@@ -1260,11 +1260,11 @@ export default function AtlasEnglishArenaModal({
                     </button>
                   </div>
 
-                  {/* Atli Mascot Companion Card (Compact Ergonomic) */}
+                  {/* Atli Mascot Companion Card (Dynamic Emotion & Reactive Context) */}
                   <div className="flex items-center gap-2.5 p-2 sm:p-2.5 bg-gradient-to-r from-indigo-950/80 via-slate-900/90 to-purple-950/70 border border-indigo-500/40 rounded-xl shadow-md relative overflow-hidden group">
                     <div className="relative w-10 h-10 sm:w-11 sm:h-11 rounded-xl overflow-hidden shrink-0 border border-amber-400/80 shadow-md ring-1 ring-indigo-500/40 group-hover:scale-105 transition-transform duration-300">
                       <img 
-                        src="/mascot/atli_hero.jpg" 
+                        src={streakShieldState?.shieldsRemaining === 0 ? "/mascot/atli_comfort.jpg" : (streak >= 3 ? "/mascot/atli_victory.jpg" : "/mascot/atli_hero.jpg")} 
                         alt="Atli" 
                         className="w-full h-full object-cover"
                       />
@@ -1281,7 +1281,9 @@ export default function AtlasEnglishArenaModal({
                         </span>
                       </div>
                       <p className="text-[11px] text-slate-300 leading-tight mt-0.5">
-                        {streak >= 3
+                        {streakShieldState?.shieldsRemaining === 0
+                          ? (isEn ? "⚠️ Shields depleted! Grab an Aegis Elixir in Treasury or clear Revenge to recover!" : "⚠️ Khiên đã cạn! Hãy ghé Kho Báu lấy Bình Khiên Aegis hoặc phục thù lỗi cũ nhé!")
+                          : streak >= 3
                           ? (isEn ? `🔥 ${streak}-day streak! Keep up the momentum, Scholar!` : `🔥 Chuỗi ${streak} ngày rực lửa! Hãy cùng Atli giữ vững phong độ!`)
                           : (isEn ? "Ready for a 3-minute blitz? Every correct answer boosts your IELTS Band!" : "Sẵn sàng cho 3 phút tốc chiến chưa? Mỗi câu đúng sẽ gia tăng điểm Band của bạn!")
                         }

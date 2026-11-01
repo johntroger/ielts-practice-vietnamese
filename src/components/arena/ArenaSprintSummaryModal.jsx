@@ -62,15 +62,30 @@ export default function ArenaSprintSummaryModal({
 
   return (
     <div className="w-full max-w-xl mx-auto bg-slate-900 border border-slate-800 rounded-3xl p-4 sm:p-5 text-white shadow-2xl flex flex-col items-center gap-3.5 text-center animate-fade-in max-h-[92vh] overflow-y-auto">
-      {/* Atli Celebratory Mascot */}
-      <div className="relative my-1">
-        <div className="absolute inset-0 rounded-2xl blur-lg bg-gradient-to-tr from-amber-400 via-indigo-500 to-purple-600 opacity-60 animate-pulse" />
-        <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border-2 border-amber-400/80 shadow-xl ring-2 ring-indigo-500/40">
-          <img 
-            src={summary.isDefeated ? "/mascot/atli_hero.jpg" : "/mascot/atli_victory.jpg"} 
-            alt="Atli Mascot" 
-            className="w-full h-full object-cover"
-          />
+      {/* Atli Celebratory / Resilient Mascot */}
+      <div className="relative my-0.5 flex flex-col items-center">
+        <div className="relative">
+          <div className="absolute inset-0 rounded-2xl blur-lg bg-gradient-to-tr from-amber-400 via-indigo-500 to-purple-600 opacity-60 animate-pulse" />
+          <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border-2 border-amber-400/80 shadow-xl ring-2 ring-indigo-500/40">
+            <img 
+              src={summary.isDefeated ? "/mascot/atli_comfort.jpg" : (summary.mysteryLoot ? "/mascot/atli_treasure.jpg" : "/mascot/atli_victory.jpg")} 
+              alt="Atli Mascot" 
+              className="w-full h-full object-cover"
+            />
+          </div>
+        </div>
+
+        {/* Atli Companion Voice Bubble */}
+        <div className="mt-2 px-3 py-1 bg-slate-800/80 border border-slate-700/80 rounded-full text-[11px] sm:text-xs font-semibold text-slate-200 flex items-center gap-1.5 shadow-sm max-w-sm">
+          <span>{summary.isDefeated ? '🛡️' : (summary.mysteryLoot ? '💎' : '✨')}</span>
+          <span className="italic">
+            {summary.isDefeated
+              ? (isEn ? "Atli: 'Hold your head high, Scholar! Review the traps & avenge!'" : "Atli: 'Đừng nản lòng nhé! Cùng Atli phục thù các bẫy vừa qua nào!'")
+              : summary.mysteryLoot
+              ? (isEn ? "Atli: 'Look at that treasure! A rare relic for your collection!'" : "Atli: 'Kho báu kìa! Một cổ vật hiếm đã vào tay bạn!'")
+              : (isEn ? "Atli: 'Glorious reflex! Your Cambridge instinct is razor-sharp!'" : "Atli: 'Phản xạ tuyệt vời! Bản năng thi cử của bạn ngày càng sắc bén!'")
+            }
+          </span>
         </div>
       </div>
 

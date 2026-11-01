@@ -464,7 +464,31 @@ export default function ArenaQuestionCard({
             </div>
           )}
 
-          <p className="text-slate-300 text-xs mt-1 leading-relaxed">{localizedQ.explanation}</p>
+          {/* Atli Interactive Tutor & Cambridge Explanation Box */}
+          <div className="flex items-start gap-2.5 my-2 p-2.5 rounded-xl bg-slate-900/70 border border-slate-700/60 shadow-inner">
+            <div className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-xl overflow-hidden shrink-0 border border-amber-400/80 shadow-md ring-1 ring-amber-500/40">
+              <img 
+                src={isCorrect ? "/mascot/atli_hero.jpg" : isSkipped ? "/mascot/atli_thinking.jpg" : "/mascot/atli_comfort.jpg"} 
+                alt="Atli Tutor" 
+                className="w-full h-full object-cover" 
+              />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-1.5 flex-wrap mb-0.5">
+                <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-amber-300">
+                  {isCorrect 
+                    ? (isEn ? 'Atli: Razor-Sharp Reflex!' : 'HLV Atli: Quá sắc bén!') 
+                    : isSkipped 
+                    ? (isEn ? 'Atli: Smart Pass • Study Concept' : 'Học Giả Atli: Nắm vững khái niệm')
+                    : (isEn ? 'Atli: Watch Out for This Trap!' : 'Atli: Hãy cẩn thận bẫy này!')}
+                </span>
+                <span className="text-[9px] px-1.5 py-0.2 rounded bg-indigo-500/20 text-indigo-300 font-bold uppercase tracking-wider border border-indigo-500/30">
+                  Cambridge Logic
+                </span>
+              </div>
+              <p className="text-slate-200 text-xs sm:text-[13px] leading-relaxed">{localizedQ.explanation}</p>
+            </div>
+          </div>
         </div>
       )}
 

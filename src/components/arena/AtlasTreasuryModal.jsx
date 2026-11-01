@@ -142,19 +142,24 @@ export default function AtlasTreasuryModal({ isOpen, onClose }) {
         {/* Header Bar */}
         <div className="flex items-center justify-between p-3.5 sm:p-4 border-b border-slate-800 bg-slate-950/60 shrink-0">
           <div className="flex items-center gap-2.5 min-w-0">
-            <div className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-xl overflow-hidden border border-amber-400/80 shadow-md ring-1 ring-indigo-500/50 shrink-0">
+            <div className="relative w-10 h-10 sm:w-11 sm:h-11 rounded-xl overflow-hidden border border-amber-400/80 shadow-md ring-2 ring-amber-500/40 shrink-0">
               <img 
-                src="/mascot/atli_hero.jpg" 
+                src="/mascot/atli_treasure.jpg" 
                 alt="Atli Treasury Keeper" 
                 className="w-full h-full object-cover"
               />
             </div>
             <div className="min-w-0">
-              <h2 className="text-sm sm:text-base font-black tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-indigo-200 to-purple-300 truncate">
-                {isEn ? 'Atlas Treasury & Emporium' : 'Kho Báu & Cửa Hàng Atlas'}
-              </h2>
-              <p className="text-[11px] text-slate-400 hidden sm:block truncate">
-                {isEn ? 'Invest Gold & Diamonds to unlock tools and mastery.' : 'Dùng Vàng & Kim Cương để trang bị bổ trợ và tri thức.'}
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <h2 className="text-sm sm:text-base font-black tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-indigo-200 to-purple-300 truncate">
+                  {isEn ? 'Atlas Treasury & Emporium' : 'Kho Báu & Cửa Hàng Atlas'}
+                </h2>
+                <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold uppercase tracking-wider">
+                  Atli Keeper
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-300 truncate mt-0.5">
+                {isEn ? 'Atli: "Trade your hard-earned Gold & Gems for tactical edge!"' : 'Atli: "Dùng Vàng & Kim Cương để nâng cấp trang bị chiến thuật!"'}
               </p>
             </div>
           </div>

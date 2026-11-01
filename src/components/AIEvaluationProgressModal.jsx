@@ -113,8 +113,19 @@ export default function AIEvaluationProgressModal({ isOpen, taskNumber = 2, skil
           <div className="absolute -right-8 -top-8 w-32 h-32 bg-white/10 rounded-full blur-xl pointer-events-none" />
           <div className="absolute -left-8 -bottom-8 w-32 h-32 bg-amber-400/20 rounded-full blur-xl pointer-events-none" />
           
-          <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center shadow-lg animate-pulse">
-            <Sparkles className="w-7 h-7 text-amber-200" />
+          {/* Atli Scholar Examiner Avatar */}
+          <div className="relative w-16 h-16 mx-auto mb-3">
+            <div className="absolute inset-0 rounded-2xl bg-amber-400/40 blur-md animate-pulse" />
+            <div className="relative w-16 h-16 rounded-2xl overflow-hidden border-2 border-amber-300 shadow-xl ring-2 ring-white/30">
+              <img 
+                src="/mascot/atli_thinking.jpg" 
+                alt="Atli Scholar AI Examiner" 
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <span className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center text-[10px] shadow-sm animate-bounce" title="Atli AI Analyzing">
+              ✨
+            </span>
           </div>
 
           <h3 className="text-lg sm:text-xl font-black tracking-tight leading-snug">
