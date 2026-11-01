@@ -1119,7 +1119,7 @@ export default function AtlasEnglishArenaModal({
             </div>
 
             {/* Main Fullscreen Lobby Body */}
-            <main className="flex-1 w-full max-w-7xl mx-auto px-3 sm:px-6 pt-3 pb-8 sm:pb-10 flex flex-col justify-start min-h-0">
+            <main className="flex-1 w-full max-w-7xl mx-auto px-3 sm:px-6 py-2 sm:py-3 md:py-4 flex flex-col justify-start lg:justify-center min-h-0">
               {/* Game Mode Switcher Tab Bar */}
               <div className="w-full flex items-center justify-center gap-2 mt-0.5 mb-2.5 shrink-0">
                 <div className="flex items-center p-1 bg-slate-900/90 rounded-2xl border border-slate-800 shadow-inner max-w-xl w-full">
@@ -1240,7 +1240,7 @@ export default function AtlasEnglishArenaModal({
               ) : (
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 sm:gap-4 lg:gap-6 items-start pb-1 sm:pb-2">
                 {/* Left: Hero Banner, Difficulty & Action Controls */}
-                <div className={`lg:col-span-6 xl:col-span-7 flex flex-col gap-2 bg-gradient-to-br from-indigo-950/40 via-slate-900/60 to-purple-950/30 border border-indigo-900/40 rounded-2xl p-3 sm:p-4 backdrop-blur-md shadow-xl ${
+                <div className={`lg:col-span-6 xl:col-span-7 flex flex-col gap-2 sm:gap-2.5 bg-gradient-to-br from-indigo-950/40 via-slate-900/60 to-purple-950/30 border border-indigo-900/40 rounded-2xl p-3.5 sm:p-4.5 md:p-5 backdrop-blur-md shadow-xl ${
                   activeMobileTab === 'match' ? 'flex' : 'hidden lg:flex'
                 }`}>
                   <div className="flex items-center justify-between gap-1.5 min-w-0">
@@ -1302,18 +1302,18 @@ export default function AtlasEnglishArenaModal({
                   </h2>
 
                   <div className="grid grid-cols-3 gap-2 pt-0.5">
-                    <div className="bg-slate-900/80 border border-slate-800 rounded-lg py-1 px-2 text-center shadow-xs">
+                    <div className="bg-slate-900/80 border border-slate-800 rounded-lg py-1.5 px-2 text-center shadow-xs">
                       <div className="text-sm sm:text-base font-black text-indigo-300 font-mono">180s</div>
                       <div className="text-[10px] sm:text-[11px] text-slate-400 font-medium truncate">{t('arena.durationLabel')}</div>
                     </div>
-                    <div className="bg-slate-900/80 border border-slate-800 rounded-lg py-1 px-2 text-center shadow-xs">
+                    <div className="bg-slate-900/80 border border-slate-800 rounded-lg py-1.5 px-2 text-center shadow-xs">
                       <div className="text-sm sm:text-base font-black text-emerald-300 flex items-center justify-center gap-1">
                         <span>{t('arena.shieldsUnit')}</span>
                         <span className="text-xs">🛡️</span>
                       </div>
                       <div className="text-[10px] sm:text-[11px] text-slate-400 font-medium truncate">{t('arena.shieldsLabel')}</div>
                     </div>
-                    <div className="bg-slate-900/80 border border-slate-800 rounded-lg py-1 px-2 text-center shadow-xs">
+                    <div className="bg-slate-900/80 border border-slate-800 rounded-lg py-1.5 px-2 text-center shadow-xs">
                       <div className="text-sm sm:text-base font-black text-amber-300 font-mono">
                         ~{ARENA_DIFFICULTY_CONFIG[selectedDifficulty]?.maxSprintXp || 200}
                       </div>

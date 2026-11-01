@@ -351,9 +351,9 @@ export default function ArenaQuestionCard({
               ? 'grid-cols-1 sm:grid-cols-2' 
               : 'grid-cols-1'
         }`}>
-          {((isEn ? (localizedQ?.options || question.optionsEn) : (localizedQ?.options || question.optionsVi)) || question.options || []).map((rawOptText, idx) => {
+          {(localizedQ?.options || question.optionsEn || question.options || []).map((rawOptText, idx) => {
             let optText = rawOptText;
-            if (isEn && typeof rawOptText === 'string') {
+            if (typeof rawOptText === 'string') {
               const parenMatch = rawOptText.match(/^[^(]+\(([^)]+)\)$/);
               if (parenMatch && /[a-zA-Z]{2,}/.test(parenMatch[1])) {
                 optText = parenMatch[1].trim();

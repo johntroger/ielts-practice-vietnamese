@@ -1783,22 +1783,30 @@ export function getLocalizedArenaQuestion(question, isEn = true) {
 
   const translation = ARENA_QUESTION_TRANSLATIONS[question.id] || {};
 
+  const englishPrompt = question.promptEn || translation.promptEn || question.prompt;
+  const englishContext = question.contextEn || translation.contextEn || question.context;
+  const englishOptions = question.optionsEn || translation.optionsEn || question.options;
+  const englishCorrectAnswer = question.correctAnswerEn || translation.correctAnswerEn || question.correctAnswer;
+
   if (!isEn) {
+    const isInstructionOnlyPrompt = question.type === 'tfng' || question.type === 'spelling';
     return {
       ...question,
-      prompt: question.promptVi || question.prompt,
-      context: question.contextVi || question.context,
-      explanation: question.explanationVi || question.explanation,
-      options: question.optionsVi || question.options
+      prompt: isInstructionOnlyPrompt ? (question.promptVi || englishPrompt) : englishPrompt,
+      context: englishContext,
+      explanation: question.explanationVi || question.explanation || translation.explanationEn,
+      options: englishOptions,
+      correctAnswer: englishCorrectAnswer
     };
   }
 
-  // English Mode
+  // English Mode: 100% English everywhere
   return {
     ...question,
-    prompt: question.promptEn || translation.promptEn || question.prompt,
-    context: question.contextEn || translation.contextEn || question.context,
+    prompt: englishPrompt,
+    context: englishContext,
     explanation: question.explanationEn || translation.explanationEn || question.explanation,
-    options: question.optionsEn || translation.optionsEn || question.options
+    options: englishOptions,
+    correctAnswer: englishCorrectAnswer
   };
 }
