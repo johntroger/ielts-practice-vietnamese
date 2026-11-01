@@ -4,7 +4,8 @@ Welcome to the **IELTS Master Handbook** — the comprehensive, high-stakes tact
 
 This guide accompanies the interactive [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) platform, offering full computer-delivered IELTS (CDI) simulations, AI diagnostic evaluations, and structured pedagogical roadmaps.
 
-> **Interactive Practice Platform:** Access [https://ielts-practice-vietnamese.vercel.app/](https://ielts-practice-vietnamese.vercel.app/) to take authentic mock exams, test your skills in split-screen CDI workspaces, and receive instant criterion-by-criterion AI scoring.
+> **Interactive Practice Platform:** Access [https://ielts-practice-vietnamese.vercel.app/](https://ielts-practice-vietnamese.vercel.app/) to take authentic mock exams, test your skills in split-screen CDI workspaces, and receive instant criterion-by-criterion AI scoring.  
+> **🏛️ Living Project Whitepaper & System Architecture:** Read the full **[How the Platform Works, Hybrid Architecture & Live Roadmap (Project Whitepaper)](project-whitepaper.md)**.
 
 ---
 

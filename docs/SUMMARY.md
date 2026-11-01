@@ -169,6 +169,7 @@
 ---
 
 ## 🚀 Hướng Dẫn Sử Dụng & Tính Năng Hệ Thống
+* [Hồ Sơ Toàn Cảnh Dự Án & Cách Vận Hành (Project Whitepaper)](project-whitepaper.md)
 * [Tổng Quan Tính Năng Nền Tảng](features/README.md)
 * [Phân Hệ AI & Chấm Điểm Chuẩn Cambridge](features/ai-evaluation.md)
 * [Kho Đề & Công Cụ Luyện Tập 4 Kỹ Năng](features/practice-tools.md)

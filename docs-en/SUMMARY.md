@@ -169,6 +169,7 @@
 ---
 
 ## 🚀 System Features & User Manual
+* [Project Whitepaper, System Architecture & Live Roadmap](project-whitepaper.md)
 * [Platform Feature Overview](features/README.md)
 * [AI Diagnostic & Cambridge Criterion Scoring System](features/ai-evaluation.md)
 * [Task Bank & 4-Skill Practice Tools](features/practice-tools.md)

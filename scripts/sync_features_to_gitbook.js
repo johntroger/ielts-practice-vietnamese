@@ -213,7 +213,191 @@ function generateCategoryPages() {
 }
 
 /**
- * 3. TỰ ĐỘNG CẬP NHẬT docs/SUMMARY.md
+ * 2.5. SINH HỒ SƠ TOÀN CẢNH DỰ ÁN & CÁCH VẬN HÀNH (docs/project-whitepaper.md & docs-en/project-whitepaper.md)
+ */
+function generateProjectWhitepaperDocs() {
+  const dataVi = getWhitepaperData(false);
+  const dataEn = getWhitepaperData(true);
+
+  // --- 1. Bản Tiếng Việt (docs/project-whitepaper.md) ---
+  let mdVi = `# 🏛️ ${dataVi.meta.title}
+
+> **Phiên bản**: \`${dataVi.meta.version}\` | **Cập nhật gần nhất**: \`${dataVi.meta.lastUpdated}\`  
+> **Quy mô hệ thống**: **${dataVi.meta.totalFeatures}+ tính năng chuyên sâu** | **Kiến trúc**: \`Local-First (90%) + Cloud & AI Examiner (10%)\`
+
+[← Quay lại Trang Chủ Cẩm Nang](README.md) • [Xem Ma Trận ${dataVi.meta.totalFeatures}+ Tính Năng ↗](features/README.md)
+
+---
+
+## 1. ${dataVi.elevatorPitch.title}
+
+> 💡 **Tuyên ngôn giá trị cốt lõi (Core Value Proposition):**  
+> ${dataVi.elevatorPitch.content}
+
+### 📊 Bảng Đối Sánh Trực Diện Với Các Mô Hình Hiện Có
+
+| ${dataVi.comparisonTable.headers.join(' | ')} |
+| :--- | :--- | :--- | :--- |
+`;
+
+  dataVi.comparisonTable.rows.forEach(row => {
+    mdVi += `| **${row[0]}** | ${row[1]} | ${row[2]} | **${row[3]}** |\n`;
+  });
+
+  mdVi += `
+---
+
+## 2. Cách Vận Hành Của Website – Hành Trình Người Dùng 5 Bước Khép Kín
+
+Toàn bộ nền tảng vận hành theo một **Vòng lặp Sư phạm Khép kín (Closed-Loop Pedagogical Engine)** gồm 5 bước liên hoàn, giúp bất kỳ người học nào từ lúc mới truy cập đến khi đi thi thật đều được dẫn dắt tự động:
+
+`;
+
+  dataVi.closedLoopSteps.forEach(step => {
+    mdVi += `### Bước ${step.stepNumber}: ${step.title} (\`${step.badge}\`)
+- **👤 Thao tác của Người dùng**: ${step.userAction}
+- **⚙️ Xử lý tự động bên dưới của Hệ thống**: ${step.systemEngine}
+- **🎯 Giá trị thực tế nhận được**: ${step.learnerValue}
+
+`;
+  });
+
+  mdVi += `---
+
+## 3. Kiến Trúc Kỹ Thuật Lai (Local-First 90% + Cloud & AI 10%)
+
+Hệ thống giải quyết bài toán chi phí vận hành máy chủ và tốc độ phản hồi bằng cách phân bổ tải thông minh giữa thiết bị người học và đám mây:
+
+`;
+
+  dataVi.architectureLayers.forEach(layer => {
+    mdVi += `### 🛡️ ${layer.title}
+> **${layer.layerBadge}** — *${layer.subtitle}*
+
+`;
+    layer.highlights.forEach(h => {
+      mdVi += `- ${h}\n`;
+    });
+    mdVi += `\n`;
+  });
+
+  mdVi += `---
+
+## 4. Lộ Trình Phát Triển Dự Án Theo Thời Gian Thực (Living Product Roadmap)
+
+Tài liệu và lộ trình này được cập nhật liên tục theo từng cột mốc phát triển của dự án:
+
+`;
+
+  dataVi.roadmapPhases.forEach(phase => {
+    mdVi += `### 🚀 ${phase.phase} — ${phase.title} (\`${phase.period}\` • \`${phase.statusLabel}\`)
+`;
+    phase.items.forEach(item => {
+      mdVi += `- ${item}\n`;
+    });
+    mdVi += `\n`;
+  });
+
+  mdVi += `---
+*Tài liệu này được đồng bộ tự động từ \`src/core/projectWhitepaperData.js\` và \`src/core/featureRegistry.js\`. Xem thêm [Trung Tâm Tính Năng Hệ Thống](features/README.md).*
+`;
+
+  const targetViPath = path.join(DOCS_DIR, 'project-whitepaper.md');
+  fs.writeFileSync(targetViPath, mdVi.trim() + '\n', 'utf8');
+  console.log('✅ Đã sinh thành công: docs/project-whitepaper.md');
+
+  // --- 2. Bản Tiếng Anh Quốc Tế (docs-en/project-whitepaper.md) ---
+  if (fs.existsSync(DOCS_EN_DIR)) {
+    let mdEn = `# 🏛️ ${dataEn.meta.title}
+
+> **Version**: \`${dataEn.meta.version}\` | **Last Updated**: \`${dataEn.meta.lastUpdated}\`  
+> **Platform Scale**: **${dataEn.meta.totalFeatures}+ specialized features** | **Architecture**: \`Local-First (90%) + Cloud & AI Examiner (10%)\`
+
+[← Back to Handbook Home](README.md) • [Explore ${dataEn.meta.totalFeatures}+ Platform Features ↗](features/README.md)
+
+---
+
+## 1. ${dataEn.elevatorPitch.title}
+
+> 💡 **Core Value Proposition:**  
+> ${dataEn.elevatorPitch.content}
+
+### 📊 ${dataEn.comparisonTable.caption}
+
+| ${dataEn.comparisonTable.headers.join(' | ')} |
+| :--- | :--- | :--- | :--- |
+`;
+
+    dataEn.comparisonTable.rows.forEach(row => {
+      mdEn += `| **${row[0]}** | ${row[1]} | ${row[2]} | **${row[3]}** |\n`;
+    });
+
+    mdEn += `
+---
+
+## 2. How the Website Operates – 5-Step Closed-Loop User Journey
+
+The platform operates as a **Closed-Loop Pedagogical Engine** across 5 interconnected stages, guiding learners seamlessly from Day 1 onboarding to official exam readiness:
+
+`;
+
+    dataEn.closedLoopSteps.forEach(step => {
+      mdEn += `### Step ${step.stepNumber}: ${step.title} (\`${step.badge}\`)
+- **👤 User Action**: ${step.userAction}
+- **⚙️ Under-the-Hood System Engine**: ${step.systemEngine}
+- **🎯 Pedagogical Value**: ${step.learnerValue}
+
+`;
+    });
+
+    mdEn += `---
+
+## 3. Hybrid Technical Architecture (Local-First 90% + Cloud & AI 10%)
+
+Our architecture eliminates server bottlenecks and reduces API unit costs by 85–90% through intelligent client-edge processing:
+
+`;
+
+    dataEn.architectureLayers.forEach(layer => {
+      mdEn += `### 🛡️ ${layer.title}
+> **${layer.layerBadge}** — *${layer.subtitle}*
+
+`;
+      layer.highlights.forEach(h => {
+        mdEn += `- ${h}\n`;
+      });
+      mdEn += `\n`;
+    });
+
+    mdEn += `---
+
+## 4. Living Product & Growth Roadmap
+
+This roadmap is continuously updated as new capabilities and test banks ship to production:
+
+`;
+
+    dataEn.roadmapPhases.forEach(phase => {
+      mdEn += `### 🚀 ${phase.phase} — ${phase.title} (\`${phase.period}\` • \`${phase.statusLabel}\`)
+`;
+      phase.items.forEach(item => {
+        mdEn += `- ${item}\n`;
+      });
+      mdEn += `\n`;
+    });
+
+    mdEn += `---
+*Automatically synchronized from \`src/core/projectWhitepaperData.js\` and \`src/core/featureRegistry.js\`. Explore the [Platform Feature Overview](features/README.md).*
+`;
+
+    const targetEnPath = path.join(DOCS_EN_DIR, 'project-whitepaper.md');
+    fs.writeFileSync(targetEnPath, mdEn.trim() + '\n', 'utf8');
+    console.log('✅ Đã sinh thành công: docs-en/project-whitepaper.md');
+  }
+}
+
+/**
+ * 3. TỰ ĐỘNG CẬP NHẬT docs/SUMMARY.md & docs-en/SUMMARY.md
  */
 function updateSummary() {
   const summaryPath = path.join(DOCS_DIR, 'SUMMARY.md');
@@ -226,6 +410,7 @@ function updateSummary() {
 
   // Khối nội dung mục lục tính năng chuẩn GitBook
   const featuresSummaryBlock = `## 🚀 Hướng Dẫn Sử Dụng & Tính Năng Hệ Thống
+* [Hồ Sơ Toàn Cảnh Dự Án & Cách Vận Hành (Project Whitepaper)](project-whitepaper.md)
 * [Tổng Quan Tính Năng Nền Tảng](features/README.md)
 * [Phân Hệ AI & Chấm Điểm Chuẩn Cambridge](features/ai-evaluation.md)
 * [Kho Đề & Công Cụ Luyện Tập 4 Kỹ Năng](features/practice-tools.md)
@@ -254,18 +439,49 @@ function updateSummary() {
   }
 
   fs.writeFileSync(summaryPath, summaryContent, 'utf8');
-  console.log('✅ Đã cập nhật docs/SUMMARY.md với danh mục Hướng Dẫn Tính Năng');
+  console.log('✅ Đã cập nhật docs/SUMMARY.md với danh mục Hướng Dẫn Tính Năng & Project Whitepaper');
+
+  // Cập nhật docs-en/SUMMARY.md nếu tồn tại
+  const summaryEnPath = path.join(DOCS_EN_DIR, 'SUMMARY.md');
+  if (fs.existsSync(summaryEnPath)) {
+    let summaryEnContent = fs.readFileSync(summaryEnPath, 'utf8');
+    const enMarker = '## 🚀 System Features & User Manual';
+    const enBlock = `## 🚀 System Features & User Manual
+* [Project Whitepaper, System Architecture & Live Roadmap](project-whitepaper.md)
+* [Platform Feature Overview](features/README.md)
+* [AI Diagnostic & Cambridge Criterion Scoring System](features/ai-evaluation.md)
+* [Task Bank & 4-Skill Practice Tools](features/practice-tools.md)
+* [Computer-Delivered IELTS (CDI) & Marathon Simulator](features/exam-simulation.md)
+* [Theory Handbook & Contextual Vocabulary Notebook](features/theory-vocab.md)
+* [Progress Analytics, Profile & Official TRF Simulator](features/analytics-profile.md)
+* [All-In-One Keyboard Shortcut Directory](features/shortcuts-ux.md)`;
+
+    if (summaryEnContent.includes(enMarker)) {
+      const parts = summaryEnContent.split(enMarker);
+      const before = parts[0];
+      const after = parts[1];
+      const nextHeaderIndex = after.indexOf('\n## ');
+      if (nextHeaderIndex !== -1) {
+        summaryEnContent = before + enBlock + after.substring(nextHeaderIndex);
+      } else {
+        summaryEnContent = before + enBlock + '\n';
+      }
+      fs.writeFileSync(summaryEnPath, summaryEnContent, 'utf8');
+      console.log('✅ Đã cập nhật docs-en/SUMMARY.md với Project Whitepaper');
+    }
+  }
 }
 
 /**
  * CHẠY QUY TRÌNH ĐỒNG BỘ
  */
 export function runSync() {
-  console.log('🔄 BẮT ĐẦU ĐỒNG BỘ TÍNH NĂNG TỪ CODEBASE SANG GITBOOK...');
+  console.log('🔄 BẮT ĐẦU ĐỒNG BỘ TÍNH NĂNG & WHITEPAPER TỪ CODEBASE SANG GITBOOK...');
   console.log(`📦 Nguồn: src/core/featureRegistry.js (${FEATURE_REGISTRY.length} tính năng)`);
   
   generateFeaturesHub();
   generateCategoryPages();
+  generateProjectWhitepaperDocs();
   updateSummary();
 
   console.log('✨ HOÀN TẤT ĐỒNG BỘ GITBOOK THÀNH CÔNG 100%!\n');

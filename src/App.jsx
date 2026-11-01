@@ -1167,6 +1167,10 @@ export default function App() {
             onOpenGitBook={() => {
               window.open(GITBOOK_FEATURES_BASE_URL, '_blank');
             }}
+            onOpenModal={(modalName) => {
+              setIsAboutViewOpen(false);
+              openModal(modalName);
+            }}
           />
         </React.Suspense>
       ) : (
@@ -1358,6 +1362,12 @@ export default function App() {
               className="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] shadow-2xs transition-all active:scale-95 shrink-0 flex items-center space-x-1 cursor-pointer"
             >
               <span>{language === 'en' ? 'Quick Guide' : 'Xem Lộ Trình'}</span>
+            </button>
+            <button
+              onClick={() => setIsAboutViewOpen(true)}
+              className="hidden md:flex px-2.5 py-1 rounded-lg bg-white hover:bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold text-[11px] shadow-2xs transition-all active:scale-95 shrink-0 items-center space-x-1 cursor-pointer"
+            >
+              <span>{language === 'en' ? 'How It Works (/about)' : 'Cách Vận Hành Web (/about)'}</span>
             </button>
             <button
               onClick={() => {

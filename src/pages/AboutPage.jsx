@@ -27,16 +27,19 @@ import {
 import { useTranslation } from '../i18n/index.js';
 import { getTheme, toggleTheme, subscribeTheme } from '../utils/themeService';
 import { GITBOOK_FEATURES_BASE_URL } from '../core/featureRegistry';
+import { getWhitepaperData } from '../core/projectWhitepaperData';
 
 export default function AboutPage({
   onStartPractice,
   onSelectSkill,
   onOpenArena,
-  onOpenGitBook
+  onOpenGitBook,
+  onOpenModal
 }) {
   const { t, language, setLanguage } = useTranslation();
   const [currentTheme, setCurrentTheme] = useState(() => getTheme());
   const [activeSkillTab, setActiveSkillTab] = useState('writing');
+  const [activeJourneyStepId, setActiveJourneyStepId] = useState('step-onboarding');
   const [showUpgradedSentence, setShowUpgradedSentence] = useState(true);
   const [quizSelectedOption, setQuizSelectedOption] = useState(null);
   const [quizAnswered, setQuizAnswered] = useState(false);
@@ -174,6 +177,20 @@ export default function AboutPage({
   };
 
   const isEn = language === 'en';
+  const wpData = getWhitepaperData(isEn);
+  const currentJourneyStep =
+    wpData.closedLoopSteps.find(s => s.id === activeJourneyStepId) || wpData.closedLoopSteps[0];
+
+  const handleLaunchJourneyAction = (step) => {
+    if (!step) return;
+    if (step.actionType === 'modal' && onOpenModal) {
+      onOpenModal(step.actionTarget);
+    } else if (step.actionType === 'skill' && onSelectSkill) {
+      onSelectSkill(step.actionTarget);
+    } else if (onStartPractice) {
+      onStartPractice();
+    }
+  };
 
   return (
     <div className="min-h-[100dvh] bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 selection:bg-indigo-500 selection:text-white transition-colors duration-200">
@@ -206,7 +223,14 @@ export default function AboutPage({
           </div>
 
           {/* Quick Nav Anchor Links (Desktop) */}
-          <nav className="hidden lg:flex items-center space-x-6 text-sm font-medium text-slate-600 dark:text-slate-300">
+          <nav className="hidden lg:flex items-center space-x-5 text-sm font-medium text-slate-600 dark:text-slate-300">
+            <button 
+              onClick={() => scrollToSection('whitepaper')}
+              className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors flex items-center space-x-1 font-bold text-indigo-600 dark:text-indigo-400"
+            >
+              <Compass className="w-3.5 h-3.5" />
+              <span>{isEn ? 'How It Works & Whitepaper' : 'Cách vận hành & Hồ sơ'}</span>
+            </button>
             <button 
               onClick={() => scrollToSection('workspaces')}
               className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
@@ -391,6 +415,300 @@ export default function AboutPage({
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                 {t('about.metricLocalFirstSub', 'Dữ liệu lưu an toàn trên máy, không quảng cáo')}
               </p>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* 2.5. LIVING PROJECT WHITEPAPER: HOW IT WORKS (5-STEP CLOSED LOOP, HYBRID ARCHITECTURE & ROADMAP) */}
+      <section id="whitepaper" className="py-16 md:py-24 bg-white dark:bg-slate-900/60 border-b border-slate-200/80 dark:border-slate-800/80">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          
+          {/* Section Header */}
+          <div className="text-center max-w-4xl mx-auto mb-12">
+            <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950/80 border border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-300 text-xs font-extrabold uppercase tracking-wider mb-3">
+              <Compass className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+              <span>{wpData.meta.badge}</span>
+            </div>
+            <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+              {wpData.meta.title}
+            </h2>
+            <p className="mt-3 text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed">
+              {wpData.meta.subtitle}
+            </p>
+          </div>
+
+          {/* Elevator Pitch Banner */}
+          <div className="p-5 sm:p-7 rounded-3xl bg-gradient-to-r from-indigo-950 via-slate-900 to-indigo-950 text-white border border-indigo-500/30 shadow-xl mb-12">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div className="space-y-2 max-w-4xl">
+                <div className="text-xs font-extrabold uppercase tracking-wider text-amber-400 flex items-center space-x-1.5">
+                  <Sparkles className="w-4 h-4" />
+                  <span>{wpData.elevatorPitch.title}</span>
+                </div>
+                <p className="text-sm sm:text-base text-slate-100 leading-relaxed font-medium">
+                  {wpData.elevatorPitch.content}
+                </p>
+              </div>
+              <a
+                href={GITBOOK_FEATURES_BASE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center space-x-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-xs sm:text-sm font-bold text-white shrink-0 transition-all"
+              >
+                <span>{isEn ? 'Read Full Whitepaper on GitBook' : 'Đọc Hồ Sơ Đầy Đủ Trên GitBook'}</span>
+                <ArrowUpRight className="w-4 h-4" />
+              </a>
+            </div>
+          </div>
+
+          {/* Interactive 5-Step Closed-Loop User Journey */}
+          <div className="mb-14">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-6 gap-2">
+              <div>
+                <span className="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
+                  {isEn ? 'Closed-Loop Pedagogical Engine' : 'Vòng Lặp Sư Phạm Khép Kín'}
+                </span>
+                <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white mt-0.5">
+                  {isEn
+                    ? '5-Step End-to-End User Journey (From Day 1 to Official Exam)'
+                    : 'Hành Trình Người Dùng 5 Bước Khép Kín (Từ Ngày Đầu Đến Phòng Thi Thật)'}
+                </h3>
+              </div>
+              <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                {isEn ? 'Click any step below to inspect & launch:' : 'Bấm vào từng bước để xem cơ chế vận hành & trải nghiệm:'}
+              </span>
+            </div>
+
+            {/* 5 Step Tabs */}
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5 mb-6">
+              {wpData.closedLoopSteps.map((st) => {
+                const isSelected = currentJourneyStep.id === st.id;
+                return (
+                  <button
+                    key={st.id}
+                    type="button"
+                    onClick={() => setActiveJourneyStepId(st.id)}
+                    className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
+                      isSelected
+                        ? 'bg-indigo-600 text-white border-indigo-600 shadow-lg shadow-indigo-600/25 scale-[1.01]'
+                        : 'bg-slate-50 dark:bg-slate-800/80 text-slate-800 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:border-indigo-400'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between w-full mb-2">
+                      <span className={`text-[11px] font-black px-2 py-0.5 rounded-md ${
+                        isSelected ? 'bg-white/20 text-white' : 'bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300'
+                      }`}>
+                        {isEn ? `STEP ${st.stepNumber}` : `BƯỚC ${st.stepNumber}`}
+                      </span>
+                      <span className={`text-[10px] font-semibold ${isSelected ? 'text-indigo-100' : 'text-slate-400'}`}>
+                        {st.badge}
+                      </span>
+                    </div>
+                    <div className="font-extrabold text-xs sm:text-sm leading-snug">
+                      {st.shortTitle}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Active Step Detail Card */}
+            <div className="p-6 sm:p-8 rounded-3xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 shadow-md">
+              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 mb-6 border-b border-slate-200 dark:border-slate-700">
+                <div>
+                  <div className="inline-flex items-center space-x-2 text-xs font-extrabold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">
+                    <span>{isEn ? `Step ${currentJourneyStep.stepNumber}` : `Bước ${currentJourneyStep.stepNumber}`}</span>
+                    <span>•</span>
+                    <span>{currentJourneyStep.badge}</span>
+                  </div>
+                  <h4 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white mt-1">
+                    {currentJourneyStep.title}
+                  </h4>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => handleLaunchJourneyAction(currentJourneyStep)}
+                  className="inline-flex items-center justify-center space-x-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs sm:text-sm shadow-sm transition-all cursor-pointer shrink-0"
+                >
+                  <span>{currentJourneyStep.actionLabel}</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800">
+                  <div className="text-xs font-extrabold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 mb-2">
+                    {isEn ? '1. What the User Does' : '1. Thao Tác Của Người Dùng'}
+                  </div>
+                  <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+                    {currentJourneyStep.userAction}
+                  </p>
+                </div>
+
+                <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800">
+                  <div className="text-xs font-extrabold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mb-2">
+                    {isEn ? '2. Under-the-Hood System Engine' : '2. Hệ Thống Tự Động Xử Lý Gì?'}
+                  </div>
+                  <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+                    {currentJourneyStep.systemEngine}
+                  </p>
+                </div>
+
+                <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800">
+                  <div className="text-xs font-extrabold uppercase tracking-wider text-amber-600 dark:text-amber-400 mb-2">
+                    {isEn ? '3. Real Value Delivered' : '3. Giá Trị Thực Tế Nhận Được'}
+                  </div>
+                  <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+                    {currentJourneyStep.learnerValue}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Hybrid Technical Architecture: Local-First 90% vs Cloud 10% */}
+          <div className="mb-14">
+            <div className="mb-6">
+              <span className="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+                {isEn ? 'Under-the-Hood Engineering Moat' : 'Kiến Trúc Kỹ Thuật & Lợi Thế Vận Hành'}
+              </span>
+              <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white mt-0.5">
+                {isEn
+                  ? 'Hybrid Local-First (90%) + Cloud & AI Examiner (10%) Architecture'
+                  : 'Kiến Trúc Lai: Xử Lý Cục Bộ Local-First (90%) + Đám Mây & AI (10%)'}
+              </h3>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {wpData.architectureLayers.map((layer, idx) => (
+                <div
+                  key={idx}
+                  className="p-6 sm:p-7 rounded-3xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 shadow-sm flex flex-col justify-between"
+                >
+                  <div>
+                    <span className={`inline-block text-[11px] font-black px-2.5 py-1 rounded-lg mb-3 ${
+                      idx === 0
+                        ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300'
+                        : 'bg-indigo-100 dark:bg-indigo-950 text-indigo-800 dark:text-indigo-300'
+                    }`}>
+                      {layer.layerBadge}
+                    </span>
+                    <h4 className="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white">
+                      {layer.title}
+                    </h4>
+                    <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1 mb-4 font-medium">
+                      {layer.subtitle}
+                    </p>
+                    <ul className="space-y-3">
+                      {layer.highlights.map((item, i) => (
+                        <li key={i} className="text-xs sm:text-sm text-slate-700 dark:text-slate-200 leading-relaxed flex items-start space-x-2.5">
+                          <CheckCircle2 className={`w-4 h-4 shrink-0 mt-0.5 ${idx === 0 ? 'text-emerald-500' : 'text-indigo-500'}`} />
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Direct Market Comparison Matrix */}
+          <div className="mb-14">
+            <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white mb-4">
+              {wpData.comparisonTable.caption}
+            </h3>
+            <div className="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+              <table className="w-full text-left border-collapse text-xs sm:text-sm">
+                <thead>
+                  <tr className="bg-slate-100 dark:bg-slate-800/90 text-slate-900 dark:text-white font-bold border-b border-slate-200 dark:border-slate-700">
+                    {wpData.comparisonTable.headers.map((h, i) => (
+                      <th key={i} className={`p-3.5 sm:p-4 ${i === 3 ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50/60 dark:bg-indigo-950/40' : ''}`}>
+                        {h}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-200 dark:divide-slate-800 bg-white dark:bg-slate-900">
+                  {wpData.comparisonTable.rows.map((row, rIdx) => (
+                    <tr key={rIdx} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
+                      <td className="p-3.5 sm:p-4 font-bold text-slate-900 dark:text-white">{row[0]}</td>
+                      <td className="p-3.5 sm:p-4 text-slate-600 dark:text-slate-400">{row[1]}</td>
+                      <td className="p-3.5 sm:p-4 text-slate-600 dark:text-slate-400">{row[2]}</td>
+                      <td className="p-3.5 sm:p-4 font-semibold text-indigo-950 dark:text-indigo-200 bg-indigo-50/30 dark:bg-indigo-950/20">
+                        {row[3]}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Living Development Roadmap (Updated Over Time) */}
+          <div>
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-6 gap-2">
+              <div>
+                <span className="text-xs font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
+                  {isEn ? 'Continuous Evolution' : 'Cập Nhật Liên Tục Theo Thời Gian'}
+                </span>
+                <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white mt-0.5">
+                  {isEn
+                    ? 'Living Product & Development Roadmap'
+                    : 'Lộ Trình Phát Triển Dự Án (Cập Nhật Theo Từng Giai Đoạn)'}
+                </h3>
+              </div>
+              <span className="text-xs font-mono text-slate-500 dark:text-slate-400">
+                {wpData.meta.version} • {wpData.meta.lastUpdated}
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {wpData.roadmapPhases.map((rp, idx) => (
+                <div
+                  key={idx}
+                  className={`p-5 rounded-2xl border flex flex-col justify-between ${
+                    rp.status === 'live'
+                      ? 'bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-300 dark:border-emerald-800/70'
+                      : rp.status === 'active'
+                      ? 'bg-indigo-50/50 dark:bg-indigo-950/20 border-indigo-300 dark:border-indigo-800/70'
+                      : 'bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700/70'
+                  }`}
+                >
+                  <div>
+                    <div className="flex items-center justify-between gap-2 mb-2">
+                      <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                        {rp.period}
+                      </span>
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                        rp.status === 'live'
+                          ? 'bg-emerald-600 text-white'
+                          : rp.status === 'active'
+                          ? 'bg-indigo-600 text-white'
+                          : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
+                      }`}>
+                        {rp.statusLabel}
+                      </span>
+                    </div>
+                    <div className="text-xs font-bold text-indigo-600 dark:text-indigo-400">
+                      {rp.phase}
+                    </div>
+                    <h4 className="font-extrabold text-slate-900 dark:text-white text-sm sm:text-base mt-1 mb-3 leading-snug">
+                      {rp.title}
+                    </h4>
+                    <ul className="space-y-2">
+                      {rp.items.map((it, i) => (
+                        <li key={i} className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed flex items-start space-x-1.5">
+                          <span className="text-indigo-500 font-bold">•</span>
+                          <span>{it}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 
@@ -596,19 +914,27 @@ export default function AboutPage({
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-4 border-t border-slate-200 dark:border-slate-800">
               <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60">
                 <div className="font-bold text-xs text-indigo-600 dark:text-indigo-400">1. Task Response</div>
-                <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Trả lời trực diện, lập luận PEEL trọn vẹn</div>
+                <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                  {isEn ? 'Direct thesis & complete PEEL argumentation' : 'Trả lời trực diện, lập luận PEEL trọn vẹn'}
+                </div>
               </div>
               <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60">
                 <div className="font-bold text-xs text-emerald-600 dark:text-emerald-400">2. Coherence & Cohesion</div>
-                <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Mạch lạc tự nhiên, liên kết câu chặt chẽ</div>
+                <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                  {isEn ? 'Natural flow & organic sentence progression' : 'Mạch lạc tự nhiên, liên kết câu chặt chẽ'}
+                </div>
               </div>
               <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60">
                 <div className="font-bold text-xs text-amber-600 dark:text-amber-400">3. Lexical Resource</div>
-                <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Từ vựng C1/C2, collocations chính xác</div>
+                <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                  {isEn ? 'C1/C2 vocabulary & precise collocations' : 'Từ vựng C1/C2, collocations chính xác'}
+                </div>
               </div>
               <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60">
                 <div className="font-bold text-xs text-rose-600 dark:text-rose-400">4. Grammatical Range</div>
-                <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Đa dạng mệnh đề phụ, chính xác cấu trúc</div>
+                <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                  {isEn ? 'Diverse complex clauses & error-free syntax' : 'Đa dạng mệnh đề phụ, chính xác cấu trúc'}
+                </div>
               </div>
             </div>
           </div>

@@ -4,7 +4,8 @@ Chào mừng bạn đến với **IELTS Master Handbook** — Cẩm nang chiến
 
 Tài liệu được thiết kế mở, tự động đồng bộ hóa thông qua **GitHub** và nền tảng **GitBook**, phục vụ miễn phí 100% cho cộng đồng người học IELTS tại Việt Nam.
 
-> **Ứng dụng luyện thi trực tuyến:** Truy cập [https://ielts-practice-vietnamese.vercel.app/](https://ielts-practice-vietnamese.vercel.app/) để làm bài thi mô phỏng chuẩn Cambridge, phòng thi máy CDI và nhận phản hồi chi tiết từ AI.
+> **Ứng dụng luyện thi trực tuyến:** Truy cập [https://ielts-practice-vietnamese.vercel.app/](https://ielts-practice-vietnamese.vercel.app/) để làm bài thi mô phỏng chuẩn Cambridge, phòng thi máy CDI và nhận phản hồi chi tiết từ AI.  
+> **🏛️ Hồ sơ toàn cảnh dự án & Cách vận hành:** Xem chi tiết **[Hồ Sơ Toàn Cảnh Dự Án, Kiến Trúc Vận Hành & Lộ Trình Phát Triển (Project Whitepaper)](project-whitepaper.md)**.
 
 ---
 
