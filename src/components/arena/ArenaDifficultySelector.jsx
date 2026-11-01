@@ -9,6 +9,7 @@ import React from 'react';
 import { Zap, ShieldCheck, Flame, Skull, Sparkles } from 'lucide-react';
 import { ARENA_DIFFICULTY_CONFIG } from '../../utils/arenaStorageKeys.js';
 import { useTranslation } from '../../i18n';
+import HeadingInfoTip from '../common/HeadingInfoTip.jsx';
 
 export default function ArenaDifficultySelector({
   selectedDifficulty = 'medium',
@@ -94,13 +95,24 @@ export default function ArenaDifficultySelector({
   const activeMobileTheme = getThemeByDiffId(selectedDiffObj.id);
 
   return (
-    <div className="w-full flex flex-col gap-2 sm:gap-2.5 select-none">
-      {/* Header: Label + Topic Pill */}
+    <div className="w-full flex flex-col gap-1.5 sm:gap-2 select-none">
+      {/* Header: Label + HeadingInfoTip + Topic Pill */}
       <div className="flex items-center justify-between gap-2">
-        <label className="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5 shrink-0">
-          <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-          <span>{isEn ? 'Difficulty' : 'Cấp Độ'}</span>
-        </label>
+        <div className="flex items-center gap-1 shrink-0">
+          <label className="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5 shrink-0">
+            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+            <span>{isEn ? 'Difficulty' : 'Cấp Độ'}</span>
+          </label>
+          <HeadingInfoTip
+            title={isEn ? 'Sprint Difficulty Tiers' : 'Các Cấp Độ Tốc Chiến'}
+            content={isEn
+              ? '• Easy (Band 4.0-5.0): Basic vocabulary & straightforward questions (+12 XP)\n• Medium (Band 5.5-6.5): B2 paraphrase & tricky audio traps (+20 XP)\n• Hard (Band 7.0-8.0): C1 lexicon & logic traps (+32 XP)\n• Master (Band 8.5-9.0): C2 mastery & complex logic (+50 XP)'
+              : '• Dễ (Band 4.0-5.0): Từ vựng & bẫy cơ bản (+12 XP)\n• Trung bình (Band 5.5-6.5): Paraphrase B2 & bẫy nghe (+20 XP)\n• Khó (Band 7.0-8.0): Từ vựng C1 & bẫy logic (+32 XP)\n• Bậc thầy (Band 8.5-9.0): Từ vựng C2 & logic cao cấp (+50 XP)'
+            }
+            dark={true}
+            isEn={isEn}
+          />
+        </div>
         {currentTopic && (
           <div className="flex items-center gap-1.5 text-[11px] font-semibold px-2 sm:px-2.5 py-0.5 rounded-lg bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 truncate max-w-[190px] sm:max-w-none">
             <span className="text-xs shrink-0">{currentTopic.icon}</span>
@@ -183,6 +195,7 @@ export default function ArenaDifficultySelector({
               type="button"
               onClick={() => onSelectDifficulty?.(diff.id)}
               className={`p-2 sm:p-2.5 rounded-xl border text-left flex flex-col justify-between transition-all cursor-pointer transform hover:scale-[1.01] active:scale-[0.99] ${ringColor}`}
+              title={`${isEn ? diff.nameEn : diff.name} • ${isEn ? diff.descEn : diff.descVi}`}
             >
               <div>
                 <div className="flex items-center justify-between mb-1">
@@ -194,13 +207,9 @@ export default function ArenaDifficultySelector({
                 <div className="text-xs sm:text-sm font-black text-slate-100 leading-tight">
                   {isEn ? diff.nameEn : diff.name}
                 </div>
-                <div className="text-[10px] sm:text-[11px] text-slate-400 mt-1 line-clamp-1 sm:line-clamp-2 leading-tight">
-                  {isEn ? diff.descEn : diff.descVi}
-                </div>
               </div>
 
-              <div className="mt-2 pt-1.5 border-t border-slate-800/80 flex items-center justify-between text-[10px]">
-                <span className="text-slate-500 font-medium">{isEn ? 'Max' : 'Tối đa'}:</span>
+              <div className="mt-1.5 pt-1 border-t border-slate-800/80 flex items-center justify-end text-[10px]">
                 <span className="font-mono font-bold text-amber-400">~{diff.maxSprintXp} XP</span>
               </div>
             </button>

@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { Trophy, Flame, ArrowUp, ArrowDown, ShieldCheck, Sparkles, UserCheck, Shield, ChevronRight } from 'lucide-react';
 import { useTranslation } from '../../i18n';
+import HeadingInfoTip from '../common/HeadingInfoTip.jsx';
 import { computeGhostRivalPacing } from '../../services/gamification/leagueEngine.js';
 import { getInventoryItemQuantity } from '../../services/gamification/atlasWalletService.js';
 
@@ -47,8 +48,16 @@ export default function ArenaRelativeLeaderboard({
         <div className="flex flex-col gap-0.5">
           <div className="flex items-center gap-1.5">
             <Trophy className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-            <h3 className="text-xs sm:text-sm font-bold text-slate-100">
-              {t('arena.leaderboardTitle')}
+            <h3 className="text-xs sm:text-sm font-bold text-slate-100 flex items-center">
+              <span>{t('arena.leaderboardTitle')}</span>
+              <HeadingInfoTip
+                title={isEn ? 'Cohort Leaderboard' : 'Bảng Xếp Hạng Nhóm'}
+                content={isEn
+                  ? '• 100% Real learners in your weekly cohort\n• Click any learner to view profile & trophy showcase\n• Top 20% promoted to higher league weekly\n• Bottom 15% relegated'
+                  : '• 100% Học viên thực cùng nhóm tuần của bạn\n• Nhấp vào bất kỳ học viên nào để xem hồ sơ và phòng danh hiệu\n• Top 20% thăng hạng giải đấu hàng tuần\n• 15% cuối bảng rớt hạng'}
+                dark={true}
+                isEn={isEn}
+              />
             </h3>
           </div>
           <div className="flex items-center gap-1.5 text-[10px] sm:text-[11px] text-emerald-400 font-medium">
@@ -294,9 +303,8 @@ export default function ArenaRelativeLeaderboard({
       </div>
 
       {/* Real Learners Interactive Footer */}
-      <div className="pt-1.5 border-t border-slate-800/80 flex items-center justify-between text-[10px] sm:text-[11px] text-slate-400">
-        <span>{t('arena.clickToViewProfile')}</span>
-        <span className="text-indigo-400 font-semibold">{t('arena.autoPromotionNotice')}</span>
+      <div className="pt-1.5 border-t border-slate-800/80 flex items-center justify-end text-[10px] sm:text-[11px] text-indigo-400 font-semibold">
+        <span>⚡ {t('arena.autoPromotionNotice')}</span>
       </div>
     </div>
   );

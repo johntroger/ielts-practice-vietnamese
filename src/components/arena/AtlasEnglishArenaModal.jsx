@@ -1246,7 +1246,7 @@ export default function AtlasEnglishArenaModal({
                   <div className="flex items-center justify-between gap-1.5 min-w-0">
                     <div className="flex items-center gap-1.5 text-indigo-400 text-[10px] sm:text-xs font-black uppercase tracking-wider min-w-0">
                       <Trophy className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                      <span className="truncate">{t('arena.rulesBadge')}</span>
+                      <span className="truncate">{isEn ? '⚡ Cambridge Reflex Sprint' : '⚡ Tốc Chiến Phản Xạ Cambridge'}</span>
                     </div>
 
                     {/* Mobile Quick Switch Pill to World Boss */}
@@ -1276,9 +1276,6 @@ export default function AtlasEnglishArenaModal({
                         <span className="text-xs sm:text-sm font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-yellow-200 to-indigo-300">
                           Atli • {isEn ? 'Little Titan' : 'Tiểu Titan'}
                         </span>
-                        <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-300 font-bold uppercase tracking-wider border border-amber-500/30">
-                          Mascot
-                        </span>
                       </div>
                       <p className="text-[11px] text-slate-300 leading-tight mt-0.5">
                         {streakShieldState?.shieldsRemaining === 0
@@ -1294,26 +1291,28 @@ export default function AtlasEnglishArenaModal({
                   <h2 className="text-sm sm:text-lg lg:text-xl font-black text-slate-100 leading-tight sm:leading-snug tracking-tight flex items-center justify-center">
                     <span>{t('arena.heroTitle')}</span>
                     <HeadingInfoTip
-                      content={t('arena.heroDescription')}
                       title={t('arena.heroTitle')}
+                      content={isEn 
+                        ? '• Rules: 7 questions • 180s timer • 5 shields max\n• Scoring: Speed bonus + streak multiplier + difficulty scale\n• Cambridge Traps: Beware paraphrasing and auditory distractors!'
+                        : '• Quy tắc: 7 câu hỏi • Giới hạn 180s • Tối đa 5 khiên\n• Điểm số: Thưởng tốc độ + hệ số chuỗi + cấp độ câu hỏi\n• Bẫy Cambridge: Cẩn thận các bẫy đảo ngữ, bẫy nghe và paraphrase!'}
                       dark={true}
                       isEn={isEn}
                     />
                   </h2>
 
                   <div className="grid grid-cols-3 gap-2 pt-0.5">
-                    <div className="bg-slate-900/80 border border-slate-800 rounded-lg py-1.5 px-2 text-center shadow-xs">
+                    <div className="bg-slate-900/80 border border-slate-800 rounded-lg py-1 px-2 text-center shadow-xs">
                       <div className="text-sm sm:text-base font-black text-indigo-300 font-mono">180s</div>
                       <div className="text-[10px] sm:text-[11px] text-slate-400 font-medium truncate">{t('arena.durationLabel')}</div>
                     </div>
-                    <div className="bg-slate-900/80 border border-slate-800 rounded-lg py-1.5 px-2 text-center shadow-xs">
+                    <div className="bg-slate-900/80 border border-slate-800 rounded-lg py-1 px-2 text-center shadow-xs">
                       <div className="text-sm sm:text-base font-black text-emerald-300 flex items-center justify-center gap-1">
                         <span>{t('arena.shieldsUnit')}</span>
                         <span className="text-xs">🛡️</span>
                       </div>
                       <div className="text-[10px] sm:text-[11px] text-slate-400 font-medium truncate">{t('arena.shieldsLabel')}</div>
                     </div>
-                    <div className="bg-slate-900/80 border border-slate-800 rounded-lg py-1.5 px-2 text-center shadow-xs">
+                    <div className="bg-slate-900/80 border border-slate-800 rounded-lg py-1 px-2 text-center shadow-xs">
                       <div className="text-sm sm:text-base font-black text-amber-300 font-mono">
                         ~{ARENA_DIFFICULTY_CONFIG[selectedDifficulty]?.maxSprintXp || 200}
                       </div>
@@ -1331,20 +1330,23 @@ export default function AtlasEnglishArenaModal({
                   {/* Compact Tactical Perk Selector (Select 1 of 4, or up to 2 if Dual-Perk Slot owned) */}
                   <div className="flex flex-col gap-1 pt-0.5">
                     <div className="flex items-center justify-between text-[11px] font-bold text-slate-300">
-                      <span className="flex items-center gap-1.5 uppercase tracking-wider text-indigo-300">
+                      <span className="flex items-center gap-1 uppercase tracking-wider text-indigo-300">
                         <span>⚡</span>
-                        <span>{isEn ? 'Perk:' : 'Bổ Trợ:'}</span>
-                        {hasDualPerkSlot && (
-                          <span className="px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[9px] font-black uppercase tracking-wider">
-                            {isEn ? 'Dual-Slot Active' : '2 Ô Bổ Trợ'}
-                          </span>
-                        )}
+                        <span>{isEn ? 'Tactical Perks' : 'Kỹ Năng Bổ Trợ'}</span>
+                        <HeadingInfoTip
+                          title={isEn ? 'Tactical Perks' : 'Kỹ Năng Bổ Trợ Chiến Thuật'}
+                          content={isEn
+                            ? '• Pure Reflex: Raw skill mastery, zero assistance\n• Titan Armor: Start sprint with +1 Shield (6 total)\n• Chronos Freeze: Adds +15s emergency time freeze\n• Oracle Trap: Eliminates 1 deceptive distractor option\n*Equip 2 perks simultaneously by unlocking Dual-Slot in Treasury!'
+                            : '• Phản xạ thuần: Thi đấu thuần kỹ năng, không trợ giúp\n• Giáp Titan: Khởi đầu trận đấu với +1 Khiên (tổng 6 khiên)\n• Đóng băng Chronos: Kích hoạt đóng băng thêm +15s thời gian\n• Triệt tiêu Oracle: Loại bỏ 1 phương án bẫy gây nhiễu\n*Trang bị cùng lúc 2 kỹ năng khi mở khóa Ô Kỹ Năng Đôi tại Kho Báu!'}
+                          dark={true}
+                          isEn={isEn}
+                        />
                       </span>
-                      <span className="text-[10px] text-slate-400 font-normal">
-                        {selectedPerks.length === 0
-                          ? (isEn ? 'None equipped' : 'Chưa trang bị')
-                          : selectedPerks.map(p => isEn ? getPerkById(p).nameEn : getPerkById(p).nameVi).join(' + ')}
-                      </span>
+                      {hasDualPerkSlot && (
+                        <span className="px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[9px] font-black uppercase tracking-wider">
+                          {isEn ? 'Dual-Slot Active' : '2 Ô Bổ Trợ'}
+                        </span>
+                      )}
                     </div>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
                       {ARENA_PERK_LIST.map((perk) => {
