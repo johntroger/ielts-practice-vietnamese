@@ -85,6 +85,17 @@ export function filterPool(vocabList, { scope = 'all', topic = 'all' } = {}) {
 }
 
 /**
+ * Orders wrong-answer candidates so words from the same topic come first
+ * (harder, more realistic options); the rest follow. Each group is shuffled.
+ */
+export function orderByTopic(candidates, item, rand = Math.random) {
+  if (!item?.topic) return shuffle(candidates, rand);
+  const same = candidates.filter(v => v.topic === item.topic);
+  const other = candidates.filter(v => v.topic !== item.topic);
+  return [...shuffle(same, rand), ...shuffle(other, rand)];
+}
+
+/**
  * Builds a practice session from a pool.
  * mode: 'cloze' | 'choice' | 'reverse' | 'scramble' | 'dictation'
  * `distractorSource` is the full vault, used for wrong options.
@@ -98,8 +109,9 @@ export function buildSession(pool, mode, { size = 10, isEn = false, rand = Math.
     const base = { id: item.id, item, mode, answer: phrase };
 
     if (mode === 'choice') {
-      const distractors = shuffle(
+      const distractors = orderByTopic(
         source.filter(v => normalizeAnswer(v.phrase) !== normalizeAnswer(phrase)),
+        item,
         rand
       ).slice(0, 3).map(v => v.phrase.trim());
       return {
@@ -111,13 +123,13 @@ export function buildSession(pool, mode, { size = 10, isEn = false, rand = Math.
 
     if (mode === 'reverse') {
       const meaning = getLocalizedVocabMeaning(item, isEn);
-      const distractors = shuffle(
-        source
-          .filter(v => normalizeAnswer(v.phrase) !== normalizeAnswer(phrase))
-          .map(v => getLocalizedVocabMeaning(v, isEn))
-          .filter(m => m && normalizeAnswer(m) !== normalizeAnswer(meaning)),
+      const distractors = orderByTopic(
+        source.filter(v => normalizeAnswer(v.phrase) !== normalizeAnswer(phrase)),
+        item,
         rand
-      );
+      )
+        .map(v => getLocalizedVocabMeaning(v, isEn))
+        .filter(m => m && normalizeAnswer(m) !== normalizeAnswer(meaning));
       const unique = [...new Set(distractors)].slice(0, 3);
       return {
         ...base,
