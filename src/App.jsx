@@ -590,6 +590,56 @@ export default function App() {
     }
   }, [modals.atlasArena]);
 
+  // Dedicated Two-Way URL Routing & Deep-Linking for Vocab Vault (/vocab-vault & /so-tay-tu-vung)
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const VAULT_PATHS = ['/vocab-vault', '/so-tay-tu-vung'];
+    const checkIsVaultRoute = () => {
+      const pathname = window.location.pathname.toLowerCase().replace(/\/+$/, '');
+      const hash = window.location.hash.toLowerCase();
+      return VAULT_PATHS.includes(pathname) || hash === '#vocab-vault';
+    };
+
+    if (checkIsVaultRoute()) openModal('notebook');
+
+    const handleLocationChange = () => {
+      if (checkIsVaultRoute()) openModal('notebook');
+      else closeModal('notebook');
+    };
+
+    window.addEventListener('popstate', handleLocationChange);
+    window.addEventListener('hashchange', handleLocationChange);
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange);
+      window.removeEventListener('hashchange', handleLocationChange);
+    };
+  }, [openModal, closeModal]);
+
+  // Sync address bar when modals.notebook opens or closes
+  const vaultMountedRef = React.useRef(false);
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    // Skip first run so a direct visit to /vocab-vault isn't reset before the modal opens
+    if (!vaultMountedRef.current) {
+      vaultMountedRef.current = true;
+      return;
+    }
+    const isOpen = Boolean(modals.notebook);
+    const pathname = window.location.pathname.toLowerCase().replace(/\/+$/, '');
+    const onVaultUrl = pathname === '/vocab-vault' || pathname === '/so-tay-tu-vung';
+
+    try {
+      if (isOpen && !onVaultUrl) {
+        window.history.pushState({ modal: 'notebook' }, '', '/vocab-vault');
+      } else if (!isOpen && onVaultUrl) {
+        window.history.pushState(null, '', '/');
+      }
+    } catch (e) {
+      // History API unavailable; ignore
+    }
+  }, [modals.notebook]);
+
   // Dedicated Two-Way URL Routing & Deep-Linking for About Page (/about & /gioi-thieu)
   useEffect(() => {
     if (typeof window === 'undefined') return;
