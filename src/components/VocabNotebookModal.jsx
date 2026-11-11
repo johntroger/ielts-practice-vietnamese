@@ -39,6 +39,7 @@ export default function VocabNotebookModal({
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTopic, setSelectedTopic] = useState('all');
   const [isAdding, setIsAdding] = useState(false);
+  const [sortMode, setSortMode] = useState('newest'); // 'newest' | 'az' | 'za'
 
   // Form State
   const [phrase, setPhrase] = useState('');
@@ -57,6 +58,11 @@ export default function VocabNotebookModal({
   const dueItems = getDueItems(vocabList);
   const currentCard = dueItems[currentCardIndex] || null;
 
+  const normalizePhrase = (s) => (s || '').trim().replace(/\s+/g, ' ').toLowerCase();
+  const existingPhrase = phrase.trim()
+    ? vocabList.find(v => normalizePhrase(v.phrase) === normalizePhrase(phrase))
+    : null;
+
   const filteredVocabs = vocabList.filter(v => {
     const matchesTopic = selectedTopic === 'all' || v.topic === selectedTopic;
     const matchesSearch = !searchQuery ||
@@ -64,11 +70,16 @@ export default function VocabNotebookModal({
       v.meaningVi?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       v.example?.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesTopic && matchesSearch;
+  }).sort((a, b) => {
+    if (sortMode === 'az') return (a.phrase || '').localeCompare(b.phrase || '', 'en', { sensitivity: 'base' });
+    if (sortMode === 'za') return (b.phrase || '').localeCompare(a.phrase || '', 'en', { sensitivity: 'base' });
+    return 0; // 'newest' keeps stored order (newest first)
   });
 
   const handleCreateVocab = (e) => {
     e.preventDefault();
     if (!phrase.trim() || !meaningVi.trim()) return;
+    if (existingPhrase) return; // duplicate: warning is shown inline
     const newVocab = initSrsItem({
       id: `vocab-${Date.now()}`,
       phrase: phrase.trim(),
@@ -207,6 +218,17 @@ export default function VocabNotebookModal({
                   ))}
                 </select>
 
+                <select
+                  value={sortMode}
+                  onChange={(e) => setSortMode(e.target.value)}
+                  aria-label={isEn ? 'Sort vocabulary' : 'Sắp xếp từ vựng'}
+                  className="px-3 py-2 rounded-xl border border-slate-200 text-xs bg-white text-slate-700 font-medium focus:outline-none cursor-pointer"
+                >
+                  <option value="newest">{isEn ? 'Newest first' : 'Mới nhất'}</option>
+                  <option value="az">{isEn ? 'A → Z' : 'A → Z'}</option>
+                  <option value="za">{isEn ? 'Z → A' : 'Z → A'}</option>
+                </select>
+
                 <button
                   onClick={() => setIsAdding(!isAdding)}
                   className="flex items-center space-x-1 px-3 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold transition-colors shrink-0 cursor-pointer"
@@ -247,6 +269,13 @@ export default function VocabNotebookModal({
                     onChange={e => setExample(e.target.value)}
                     className="w-full px-3 py-2 rounded-xl border border-amber-200 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/20"
                   />
+                  {existingPhrase && (
+                    <div role="alert" className="px-3 py-2 rounded-xl bg-red-50 border border-red-200 text-xs text-red-700 font-semibold">
+                      {isEn
+                        ? `"${existingPhrase.phrase}" already exists in your vault.`
+                        : `"${existingPhrase.phrase}" đã tồn tại trong sổ tay của bạn.`}
+                    </div>
+                  )}
                   <div className="flex items-center justify-between pt-1">
                     <select
                       value={topic}
@@ -259,7 +288,8 @@ export default function VocabNotebookModal({
                     </select>
                     <button
                       type="submit"
-                      className="px-4 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold transition-all shadow-2xs cursor-pointer"
+                      disabled={Boolean(existingPhrase)}
+                      className="px-4 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold transition-all shadow-2xs cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {isEn ? 'Save Vocabulary' : 'Lưu Từ Vựng'}
                     </button>

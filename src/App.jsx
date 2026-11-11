@@ -31,6 +31,7 @@ import { setCdiFontSize as setCdiFontSizeInStore, setCdiContrast as setCdiContra
 import { auditAndCleanWebsiteContent } from './services/deduplicationService';
 import { trackSkillView } from './services/analyticsService.js';
 import { useTranslation } from './i18n';
+import { addVocabUnique } from './utils/vocabDuplicate';
 import { GITBOOK_FEATURES_BASE_URL } from './core/featureRegistry';
 
 export default function App() {
@@ -1402,7 +1403,7 @@ export default function App() {
                 onOpenSettings={() => openModal('settings')}
                 onOpenTheory={(opts) => openModal('theory', { skill: 'reading', ...(typeof opts === 'object' ? opts : {}) })}
                 user={currentUser}
-                onSaveToVocabNotebook={(v) => setVocabList(prev => [v, ...prev])}
+                onSaveToVocabNotebook={(v) => addVocabUnique(vocabList, v, setVocabList)}
                 onReadingSubmitted={(sub) => {
                   setReadingHistory(prev => [sub, ...prev]);
 
@@ -1456,7 +1457,7 @@ export default function App() {
                 onOpenSettings={() => openModal('settings')}
                 onOpenTheory={(opts) => openModal('theory', { skill: 'listening', ...(typeof opts === 'object' ? opts : {}) })}
                 user={currentUser}
-                onSaveToVocabNotebook={(v) => setVocabList(prev => [v, ...prev])}
+                onSaveToVocabNotebook={(v) => addVocabUnique(vocabList, v, setVocabList)}
                 onOpenDrills={() => openModal('drills')}
                 onListeningSubmitted={(sub) => {
                   setListeningHistory(prev => [sub, ...prev]);
@@ -1508,7 +1509,7 @@ export default function App() {
                 onOpenSettings={() => openModal('settings')}
                 user={currentUser}
                 onOpenTheory={(opts) => openModal('theory', { skill: 'speaking', ...(typeof opts === 'object' ? opts : {}) })}
-                onSaveToVocabNotebook={(v) => setVocabList(prev => [v, ...prev])}
+                onSaveToVocabNotebook={(v) => addVocabUnique(vocabList, v, setVocabList)}
                 onSpeakingSubmitted={(sub) => {
                   setSpeakingHistory(prev => [sub, ...prev]);
                 }}
@@ -1573,7 +1574,7 @@ export default function App() {
             setIsSlimHeader={setIsSlimHeader}
             vocabList={vocabList}
             onAddVocab={(v) => {
-              setVocabList(prev => [v, ...prev]);
+              if (!addVocabUnique(vocabList, v, setVocabList)) return;
               if (currentUser) saveUserVocabItem(currentUser.id, v);
             }}
             currentUser={currentUser}

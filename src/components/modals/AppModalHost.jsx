@@ -4,6 +4,7 @@ import { useModalStore } from '../../core/modalStore';
 import { useAppStore } from '../../core/appStore';
 import { countWords } from '../../utils/textAnalytics';
 import { useTranslation } from '../../i18n';
+import { addVocabUnique } from '../../utils/vocabDuplicate';
 
 // ==========================================
 // LAZY-LOADED MODAL CHUNKS (CODE-SPLIT)
@@ -228,7 +229,7 @@ export default function AppModalHost({
             apiKey={apiKey}
             model={model}
             onSaveToNotebook={(v) => {
-              setVocabList(prev => [v, ...prev]);
+              if (!addVocabUnique(vocabList, v, setVocabList)) return;
               if (onSaveUserVocab) onSaveUserVocab(v);
             }}
             currentUser={currentUser}
@@ -329,7 +330,7 @@ export default function AppModalHost({
           }}
           onSaveToMistakeLog={(m) => setMistakes(prev => [m, ...prev])}
           onSaveToVocabNotebook={(v) => {
-            setVocabList(prev => [v, ...prev]);
+            if (!addVocabUnique(vocabList, v, setVocabList)) return;
             if (onSaveUserVocab) onSaveUserVocab(v);
           }}
           onOpenRevision={() => openModal('revision')}
@@ -392,12 +393,16 @@ export default function AppModalHost({
           onClose={() => closeModal('notebook')}
           vocabList={vocabList}
           onAddVocab={(v) => {
-            setVocabList(prev => [v, ...prev]);
+            if (!addVocabUnique(vocabList, v, setVocabList)) return;
             if (onSaveUserVocab) onSaveUserVocab(v);
           }}
           onDeleteVocab={(id) => {
             setVocabList(prev => prev.filter((v, i) => (v.id || i) !== id));
             if (onDeleteUserVocab) onDeleteUserVocab(id);
+          }}
+          onUpdateVocab={(updated) => {
+            setVocabList(prev => prev.map(v => (v.id === updated.id ? updated : v)));
+            if (onSaveUserVocab) onSaveUserVocab(updated);
           }}
           onClearAll={() => setVocabList([])}
         />
@@ -465,7 +470,7 @@ export default function AppModalHost({
           isOpen={Boolean(modals.paraphrase)}
           onClose={() => closeModal('paraphrase')}
           onSaveToNotebook={(v) => {
-            setVocabList(prev => [v, ...prev]);
+            if (!addVocabUnique(vocabList, v, setVocabList)) return;
             if (onSaveUserVocab) onSaveUserVocab(v);
           }}
         />
@@ -482,7 +487,7 @@ export default function AppModalHost({
           examiner={selectedHistorySpeakingSub.examiner}
           totalDurationSec={selectedHistorySpeakingSub.durationSec}
           onSaveToVocabNotebook={(v) => {
-            setVocabList(prev => [v, ...prev]);
+            if (!addVocabUnique(vocabList, v, setVocabList)) return;
             if (onSaveUserVocab) onSaveUserVocab(v);
           }}
           onSaveMistake={(m) => setMistakes(prev => [m, ...prev])}
@@ -509,7 +514,7 @@ export default function AppModalHost({
           vocabList={vocabList}
           targetBand={targetBand}
           onSaveToVocabNotebook={(v) => {
-            setVocabList(prev => [v, ...prev]);
+            if (!addVocabUnique(vocabList, v, setVocabList)) return;
             if (onSaveUserVocab) onSaveUserVocab(v);
           }}
         />
@@ -614,7 +619,7 @@ export default function AppModalHost({
           onClearSpeakingHistory={onClearSpeakingHistory}
           onClearAllHistory={onClearAllHistory}
           onSaveToVocabNotebook={(v) => {
-            setVocabList(prev => [v, ...prev]);
+            if (!addVocabUnique(vocabList, v, setVocabList)) return;
             if (onSaveUserVocab) onSaveUserVocab(v);
           }}
           onSaveMistake={(m) => setMistakes(prev => [m, ...prev])}
