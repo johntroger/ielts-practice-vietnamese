@@ -40,6 +40,8 @@ export default function VocabNotebookModal({
   const [selectedTopic, setSelectedTopic] = useState('all');
   const [isAdding, setIsAdding] = useState(false);
   const [sortMode, setSortMode] = useState('newest'); // 'newest' | 'az' | 'za'
+  const [page, setPage] = useState(1);
+  const PAGE_SIZE = 24;
 
   // Form State
   const [phrase, setPhrase] = useState('');
@@ -75,6 +77,18 @@ export default function VocabNotebookModal({
     if (sortMode === 'za') return (b.phrase || '').localeCompare(a.phrase || '', 'en', { sensitivity: 'base' });
     return 0; // 'newest' keeps stored order (newest first)
   });
+
+  const totalPages = Math.max(1, Math.ceil(filteredVocabs.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const pagedVocabs = filteredVocabs.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+  // Compact page list: 1 … 4 5 [6] 7 8 … 20
+  const pageNumbers = [];
+  for (let p = 1; p <= totalPages; p++) {
+    if (p === 1 || p === totalPages || Math.abs(p - currentPage) <= 2) pageNumbers.push(p);
+    else if (pageNumbers[pageNumbers.length - 1] !== '…') pageNumbers.push('…');
+  }
+  const goToPage = (p) => setPage(Math.min(Math.max(1, p), totalPages));
 
   const handleCreateVocab = (e) => {
     e.preventDefault();
@@ -200,7 +214,7 @@ export default function VocabNotebookModal({
                 <input
                   type="text"
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={(e) => { setSearchQuery(e.target.value); setPage(1); }}
                   placeholder={isEn ? "Search vocabulary or meaning..." : "Tìm từ vựng hoặc nghĩa tiếng Việt..."}
                   className="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-amber-500/20 bg-white"
                 />
@@ -209,7 +223,7 @@ export default function VocabNotebookModal({
               <div className="flex items-center space-x-2 w-full sm:w-auto justify-between">
                 <select
                   value={selectedTopic}
-                  onChange={(e) => setSelectedTopic(e.target.value)}
+                  onChange={(e) => { setSelectedTopic(e.target.value); setPage(1); }}
                   className="px-3 py-2 rounded-xl border border-slate-200 text-xs bg-white text-slate-700 font-medium focus:outline-none cursor-pointer"
                 >
                   <option value="all">{isEn ? 'All Topics' : 'Tất cả chủ đề'}</option>
@@ -220,7 +234,7 @@ export default function VocabNotebookModal({
 
                 <select
                   value={sortMode}
-                  onChange={(e) => setSortMode(e.target.value)}
+                  onChange={(e) => { setSortMode(e.target.value); setPage(1); }}
                   aria-label={isEn ? 'Sort vocabulary' : 'Sắp xếp từ vựng'}
                   className="px-3 py-2 rounded-xl border border-slate-200 text-xs bg-white text-slate-700 font-medium focus:outline-none cursor-pointer"
                 >
@@ -299,7 +313,7 @@ export default function VocabNotebookModal({
 
               {filteredVocabs.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-                  {filteredVocabs.map((v, idx) => (
+                  {pagedVocabs.map((v, idx) => (
                     <div key={v.id || idx} className="p-3.5 rounded-xl border border-slate-200 bg-white shadow-2xs space-y-1.5 group hover:border-amber-300 transition-all">
                       <div className="flex items-center justify-between">
                         <span className="font-bold text-sm text-slate-900 group-hover:text-amber-600 transition-colors">
@@ -339,6 +353,51 @@ export default function VocabNotebookModal({
                     ? 'No vocabulary in notebook yet. Use Paraphrase search or bookmark collocations from sample essays and AI examiner feedback!' 
                     : 'Chưa có từ vựng nào trong sổ. Hãy tra từ điển Paraphrase hoặc bấm lưu từ bài mẫu và nhận xét của giám khảo AI!'}
                 </div>
+              )}
+
+              {filteredVocabs.length > PAGE_SIZE && (
+                <nav
+                  aria-label={isEn ? 'Vocabulary pages' : 'Phân trang từ vựng'}
+                  className="flex flex-col sm:flex-row items-center justify-between gap-2 pt-4 border-t border-slate-100"
+                >
+                  <span className="text-[11px] text-slate-500 font-medium">
+                    {isEn
+                      ? `Showing ${(currentPage - 1) * PAGE_SIZE + 1}–${Math.min(currentPage * PAGE_SIZE, filteredVocabs.length)} of ${filteredVocabs.length}`
+                      : `Hiển thị ${(currentPage - 1) * PAGE_SIZE + 1}–${Math.min(currentPage * PAGE_SIZE, filteredVocabs.length)} / ${filteredVocabs.length} từ`}
+                  </span>
+                  <div className="flex items-center flex-wrap justify-center gap-1">
+                    <button
+                      onClick={() => goToPage(currentPage - 1)}
+                      disabled={currentPage === 1}
+                      className="px-2.5 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-600 bg-white hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                    >
+                      {isEn ? 'Prev' : 'Trước'}
+                    </button>
+                    {pageNumbers.map((p, i) => p === '…' ? (
+                      <span key={`gap-${i}`} className="px-1 text-xs text-slate-400">…</span>
+                    ) : (
+                      <button
+                        key={p}
+                        onClick={() => goToPage(p)}
+                        aria-current={p === currentPage ? 'page' : undefined}
+                        className={`min-w-[32px] px-2 py-1.5 rounded-lg border text-xs font-bold cursor-pointer ${
+                          p === currentPage
+                            ? 'bg-amber-500 border-amber-500 text-white'
+                            : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                        }`}
+                      >
+                        {p}
+                      </button>
+                    ))}
+                    <button
+                      onClick={() => goToPage(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                      className="px-2.5 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-600 bg-white hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                    >
+                      {isEn ? 'Next' : 'Sau'}
+                    </button>
+                  </div>
+                </nav>
               )}
             </div>
           </>
