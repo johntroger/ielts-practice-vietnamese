@@ -93,7 +93,7 @@ export function buildSession(pool, mode, { size = 10, isEn = false, rand = Math.
   const source = (distractorSource || pool).filter(v => (v?.phrase || '').trim());
   const picked = shuffle(pool.filter(v => (v?.phrase || '').trim()), rand).slice(0, size);
 
-  return picked.map((item) => {
+  const questions = picked.map((item) => {
     const phrase = item.phrase.trim();
     const base = { id: item.id, item, mode, answer: phrase };
 
@@ -151,6 +151,9 @@ export function buildSession(pool, mode, { size = 10, isEn = false, rand = Math.
       hint: blanked ? getLocalizedVocabMeaning(item, isEn) : ''
     };
   });
+
+  // Small vaults may not yield enough distinct options for a multiple-choice question
+  return questions.filter(q => !q.options || q.options.length >= 2);
 }
 
 /** Builds one matching board (phrases vs meanings) of up to `size` pairs. */

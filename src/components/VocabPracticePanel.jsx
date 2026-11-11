@@ -21,11 +21,11 @@ const MODES = [
     titleEn: 'Fill in the blank', titleVi: 'Điền từ vào chỗ trống',
     descEn: 'Type the missing word from your saved example sentence.',
     descVi: 'Gõ từ còn thiếu trong câu ví dụ bạn đã lưu.' },
-  { id: 'choice', icon: ListChecks, minPool: 1, minVault: 4,
+  { id: 'choice', icon: ListChecks, minPool: 1, minVault: 2,
     titleEn: 'Meaning → Word', titleVi: 'Nghĩa → Từ',
     descEn: 'Pick the correct word for the meaning shown.',
     descVi: 'Chọn từ đúng với nghĩa được hiển thị.' },
-  { id: 'reverse', icon: ArrowLeftRight, minPool: 1, minVault: 4,
+  { id: 'reverse', icon: ArrowLeftRight, minPool: 1, minVault: 2,
     titleEn: 'Word → Meaning', titleVi: 'Từ → Nghĩa',
     descEn: 'See the word, choose the right meaning.',
     descVi: 'Nhìn từ tiếng Anh, chọn nghĩa đúng.' },
@@ -50,7 +50,9 @@ const SCOPES = [
   { id: 'new', en: 'New words', vi: 'Từ mới' }
 ];
 
-const LENGTHS = [10, 20, 30];
+const LENGTHS = [10, 20, 30, 50];
+const ALL_CAP = 100; // 'All' is capped so a huge vault stays playable
+const ALL_VALUE = 0;
 
 export default function VocabPracticePanel({ vocabList, isEn, onUpdateVocab }) {
   // setup
@@ -128,8 +130,13 @@ export default function VocabPracticePanel({ vocabList, isEn, onUpdateVocab }) {
       setSession([]);
       return;
     }
-    const size = poolOverride ? poolOverride.length : length;
-    setSession(buildSession(usePool, m, { size, isEn, distractorSource: vocabList }));
+    const size = poolOverride ? poolOverride.length : (length === ALL_VALUE ? ALL_CAP : length);
+    const built = buildSession(usePool, m, { size, isEn, distractorSource: vocabList });
+    if (built.length === 0) {
+      setMode(null); // not enough distinct data for this mode
+      return;
+    }
+    setSession(built);
   };
 
   const exit = () => {
@@ -219,10 +226,32 @@ export default function VocabPracticePanel({ vocabList, isEn, onUpdateVocab }) {
     }
   };
 
-  const modeEligibility = MODES.map(m => ({
-    ...m,
-    ok: pool.length >= m.minPool && vocabList.length >= m.minVault
-  }));
+  const uniqueCount = (list) =>
+    new Set(list.map(v => normalizeAnswer(getLocalizedVocabMeaning(v, isEn))).filter(Boolean)).size;
+  const poolMeanings = useMemo(() => uniqueCount(pool), [pool, isEn]); // eslint-disable-line react-hooks/exhaustive-deps
+  const vaultMeanings = useMemo(() => uniqueCount(vocabList), [vocabList, isEn]); // eslint-disable-line react-hooks/exhaustive-deps
+  const vaultPhrases = useMemo(
+    () => new Set(vocabList.map(v => normalizeAnswer(v.phrase)).filter(Boolean)).size,
+    [vocabList]
+  );
+
+  const modeEligibility = MODES.map(m => {
+    let ok = pool.length >= m.minPool && vocabList.length >= m.minVault;
+    if (m.id === 'choice') ok = ok && vaultPhrases >= 2;
+    if (m.id === 'reverse') ok = ok && vaultMeanings >= 2;
+    if (m.id === 'match') ok = ok && poolMeanings >= 3;
+    return { ...m, ok };
+  });
+
+  // Round-length choices adapt to the user's pool size
+  const lengthOptions = LENGTHS.filter(n => n < pool.length);
+  const effectiveLength = length === ALL_VALUE || length >= pool.length ? Math.min(pool.length, ALL_CAP) : length;
+  const scopeEmptyHint = {
+    due: isEn ? 'No words are due right now. Try "All words".' : 'Hiện chưa có từ nào đến hạn ôn. Hãy thử "Tất cả từ".',
+    weak: isEn ? 'No weak words yet — they appear after you review and miss some.' : 'Chưa có từ hay quên — chúng xuất hiện sau khi bạn ôn và trả lời sai một số từ.',
+    new: isEn ? 'No new words left. Try "All words".' : 'Không còn từ mới. Hãy thử "Tất cả từ".',
+    all: ''
+  }[scope];
 
   const accuracy = stats.answered ? Math.round((stats.correct / stats.answered) * 100) : 0;
 
@@ -272,12 +301,21 @@ export default function VocabPracticePanel({ vocabList, isEn, onUpdateVocab }) {
               <span>{isEn ? 'Words per round' : 'Số từ mỗi lượt'}</span>
               <select value={length} onChange={e => setLength(Number(e.target.value))}
                 className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs bg-white text-slate-700 font-medium cursor-pointer">
-                {LENGTHS.map(n => <option key={n} value={n}>{n}</option>)}
+                {lengthOptions.map(n => <option key={n} value={n}>{n}</option>)}
+                <option value={ALL_VALUE}>
+                  {isEn
+                    ? `All (${Math.min(pool.length, ALL_CAP)})`
+                    : `Tất cả (${Math.min(pool.length, ALL_CAP)})`}
+                </option>
               </select>
             </label>
           </div>
           <div className="text-xs text-slate-500">
-            {isEn ? `${pool.length} word(s) match your selection.` : `${pool.length} từ phù hợp với lựa chọn của bạn.`}
+            {pool.length === 0
+              ? (scopeEmptyHint || (isEn ? 'No words match your selection.' : 'Không có từ nào phù hợp với lựa chọn.'))
+              : (isEn
+                ? `${pool.length} word(s) match · this round: ${effectiveLength}`
+                : `${pool.length} từ phù hợp · lượt này: ${effectiveLength} từ`)}
           </div>
 
           {vocabList.length === 0 && (
