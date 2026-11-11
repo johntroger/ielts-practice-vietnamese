@@ -12,8 +12,13 @@ import {
   Check, 
   Clock, 
   Award,
-  Layers
+  Layers,
+  Volume2,
+  Dumbbell
 } from 'lucide-react';
+import VocabPracticePanel from './VocabPracticePanel';
+import { getMasteryLevel } from '../utils/vocabPractice';
+import { speakText } from '../utils/speechAudio';
 import { IELTS_TOPICS } from '../data/topics';
 import { 
   getDueItems, 
@@ -23,6 +28,19 @@ import {
 } from '../utils/srsService';
 import { getLocalizedVocabMeaning, getLocalizedTopicName } from '../utils/vocabLocalization';
 import { useTranslation } from '../i18n';
+
+const MASTERY_STYLES = {
+  new: 'bg-slate-100 text-slate-500',
+  learning: 'bg-amber-100 text-amber-700',
+  familiar: 'bg-blue-100 text-blue-700',
+  mastered: 'bg-emerald-100 text-emerald-700'
+};
+const MASTERY_LABELS = {
+  new: { en: 'New', vi: 'Mới' },
+  learning: { en: 'Learning', vi: 'Đang học' },
+  familiar: { en: 'Familiar', vi: 'Quen' },
+  mastered: { en: 'Mastered', vi: 'Thuộc' }
+};
 
 export default function VocabNotebookModal({
   isOpen,
@@ -202,7 +220,24 @@ export default function VocabNotebookModal({
               </span>
             )}
           </button>
+
+          <button
+            onClick={() => setActiveTab('practice')}
+            className={`flex items-center space-x-1.5 px-4 py-2.5 rounded-t-xl text-xs font-bold transition-all cursor-pointer ${
+              activeTab === 'practice'
+                ? 'bg-white text-emerald-700 border-t-2 border-emerald-500 shadow-2xs'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
+            }`}
+          >
+            <Dumbbell className="w-3.5 h-3.5 text-emerald-600" />
+            <span>{isEn ? 'Practice' : 'Luyện Tập'}</span>
+          </button>
         </div>
+
+        {/* TAB 3: ACTIVE RECALL PRACTICE */}
+        {activeTab === 'practice' && (
+          <VocabPracticePanel vocabList={vocabList} isEn={isEn} onUpdateVocab={onUpdateVocab} />
+        )}
 
         {/* TAB 1: TRUYỀN THỐNG (LIST VIEW) */}
         {activeTab === 'list' && (
@@ -320,6 +355,17 @@ export default function VocabNotebookModal({
                           {v.phrase}
                         </span>
                         <div className="flex items-center space-x-1">
+                          <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold ${MASTERY_STYLES[getMasteryLevel(v)]}`}>
+                            {isEn ? MASTERY_LABELS[getMasteryLevel(v)].en : MASTERY_LABELS[getMasteryLevel(v)].vi}
+                          </span>
+                          <button
+                            onClick={() => speakText(v.phrase)}
+                            className="p-1 text-slate-300 hover:text-amber-600 transition-colors cursor-pointer"
+                            title={isEn ? 'Listen' : 'Nghe phát âm'}
+                            aria-label={isEn ? 'Listen' : 'Nghe phát âm'}
+                          >
+                            <Volume2 className="w-3.5 h-3.5" />
+                          </button>
                           {v.intervalDays > 0 && (
                             <span className="px-1.5 py-0.2 rounded bg-slate-100 text-slate-500 text-[9px] font-bold" title={isEn ? `Review interval: ${v.intervalDays} days` : `Chu kỳ ôn: ${v.intervalDays} ngày`}>
                               {v.intervalDays}d
@@ -439,6 +485,14 @@ export default function VocabNotebookModal({
                       <div className="text-2xl font-black text-white tracking-wide px-4">
                         {currentCard.phrase}
                       </div>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); speakText(currentCard.phrase); }}
+                        className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-amber-300 cursor-pointer"
+                        aria-label={isEn ? 'Listen' : 'Nghe phát âm'}
+                        title={isEn ? 'Listen' : 'Nghe phát âm'}
+                      >
+                        <Volume2 className="w-4 h-4" />
+                      </button>
                       <p className="text-xs text-slate-400 pt-2">
                         {isEn ? '(Recall the meaning and how to use it in IELTS...)' : '(Thử nhớ nghĩa tiếng Việt và cách dùng trong IELTS...)'}
                       </p>
