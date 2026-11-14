@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { 
   Bookmark, 
   Plus, 
@@ -14,7 +14,8 @@ import {
   Award,
   Layers,
   Volume2,
-  Dumbbell
+  Dumbbell,
+  Pencil
 } from 'lucide-react';
 import VocabPracticePanel from './VocabPracticePanel';
 import { getMasteryLevel } from '../utils/vocabPractice';
@@ -22,6 +23,7 @@ import { speakText } from '../utils/speechAudio';
 import { IELTS_TOPICS } from '../data/topics';
 import { 
   getDueItems, 
+  isItemDue,
   calculateNextReview, 
   initSrsItem, 
   SRS_GRADES 
@@ -56,10 +58,18 @@ export default function VocabNotebookModal({
   const [activeTab, setActiveTab] = useState('list'); // 'list' | 'srs'
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTopic, setSelectedTopic] = useState('all');
+  const [masteryFilter, setMasteryFilter] = useState('all'); // 'all' | 'due' | 'new' | 'learning' | 'familiar' | 'mastered'
   const [isAdding, setIsAdding] = useState(false);
   const [sortMode, setSortMode] = useState('newest'); // 'newest' | 'az' | 'za'
   const [page, setPage] = useState(1);
   const PAGE_SIZE = 24;
+
+  // Inline Edit State
+  const [editingId, setEditingId] = useState(null);
+  const [editPhrase, setEditPhrase] = useState('');
+  const [editMeaningVi, setEditMeaningVi] = useState('');
+  const [editExample, setEditExample] = useState('');
+  const [editTopic, setEditTopic] = useState('tech');
 
   // Form State
   const [phrase, setPhrase] = useState('');
@@ -72,29 +82,42 @@ export default function VocabNotebookModal({
   const [isFlipped, setIsFlipped] = useState(false);
   const [reviewedSessionCount, setReviewedSessionCount] = useState(0);
 
+  const normalizePhrase = (s) => (s || '').trim().replace(/\s+/g, ' ').toLowerCase();
+
+  // Memoized due & filtered lists so typing in search/forms stays fast on large vaults
+  const dueItems = useMemo(() => getDueItems(vocabList), [vocabList]);
+
+  const filteredVocabs = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    return vocabList.filter(v => {
+      if (selectedTopic !== 'all' && v.topic !== selectedTopic) return false;
+      if (masteryFilter === 'due' && !isItemDue(v)) return false;
+      if (masteryFilter !== 'all' && masteryFilter !== 'due' && getMasteryLevel(v) !== masteryFilter) return false;
+      if (q) {
+        const match =
+          v.phrase?.toLowerCase().includes(q) ||
+          v.meaningVi?.toLowerCase().includes(q) ||
+          v.meaningEn?.toLowerCase().includes(q) ||
+          v.example?.toLowerCase().includes(q);
+        if (!match) return false;
+      }
+      return true;
+    }).sort((a, b) => {
+      if (sortMode === 'az') return (a.phrase || '').localeCompare(b.phrase || '', 'en', { sensitivity: 'base' });
+      if (sortMode === 'za') return (b.phrase || '').localeCompare(a.phrase || '', 'en', { sensitivity: 'base' });
+      return 0; // 'newest' keeps stored order (newest first)
+    });
+  }, [vocabList, selectedTopic, masteryFilter, searchQuery, sortMode]);
+
   if (!isOpen) return null;
 
-  // Compute due cards
-  const dueItems = getDueItems(vocabList);
   const currentCard = dueItems[currentCardIndex] || null;
-
-  const normalizePhrase = (s) => (s || '').trim().replace(/\s+/g, ' ').toLowerCase();
   const existingPhrase = phrase.trim()
     ? vocabList.find(v => normalizePhrase(v.phrase) === normalizePhrase(phrase))
     : null;
-
-  const filteredVocabs = vocabList.filter(v => {
-    const matchesTopic = selectedTopic === 'all' || v.topic === selectedTopic;
-    const matchesSearch = !searchQuery ||
-      v.phrase?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      v.meaningVi?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      v.example?.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesTopic && matchesSearch;
-  }).sort((a, b) => {
-    if (sortMode === 'az') return (a.phrase || '').localeCompare(b.phrase || '', 'en', { sensitivity: 'base' });
-    if (sortMode === 'za') return (b.phrase || '').localeCompare(a.phrase || '', 'en', { sensitivity: 'base' });
-    return 0; // 'newest' keeps stored order (newest first)
-  });
+  const editDuplicate = editingId && editPhrase.trim()
+    ? vocabList.find(v => v.id !== editingId && normalizePhrase(v.phrase) === normalizePhrase(editPhrase))
+    : null;
 
   const totalPages = Math.max(1, Math.ceil(filteredVocabs.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
@@ -125,6 +148,27 @@ export default function VocabNotebookModal({
     setMeaningVi('');
     setExample('');
     setIsAdding(false);
+  };
+
+  const startEditVocab = (item) => {
+    setEditingId(item.id);
+    setEditPhrase(item.phrase || '');
+    setEditMeaningVi(item.meaningVi || item.meaning || '');
+    setEditExample(item.example || '');
+    setEditTopic(item.topic || 'tech');
+  };
+
+  const handleSaveEdit = (e, item) => {
+    e.preventDefault();
+    if (!editPhrase.trim() || !editMeaningVi.trim() || editDuplicate || !onUpdateVocab) return;
+    onUpdateVocab({
+      ...item,
+      phrase: editPhrase.trim(),
+      meaningVi: editMeaningVi.trim(),
+      example: editExample.trim(),
+      topic: editTopic
+    });
+    setEditingId(null);
   };
 
   const handleRateCard = (grade) => {
@@ -255,7 +299,7 @@ export default function VocabNotebookModal({
                 />
               </div>
 
-              <div className="flex items-center space-x-2 w-full sm:w-auto justify-between">
+              <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-between">
                 <select
                   value={selectedTopic}
                   onChange={(e) => { setSelectedTopic(e.target.value); setPage(1); }}
@@ -265,6 +309,20 @@ export default function VocabNotebookModal({
                   {IELTS_TOPICS.map(t => (
                     <option key={t.id} value={t.id}>{isEn ? t.name : (t.vi || t.name)}</option>
                   ))}
+                </select>
+
+                <select
+                  value={masteryFilter}
+                  onChange={(e) => { setMasteryFilter(e.target.value); setPage(1); }}
+                  aria-label={isEn ? 'Filter by mastery' : 'Lọc theo mức thuộc'}
+                  className="px-3 py-2 rounded-xl border border-slate-200 text-xs bg-white text-slate-700 font-medium focus:outline-none cursor-pointer"
+                >
+                  <option value="all">{isEn ? 'All Levels' : 'Mọi mức độ'}</option>
+                  <option value="due">{isEn ? 'Due now' : 'Cần ôn'}</option>
+                  <option value="new">{isEn ? 'New' : 'Mới'}</option>
+                  <option value="learning">{isEn ? 'Learning' : 'Đang học'}</option>
+                  <option value="familiar">{isEn ? 'Familiar' : 'Quen'}</option>
+                  <option value="mastered">{isEn ? 'Mastered' : 'Thuộc'}</option>
                 </select>
 
                 <select
@@ -350,45 +408,113 @@ export default function VocabNotebookModal({
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
                   {pagedVocabs.map((v, idx) => (
                     <div key={v.id || idx} className="p-3.5 rounded-xl border border-slate-200 bg-white shadow-2xs space-y-1.5 group hover:border-amber-300 transition-all">
-                      <div className="flex items-center justify-between">
-                        <span className="font-bold text-sm text-slate-900 group-hover:text-amber-600 transition-colors">
-                          {v.phrase}
-                        </span>
-                        <div className="flex items-center space-x-1">
-                          <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold ${MASTERY_STYLES[getMasteryLevel(v)]}`}>
-                            {isEn ? MASTERY_LABELS[getMasteryLevel(v)].en : MASTERY_LABELS[getMasteryLevel(v)].vi}
-                          </span>
-                          <button
-                            onClick={() => speakText(v.phrase)}
-                            className="p-1 text-slate-300 hover:text-amber-600 transition-colors cursor-pointer"
-                            title={isEn ? 'Listen' : 'Nghe phát âm'}
-                            aria-label={isEn ? 'Listen' : 'Nghe phát âm'}
+                      {editingId && editingId === v.id ? (
+                        <form onSubmit={(e) => handleSaveEdit(e, v)} className="space-y-2">
+                          <input
+                            type="text"
+                            value={editPhrase}
+                            onChange={(e) => setEditPhrase(e.target.value)}
+                            placeholder={isEn ? 'Phrase...' : 'Cụm từ...'}
+                            className="w-full px-2.5 py-1.5 rounded-lg border border-amber-300 text-xs font-bold focus:outline-none"
+                          />
+                          <input
+                            type="text"
+                            value={editMeaningVi}
+                            onChange={(e) => setEditMeaningVi(e.target.value)}
+                            placeholder={isEn ? 'Meaning...' : 'Nghĩa...'}
+                            className="w-full px-2.5 py-1.5 rounded-lg border border-slate-200 text-xs focus:outline-none"
+                          />
+                          <input
+                            type="text"
+                            value={editExample}
+                            onChange={(e) => setEditExample(e.target.value)}
+                            placeholder={isEn ? 'Example...' : 'Ví dụ...'}
+                            className="w-full px-2.5 py-1.5 rounded-lg border border-slate-200 text-xs focus:outline-none"
+                          />
+                          <select
+                            value={editTopic}
+                            onChange={(e) => setEditTopic(e.target.value)}
+                            className="w-full px-2.5 py-1.5 rounded-lg border border-slate-200 text-xs bg-white"
                           >
-                            <Volume2 className="w-3.5 h-3.5" />
-                          </button>
-                          {v.intervalDays > 0 && (
-                            <span className="px-1.5 py-0.2 rounded bg-slate-100 text-slate-500 text-[9px] font-bold" title={isEn ? `Review interval: ${v.intervalDays} days` : `Chu kỳ ôn: ${v.intervalDays} ngày`}>
-                              {v.intervalDays}d
-                            </span>
+                            {IELTS_TOPICS.map(t => (
+                              <option key={t.id} value={t.id}>{isEn ? t.name : (t.vi || t.name)}</option>
+                            ))}
+                          </select>
+                          {editDuplicate && (
+                            <div className="text-[11px] text-red-600 font-semibold">
+                              {isEn ? `"${editDuplicate.phrase}" already exists.` : `"${editDuplicate.phrase}" đã tồn tại.`}
+                            </div>
                           )}
-                          <button
-                            onClick={() => onDeleteVocab(v.id || idx)}
-                            className="p-1 text-slate-300 hover:text-red-600 transition-colors cursor-pointer"
-                            title={isEn ? "Delete this word" : "Xóa từ này"}
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                      </div>
+                          <div className="flex justify-end gap-1.5 pt-1">
+                            <button
+                              type="button"
+                              onClick={() => setEditingId(null)}
+                              className="px-2.5 py-1 rounded-lg border border-slate-200 text-[11px] font-bold text-slate-600 hover:bg-slate-50 cursor-pointer"
+                            >
+                              {isEn ? 'Cancel' : 'Hủy'}
+                            </button>
+                            <button
+                              type="submit"
+                              disabled={Boolean(editDuplicate) || !editPhrase.trim() || !editMeaningVi.trim()}
+                              className="px-2.5 py-1 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-[11px] font-bold cursor-pointer disabled:opacity-40"
+                            >
+                              {isEn ? 'Save' : 'Lưu'}
+                            </button>
+                          </div>
+                        </form>
+                      ) : (
+                        <>
+                          <div className="flex items-center justify-between">
+                            <span className="font-bold text-sm text-slate-900 group-hover:text-amber-600 transition-colors">
+                              {v.phrase}
+                            </span>
+                            <div className="flex items-center space-x-1">
+                              <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold ${MASTERY_STYLES[getMasteryLevel(v)]}`}>
+                                {isEn ? MASTERY_LABELS[getMasteryLevel(v)].en : MASTERY_LABELS[getMasteryLevel(v)].vi}
+                              </span>
+                              <button
+                                onClick={() => speakText(v.phrase)}
+                                className="p-1 text-slate-300 hover:text-amber-600 transition-colors cursor-pointer"
+                                title={isEn ? 'Listen' : 'Nghe phát âm'}
+                                aria-label={isEn ? 'Listen' : 'Nghe phát âm'}
+                              >
+                                <Volume2 className="w-3.5 h-3.5" />
+                              </button>
+                              {onUpdateVocab && v.id && (
+                                <button
+                                  onClick={() => startEditVocab(v)}
+                                  className="p-1 text-slate-300 hover:text-blue-600 transition-colors cursor-pointer"
+                                  title={isEn ? 'Edit word' : 'Sửa từ'}
+                                  aria-label={isEn ? 'Edit word' : 'Sửa từ'}
+                                >
+                                  <Pencil className="w-3.5 h-3.5" />
+                                </button>
+                              )}
+                              {v.intervalDays > 0 && (
+                                <span className="px-1.5 py-0.2 rounded bg-slate-100 text-slate-500 text-[9px] font-bold" title={isEn ? `Review interval: ${v.intervalDays} days` : `Chu kỳ ôn: ${v.intervalDays} ngày`}>
+                                  {v.intervalDays}d
+                                </span>
+                              )}
+                              <button
+                                onClick={() => onDeleteVocab(v.id || idx)}
+                                className="p-1 text-slate-300 hover:text-red-600 transition-colors cursor-pointer"
+                                title={isEn ? "Delete this word" : "Xóa từ này"}
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          </div>
 
-                      <p className="text-xs text-slate-600 font-medium">
-                        {getLocalizedVocabMeaning(v, isEn)}
-                      </p>
+                          <p className="text-xs text-slate-600 font-medium">
+                            {getLocalizedVocabMeaning(v, isEn)}
+                          </p>
 
-                      {v.example && (
-                        <p className="text-[11px] text-slate-500 italic bg-slate-50 p-2 rounded border border-slate-100">
-                          "{v.example}"
-                        </p>
+                          {v.example && (
+                            <p className="text-[11px] text-slate-500 italic bg-slate-50 p-2 rounded border border-slate-100">
+                              "{v.example}"
+                            </p>
+                          )}
+                        </>
                       )}
                     </div>
                   ))}

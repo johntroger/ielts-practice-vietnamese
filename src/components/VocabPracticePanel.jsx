@@ -73,6 +73,7 @@ export default function VocabPracticePanel({ vocabList, isEn, onUpdateVocab }) {
   const [bestCombo, setBestCombo] = useState(0);
   const [missed, setMissed] = useState([]);
   const [finished, setFinished] = useState(false);
+  const [pickedChips, setPickedChips] = useState([]); // indices of tapped scramble units
 
   // match mode
   const [board, setBoard] = useState(null);
@@ -115,7 +116,7 @@ export default function VocabPracticePanel({ vocabList, isEn, onUpdateVocab }) {
   }, [mode, finished, board]);
 
   const resetRunState = () => {
-    setIndex(0); setInput(''); setResult(null); setHinted(false);
+    setIndex(0); setInput(''); setResult(null); setHinted(false); setPickedChips([]);
     setScore(0); setCombo(0); setBestCombo(0); setMissed([]); setFinished(false);
     setBoard(null); setSelLeft(null); setMatched([]); setFlash(null);
     setMatchMistakes([]); setSeconds(0);
@@ -192,6 +193,49 @@ export default function VocabPracticePanel({ vocabList, isEn, onUpdateVocab }) {
     setInput('');
     setResult(null);
     setHinted(false);
+    setPickedChips([]);
+  };
+
+  // Keyboard shortcuts: Enter to advance after check, 1-4 for choice, R to replay audio
+  useEffect(() => {
+    if (!mode || mode === 'match' || finished || !question) return undefined;
+    const onKeyDown = (e) => {
+      const tag = e.target?.tagName;
+      const inInput = tag === 'INPUT' || tag === 'TEXTAREA';
+
+      if (e.key === 'Enter' && result) {
+        e.preventDefault();
+        next();
+        return;
+      }
+      if (!result && (question.mode === 'choice' || question.mode === 'reverse')) {
+        const num = Number(e.key);
+        if (num >= 1 && num <= question.options.length) {
+          e.preventDefault();
+          submit(question.options[num - 1]);
+        }
+        return;
+      }
+      if (!inInput && (e.key === 'r' || e.key === 'R')) {
+        if (result || question.mode === 'dictation' || question.mode === 'reverse') {
+          e.preventDefault();
+          speakText(question.item.phrase, { rate: 0.85 });
+        }
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  });
+
+  const toggleScrambleChip = (chipIdx) => {
+    if (result || !question || question.mode !== 'scramble') return;
+    playArenaSfx('tap');
+    const nextIndices = pickedChips.includes(chipIdx)
+      ? pickedChips.filter(i => i !== chipIdx)
+      : [...pickedChips, chipIdx];
+    setPickedChips(nextIndices);
+    const sep = question.isWordLevel ? ' ' : '';
+    setInput(nextIndices.map(i => question.scrambledUnits[i]).join(sep));
   };
 
   // ---------- Match answers ----------
@@ -510,10 +554,30 @@ export default function VocabPracticePanel({ vocabList, isEn, onUpdateVocab }) {
               <div className="text-[11px] font-bold text-amber-400 uppercase tracking-wider">{isEn ? 'Unscramble for' : 'Sắp xếp lại cho nghĩa'}</div>
               <div className="text-sm text-slate-200">{question.prompt}</div>
               <div className="flex flex-wrap justify-center gap-1.5 pt-1">
-                {question.scrambledUnits.map((u, i) => (
-                  <span key={i} className="px-2.5 py-1 lg:px-4 lg:py-2 rounded-lg bg-white/10 border border-white/20 text-base lg:text-3xl font-bold tracking-wider">{u}</span>
-                ))}
+                {question.scrambledUnits.map((u, i) => {
+                  const used = pickedChips.includes(i);
+                  return (
+                    <button
+                      type="button"
+                      key={i}
+                      onClick={() => toggleScrambleChip(i)}
+                      disabled={Boolean(result)}
+                      className={`px-2.5 py-1 lg:px-4 lg:py-2 rounded-lg border text-base lg:text-3xl font-bold tracking-wider transition-all cursor-pointer disabled:cursor-default ${
+                        used
+                          ? 'bg-amber-500/30 border-amber-400 text-amber-200 scale-95 opacity-60'
+                          : 'bg-white/10 border-white/20 hover:bg-white/20 text-white'
+                      }`}
+                    >
+                      {u}
+                    </button>
+                  );
+                })}
               </div>
+              {!result && (
+                <div className="text-[11px] text-slate-400">
+                  {isEn ? 'Tap pieces to build or type below' : 'Chạm vào từng mảnh để ghép hoặc gõ ở bên'}
+                </div>
+              )}
             </>
           ) : (
             <>
@@ -531,7 +595,7 @@ export default function VocabPracticePanel({ vocabList, isEn, onUpdateVocab }) {
         <div className="space-y-4 lg:flex lg:flex-col lg:justify-center lg:space-y-0 lg:gap-4">
         {isChoice ? (
           <div className="grid gap-2 lg:gap-3">
-            {question.options.map(opt => {
+            {question.options.map((opt, optIdx) => {
               const isAnswer = normalizeAnswer(opt) === normalizeAnswer(question.answer);
               const isPicked = result && normalizeAnswer(result.given) === normalizeAnswer(opt);
               let cls = 'bg-white border-slate-200 text-slate-800 hover:border-amber-400';
@@ -539,8 +603,11 @@ export default function VocabPracticePanel({ vocabList, isEn, onUpdateVocab }) {
               else if (result && isPicked) cls = 'bg-red-50 border-red-400 text-red-700';
               return (
                 <button key={opt} onClick={() => submit(opt)} disabled={Boolean(result)}
-                  className={`px-4 py-3 lg:px-6 lg:py-5 rounded-xl border text-sm lg:text-lg font-semibold text-left transition-all cursor-pointer disabled:cursor-default ${cls}`}>
-                  {opt}
+                  className={`px-4 py-3 lg:px-6 lg:py-5 rounded-xl border text-sm lg:text-lg font-semibold text-left transition-all cursor-pointer disabled:cursor-default flex items-center gap-3 ${cls}`}>
+                  <span className="w-6 h-6 rounded-md bg-slate-100 text-slate-500 text-xs font-bold inline-flex items-center justify-center shrink-0">
+                    {optIdx + 1}
+                  </span>
+                  <span className="flex-1">{opt}</span>
                 </button>
               );
             })}
@@ -551,7 +618,7 @@ export default function VocabPracticePanel({ vocabList, isEn, onUpdateVocab }) {
               ref={inputRef}
               type="text"
               value={input}
-              onChange={(e) => setInput(e.target.value)}
+              onChange={(e) => { setInput(e.target.value); if (pickedChips.length) setPickedChips([]); }}
               disabled={Boolean(result)}
               autoComplete="off"
               autoCapitalize="off"
@@ -586,9 +653,29 @@ export default function VocabPracticePanel({ vocabList, isEn, onUpdateVocab }) {
               {result.correct ? (isEn ? 'Correct!' : 'Chính xác!') : (isEn ? 'Not quite' : 'Chưa đúng')}
             </div>
             {!result.correct && (
-              <div className="text-xs">
-                {isEn ? 'Answer: ' : 'Đáp án: '}<span className="font-bold">{question.answer}</span>
-                {question.mode === 'reverse' && <span className="opacity-70"> ({question.item.phrase})</span>}
+              <div className="text-xs space-y-1">
+                <div>
+                  {isEn ? 'Answer: ' : 'Đáp án: '}<span className="font-bold">{question.answer}</span>
+                  {question.mode === 'reverse' && <span className="opacity-70"> ({question.item.phrase})</span>}
+                </div>
+                {question.mode === 'dictation' && result.diff?.userDiff?.length > 0 && (
+                  <div className="flex flex-wrap gap-1 pt-0.5">
+                    {result.diff.userDiff.map((tok, ti) => (
+                      <span
+                        key={ti}
+                        className={
+                          tok.type === 'correct'
+                            ? 'px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-semibold'
+                            : tok.type === 'omission'
+                              ? 'px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 underline decoration-dashed'
+                              : 'px-1.5 py-0.5 rounded bg-red-100 text-red-700 line-through'
+                        }
+                      >
+                        {tok.text}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
             {question.item.example && <div className="text-xs italic opacity-80">"{question.item.example}"</div>}
