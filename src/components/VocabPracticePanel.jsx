@@ -259,7 +259,7 @@ export default function VocabPracticePanel({ vocabList, isEn, onUpdateVocab }) {
   if (!mode) {
     return (
       <div className="flex-1 overflow-y-auto p-5 sm:p-8">
-        <div className="max-w-2xl mx-auto space-y-5">
+      <div className="max-w-6xl mx-auto space-y-5">
           <div className="flex flex-wrap items-start justify-between gap-2">
             <div>
               <h3 className="text-base font-bold text-slate-800">
@@ -324,7 +324,7 @@ export default function VocabPracticePanel({ vocabList, isEn, onUpdateVocab }) {
             </div>
           )}
 
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {modeEligibility.map(m => {
               const Icon = m.icon;
               return (
@@ -363,7 +363,7 @@ export default function VocabPracticePanel({ vocabList, isEn, onUpdateVocab }) {
     const ss = String(seconds % 60).padStart(2, '0');
     return (
       <div className="flex-1 overflow-y-auto p-6">
-        <div className="max-w-md mx-auto text-center space-y-4">
+        <div className="max-w-3xl mx-auto text-center space-y-4">
           <div className="text-4xl">{pct >= 80 ? '🏆' : pct >= 50 ? '👍' : '💪'}</div>
           <h3 className="text-lg font-bold text-slate-800">{score} / {total} ({pct}%)</h3>
           <div className="flex justify-center gap-4 text-xs text-slate-500 font-semibold">
@@ -373,8 +373,8 @@ export default function VocabPracticePanel({ vocabList, isEn, onUpdateVocab }) {
           </div>
 
           {missed.length > 0 && (
-            <div className="text-left space-y-2">
-              <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+            <div className="text-left grid gap-2 lg:grid-cols-2">
+              <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider lg:col-span-2">
                 {isEn ? 'Words to review' : 'Từ cần ôn lại'}
               </div>
               {missed.map((it, i) => (
@@ -428,7 +428,7 @@ export default function VocabPracticePanel({ vocabList, isEn, onUpdateVocab }) {
           key={`${side}-${c.idx}`}
           onClick={() => (side === 'l' ? pickLeft(c.idx) : pickRight(c.idx))}
           disabled={isMatched}
-          className={`w-full px-3 py-3 rounded-xl border text-xs font-semibold text-left transition-all cursor-pointer disabled:cursor-default ${cls}`}
+          className={`w-full px-3 py-3 lg:px-5 lg:py-5 rounded-xl border text-xs lg:text-base font-semibold text-left transition-all cursor-pointer disabled:cursor-default ${cls}`}
         >
           {c.text}
         </button>
@@ -436,7 +436,7 @@ export default function VocabPracticePanel({ vocabList, isEn, onUpdateVocab }) {
     };
     return (
       <div className="flex-1 overflow-y-auto p-5 sm:p-8">
-        <div className="max-w-2xl mx-auto space-y-4">
+        <div className="max-w-6xl mx-auto space-y-4">
           <div className="flex items-center justify-between text-xs font-semibold text-slate-500">
             <button onClick={exit} className="hover:text-slate-800 cursor-pointer">← {isEn ? 'Modes' : 'Chế độ'}</button>
             <span className="inline-flex items-center gap-1"><Timer className="w-3.5 h-3.5" />{mm}:{ss}</span>
@@ -461,8 +461,8 @@ export default function VocabPracticePanel({ vocabList, isEn, onUpdateVocab }) {
   const canHint = (question.mode === 'cloze' || question.mode === 'scramble' || question.mode === 'dictation') && !result;
 
   return (
-    <div className="flex-1 overflow-y-auto p-5 sm:p-8">
-      <div className="max-w-xl mx-auto space-y-5">
+    <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-10 flex flex-col">
+      <div className="w-full max-w-6xl mx-auto space-y-5 my-auto">
         <div className="flex items-center justify-between text-xs font-semibold text-slate-500">
           <button onClick={exit} className="hover:text-slate-800 cursor-pointer">← {isEn ? 'Modes' : 'Chế độ'}</button>
           <span>{isEn ? `Question ${index + 1} / ${session.length}` : `Câu ${index + 1} / ${session.length}`}</span>
@@ -477,7 +477,8 @@ export default function VocabPracticePanel({ vocabList, isEn, onUpdateVocab }) {
           <div className="bg-gradient-to-r from-amber-500 to-rose-500 h-full transition-all" style={{ width: `${((index + (result ? 1 : 0)) / session.length) * 100}%` }} />
         </div>
 
-        <div className="p-6 rounded-2xl bg-slate-900 text-white text-center space-y-3 min-h-[140px] flex flex-col items-center justify-center">
+        <div className="grid lg:grid-cols-2 gap-5 lg:gap-8">
+        <div className="p-6 lg:p-10 rounded-2xl bg-slate-900 text-white text-center space-y-3 lg:space-y-5 min-h-[140px] lg:min-h-[360px] flex flex-col items-center justify-center">
           {question.mode === 'dictation' ? (
             <>
               <div className="text-[11px] font-bold text-amber-400 uppercase tracking-wider">
@@ -493,12 +494,12 @@ export default function VocabPracticePanel({ vocabList, isEn, onUpdateVocab }) {
           ) : question.mode === 'choice' ? (
             <>
               <div className="text-[11px] font-bold text-amber-400 uppercase tracking-wider">{isEn ? 'Which word means…' : 'Từ nào có nghĩa…'}</div>
-              <div className="text-lg font-bold">{question.prompt}</div>
+              <div className="text-lg lg:text-3xl font-bold">{question.prompt}</div>
             </>
           ) : question.mode === 'reverse' ? (
             <>
               <div className="text-[11px] font-bold text-amber-400 uppercase tracking-wider">{isEn ? 'What does this mean?' : 'Từ này có nghĩa là gì?'}</div>
-              <div className="text-2xl font-black tracking-wide">{question.prompt}</div>
+              <div className="text-2xl lg:text-5xl font-black tracking-wide">{question.prompt}</div>
               <button onClick={() => speakText(question.prompt)} className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-amber-300 cursor-pointer"
                 aria-label={isEn ? 'Listen' : 'Nghe phát âm'}>
                 <Volume2 className="w-4 h-4" />
@@ -510,7 +511,7 @@ export default function VocabPracticePanel({ vocabList, isEn, onUpdateVocab }) {
               <div className="text-sm text-slate-200">{question.prompt}</div>
               <div className="flex flex-wrap justify-center gap-1.5 pt-1">
                 {question.scrambledUnits.map((u, i) => (
-                  <span key={i} className="px-2.5 py-1 rounded-lg bg-white/10 border border-white/20 text-base font-bold tracking-wider">{u}</span>
+                  <span key={i} className="px-2.5 py-1 lg:px-4 lg:py-2 rounded-lg bg-white/10 border border-white/20 text-base lg:text-3xl font-bold tracking-wider">{u}</span>
                 ))}
               </div>
             </>
@@ -521,14 +522,15 @@ export default function VocabPracticePanel({ vocabList, isEn, onUpdateVocab }) {
                   ? (isEn ? 'Type the English word for' : 'Gõ từ tiếng Anh có nghĩa')
                   : (isEn ? 'Complete the sentence' : 'Hoàn thành câu')}
               </div>
-              <div className="text-base font-semibold leading-relaxed">{question.prompt}</div>
+              <div className="text-base lg:text-2xl font-semibold leading-relaxed">{question.prompt}</div>
               {question.hint && <div className="text-xs text-slate-400">💡 {question.hint}</div>}
             </>
           )}
         </div>
 
+        <div className="space-y-4 lg:flex lg:flex-col lg:justify-center lg:space-y-0 lg:gap-4">
         {isChoice ? (
-          <div className="grid gap-2">
+          <div className="grid gap-2 lg:gap-3">
             {question.options.map(opt => {
               const isAnswer = normalizeAnswer(opt) === normalizeAnswer(question.answer);
               const isPicked = result && normalizeAnswer(result.given) === normalizeAnswer(opt);
@@ -537,7 +539,7 @@ export default function VocabPracticePanel({ vocabList, isEn, onUpdateVocab }) {
               else if (result && isPicked) cls = 'bg-red-50 border-red-400 text-red-700';
               return (
                 <button key={opt} onClick={() => submit(opt)} disabled={Boolean(result)}
-                  className={`px-4 py-3 rounded-xl border text-sm font-semibold text-left transition-all cursor-pointer disabled:cursor-default ${cls}`}>
+                  className={`px-4 py-3 lg:px-6 lg:py-5 rounded-xl border text-sm lg:text-lg font-semibold text-left transition-all cursor-pointer disabled:cursor-default ${cls}`}>
                   {opt}
                 </button>
               );
@@ -555,7 +557,7 @@ export default function VocabPracticePanel({ vocabList, isEn, onUpdateVocab }) {
               autoCapitalize="off"
               spellCheck={false}
               placeholder={isEn ? 'Type your answer…' : 'Gõ câu trả lời…'}
-              className="w-full px-4 py-3 rounded-xl border border-slate-300 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-amber-500/30 disabled:bg-slate-50"
+              className="w-full px-4 py-3 lg:px-6 lg:py-5 rounded-xl border border-slate-300 text-sm lg:text-xl font-semibold focus:outline-none focus:ring-2 focus:ring-amber-500/30 disabled:bg-slate-50"
             />
             {hinted && !result && (
               <div className="text-center text-sm font-mono tracking-widest text-amber-600">{firstLetterHint(question.answer)}</div>
@@ -605,6 +607,8 @@ export default function VocabPracticePanel({ vocabList, isEn, onUpdateVocab }) {
             </button>
           </div>
         )}
+        </div>
+        </div>
       </div>
     </div>
   );
