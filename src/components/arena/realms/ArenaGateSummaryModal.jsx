@@ -43,7 +43,7 @@ export default function ArenaGateSummaryModal({
   }, [isMastered, result.isNewlyUnlocked, isPassed]);
 
   return (
-    <div className="relative w-full max-w-lg mx-auto bg-slate-900 border border-slate-800 rounded-3xl p-4 sm:p-6 text-white shadow-2xl flex flex-col items-center gap-4 text-center animate-fade-in select-none">
+    <div className="relative w-full max-w-lg mx-auto bg-slate-900 border border-slate-800 rounded-3xl p-4 sm:p-6 text-white shadow-2xl flex flex-col items-center gap-3.5 sm:gap-4 text-center animate-fade-in select-none max-h-[92dvh] overflow-y-auto">
       {/* Top Close Button */}
       <button
         type="button"

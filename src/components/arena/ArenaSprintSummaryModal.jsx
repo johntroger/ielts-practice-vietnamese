@@ -61,7 +61,7 @@ export default function ArenaSprintSummaryModal({
   }, [summary.mysteryLoot, summary.isBossCleared, summary.awardedSurge, summary.recoveredShield, summary.isDefeated]);
 
   return (
-    <div className="w-full max-w-xl mx-auto bg-slate-900 border border-slate-800 rounded-3xl p-4 sm:p-5 text-white shadow-2xl flex flex-col items-center gap-3.5 text-center animate-fade-in max-h-[92vh] overflow-y-auto">
+    <div className="w-full max-w-xl mx-auto bg-slate-900 border border-slate-800 rounded-3xl p-4 sm:p-5 text-white shadow-2xl flex flex-col items-center gap-3.5 text-center animate-fade-in max-h-[92dvh] overflow-y-auto">
       {/* Atli Celebratory / Resilient Mascot */}
       <div className="relative my-0.5 flex flex-col items-center">
         <div className="relative">
@@ -76,7 +76,7 @@ export default function ArenaSprintSummaryModal({
         </div>
 
         {/* Atli Companion Voice Bubble */}
-        <div className="mt-2 px-3 py-1 bg-slate-800/80 border border-slate-700/80 rounded-full text-[11px] sm:text-xs font-semibold text-slate-200 flex items-center gap-1.5 shadow-sm max-w-sm">
+        <div className="mt-2 px-3 py-1.5 bg-slate-800/80 border border-slate-700/80 rounded-2xl text-[11px] sm:text-xs font-semibold text-slate-200 flex items-center gap-1.5 shadow-sm max-w-sm">
           <span>{summary.isDefeated ? '🛡️' : (summary.mysteryLoot ? '💎' : '✨')}</span>
           <span className="italic">
             {summary.isDefeated

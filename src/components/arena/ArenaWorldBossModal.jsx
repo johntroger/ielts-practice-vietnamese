@@ -58,8 +58,9 @@ export default function ArenaWorldBossModal({
           <button
             type="button"
             onClick={onClose}
-            className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+            className="p-1.5 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer shrink-0"
             title={isEn ? 'Close' : 'Đóng'}
+            aria-label={isEn ? 'Close' : 'Đóng'}
           >
             <X className="w-4 h-4" />
           </button>

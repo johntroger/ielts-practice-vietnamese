@@ -29,26 +29,26 @@ export default function ArenaTowerBossFightCard({
       isEnraged ? 'border-red-500 shadow-xl shadow-red-950/50 animate-pulse' : 'border-amber-500/50 shadow-lg'
     } flex flex-col gap-2 relative overflow-hidden select-none`}>
       {/* Boss Identity Header */}
-      <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2.5">
-          <div className="text-3xl sm:text-4xl p-2 rounded-2xl bg-rose-500/20 border border-rose-500/40 shrink-0">
+      <div className="flex items-start sm:items-center justify-between gap-2">
+        <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 flex-1">
+          <div className="text-2xl sm:text-4xl p-1.5 sm:p-2 rounded-2xl bg-rose-500/20 border border-rose-500/40 shrink-0">
             {boss.avatar || '👑'}
           </div>
-          <div className="flex flex-col min-w-0">
-            <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex flex-col min-w-0 flex-1">
+            <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
               <span className="font-black text-sm sm:text-lg text-white truncate">
                 {isEn ? boss.nameEn : boss.nameVi}
               </span>
-              <span className="px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 text-[10px] font-black border border-rose-500/40 uppercase tracking-wider">
+              <span className="px-1.5 sm:px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 text-[9px] sm:text-[10px] font-black border border-rose-500/40 uppercase tracking-wider shrink-0">
                 {isEn ? boss.titleEn : boss.titleVi}
               </span>
               {isEnraged && (
-                <span className="px-2 py-0.5 rounded-full bg-red-600 text-white text-[10px] font-black uppercase tracking-wider animate-bounce">
-                  🔥 {isEn ? 'ENRAGED PHASE' : 'GIAI ĐOẠN CUỒNG NỘ'}
+                <span className="px-1.5 sm:px-2 py-0.5 rounded-full bg-red-600 text-white text-[9px] sm:text-[10px] font-black uppercase tracking-wider animate-bounce shrink-0">
+                  🔥 {isEn ? 'ENRAGED' : 'CUỒNG NỘ'}
                 </span>
               )}
             </div>
-            <p className="text-xs text-rose-300/80 italic mt-0.5">
+            <p className="text-[11px] sm:text-xs text-rose-300/80 italic mt-0.5 line-clamp-2 sm:line-clamp-none">
               {isEn ? boss.attackDescEn : boss.attackDescVi}
             </p>
           </div>
@@ -56,15 +56,15 @@ export default function ArenaTowerBossFightCard({
 
         {/* Floating Damage Indicator */}
         {lastDamageDealt > 0 && (
-          <div className="flex flex-col items-end animate-bounce">
-            <span className={`font-mono font-black text-lg sm:text-2xl ${
-              isCriticalHit ? 'text-amber-300 text-2xl sm:text-3xl' : 'text-rose-400'
+          <div className="flex flex-col items-end animate-bounce shrink-0">
+            <span className={`font-mono font-black text-base sm:text-2xl whitespace-nowrap ${
+              isCriticalHit ? 'text-amber-300 text-lg sm:text-3xl' : 'text-rose-400'
             }`}>
               -{lastDamageDealt} HP
             </span>
             {isCriticalHit && (
-              <span className="text-[10px] font-black uppercase tracking-wider text-amber-400 bg-amber-950/80 px-2 py-0.5 rounded border border-amber-500/60 shadow-xs">
-                ⚡ {isEn ? 'CRITICAL HIT!' : 'ĐÒN CHÍ MẠNG!'}
+              <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-amber-400 bg-amber-950/80 px-1.5 sm:px-2 py-0.5 rounded border border-amber-500/60 shadow-xs whitespace-nowrap">
+                ⚡ {isEn ? 'CRIT!' : 'CHÍ MẠNG!'}
               </span>
             )}
           </div>

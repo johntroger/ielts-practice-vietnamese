@@ -52,11 +52,11 @@ export default function ArenaMediaViewer({ media }) {
           <button
             type="button"
             onClick={() => setIsZoomed(true)}
-            className="flex items-center gap-1 text-[11px] font-semibold text-indigo-400 hover:text-indigo-300 bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
+            className="flex items-center gap-1 text-[11px] font-semibold text-indigo-400 hover:text-indigo-300 bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 px-2.5 py-1 min-h-[32px] rounded-lg transition-colors cursor-pointer shrink-0"
             title={isEn ? 'Zoom In' : 'Phóng to ảnh'}
           >
-            <ZoomIn className="w-3 h-3" />
-            <span className="hidden sm:inline">{isEn ? 'Zoom In' : 'Phóng To'}</span>
+            <ZoomIn className="w-3.5 h-3.5" />
+            <span>{isEn ? 'Zoom' : 'Phóng to'}</span>
           </button>
         </div>
 
@@ -84,26 +84,26 @@ export default function ArenaMediaViewer({ media }) {
       {/* Lightbox Zoom Modal */}
       {isZoomed && (
         <div 
-          className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex flex-col items-center justify-center p-4 sm:p-8 animate-fade-in"
+          className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex flex-col items-center justify-center p-2.5 sm:p-8 animate-fade-in"
           onClick={() => setIsZoomed(false)}
         >
           <div 
-            className="relative max-w-4xl w-full bg-slate-900 border border-slate-700 rounded-3xl p-6 shadow-2xl flex flex-col gap-4 max-h-[90vh] overflow-y-auto"
+            className="relative max-w-4xl w-full bg-slate-900 border border-slate-700 rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 shadow-2xl flex flex-col gap-3 sm:gap-4 max-h-[92dvh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <div className="flex items-center gap-2">
-                <TypeIcon className="w-4 h-4 text-indigo-400" />
-                <h3 className="text-sm font-bold text-slate-100">
+            <div className="flex items-center justify-between gap-2 border-b border-slate-800 pb-2.5 sm:pb-3">
+              <div className="flex items-center gap-2 min-w-0">
+                <TypeIcon className="w-4 h-4 text-indigo-400 shrink-0" />
+                <h3 className="text-xs sm:text-sm font-bold text-slate-100 truncate">
                   {media.caption || (isEn ? 'Detailed View' : 'Xem Chi Tiết Hình Ảnh')}
                 </h3>
               </div>
-              <div className="flex items-center gap-2">
-                <div className="flex items-center gap-1 bg-slate-800/80 rounded-xl p-1 border border-slate-700/60">
+              <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                <div className="flex items-center gap-0.5 sm:gap-1 bg-slate-800/80 rounded-xl p-1 border border-slate-700/60">
                   <button
                     type="button"
                     onClick={() => setZoomScale(prev => Math.min(2.5, +(prev + 0.25).toFixed(2)))}
-                    className="p-1 text-slate-300 hover:text-white rounded-lg hover:bg-slate-700/60 transition-colors cursor-pointer"
+                    className="p-1.5 sm:p-1 min-w-[32px] min-h-[32px] flex items-center justify-center text-slate-300 hover:text-white rounded-lg hover:bg-slate-700/60 transition-colors cursor-pointer"
                     title={isEn ? 'Zoom In' : 'Phóng to'}
                   >
                     <ZoomIn className="w-4 h-4" />
@@ -111,7 +111,7 @@ export default function ArenaMediaViewer({ media }) {
                   <button
                     type="button"
                     onClick={() => setZoomScale(prev => Math.max(0.75, +(prev - 0.25).toFixed(2)))}
-                    className="p-1 text-slate-300 hover:text-white rounded-lg hover:bg-slate-700/60 transition-colors cursor-pointer"
+                    className="p-1.5 sm:p-1 min-w-[32px] min-h-[32px] flex items-center justify-center text-slate-300 hover:text-white rounded-lg hover:bg-slate-700/60 transition-colors cursor-pointer"
                     title={isEn ? 'Zoom Out' : 'Thu nhỏ'}
                   >
                     <ZoomOut className="w-4 h-4" />
@@ -119,12 +119,12 @@ export default function ArenaMediaViewer({ media }) {
                   <button
                     type="button"
                     onClick={() => setZoomScale(1)}
-                    className="p-1 text-slate-300 hover:text-white rounded-lg hover:bg-slate-700/60 transition-colors cursor-pointer"
+                    className="p-1.5 sm:p-1 min-w-[32px] min-h-[32px] flex items-center justify-center text-slate-300 hover:text-white rounded-lg hover:bg-slate-700/60 transition-colors cursor-pointer"
                     title={isEn ? 'Reset Zoom' : 'Mặc định'}
                   >
                     <RotateCcw className="w-4 h-4" />
                   </button>
-                  <span className="text-[11px] font-mono text-slate-400 px-1.5">
+                  <span className="hidden sm:inline text-[11px] font-mono text-slate-400 px-1.5">
                     {Math.round(zoomScale * 100)}%
                   </span>
                 </div>
@@ -134,7 +134,7 @@ export default function ArenaMediaViewer({ media }) {
                     setIsZoomed(false);
                     setZoomScale(1);
                   }}
-                  className="p-1.5 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 transition-colors cursor-pointer"
+                  className="p-2 sm:p-1.5 min-w-[36px] min-h-[36px] flex items-center justify-center text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 transition-colors cursor-pointer"
                   title={isEn ? 'Close' : 'Đóng (Esc)'}
                 >
                   <X className="w-5 h-5" />

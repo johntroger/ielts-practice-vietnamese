@@ -90,7 +90,7 @@ export default function AtlasDailySprintCard({ onClaimVault, onStartSprint }) {
                   <div className={`font-bold truncate text-[11px] sm:text-xs ${isDone ? 'line-through opacity-70 text-emerald-400' : 'text-slate-200'}`}>
                     {isEn ? quest.titleEn : quest.titleVi}
                   </div>
-                  <div className="text-[10px] text-slate-400 truncate hidden sm:block">
+                  <div className="text-[10px] text-slate-400 leading-snug line-clamp-2">
                     {isEn ? quest.descEn : quest.descVi}
                   </div>
                 </div>

@@ -42,9 +42,9 @@ export default function LevelUpCelebrationModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/85 backdrop-blur-lg animate-fadeIn select-none">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 bg-slate-950/85 backdrop-blur-lg animate-fadeIn select-none">
       <div 
-        className="relative w-full max-w-md bg-gradient-to-b from-slate-900 via-indigo-950/80 to-slate-950 border border-indigo-500/50 rounded-3xl p-6 sm:p-8 shadow-2xl text-white flex flex-col items-center text-center gap-5 overflow-hidden ring-1 ring-indigo-500/30"
+        className="relative w-full max-w-md bg-gradient-to-b from-slate-900 via-indigo-950/80 to-slate-950 border border-indigo-500/50 rounded-3xl p-5 sm:p-8 shadow-2xl text-white flex flex-col items-center text-center gap-4 sm:gap-5 max-h-[92dvh] overflow-y-auto ring-1 ring-indigo-500/30"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Celebration Ambient Particle Glow */}

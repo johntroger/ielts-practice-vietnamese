@@ -22,9 +22,9 @@ export default function ArenaTowerCampfireModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/85 backdrop-blur-md animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 bg-slate-950/85 backdrop-blur-md animate-in fade-in duration-200">
       <div 
-        className="w-full max-w-xl bg-slate-900 border-2 border-emerald-500/60 rounded-3xl shadow-2xl text-white flex flex-col p-4 sm:p-6 gap-4 animate-in zoom-in-95 duration-200 text-center"
+        className="w-full max-w-xl bg-slate-900 border-2 border-emerald-500/60 rounded-3xl shadow-2xl text-white flex flex-col p-4 sm:p-6 gap-3.5 sm:gap-4 max-h-[92dvh] overflow-y-auto animate-in zoom-in-95 duration-200 text-center"
         role="dialog"
         aria-modal="true"
       >

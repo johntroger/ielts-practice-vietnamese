@@ -108,7 +108,7 @@ export default function ArenaRelativeLeaderboard({
       )}
 
       {/* Real Learners List */}
-      <div className="flex flex-col gap-1.5 max-h-[240px] sm:max-h-[280px] md:max-h-[340px] overflow-y-auto pr-1 custom-scrollbar">
+      <div className="flex flex-col gap-1.5 max-h-[55dvh] lg:max-h-[340px] overflow-y-auto pr-1 custom-scrollbar">
         {rivals.length === 0 ? (
           <div className="p-6 text-center text-slate-400 text-xs flex flex-col items-center gap-2">
             <Sparkles className="w-6 h-6 text-indigo-400 animate-pulse" />
@@ -241,7 +241,7 @@ export default function ArenaRelativeLeaderboard({
                         ) : null}
 
                         {hasLexicalTitle && (
-                          <span className="text-[9px] bg-purple-500/20 text-purple-300 border border-purple-500/40 px-1.5 py-0.2 rounded font-black tracking-wide shrink-0 whitespace-nowrap">
+                          <span className="hidden sm:inline-flex text-[9px] bg-purple-500/20 text-purple-300 border border-purple-500/40 px-1.5 py-0.2 rounded font-black tracking-wide shrink-0 whitespace-nowrap">
                             ✨ {isEn ? 'Lexical Alchemist' : 'Giả Kim Từ Vựng'}
                           </span>
                         )}

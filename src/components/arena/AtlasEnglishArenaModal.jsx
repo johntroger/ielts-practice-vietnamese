@@ -973,10 +973,11 @@ export default function AtlasEnglishArenaModal({
       <div className="w-full h-full flex flex-col bg-slate-950 overflow-hidden">
         {/* State 1: IDLE / Full-Screen Lobby Screen */}
         {sprint.phase === ARENA_SPRINT_PHASES.IDLE && (
-          <div className="flex flex-col flex-1 h-full overflow-y-auto">
-            {/* Unified Sticky Header & Mobile Navigation Bar */}
+          <div className="flex flex-col flex-1 h-full min-h-0 overflow-hidden">
+            <div className="flex-1 overflow-y-auto min-h-0 flex flex-col">
+            {/* Unified Sticky Header */}
             <div className="sticky top-0 z-30 w-full shrink-0 shadow-md">
-              <header className="w-full bg-slate-900/95 backdrop-blur-md border-b border-slate-800 px-3 sm:px-6 py-2 sm:py-2.5 flex items-center justify-between">
+              <header className="w-full bg-slate-900/95 backdrop-blur-md border-b border-slate-800 px-3 sm:px-6 py-2 sm:py-2.5 flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2 sm:gap-3 min-w-0">
                   <div className="relative w-8 h-8 sm:w-9 sm:h-9 rounded-xl overflow-hidden border border-amber-400/80 shadow-md shadow-indigo-600/30 shrink-0 ring-1 ring-indigo-500/50">
                     <img 
@@ -987,7 +988,8 @@ export default function AtlasEnglishArenaModal({
                   </div>
                   <div className="min-w-0">
                     <h1 className="text-xs sm:text-base font-black tracking-wide bg-gradient-to-r from-white via-indigo-200 to-indigo-400 bg-clip-text text-transparent leading-snug truncate">
-                      {t('arena.title')}
+                      <span className="sm:hidden">Atlas Arena</span>
+                      <span className="hidden sm:inline">{t('arena.title')}</span>
                     </h1>
                     <p className="text-[11px] text-slate-400 hidden sm:block leading-none">
                       {t('arena.subtitle')}
@@ -996,18 +998,18 @@ export default function AtlasEnglishArenaModal({
                 </div>
 
                 {/* Header Right Actions */}
-                <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+                <div className="flex items-center gap-1 sm:gap-2.5 shrink-0">
                   {/* Streak Badge with Atlas Streak Shield Indicator */}
-                  <div className="flex items-center gap-1.5 shrink-0">
+                  <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
                     {streak > 0 && (
-                      <div className="flex items-center gap-1 bg-amber-500/10 border border-amber-500/30 px-2 py-1 rounded-lg text-amber-400 text-[11px] sm:text-xs font-bold">
+                      <div className="flex items-center gap-1 bg-amber-500/10 border border-amber-500/30 px-1.5 sm:px-2 py-1 rounded-lg text-amber-400 text-[11px] sm:text-xs font-bold">
                         <Flame className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-amber-400" />
-                        <span>{streak} {isEn ? 'd' : 'ngày'}</span>
+                        <span>{streak}{isEn ? 'd' : 'n'}</span>
                       </div>
                     )}
                     {streakShieldState?.shieldsRemaining > 0 && (
                       <div 
-                        className="flex items-center gap-1 bg-cyan-500/10 border border-cyan-500/30 px-1.5 py-1 rounded-lg text-cyan-300 text-[11px] sm:text-xs font-bold"
+                        className="hidden sm:flex items-center gap-1 bg-cyan-500/10 border border-cyan-500/30 px-1.5 py-1 rounded-lg text-cyan-300 text-[11px] sm:text-xs font-bold"
                         title={t('arena.streakShieldTooltip')}
                       >
                         <span className="text-xs">🛡️</span>
@@ -1016,11 +1018,11 @@ export default function AtlasEnglishArenaModal({
                     )}
                     {surgeSeconds > 0 && (
                       <div 
-                        className="flex items-center gap-1 bg-gradient-to-r from-amber-500/20 via-yellow-500/20 to-amber-600/20 border border-amber-400/50 px-2 py-1 rounded-lg text-amber-300 text-[11px] sm:text-xs font-black shadow-[0_0_10px_rgba(245,158,11,0.25)] animate-pulse"
+                        className="flex items-center gap-1 bg-gradient-to-r from-amber-500/20 via-yellow-500/20 to-amber-600/20 border border-amber-400/50 px-1.5 sm:px-2 py-1 rounded-lg text-amber-300 text-[11px] sm:text-xs font-black shadow-[0_0_10px_rgba(245,158,11,0.25)] animate-pulse"
                         title={t('arena.sprintSurgeTooltip')}
                       >
                         <Zap className="w-3 h-3 text-amber-400 fill-amber-400" />
-                        <span className="font-mono">{formatSurgeTimer(surgeSeconds)}</span>
+                        <span className="font-mono hidden sm:inline">{formatSurgeTimer(surgeSeconds)}</span>
                         <span className="text-[9px] uppercase tracking-wider font-extrabold text-amber-200 bg-amber-500/30 px-1 py-0.2 rounded">2x</span>
                       </div>
                     )}
@@ -1034,7 +1036,7 @@ export default function AtlasEnglishArenaModal({
                       setIsTreasuryOpen(true);
                       triggerHaptic('chipTap');
                     }}
-                    className="flex items-center gap-1.5 px-2 sm:px-2.5 py-1 bg-gradient-to-r from-amber-500/10 via-slate-800 to-cyan-500/10 hover:border-amber-400/50 border border-slate-700/80 rounded-lg text-xs font-mono font-black transition-all cursor-pointer shadow-xs active:scale-95"
+                    className="flex items-center gap-1.5 px-2 sm:px-2.5 py-1 min-h-[34px] bg-gradient-to-r from-amber-500/10 via-slate-800 to-cyan-500/10 hover:border-amber-400/50 border border-slate-700/80 rounded-lg text-xs font-mono font-black transition-all cursor-pointer shadow-xs active:scale-95"
                     title={isEn ? "Open Atlas Treasury & Store" : "Mở Kho Báu & Cửa Hàng Atlas"}
                   >
                     <span className="flex items-center gap-1 text-amber-300">
@@ -1064,7 +1066,7 @@ export default function AtlasEnglishArenaModal({
                   <button
                     type="button"
                     onClick={toggleFullscreen}
-                    className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800/80 rounded-lg transition-colors cursor-pointer"
+                    className="hidden sm:flex p-1.5 text-slate-400 hover:text-white hover:bg-slate-800/80 rounded-lg transition-colors cursor-pointer"
                     title={isFullscreen ? t('arena.minimizeWindow') : t('arena.fullscreenWindow')}
                   >
                     {isFullscreen ? <Minimize2 className="w-4 h-4 sm:w-5 sm:h-5" /> : <Maximize2 className="w-4 h-4 sm:w-5 sm:h-5" />}
@@ -1073,55 +1075,20 @@ export default function AtlasEnglishArenaModal({
                   <button
                     type="button"
                     onClick={handleClose}
-                    className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800/80 rounded-lg transition-colors cursor-pointer"
+                    className="p-1.5 min-w-[36px] min-h-[36px] flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800/80 rounded-lg transition-colors cursor-pointer"
                     title={t('arena.exitArena')}
+                    aria-label={t('arena.exitArena')}
                   >
                     <X className="w-4 h-4 sm:w-5 sm:h-5" />
                   </button>
                 </div>
               </header>
-
-              {/* Mobile Tab Navigation Bar (Segmented Controller for < lg screens) */}
-              <div className="lg:hidden w-full px-3 pt-1.5 pb-1.5 bg-slate-950/95 backdrop-blur-md border-b border-slate-800/80">
-                <div className="grid grid-cols-2 p-1 bg-slate-900/90 rounded-xl border border-slate-800 shadow-inner">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setActiveMobileTab('match');
-                      triggerHaptic('chipTap');
-                    }}
-                    className={`flex items-center justify-center gap-2 py-1.5 px-3 rounded-lg text-xs font-black transition-all cursor-pointer ${
-                      activeMobileTab === 'match'
-                        ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md shadow-indigo-600/30'
-                        : 'text-slate-400 hover:text-slate-200'
-                    }`}
-                  >
-                    <Swords className="w-3.5 h-3.5" />
-                    <span>{isEn ? 'Arena Battle' : 'Đấu Trường'}</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setActiveMobileTab('leaderboard');
-                      triggerHaptic('chipTap');
-                    }}
-                    className={`flex items-center justify-center gap-2 py-1.5 px-3 rounded-lg text-xs font-black transition-all cursor-pointer ${
-                      activeMobileTab === 'leaderboard'
-                        ? 'bg-gradient-to-r from-amber-600 to-rose-600 text-white shadow-md shadow-amber-600/30'
-                        : 'text-slate-400 hover:text-slate-200'
-                    }`}
-                  >
-                    <Trophy className="w-3.5 h-3.5 text-amber-300" />
-                    <span>{isEn ? 'Ranks & Boss' : 'Bảng Vàng & Boss'}</span>
-                  </button>
-                </div>
-              </div>
             </div>
 
             {/* Main Fullscreen Lobby Body */}
-            <main className="flex-1 w-full max-w-7xl mx-auto px-3 sm:px-6 py-2 sm:py-3 md:py-4 flex flex-col justify-start lg:justify-center min-h-0">
-              {/* Game Mode Switcher Tab Bar */}
-              <div className="w-full flex items-center justify-center gap-2 mt-0.5 mb-2.5 shrink-0">
+            <main className="flex-1 w-full max-w-7xl mx-auto px-3 sm:px-6 pt-2.5 sm:pt-3 pb-4 sm:pb-6 flex flex-col justify-start min-h-0">
+              {/* Desktop Game Mode Switcher Tab Bar (Mobile uses Bottom Tab Bar) */}
+              <div className="hidden lg:flex w-full items-center justify-center gap-2 mt-0.5 mb-2.5 shrink-0">
                 <div className="flex items-center p-1 bg-slate-900/90 rounded-2xl border border-slate-800 shadow-inner max-w-xl w-full">
                   <button
                     type="button"
@@ -1240,26 +1207,9 @@ export default function AtlasEnglishArenaModal({
               ) : (
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 sm:gap-4 lg:gap-6 items-start pb-1 sm:pb-2">
                 {/* Left: Hero Banner, Difficulty & Action Controls */}
-                <div className={`lg:col-span-6 xl:col-span-7 flex flex-col gap-2 sm:gap-2.5 bg-gradient-to-br from-indigo-950/40 via-slate-900/60 to-purple-950/30 border border-indigo-900/40 rounded-2xl p-3.5 sm:p-4.5 md:p-5 backdrop-blur-md shadow-xl ${
+                <div className={`lg:col-span-6 xl:col-span-7 flex flex-col gap-2 sm:gap-2.5 bg-gradient-to-br from-indigo-950/40 via-slate-900/60 to-purple-950/30 border border-indigo-900/40 rounded-2xl p-3 sm:p-4.5 md:p-5 backdrop-blur-md shadow-xl ${
                   activeMobileTab === 'match' ? 'flex' : 'hidden lg:flex'
                 }`}>
-                  <div className="flex items-center justify-between gap-1.5 min-w-0">
-                    <div className="flex items-center gap-1.5 text-indigo-400 text-[10px] sm:text-xs font-black uppercase tracking-wider min-w-0">
-                      <Trophy className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                      <span className="truncate">{isEn ? '⚡ Cambridge Reflex Sprint' : '⚡ Tốc Chiến Phản Xạ Cambridge'}</span>
-                    </div>
-
-                    {/* Mobile Quick Switch Pill to World Boss */}
-                    <button
-                      type="button"
-                      onClick={() => setActiveMobileTab('leaderboard')}
-                      className="lg:hidden shrink-0 flex items-center gap-1 text-[10px] font-bold text-amber-400 hover:text-amber-300 bg-amber-500/10 border border-amber-500/30 px-2 py-0.5 rounded-full cursor-pointer active:scale-95 transition-transform"
-                    >
-                      <span>🔥 {isEn ? 'Boss Raid' : 'Săn Boss'}</span>
-                      <span>→</span>
-                    </button>
-                  </div>
-
                   {/* Atli Mascot Companion Card (Dynamic Emotion & Reactive Context) */}
                   <div className="flex items-center gap-2.5 p-2 sm:p-2.5 bg-gradient-to-r from-indigo-950/80 via-slate-900/90 to-purple-950/70 border border-indigo-500/40 rounded-xl shadow-md relative overflow-hidden group">
                     <div className="relative w-10 h-10 sm:w-11 sm:h-11 rounded-xl overflow-hidden shrink-0 border border-amber-400/80 shadow-md ring-1 ring-indigo-500/40 group-hover:scale-105 transition-transform duration-300">
@@ -1547,23 +1497,89 @@ export default function AtlasEnglishArenaModal({
                     />
                   </div>
 
-                  {/* Mobile Back-to-Battle Quick Action */}
-                  <div className="lg:hidden pt-1 pb-3">
-                    <button
-                      type="button"
-                      onClick={() => setActiveMobileTab('match')}
-                      className="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/40 text-indigo-300 rounded-xl text-xs font-bold transition-all cursor-pointer active:scale-98"
-                    >
-                      <Swords className="w-4 h-4" />
-                      <span>{isEn ? 'Return to Battle Setup' : 'Quay Lại Sảnh Trận Đấu'}</span>
-                    </button>
-                  </div>
                 </div>
               </div>
             )}
           </main>
-            {/* Safe area bottom padding for mobile devices */}
-            <div className="lg:hidden h-16 pb-[env(safe-area-inset-bottom,1.5rem)] shrink-0" />
+            </div>
+
+            {/* Mobile Bottom Navigation Bar (Thumb-Ergonomic 4-Tab Bar for < lg screens) */}
+            <nav
+              className="lg:hidden shrink-0 w-full bg-slate-900/95 backdrop-blur-md border-t border-slate-800 px-2 pt-1.5 pb-[max(0.4rem,env(safe-area-inset-bottom))] z-30 shadow-[0_-4px_20px_rgba(0,0,0,0.4)]"
+              aria-label={isEn ? 'Arena Navigation' : 'Điều hướng Đấu Trường'}
+            >
+              <div className="grid grid-cols-4 gap-1 max-w-md mx-auto">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setGameMode('blitz');
+                    safeSet('ielts_arena_game_mode', 'blitz');
+                    setActiveMobileTab('match');
+                    triggerHaptic('chipTap');
+                  }}
+                  className={`flex flex-col items-center justify-center py-1.5 px-1 rounded-xl text-[10px] font-black transition-all cursor-pointer active:scale-95 ${
+                    gameMode === 'blitz' && activeMobileTab === 'match'
+                      ? 'bg-gradient-to-b from-indigo-600/35 to-purple-600/25 text-white border border-indigo-400/50 shadow-sm'
+                      : 'text-slate-400 hover:text-slate-200 border border-transparent'
+                  }`}
+                >
+                  <span className="text-base leading-none mb-1">⚡</span>
+                  <span className="truncate w-full text-center">{isEn ? 'Blitz' : 'Tốc Chiến'}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setGameMode('realms');
+                    safeSet('ielts_arena_game_mode', 'realms');
+                    triggerHaptic('chipTap');
+                  }}
+                  className={`flex flex-col items-center justify-center py-1.5 px-1 rounded-xl text-[10px] font-black transition-all cursor-pointer active:scale-95 ${
+                    gameMode === 'realms'
+                      ? 'bg-gradient-to-b from-emerald-600/35 to-teal-600/25 text-white border border-emerald-400/50 shadow-sm'
+                      : 'text-slate-400 hover:text-slate-200 border border-transparent'
+                  }`}
+                >
+                  <span className="text-base leading-none mb-1">🏛️</span>
+                  <span className="truncate w-full text-center">{isEn ? 'Realms' : '4 Kỹ Năng'}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setGameMode('tower');
+                    safeSet('ielts_arena_game_mode', 'tower');
+                    triggerHaptic('chipTap');
+                  }}
+                  className={`flex flex-col items-center justify-center py-1.5 px-1 rounded-xl text-[10px] font-black transition-all cursor-pointer active:scale-95 ${
+                    gameMode === 'tower'
+                      ? 'bg-gradient-to-b from-amber-600/35 to-rose-600/25 text-white border border-amber-400/50 shadow-sm'
+                      : 'text-slate-400 hover:text-slate-200 border border-transparent'
+                  }`}
+                >
+                  <span className="text-base leading-none mb-1">🏰</span>
+                  <span className="truncate w-full text-center">{isEn ? 'Babel' : 'Tháp Babel'}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setGameMode('blitz');
+                    safeSet('ielts_arena_game_mode', 'blitz');
+                    setActiveMobileTab('leaderboard');
+                    triggerHaptic('chipTap');
+                  }}
+                  className={`flex flex-col items-center justify-center py-1.5 px-1 rounded-xl text-[10px] font-black transition-all cursor-pointer active:scale-95 ${
+                    gameMode === 'blitz' && activeMobileTab === 'leaderboard'
+                      ? 'bg-gradient-to-b from-amber-600/35 to-rose-600/25 text-white border border-amber-400/50 shadow-sm'
+                      : 'text-slate-400 hover:text-slate-200 border border-transparent'
+                  }`}
+                >
+                  <span className="text-base leading-none mb-1">🏆</span>
+                  <span className="truncate w-full text-center">{isEn ? 'Ranks' : 'Xếp Hạng'}</span>
+                </button>
+              </div>
+            </nav>
           </div>
         )}
 
@@ -1657,11 +1673,18 @@ export default function AtlasEnglishArenaModal({
               </button>
             </header>
 
-            <main className="flex-1 flex flex-col items-center justify-center p-6 text-center max-w-lg mx-auto">
-              <div className="w-20 h-20 rounded-full bg-rose-500/20 border-2 border-rose-500/40 flex items-center justify-center text-rose-400 mb-6 animate-bounce">
-                <ShieldAlert className="w-10 h-10" />
+            <main className="flex-1 flex flex-col items-center justify-center p-4 sm:p-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] text-center max-w-lg mx-auto">
+              <div className="relative w-20 h-20 sm:w-24 sm:h-24 mb-4">
+                <div className="absolute inset-0 rounded-2xl blur-lg bg-rose-500/40 animate-pulse" />
+                <div className="relative w-full h-full rounded-2xl overflow-hidden border-2 border-rose-400/80 shadow-xl ring-2 ring-amber-400/40">
+                  <img 
+                    src="/mascot/atli_comfort.jpg" 
+                    alt="Atli Comfort" 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
               </div>
-              <h2 className="text-3xl font-black text-white mb-2">{t('arena.arenaPaused')}</h2>
+              <h2 className="text-2xl sm:text-3xl font-black text-white mb-2">{t('arena.arenaPaused')}</h2>
               <p className="text-sm text-slate-400 mb-5 leading-relaxed">
                 {t('arena.defeatedDescription')}
               </p>

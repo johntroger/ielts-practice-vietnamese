@@ -43,14 +43,14 @@ export default function ArenaGhostDuelBar({
   }
 
   return (
-    <div className="w-full max-w-2xl mx-auto mb-2 px-3 py-1.5 bg-slate-900/90 backdrop-blur border border-indigo-500/30 rounded-xl shadow-md flex items-center justify-between gap-3 text-xs">
+    <div className="w-full max-w-2xl mx-auto mb-2 px-2.5 sm:px-3 py-1.5 bg-slate-900/90 backdrop-blur border border-indigo-500/30 rounded-xl shadow-md flex items-center justify-between gap-1.5 sm:gap-3 text-xs">
       {/* You Column */}
-      <div className="flex items-center gap-2 min-w-0">
-        <div className="w-6 h-6 rounded-full bg-indigo-600/30 border border-indigo-400/50 flex items-center justify-center text-[10px] font-black text-indigo-300 shrink-0">
+      <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
+        <div className="hidden sm:flex w-6 h-6 rounded-full bg-indigo-600/30 border border-indigo-400/50 items-center justify-center text-[10px] font-black text-indigo-300 shrink-0">
           YOU
         </div>
         <div className="truncate">
-          <div className="flex items-center gap-1 font-bold text-slate-200">
+          <div className="flex items-center gap-1 font-bold text-slate-200 text-[11px] sm:text-xs">
             <span>{isEn ? 'You' : 'Bạn'}</span>
             <span className="text-amber-400 font-black">({userScore})</span>
           </div>
@@ -61,9 +61,9 @@ export default function ArenaGhostDuelBar({
       </div>
 
       {/* Middle Lead Pill & Pacing Track */}
-      <div className="flex-1 flex flex-col items-center justify-center px-2">
-        <div className={`px-2 py-0.5 rounded-full border text-[10px] font-black uppercase tracking-wider flex items-center gap-1 ${leadStatusClass}`}>
-          <Swords className="w-2.5 h-2.5" />
+      <div className="flex-1 flex flex-col items-center justify-center px-1 sm:px-2 min-w-[96px]">
+        <div className={`px-2 py-0.5 rounded-full border text-[10px] font-black uppercase tracking-wider flex items-center gap-1 whitespace-nowrap ${leadStatusClass}`}>
+          <Swords className="w-2.5 h-2.5 shrink-0" />
           <span>{leadStatusText}</span>
         </div>
         <div className="w-full bg-slate-800 rounded-full h-1 mt-1.5 overflow-hidden flex relative">
@@ -82,10 +82,10 @@ export default function ArenaGhostDuelBar({
       </div>
 
       {/* Ghost Rival Column */}
-      <div className="flex items-center gap-2 min-w-0 justify-end text-right">
+      <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 justify-end text-right">
         <div className="truncate">
-          <div className="flex items-center justify-end gap-1 font-bold text-slate-300 truncate">
-            <span className="truncate max-w-[90px] sm:max-w-[120px]">{duel.rivalName}</span>
+          <div className="flex items-center justify-end gap-1 font-bold text-slate-300 truncate text-[11px] sm:text-xs">
+            <span className="truncate max-w-[64px] sm:max-w-[120px]">{duel.rivalName}</span>
             <span className="text-rose-400 font-black">({ghostProgress.ghostScore})</span>
           </div>
           <div className="text-[10px] text-slate-400">
@@ -95,7 +95,7 @@ export default function ArenaGhostDuelBar({
         <img 
           src={duel.rivalAvatar} 
           alt={duel.rivalName}
-          className="w-6 h-6 rounded-full border border-rose-500/40 object-cover shrink-0"
+          className="w-5 h-5 sm:w-6 sm:h-6 rounded-full border border-rose-500/40 object-cover shrink-0"
           onError={(e) => {
             e.target.style.display = 'none';
           }}

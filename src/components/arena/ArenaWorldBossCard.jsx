@@ -36,7 +36,7 @@ export default function ArenaWorldBossCard({ isEn = false, onStartSprint = null 
         {/* Decorative background glow */}
         <div className="absolute -top-12 -right-12 w-28 h-28 bg-rose-500/10 rounded-full blur-2xl pointer-events-none group-hover:bg-rose-500/20 transition-colors" />
 
-        <div className="flex items-center justify-between gap-2.5 relative z-10">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-2.5 relative z-10">
           {/* Boss Identity */}
           <div className="flex items-center gap-2.5 min-w-0">
             <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-rose-500/20 border border-rose-500/40 group-hover:border-rose-400/60 flex items-center justify-center text-xl shadow-inner shrink-0 transition-colors">

@@ -121,57 +121,49 @@ export default function ArenaDifficultySelector({
         )}
       </div>
 
-      {/* MOBILE ONLY (sm:hidden): Native 4-Segment Tab Bar + Active Detail Card */}
-      <div className="flex flex-col gap-1.5 sm:hidden">
-        <div className="grid grid-cols-4 gap-1 p-1 bg-slate-900/90 rounded-xl border border-slate-800">
-          {difficultyList.map(diff => {
-            const isSelected = selectedDifficulty === diff.id;
-            const Icon = diff.icon;
-            const theme = getThemeByDiffId(diff.id);
+      {/* MOBILE ONLY (sm:hidden): Compact 4-Segment Tab Bar (Eliminates redundant second detail card) */}
+      <div className="grid grid-cols-4 gap-1 p-1 bg-slate-900/90 rounded-xl border border-slate-800 sm:hidden">
+        {difficultyList.map(diff => {
+          const isSelected = selectedDifficulty === diff.id;
+          const Icon = diff.icon;
+          const theme = getThemeByDiffId(diff.id);
 
-            let tabClass = 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40';
-            if (isSelected) {
-              tabClass = `${theme.bg} ${theme.text} border ${theme.border} font-bold shadow-sm`;
-            }
+          let tabClass = 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border border-transparent';
+          if (isSelected) {
+            tabClass = `${theme.bg} ${theme.text} border ${theme.border} font-bold shadow-sm`;
+          }
 
-            return (
-              <button
-                key={diff.id}
-                type="button"
-                onClick={() => onSelectDifficulty?.(diff.id)}
-                className={`flex flex-col items-center justify-center py-1.5 px-0.5 rounded-lg transition-all cursor-pointer ${tabClass}`}
-              >
-                <Icon className="w-3.5 h-3.5 mb-0.5 shrink-0" />
-                <span className="text-[11px] font-bold leading-none truncate w-full text-center">
-                  {diff.id === 'nightmare' ? (isEn ? 'Nightm.' : 'Ác Mộng') : (isEn ? diff.nameEn.split(' ')[0] : diff.name.split(' ')[0])}
+          const shortMobileLabel = {
+            easy: isEn ? 'Easy' : 'Dễ',
+            medium: isEn ? 'Medium' : 'T.Bình',
+            hard: isEn ? 'Hard' : 'Khó',
+            nightmare: isEn ? 'Master' : 'Siêu Khó'
+          }[diff.id] || (isEn ? diff.nameEn.split(' ')[0] : diff.name.split(' ')[0]);
+
+          const shortBand = diff.targetBand ? diff.targetBand.replace(/^Band\s*/i, '') : '';
+
+          return (
+            <button
+              key={diff.id}
+              type="button"
+              onClick={() => onSelectDifficulty?.(diff.id)}
+              className={`flex flex-col items-center justify-center py-1.5 px-0.5 rounded-lg transition-all cursor-pointer ${tabClass}`}
+            >
+              <div className="flex items-center gap-1 mb-0.5">
+                <Icon className="w-3 h-3 shrink-0" />
+                <span className="text-[11px] font-bold leading-none truncate">
+                  {shortMobileLabel}
                 </span>
-                <span className="text-[9px] opacity-75 font-mono mt-0.5 leading-none">
-                  +{diff.baseXpPerQuestion}XP
-                </span>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Selected Difficulty Full Un-truncated Detail Card */}
-        <div className={`p-2 rounded-xl border transition-all ${activeMobileTheme.border} ${activeMobileTheme.bg}`}>
-          <div className="flex items-center justify-between mb-0.5">
-            <div className="flex items-center gap-1.5">
-              <selectedDiffObj.icon className={`w-3.5 h-3.5 ${activeMobileTheme.text} shrink-0`} />
-              <span className="text-xs font-black text-slate-100">
-                {isEn ? selectedDiffObj.nameEn : selectedDiffObj.name}
+              </div>
+              <span className="text-[9px] text-slate-300/90 font-mono leading-none">
+                {shortBand}
               </span>
-            </div>
-            <div className="flex items-center gap-1 text-[10px] font-mono">
-              <span className="text-emerald-400 font-bold">+{selectedDiffObj.baseXpPerQuestion} {isEn ? 'XP/q' : 'XP/câu'}</span>
-              <span className="text-slate-600">•</span>
-              <span className="text-amber-400 font-bold">~{selectedDiffObj.maxSprintXp} XP</span>
-            </div>
-          </div>
-          <p className="text-[10.5px] text-slate-300 leading-tight">
-            {isEn ? selectedDiffObj.descEn : selectedDiffObj.descVi}
-          </p>
-        </div>
+              <span className="text-[9px] text-amber-400 font-mono font-bold mt-0.5 leading-none">
+                +{diff.baseXpPerQuestion}XP
+              </span>
+            </button>
+          );
+        })}
       </div>
 
       {/* DESKTOP / TABLET (hidden sm:grid): 4-Column Card Grid */}

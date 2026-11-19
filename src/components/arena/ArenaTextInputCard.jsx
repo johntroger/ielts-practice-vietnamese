@@ -31,7 +31,8 @@ export default function ArenaTextInputCard({
   nearMissState = null,
   validationResult = null,
   correctAnswer = '',
-  acceptableAnswers = []
+  acceptableAnswers = [],
+  showInlineActions = true
 }) {
   const { t, isEn } = useTranslation();
   const inputRef = useRef(null);
@@ -202,8 +203,8 @@ export default function ArenaTextInputCard({
         </div>
       )}
 
-      {/* Mobile Ergonomics Action Bar (Quick thumb buttons directly below input) */}
-      {!isAnswerChecked && (
+      {/* Mobile Ergonomics Action Bar (Quick thumb buttons directly below input - hidden when unified sticky dock is active) */}
+      {showInlineActions && !isAnswerChecked && (
         <div className="flex items-center justify-between gap-2 pt-0.5">
           <div className="flex items-center gap-2">
             {onSkip && (
@@ -305,10 +306,10 @@ export default function ArenaTextInputCard({
       {!isAnswerChecked && (
         <div className="flex items-center justify-between text-[11px] text-slate-400 px-1">
           <span className="flex items-center gap-1 text-indigo-300">
-            <Sparkles className="w-3 h-3" />
+            <Sparkles className="w-3 h-3 shrink-0" />
             <span>{isEn ? 'Cambridge Active Recall • Type exact word' : 'Phản xạ chủ động Cambridge • Gõ từ chính xác'}</span>
           </span>
-          <span className="font-mono text-slate-500">Press Enter ↵</span>
+          <span className="hidden sm:inline font-mono text-slate-500">Press Enter ↵</span>
         </div>
       )}
     </div>

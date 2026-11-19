@@ -140,33 +140,33 @@ export default function AtlasTreasuryModal({ isOpen, onClose }) {
         aria-modal="true"
       >
         {/* Header Bar */}
-        <div className="flex items-center justify-between p-3.5 sm:p-4 border-b border-slate-800 bg-slate-950/60 shrink-0">
-          <div className="flex items-center gap-2.5 min-w-0">
-            <div className="relative w-10 h-10 sm:w-11 sm:h-11 rounded-xl overflow-hidden border border-amber-400/80 shadow-md ring-2 ring-amber-500/40 shrink-0">
+        <div className="flex items-center justify-between gap-2 p-3 sm:p-4 border-b border-slate-800 bg-slate-950/60 shrink-0">
+          <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 flex-1">
+            <div className="relative w-9 h-9 sm:w-11 sm:h-11 rounded-xl overflow-hidden border border-amber-400/80 shadow-md ring-2 ring-amber-500/40 shrink-0">
               <img 
                 src="/mascot/atli_treasure.jpg" 
                 alt="Atli Treasury Keeper" 
                 className="w-full h-full object-cover"
               />
             </div>
-            <div className="min-w-0">
+            <div className="min-w-0 flex-1">
               <div className="flex items-center gap-1.5 flex-wrap">
-                <h2 className="text-sm sm:text-base font-black tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-indigo-200 to-purple-300 truncate">
-                  {isEn ? 'Atlas Treasury & Emporium' : 'Kho Báu & Cửa Hàng Atlas'}
+                <h2 className="text-xs sm:text-base font-black tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-indigo-200 to-purple-300 truncate">
+                  {isEn ? 'Atlas Treasury' : 'Kho Báu Atlas'}
                 </h2>
-                <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold uppercase tracking-wider">
+                <span className="hidden sm:inline-block text-[9px] px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold uppercase tracking-wider">
                   Atli Keeper
                 </span>
               </div>
-              <p className="text-[11px] text-slate-300 truncate mt-0.5">
+              <p className="hidden sm:block text-[11px] text-slate-300 truncate mt-0.5">
                 {isEn ? 'Atli: "Trade your hard-earned Gold & Gems for tactical edge!"' : 'Atli: "Dùng Vàng & Kim Cương để nâng cấp trang bị chiến thuật!"'}
               </p>
             </div>
           </div>
 
           {/* Wallet Balance Pill */}
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-2 px-2.5 py-1 bg-slate-800/90 border border-slate-700/80 rounded-xl text-xs font-mono font-black shadow-inner">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            <div className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-2.5 py-1 bg-slate-800/90 border border-slate-700/80 rounded-xl text-xs font-mono font-black shadow-inner">
               <span className="flex items-center gap-1 text-amber-300">
                 <Coins className="w-3.5 h-3.5 text-amber-400" />
                 <span>{wallet.gold || 0}</span>
@@ -181,63 +181,64 @@ export default function AtlasTreasuryModal({ isOpen, onClose }) {
             <button
               type="button"
               onClick={onClose}
-              className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800/80 rounded-lg transition-colors cursor-pointer shrink-0"
+              className="p-1.5 min-w-[36px] min-h-[36px] flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800/80 rounded-lg transition-colors cursor-pointer shrink-0"
               title={isEn ? 'Close Treasury' : 'Đóng Kho Báu'}
+              aria-label={isEn ? 'Close Treasury' : 'Đóng Kho Báu'}
             >
               <X className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
           </div>
         </div>
 
-        {/* 4 Category Tabs */}
-        <div className="grid grid-cols-4 p-1 bg-slate-950/80 border-b border-slate-800 text-xs font-black shrink-0">
+        {/* 4 Category Tabs (Icon + Label visible on all screen sizes) */}
+        <div className="grid grid-cols-4 gap-1 p-1 bg-slate-950/80 border-b border-slate-800 text-[10px] sm:text-xs font-black shrink-0">
           <button
             type="button"
             onClick={() => { setActiveTab(TREASURY_TABS.SURVIVAL); setFeedbackMsg(null); }}
-            className={`py-2 px-1 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+            className={`py-1.5 sm:py-2 px-1 rounded-xl transition-all flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1.5 cursor-pointer ${
               activeTab === TREASURY_TABS.SURVIVAL
                 ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
-            <span>🛡️</span>
-            <span className="hidden sm:inline">{isEn ? 'Survival' : 'Cứu Trợ'}</span>
+            <span className="text-sm sm:text-xs">🛡️</span>
+            <span className="truncate max-w-full">{isEn ? 'Survival' : 'Cứu Trợ'}</span>
           </button>
           <button
             type="button"
             onClick={() => { setActiveTab(TREASURY_TABS.TACTICAL); setFeedbackMsg(null); }}
-            className={`py-2 px-1 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+            className={`py-1.5 sm:py-2 px-1 rounded-xl transition-all flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1.5 cursor-pointer ${
               activeTab === TREASURY_TABS.TACTICAL
                 ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-md'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
-            <span>⚡</span>
-            <span className="hidden sm:inline">{isEn ? 'Tactical' : 'Bổ Trợ'}</span>
+            <span className="text-sm sm:text-xs">⚡</span>
+            <span className="truncate max-w-full">{isEn ? 'Tactical' : 'Bổ Trợ'}</span>
           </button>
           <button
             type="button"
             onClick={() => { setActiveTab(TREASURY_TABS.SCHOLASTIC); setFeedbackMsg(null); }}
-            className={`py-2 px-1 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+            className={`py-1.5 sm:py-2 px-1 rounded-xl transition-all flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1.5 cursor-pointer ${
               activeTab === TREASURY_TABS.SCHOLASTIC
                 ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
-            <span>🎓</span>
-            <span className="hidden sm:inline">{isEn ? 'Scholastic' : 'Tri Thức'}</span>
+            <span className="text-sm sm:text-xs">🎓</span>
+            <span className="truncate max-w-full">{isEn ? 'VIP' : 'Tri Thức'}</span>
           </button>
           <button
             type="button"
             onClick={() => { setActiveTab(TREASURY_TABS.PRESTIGE); setFeedbackMsg(null); }}
-            className={`py-2 px-1 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+            className={`py-1.5 sm:py-2 px-1 rounded-xl transition-all flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1.5 cursor-pointer ${
               activeTab === TREASURY_TABS.PRESTIGE
                 ? 'bg-gradient-to-r from-amber-600 to-rose-600 text-white shadow-md'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
-            <span>👑</span>
-            <span className="hidden sm:inline">{isEn ? 'Prestige' : 'Vinh Danh'}</span>
+            <span className="text-sm sm:text-xs">👑</span>
+            <span className="truncate max-w-full">{isEn ? 'Prestige' : 'Vinh Danh'}</span>
           </button>
         </div>
 

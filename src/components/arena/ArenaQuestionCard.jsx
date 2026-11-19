@@ -212,21 +212,21 @@ export default function ArenaQuestionCard({
     <div className={`w-full max-w-2xl sm:max-w-3xl lg:max-w-5xl mx-auto flex flex-col gap-2 sm:gap-2.5 py-0.5 transition-all duration-300 ${
       question.isBossQuestion ? 'rounded-2xl p-2 sm:p-2.5 bg-gradient-to-b from-amber-950/20 via-slate-900/40 to-purple-950/25 border-2 border-amber-500/40 shadow-xl shadow-amber-950/30 ring-1 ring-amber-400/30' : ''
     }`}>
-      {/* Category Pill, Topic, Difficulty & Audio Button */}
-      <div className="flex flex-wrap items-center justify-between gap-1.5 sm:gap-2">
-        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
-          <span className={`text-xs font-extrabold tracking-wider uppercase px-2.5 py-1 rounded-lg border shadow-xs ${categoryColor}`}>
+      {/* Category Pill, Topic, Difficulty & Audio Button (Single scrollable row on mobile) */}
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center flex-nowrap overflow-x-auto no-scrollbar sm:flex-wrap gap-1.5 min-w-0 flex-1 py-0.5">
+          <span className={`text-[11px] sm:text-xs font-extrabold tracking-wider uppercase px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg border shadow-xs shrink-0 whitespace-nowrap ${categoryColor}`}>
             {localizedQ.skillCategory?.toUpperCase() || 'PRACTICE'}
           </span>
 
           {diffConfig && (
-            <span className={`text-xs font-extrabold tracking-wider px-2.5 py-1 rounded-lg border shadow-xs ${diffConfig.badgeClass}`}>
+            <span className={`text-[11px] sm:text-xs font-extrabold tracking-wider px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg border shadow-xs shrink-0 whitespace-nowrap ${diffConfig.badgeClass}`}>
               {diffConfig.targetBand}
             </span>
           )}
 
           {topicObj && (
-            <span className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-slate-800/80 border border-slate-700/60 text-slate-300 flex items-center gap-1.5 shadow-xs">
+            <span className="text-[11px] sm:text-xs font-semibold px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg bg-slate-800/80 border border-slate-700/60 text-slate-300 flex items-center gap-1 shadow-xs shrink-0 whitespace-nowrap">
               <span className="text-xs sm:text-sm">{topicObj.icon}</span>
               <span>{isEn ? topicObj.nameEn : topicObj.nameVi}</span>
             </span>
@@ -238,7 +238,7 @@ export default function ArenaQuestionCard({
               const pInfo = getPerkById(pId);
               const isUsed = usedPerks?.includes(pId) || (isPerkUsed && pId === equippedPerk);
               return (
-                <span key={pId} className={`text-xs font-bold tracking-wider px-2.5 py-1 rounded-lg border shadow-xs flex items-center gap-1.5 ${pInfo.badgeColor}`}>
+                <span key={pId} className={`text-[11px] sm:text-xs font-bold tracking-wider px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg border shadow-xs flex items-center gap-1 shrink-0 whitespace-nowrap ${pInfo.badgeColor}`}>
                   <span>{pInfo.icon}</span>
                   <span>{isEn ? pInfo.nameEn : pInfo.nameVi}</span>
                   {isUsed && <span className="opacity-60 text-[10px]">({isEn ? 'Used' : 'Đã dùng'})</span>}
@@ -247,23 +247,23 @@ export default function ArenaQuestionCard({
             })}
 
           {question.isBossQuestion && (
-            <span className="text-xs font-black tracking-wider px-2.5 py-1 rounded-lg bg-gradient-to-r from-amber-500/30 via-purple-600/30 to-amber-500/30 text-amber-300 border border-amber-400/60 flex items-center gap-1.5 shadow-sm shadow-amber-500/20 animate-pulse">
+            <span className="text-[11px] sm:text-xs font-black tracking-wider px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg bg-gradient-to-r from-amber-500/30 via-purple-600/30 to-amber-500/30 text-amber-300 border border-amber-400/60 flex items-center gap-1 shadow-sm shadow-amber-500/20 animate-pulse shrink-0 whitespace-nowrap">
               <span>👑</span>
-              <span>{t('arena.bossClimaxBadge') || (isEn ? 'CAMBRIDGE BOSS CLIMAX (x2 XP)' : 'TRÙM CUỐI CAMBRIDGE (x2 XP)')}</span>
+              <span>{t('arena.bossClimaxBadge') || (isEn ? 'CAMBRIDGE BOSS (x2 XP)' : 'TRÙM CAMBRIDGE (x2 XP)')}</span>
             </span>
           )}
 
           {(question.isR2Audio || question.audioUrl) && (
-            <span className="text-xs font-black tracking-wider px-2.5 py-1 rounded-lg bg-cyan-500/20 text-cyan-300 border border-cyan-400/50 flex items-center gap-1.5 shadow-xs">
+            <span className="text-[11px] sm:text-xs font-black tracking-wider px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg bg-cyan-500/20 text-cyan-300 border border-cyan-400/50 flex items-center gap-1 shadow-xs shrink-0 whitespace-nowrap">
               <span>🎧</span>
-              <span>{question.trackLabel || (isEn ? 'CAMBRIDGE STUDIO AUDIO' : 'AUDIO THỰC CHIẾN CAMBRIDGE')}</span>
+              <span>{question.trackLabel || (isEn ? 'STUDIO AUDIO' : 'AUDIO CAMBRIDGE')}</span>
             </span>
           )}
 
           {question.isRevengeQuestion && (
-            <span className="text-xs font-black tracking-wider px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/50 flex items-center gap-1 animate-pulse shadow-xs">
+            <span className="text-[11px] sm:text-xs font-black tracking-wider px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/50 flex items-center gap-1 animate-pulse shadow-xs shrink-0 whitespace-nowrap">
               <span>⚡</span>
-              <span>{isEn ? 'REVENGE (+5 XP)' : 'CÂU PHỤC THÙ (+5 XP)'}</span>
+              <span>{isEn ? 'REVENGE (+5 XP)' : 'PHỤC THÙ (+5 XP)'}</span>
             </span>
           )}
         </div>
@@ -272,10 +272,11 @@ export default function ArenaQuestionCard({
           <button
             type="button"
             onClick={() => onPlayAudio?.(localizedQ.audioText, question)}
-            className="flex items-center gap-1.5 text-xs font-bold text-indigo-300 hover:text-white bg-indigo-500/15 hover:bg-indigo-500/25 border border-indigo-500/35 px-3 py-1 rounded-lg transition-all cursor-pointer shadow-xs active:scale-95"
+            className="flex items-center gap-1.5 text-xs font-bold text-indigo-300 hover:text-white bg-indigo-500/15 hover:bg-indigo-500/25 border border-indigo-500/35 px-3 py-1.5 min-h-[36px] rounded-lg transition-all cursor-pointer shadow-xs active:scale-95 shrink-0"
           >
-            <Volume2 className="w-3.5 h-3.5" />
-            <span>{t('arena.playAudio') || (isEn ? 'Play Audio (Space)' : 'Nghe Audio (Phím cách)')}</span>
+            <Volume2 className="w-3.5 h-3.5 shrink-0" />
+            <span className="sm:hidden">{isEn ? 'Listen' : 'Nghe'}</span>
+            <span className="hidden sm:inline">{t('arena.playAudio') || (isEn ? 'Play Audio (Space)' : 'Nghe Audio (Phím cách)')}</span>
           </button>
         )}
       </div>
@@ -315,7 +316,7 @@ export default function ArenaQuestionCard({
             <button
               type="button"
               onClick={() => onPlayAudio?.(question.audioText, question)}
-              className="px-2.5 py-1 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 rounded-md font-bold text-xs transition-colors cursor-pointer shrink-0"
+              className="hidden sm:inline-flex px-2.5 py-1 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 rounded-md font-bold text-xs transition-colors cursor-pointer shrink-0"
             >
               {isEn ? 'Replay Audio' : 'Nghe lại'}
             </button>
@@ -341,6 +342,7 @@ export default function ArenaQuestionCard({
           validationResult={validationResult}
           onCheckAnswer={handleCheck}
           onSkip={onSkipQuestion || onSkip}
+          showInlineActions={false}
         />
       ) : (
         /* Option Cards: Adaptive Grid (3-column for TFNG / 3 options, 1-column or 2-column for others) */
@@ -388,7 +390,7 @@ export default function ArenaQuestionCard({
                   triggerHaptic('chipTap');
                   onSelectOption?.(idx);
                 }}
-                className={`group flex items-center justify-between py-2.5 px-3.5 sm:py-3 sm:px-4 rounded-xl border text-left transition-all active:scale-[0.99] select-none ${btnStyle}`}
+                className={`group flex items-center justify-between py-2.5 px-3 sm:py-3 sm:px-4 min-h-[48px] rounded-xl border text-left transition-all active:scale-[0.99] select-none ${btnStyle}`}
               >
                 <div className="flex items-center gap-3 sm:gap-3.5 flex-1 min-w-0">
                   <span className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-slate-700/60 group-hover:bg-slate-700 flex items-center justify-center text-xs sm:text-sm font-mono font-black text-slate-200 shrink-0 transition-colors shadow-xs">
@@ -492,15 +494,15 @@ export default function ArenaQuestionCard({
         </div>
       )}
 
-      {/* 2-Step Action CTA & Skip Button & Active Perk Trigger */}
-      <div className="mt-1 sm:mt-1.5 flex flex-wrap items-center justify-between gap-2.5">
+      {/* 2-Step Action CTA & Skip Button & Active Perk Trigger (Sticky Thumb Dock on Mobile) */}
+      <div className="sticky bottom-0 z-20 -mx-3 px-3 pt-2.5 pb-[max(0.625rem,env(safe-area-inset-bottom))] bg-slate-950/95 backdrop-blur-md border-t border-slate-800/90 sm:static sm:mx-0 sm:px-0 sm:pt-0 sm:pb-0 sm:bg-transparent sm:backdrop-blur-none sm:border-0 mt-1 sm:mt-1.5 flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center justify-between gap-2 sm:gap-2.5">
         {!isAnswerChecked ? (
           <>
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
               <button
                 type="button"
                 onClick={() => (onSkipQuestion || onSkip)?.()}
-                className="flex items-center gap-1.5 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-slate-700/80 bg-slate-800/60 hover:bg-slate-800 hover:border-slate-600 text-slate-300 hover:text-white text-xs sm:text-sm font-bold transition-all cursor-pointer select-none active:scale-95 shadow-xs"
+                className="flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 sm:py-2.5 min-h-[40px] rounded-xl border border-slate-700/80 bg-slate-800/60 hover:bg-slate-800 hover:border-slate-600 text-slate-300 hover:text-white text-xs sm:text-sm font-bold transition-all cursor-pointer select-none active:scale-95 shadow-xs"
                 title={isEn ? "Don't know this answer? Skip to reveal explanation (Esc)" : "Không biết câu này? Bỏ qua để xem đáp án (Esc)"}
               >
                 <SkipForward className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400" />
@@ -522,7 +524,7 @@ export default function ArenaQuestionCard({
                         triggerHaptic('combo');
                         onActivatePerk?.(pId);
                       }}
-                      className={`flex items-center gap-1.5 px-3 sm:px-3.5 py-2 sm:py-2.5 rounded-xl border font-bold text-xs sm:text-sm transition-all cursor-pointer select-none active:scale-95 shadow-md ${
+                      className={`flex items-center gap-1.5 px-3 sm:px-3.5 py-2 sm:py-2.5 min-h-[40px] rounded-xl border font-bold text-xs sm:text-sm transition-all cursor-pointer select-none active:scale-95 shadow-md ${
                         pId === 'chronos_freeze'
                           ? 'border-amber-400/80 bg-gradient-to-r from-amber-600/30 to-amber-500/20 text-amber-200 hover:bg-amber-500/30 ring-1 ring-amber-400/50 animate-pulse'
                           : 'border-purple-400/80 bg-gradient-to-r from-purple-600/30 to-indigo-500/20 text-purple-200 hover:bg-purple-500/30 ring-1 ring-purple-400/50 animate-pulse'
@@ -547,7 +549,7 @@ export default function ArenaQuestionCard({
                     triggerHaptic('loot');
                     onConsumeAegisElixir();
                   }}
-                  className="flex items-center gap-1.5 px-3 sm:px-3.5 py-2 sm:py-2.5 rounded-xl border border-rose-400/80 bg-gradient-to-r from-rose-600/30 to-pink-500/20 text-rose-200 hover:bg-rose-500/30 ring-1 ring-rose-400/60 animate-bounce font-black text-xs sm:text-sm transition-all cursor-pointer select-none active:scale-95 shadow-md"
+                  className="flex items-center gap-1.5 px-3 sm:px-3.5 py-2 sm:py-2.5 min-h-[40px] rounded-xl border border-rose-400/80 bg-gradient-to-r from-rose-600/30 to-pink-500/20 text-rose-200 hover:bg-rose-500/30 ring-1 ring-rose-400/60 animate-bounce font-black text-xs sm:text-sm transition-all cursor-pointer select-none active:scale-95 shadow-md"
                   title={isEn ? "Drink Aegis Elixir to restore +1 Shield" : "Uống Đan Dược để hồi +1 Khiên"}
                 >
                   <span>🧪</span>
@@ -560,7 +562,7 @@ export default function ArenaQuestionCard({
               type="button"
               disabled={isTextInput ? !userInputText?.trim() : selectedOption === null}
               onClick={() => handleCheck?.()}
-              className="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 disabled:hover:bg-indigo-600 disabled:cursor-not-allowed cursor-pointer text-white font-bold text-xs sm:text-sm px-6 sm:px-8 py-2.5 sm:py-2.5 rounded-xl shadow-lg shadow-indigo-600/25 transition-all select-none w-full sm:w-auto sm:ml-auto active:scale-95"
+              className="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 disabled:hover:bg-indigo-600 disabled:cursor-not-allowed cursor-pointer text-white font-bold text-sm px-6 sm:px-8 py-3 sm:py-2.5 min-h-[44px] rounded-xl shadow-lg shadow-indigo-600/25 transition-all select-none w-full sm:w-auto sm:ml-auto active:scale-95"
             >
               <span>{t('arena.checkAnswer') || (isEn ? 'Check' : 'Kiểm Tra')}</span>
             </button>
@@ -570,7 +572,7 @@ export default function ArenaQuestionCard({
             <button
               type="button"
               onClick={() => onNextQuestion?.()}
-              className="flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 cursor-pointer text-white font-bold text-xs sm:text-sm px-6 sm:px-8 py-2.5 sm:py-2.5 rounded-xl shadow-lg shadow-emerald-600/25 transition-all select-none w-full sm:w-auto active:scale-95"
+              className="flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 cursor-pointer text-white font-bold text-sm px-6 sm:px-8 py-3 sm:py-2.5 min-h-[44px] rounded-xl shadow-lg shadow-emerald-600/25 transition-all select-none w-full sm:w-auto active:scale-95"
             >
               <span>{t('arena.nextQuestion') || (isEn ? 'Next' : 'Tiếp Tục')}</span>
               <ArrowRight className="w-4 h-4" />
