@@ -76,6 +76,31 @@ export const FEATURE_CATEGORIES = [
 export const FEATURE_REGISTRY = [
   // --- NHÓM 1: CÁC TÍNH NĂNG MỚI NHẤT (PHASE 2026 RELEASES) ---
   {
+    id: 'feat-pronunciation-studio',
+    version: 'v3.5',
+    status: 'new',
+    badge: 'Mới Ra Mắt',
+    category: 'practice_tools',
+    targetSkills: ['speaking', 'listening'],
+    title: 'Phòng Luyện Phát Âm & Ngữ Điệu Chuẩn Cambridge (/pronunciation)',
+    shortDesc: 'Rèn luyện phát âm 3 cấp độ (Từ đơn học thuật, Cụm từ nối âm & Câu hoàn chỉnh), chẩn đoán độ chuẩn xác từng từ qua Micro và tích lũy Điểm Kinh Nghiệm (XP) thăng cấp.',
+    icon: 'Mic',
+    shortcut: null,
+    updatedAt: '2026-11-19',
+    highlights: [
+      'Luyện Tập 3 Cấp Độ (/pronunciation): Từ Đơn Học Thuật (+15-20 XP), Cụm Từ & Nối Âm Connected Speech (+25-30 XP) và Câu Hoàn Chỉnh & Ngữ Điệu (+35-45 XP).',
+      'Chẩn Đoán Từng Từ Qua Micro & Sóng Âm 60FPS: Phân tích độ khớp ngữ âm từng từ (Xanh: Chuẩn xác ≥84%, Vàng: Gần đúng, Đỏ: Cần đọc lại) và ước tính Band Pronunciation.',
+      'So Sánh Giọng Bản Xứ UK/US & Giọng Của Bạn: Hỗ trợ 3 giọng Giám khảo (Anh-Anh & Anh-Mỹ) ở 3 tốc độ (0.75x tách âm, 0.9x, 1.0x) kèm tính năng phát nối tiếp để tự đối chiếu.',
+      'Tạo Bài Tập Phát Âm Tự Chọn & Tích Điểm Kinh Nghiệm (XP): Tự tạo bài tập mới hoặc nạp 1-chạm từ Sổ Tay Từ Vựng, nhận ngay XP và Vàng Học Thuật đồng bộ trực tiếp lên Bảng Xếp Hạng.'
+    ],
+    usageGuide: 'Truy cập menu "Công Cụ" trên thanh Navbar và chọn "Luyện Phát Âm & Ngữ Điệu" hoặc mở trực tiếp đường dẫn /pronunciation.',
+    quickAction: {
+      type: 'open_modal',
+      target: 'pronunciation',
+      label: 'Mở Phòng Luyện Phát Âm'
+    }
+  },
+  {
     id: 'feat-beginner-foundation-hub',
     version: 'v3.4',
     status: 'new',

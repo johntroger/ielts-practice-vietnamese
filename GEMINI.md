@@ -19,4 +19,13 @@ Sau khi hoàn thành việc viết code, chạy script một lần (one-off scri
   2. **Chuẩn hóa dữ liệu ngân hàng đề & bài tập mới**:
      - Mọi dữ liệu đề thi, bài tập, câu hỏi, hướng dẫn, bài đọc, kịch bản hội thoại, câu hỏi trắc nghiệm, bẫy distractor, bảng paraphrase, nhãn diagram, lời giải thích và tiêu chí chấm thi khi nạp vào hệ thống bắt buộc phải có phiên bản tiếng Anh chuẩn khảo thí Cambridge (`titleEn`, `explanationEn`, `instructionEn`, `topicEn`, `categoryEn`, `trapTypeEn`, `evidenceEn`...) hoặc hiển thị hoàn toàn bằng tiếng Anh khi ở chế độ `isEn`.
 
+# Quy tắc Tự động Đẩy Code lên Git & Triển khai Vercel (Auto Git Push & Vercel Deployment)
+
+Sau khi hoàn thành việc viết code, kiểm thử (`vite build` / unit tests) và dọn dẹp file tạm (`dist/`, `scratch/`):
+1. **Đồng bộ tài liệu & Kiểm tra trạng thái Git**:
+   - Chạy `npm run docs:sync` (nếu có cập nhật `FEATURE_REGISTRY`) và kiểm tra `git status -s` để đảm bảo không sót file rác hay file tạm.
+2. **Tự động Commit & Push lên GitHub (`origin/main`) để Vercel tự động Deploy**:
+   - Chủ động stage các file mã nguồn của tính năng/bản sửa lỗi (`git add`), tạo commit với thông điệp chuẩn Conventional Commits (`feat: ...`, `fix: ...`, `chore: ...`) và chạy `git push origin main` (hoặc nhánh làm việc hiện tại) để kích hoạt pipeline tự động build & deploy từ Git sang Vercel mà không cần chờ người dùng nhắc thủ công.
+
+
 

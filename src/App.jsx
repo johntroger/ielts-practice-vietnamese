@@ -1024,6 +1024,121 @@ export default function App() {
     }
   }, [modals.vocabGrammar]);
 
+  // Dedicated Two-Way URL Routing & Deep-Linking for Pronunciation Studio (/pronunciation & /luyen-phat-am)
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const checkIsPronunciationRoute = () => {
+      const pathname = window.location.pathname.toLowerCase().replace(/\/+$/, '');
+      const hash = window.location.hash.toLowerCase();
+      const search = new URLSearchParams(window.location.search);
+
+      const isPathMatch = (
+        pathname === '/pronunciation' ||
+        pathname.endsWith('/pronunciation') ||
+        pathname.startsWith('/pronunciation/') ||
+        pathname === '/luyen-phat-am' ||
+        pathname.endsWith('/luyen-phat-am')
+      );
+
+      const isHashMatch = (
+        hash === '#pronunciation' ||
+        hash === '#luyen-phat-am' ||
+        hash.startsWith('#pronunciation')
+      );
+
+      const modal = search.get('modal');
+      const mode = search.get('mode');
+      const view = search.get('view');
+      const page = search.get('page');
+
+      const isSearchMatch = (
+        modal === 'pronunciation' ||
+        mode === 'pronunciation' ||
+        view === 'pronunciation' ||
+        page === 'pronunciation'
+      );
+
+      return isPathMatch || isHashMatch || isSearchMatch;
+    };
+
+    const extractPronunciationParams = () => {
+      const pathname = window.location.pathname.toLowerCase().replace(/\/+$/, '');
+      const search = new URLSearchParams(window.location.search);
+      let tab = search.get('tab');
+
+      if (!tab) {
+        if (pathname.endsWith('/phrases')) tab = 'phrases';
+        else if (pathname.endsWith('/sentences')) tab = 'sentences';
+        else if (pathname.endsWith('/words')) tab = 'words';
+      }
+
+      return { tab: tab || undefined };
+    };
+
+    if (checkIsPronunciationRoute()) {
+      const { tab } = extractPronunciationParams();
+      openModal('pronunciation', tab ? { tab } : true);
+    }
+
+    const handleLocationChange = () => {
+      if (checkIsPronunciationRoute()) {
+        const { tab } = extractPronunciationParams();
+        openModal('pronunciation', tab ? { tab } : true);
+      } else {
+        closeModal('pronunciation');
+      }
+    };
+
+    window.addEventListener('popstate', handleLocationChange);
+    window.addEventListener('hashchange', handleLocationChange);
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange);
+      window.removeEventListener('hashchange', handleLocationChange);
+    };
+  }, [openModal, closeModal]);
+
+  // Sync address bar when modals.pronunciation opens or closes
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const isPronOpen = Boolean(modals.pronunciation);
+    const pathname = window.location.pathname.toLowerCase().replace(/\/+$/, '');
+    const hash = window.location.hash.toLowerCase();
+    const isCurrentlyOnPronunciationUrl = (
+      pathname === '/pronunciation' ||
+      pathname.endsWith('/pronunciation') ||
+      pathname.startsWith('/pronunciation/') ||
+      pathname === '/luyen-phat-am' ||
+      pathname.endsWith('/luyen-phat-am') ||
+      hash === '#pronunciation' ||
+      hash === '#luyen-phat-am' ||
+      hash.startsWith('#pronunciation')
+    );
+
+    if (isPronOpen && !isCurrentlyOnPronunciationUrl) {
+      try {
+        const payloadTab = typeof modals.pronunciation === 'object' && modals.pronunciation !== null ? modals.pronunciation.tab : null;
+        let targetUrl = '/pronunciation';
+        if (payloadTab && payloadTab !== 'words') {
+          targetUrl = `/pronunciation?tab=${payloadTab}`;
+        }
+        window.history.pushState({ modal: 'pronunciation' }, '', targetUrl);
+      } catch (e) {
+        window.location.hash = 'pronunciation';
+      }
+    } else if (!isPronOpen && isCurrentlyOnPronunciationUrl) {
+      try {
+        if (hash.startsWith('#pronunciation') || hash === '#luyen-phat-am') {
+          window.history.pushState(null, '', window.location.pathname + window.location.search);
+        } else {
+          window.history.pushState(null, '', '/');
+        }
+      } catch (e) {
+        window.history.replaceState(null, '', '/');
+      }
+    }
+  }, [modals.pronunciation]);
+
   // 5. Automated Content Deduplication & Sanitization & Theme init on startup
   useEffect(() => {
     initTheme();
@@ -1297,6 +1412,7 @@ export default function App() {
           setMode={setMode}
           streakCount={streakCount}
           onOpenVocabGrammar={() => openModal('vocabGrammar')}
+          onOpenPronunciation={() => openModal('pronunciation')}
           onOpenDrills={() => openModal('drills')}
           onOpenWeeklyReport={() => openModal('weeklyReport')}
           onOpenMockTest={() => openModal('mockTest')}

@@ -1,7 +1,7 @@
 # 🚀 Trung Tâm Hướng Dẫn & Tính Năng Nền Tảng (Feature Matrix)
 
 > **Cập nhật tự động**: Trang tài liệu này được đồng bộ trực tiếp từ Codebase (`src/core/featureRegistry.js`).  
-> **Tổng số tính năng hiện có**: **45 tính năng chuyên sâu** | **Phiên bản mới nhất**: `v3.5 (2026 Edition)`  
+> **Tổng số tính năng hiện có**: **46 tính năng chuyên sâu** | **Phiên bản mới nhất**: `v3.5 (2026 Edition)`  
 > 📄 **Hồ sơ toàn cảnh dự án & Cách vận hành**: [Xem Hồ Sơ Dự Án & Kiến Trúc Vận Hành (Project Whitepaper) ↗](../project-whitepaper.md)
 
 ---
@@ -15,7 +15,7 @@ Hệ thống **IELTS Practice Vietnamese** được thiết kế theo tiêu chu�
 | Chuyên Mục Tính Năng | Số Lượng | Trạng Thái Nổi Bật | Xem Tài Liệu |
 | :--- | :---: | :--- | :--- |
 | 🤖 **Phân Hệ AI** | **6** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](ai-evaluation.md) |
-| 🛠️ **Kho Đề Thi** | **13** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](practice-tools.md) |
+| 🛠️ **Kho Đề Thi** | **14** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](practice-tools.md) |
 | ⏱️ **Phòng Thi Thử Chuẩn CDI** | **6** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](exam-simulation.md) |
 | 📖 **Cẩm Nang Lý Thuyết** | **5** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](theory-vocab.md) |
 | 📊 **Theo Dõi Tiến Độ, Hồ Sơ Cá Nhân** | **8** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](analytics-profile.md) |
@@ -42,6 +42,11 @@ Hệ thống tích hợp toàn bộ các phím tắt tiêu chuẩn quốc tế g
 ## 🌟 Các Tính Năng Mới Cập Nhật (Release 2026)
 
 Dưới đây là các tính năng học thuật mới nhất được nâng cấp trên hệ thống:
+
+### ✦ [Phòng Luyện Phát Âm & Ngữ Điệu Chuẩn Cambridge (/pronunciation)](practice-tools.md#feat-pronunciation-studio)
+- **Phiên bản**: `v3.5` | **Kỹ năng**: **Speaking** • **Listening**
+- **Tóm tắt**: Rèn luyện phát âm 3 cấp độ (Từ đơn học thuật, Cụm từ nối âm & Câu hoàn chỉnh), chẩn đoán độ chuẩn xác từng từ qua Micro và tích lũy Điểm Kinh Nghiệm (XP) thăng cấp.
+- **Cách dùng nhanh**: Truy cập menu "Công Cụ" trên thanh Navbar và chọn "Luyện Phát Âm & Ngữ Điệu" hoặc mở trực tiếp đường dẫn /pronunciation.
 
 ### ✦ [Trung Tâm Khởi Động Cho Người Mới Bắt Đầu (Beginner Foundation Hub)](practice-tools.md#feat-beginner-foundation-hub)
 - **Phiên bản**: `v3.4` | **Kỹ năng**: **Writing** • **Speaking** • **Reading** • **Listening**

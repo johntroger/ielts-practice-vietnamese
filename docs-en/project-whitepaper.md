@@ -1,9 +1,9 @@
 # 🏛️ How the Platform Works & Project Whitepaper
 
 > **Version**: `v3.5 (2026 Living Edition)` | **Last Updated**: `2026-11-01`  
-> **Platform Scale**: **45+ specialized features** | **Architecture**: `Local-First (90%) + Cloud & AI Examiner (10%)`
+> **Platform Scale**: **46+ specialized features** | **Architecture**: `Local-First (90%) + Cloud & AI Examiner (10%)`
 
-[← Back to Handbook Home](README.md) • [Explore 45+ Platform Features ↗](features/README.md)
+[← Back to Handbook Home](README.md) • [Explore 46+ Platform Features ↗](features/README.md)
 
 ---
 
@@ -81,7 +81,7 @@ Our architecture eliminates server bottlenecks and reduces API unit costs by 85�
 This roadmap is continuously updated as new capabilities and test banks ship to production:
 
 ### 🚀 Phase 1 (Completed & Live) — Core 4-Skill CDI Studio, Dual-Engine Grading & Atlas Arena (`v1.0 – v3.5 (Current)` • `100% Live in Production`)
-- 45+ specialized features across Writing, Speaking, Reading, and Listening.
+- 46+ specialized features across Writing, Speaking, Reading, and Listening.
 - 0.02ms Algorithmic Scorer + 4-Criteria Cambridge AI Examiner with PEEL & GRA Heatmap.
 - 100-Level Atlas Titans Arena, Tower of Babel, Ghost Duels, and Streak Shield economy.
 - 100% Strict Global English UI & Bilingual GitBook auto-sync pipeline.

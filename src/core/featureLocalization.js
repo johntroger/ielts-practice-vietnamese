@@ -44,6 +44,19 @@ export const BADGE_LOCALIZATION_EN = {
 };
 
 export const FEATURE_LOCALIZATION_EN = {
+  'feat-pronunciation-studio': {
+    title: 'Cambridge Pronunciation & Intonation Studio (/pronunciation)',
+    shortDesc: '3-tier phonological training across Single Words, Linked Phrases, and Full Sentences with live microphone word-by-word diagnostics and Experience Points (XP) leveling.',
+    badge: 'New Release',
+    highlights: [
+      '3-Tier Phonological Tracks (/pronunciation): Single Academic Words (+15-20 XP), Connected Speech & Collocations (+25-30 XP), and Full Sentences & Intonation (+35-45 XP).',
+      'Live Word-by-Word Microphone Diagnostics: Color-coded phonetic evaluation (Emerald: Accurate ≥84%, Amber: Near Match, Rose: Retry) with estimated IELTS Pronunciation Band.',
+      'UK/US Native Model & Side-by-Side Comparison: Choose from 3 Examiner voices (UK RP & US GenAm) at 0.75x, 0.9x, or 1.0x speed and compare directly with your recorded voice.',
+      'Custom Drill Creator & Global XP Progression: Create custom pronunciation drills or import from your Vocabulary Notebook to earn XP and Scholastic Gold toward your Atlas Level.'
+    ],
+    usageGuide: 'Open the "Tools" menu on the Navbar and select "Pronunciation Studio" or navigate directly to /pronunciation.',
+    quickActionLabel: 'Open Pronunciation Studio'
+  },
   'feat-beginner-foundation-hub': {
     title: 'Beginner Foundation Hub & Zero-Overwhelm Roadmap',
     shortDesc: 'Gentle, pressure-free 4-step onboarding journey for learners starting from scratch: 90s vocabulary games, 3-minute sentence drills, and clear IELTS jargon decoded.',

@@ -35,6 +35,7 @@ const QuickParaphraseModal = React.lazy(() => import('../QuickParaphraseModal'))
 const SpeakingResultModal = React.lazy(() => import('../speaking/SpeakingResultModal'));
 const AdaptiveSprintModal = React.lazy(() => import('../AdaptiveSprintModal'));
 const AtlasEnglishArenaModal = React.lazy(() => import('../arena/AtlasEnglishArenaModal'));
+const PronunciationStudioModal = React.lazy(() => import('../PronunciationStudioModal'));
 
 // 3. System & Profile Cluster
 const SettingsModal = React.lazy(() => import('../SettingsModal'));
@@ -236,6 +237,25 @@ export default function AppModalHost({
             masteredIds={resolvedMasteredIds}
             onToggleMastered={resolvedToggleMastered}
             onOpenAuth={() => openModal('auth')}
+          />
+        </WorkspaceErrorBoundary>
+      )}
+
+      {/* 2.1.b Pronunciation & Intonation Studio (/pronunciation) */}
+      {Boolean(modals.pronunciation) && (
+        <WorkspaceErrorBoundary skillName="IELTS Pronunciation & Intonation Studio">
+          <PronunciationStudioModal
+            isOpen={Boolean(modals.pronunciation)}
+            initialOptions={typeof modals.pronunciation === 'object' && modals.pronunciation !== null ? modals.pronunciation : null}
+            onClose={() => closeModal('pronunciation')}
+            currentUser={currentUser}
+            vocabList={vocabList}
+            onSaveToNotebook={(v) => {
+              if (!addVocabUnique(vocabList, v, setVocabList)) return;
+              if (onSaveUserVocab) onSaveUserVocab(v);
+            }}
+            masteredIds={resolvedMasteredIds}
+            onToggleMastered={resolvedToggleMastered}
           />
         </WorkspaceErrorBoundary>
       )}

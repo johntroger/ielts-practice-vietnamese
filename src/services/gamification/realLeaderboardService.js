@@ -457,12 +457,28 @@ export async function submitRealSprintScore({
   safeSet(REAL_LEADERBOARD_STORAGE_KEY, cachedList);
 
   // If owner, also update local user profile storage
+  let updatedTotalXp = validXp;
+  let updatedWeeklyXp = validXp;
+
   if (isOwner) {
-    const finalOwnerXp = cachedList.find(u => u.display_name === 'tranthanhtung37')?.total_xp || validXp;
+    const ownerRec = cachedList.find(u => u.display_name === 'tranthanhtung37');
+    updatedTotalXp = ownerRec?.total_xp || validXp;
+    updatedWeeklyXp = ownerRec?.weekly_xp || updatedTotalXp;
     safeSet(`ielts_leaderboard_local_${DEFAULT_OWNER_PROFILE.user_id}`, {
-      weekly_xp: finalOwnerXp,
-      total_xp: finalOwnerXp,
+      weekly_xp: updatedWeeklyXp,
+      total_xp: updatedTotalXp,
       streak_count: streakCount,
+      version_v2: true
+    });
+  } else if (currentUser?.id) {
+    const userRec = cachedList.find(u => u.display_name.toLowerCase() === targetName.toLowerCase());
+    const prevLocal = safeGet(`ielts_leaderboard_local_${currentUser.id}`, {});
+    updatedWeeklyXp = Math.max(userRec?.weekly_xp || 0, (Number(prevLocal.weekly_xp) || 0) + validXp);
+    updatedTotalXp = Math.max(userRec?.total_xp || 0, (Number(prevLocal.total_xp) || 0) + validXp);
+    safeSet(`ielts_leaderboard_local_${currentUser.id}`, {
+      weekly_xp: updatedWeeklyXp,
+      total_xp: updatedTotalXp,
+      streak_count: Math.max(Number(prevLocal.streak_count) || 1, streakCount),
       version_v2: true
     });
   }
@@ -470,14 +486,42 @@ export async function submitRealSprintScore({
   // If Guest, record guest score locally
   if (!currentUser) {
     const curGuest = safeGet(GUEST_ARENA_STORAGE_KEY, { weekly_xp: 0, total_xp: 0, streak: 1 });
+    updatedWeeklyXp = (curGuest.weekly_xp || 0) + validXp;
+    updatedTotalXp = (curGuest.total_xp || 0) + validXp;
     safeSet(GUEST_ARENA_STORAGE_KEY, {
-      weekly_xp: (curGuest.weekly_xp || 0) + validXp,
-      total_xp: (curGuest.total_xp || 0) + validXp,
+      weekly_xp: updatedWeeklyXp,
+      total_xp: updatedTotalXp,
       streak: Math.max(curGuest.streak || 1, streakCount)
     });
   }
 
-  return { success: true };
+  return {
+    success: true,
+    deltaXp: validXp,
+    totalXp: updatedTotalXp,
+    weeklyXp: updatedWeeklyXp
+  };
+}
+
+/**
+ * Reads the current user's (or guest's) cumulative XP from local storage cache.
+ * @param {Object|null} currentUser
+ * @returns {number}
+ */
+export function getCurrentUserTotalXp(currentUser = null) {
+  const isOwner = isUserOwner(currentUser);
+  if (currentUser?.id) {
+    const local = safeGet(`ielts_leaderboard_local_${currentUser.id}`, {});
+    if (isOwner && (!local.version_v2 && (local.total_xp === 9400 || local.weekly_xp === 2850))) {
+      return 0;
+    }
+    return Number(local.total_xp || local.weekly_xp || (isOwner ? DEFAULT_OWNER_PROFILE.total_xp : 0));
+  }
+  if (isOwner) {
+    return Number(DEFAULT_OWNER_PROFILE.total_xp || 0);
+  }
+  const guest = safeGet(GUEST_ARENA_STORAGE_KEY, {});
+  return Number(guest.total_xp || guest.weekly_xp || 0);
 }
 
 /**
