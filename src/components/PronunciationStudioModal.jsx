@@ -1611,6 +1611,25 @@ export default function PronunciationStudioModal({
                     ) : null}
                   </div>
 
+                  {speechEngine.speechError && (
+                    <div className="p-2.5 rounded-xl bg-rose-950/60 border border-rose-500/40 text-xs text-rose-200 flex items-start gap-2">
+                      <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+                      <span>
+                        {speechEngine.speechError === 'not-allowed'
+                          ? isEn
+                            ? 'Microphone permission is blocked. Please allow Microphone access in your browser site settings (🔒 icon next to the URL).'
+                            : 'Trình duyệt đang chặn quyền Micro. Hãy bấm biểu tượng 🔒 cạnh thanh địa chỉ để cho phép Micro.'
+                          : speechEngine.speechError === 'audio-capture'
+                          ? isEn
+                            ? 'Could not capture microphone audio. Close other apps/tabs using the mic and try again.'
+                            : 'Không thể thu âm từ Micro. Hãy đóng các ứng dụng/tab khác đang dùng mic rồi thử lại.'
+                          : isEn
+                          ? 'Voice recognition is unavailable on this browser. Please use Chrome/Safari over HTTPS or tap "Text Test?".'
+                          : 'Nhận diện giọng nói chưa khả dụng trên trình duyệt này. Hãy dùng Chrome/Safari (HTTPS) hoặc bấm "Kiểm Tra Chữ?".'}
+                      </span>
+                    </div>
+                  )}
+
                   {/* Primary Record / Stop Button */}
                   <div className="flex flex-wrap items-center gap-2.5">
                     <button

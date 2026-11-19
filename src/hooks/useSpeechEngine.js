@@ -115,9 +115,11 @@ export function useSpeechEngine({
   const ttsSessionIdRef = useRef(0);
   const currentUtteranceRef = useRef(null);
 
-  // Check Web Speech API support
+  // Check Web Speech API support & mobile platform
   const isSpeechRecognitionSupported = typeof window !== 'undefined' && 
     !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+  const isMobileDevice = typeof navigator !== 'undefined' &&
+    /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || '');
 
   // =========================================================================
   // 1. INITIALIZE & PRELOAD VOICES (TTS)
@@ -330,7 +332,9 @@ export function useSpeechEngine({
     const SpeechRecognitionClass = window.SpeechRecognition || window.webkitSpeechRecognition;
     const recognition = new SpeechRecognitionClass();
 
-    recognition.continuous = true;
+    // On mobile (Android Chrome / iOS Safari), continuous=true often stalls or duplicates words;
+    // single-utterance mode + watchdog auto-reconnect is far more reliable.
+    recognition.continuous = !isMobileDevice;
     recognition.interimResults = true;
     recognition.maxAlternatives = 5;
     recognition.lang = 'en-US'; // Best recognition accuracy across accents
@@ -396,12 +400,23 @@ export function useSpeechEngine({
 
     recognition.onerror = (event) => {
       console.warn('Speech recognition status notice:', event.error);
+      const hasActiveRecorder =
+        mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive';
+
       if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
-        // If STT cloud service is restricted, do NOT kill audio recording!
-        // We have direct Gemini Multimodal Audio STT fallback.
-        setSpeechError('stt-service-unavailable');
+        setSpeechError(event.error === 'not-allowed' ? 'not-allowed' : 'stt-service-unavailable');
+        if (!hasActiveRecorder) {
+          isIntentionalListeningRef.current = false;
+          setIsListening(false);
+        }
+      } else if (event.error === 'audio-capture') {
+        setSpeechError('audio-capture');
+        if (!hasActiveRecorder) {
+          isIntentionalListeningRef.current = false;
+          setIsListening(false);
+        }
       } else if (event.error === 'no-speech') {
-        // Silence pause detected in Chrome, watchdog will auto-restart if still intentional
+        // Silence pause detected, watchdog will auto-restart if still intentional
       } else if (event.error === 'network') {
         // Network drop in cloud STT - do not crash candidate audio recording
         console.warn('Speech recognition network warning');
@@ -444,6 +459,33 @@ export function useSpeechEngine({
     setActiveClipId(clipId);
     isIntentionalListeningRef.current = true;
 
+    // MOBILE FAST-PATH: On iOS Safari & Android Chrome, opening getUserMedia + MediaRecorder
+    // simultaneously with SpeechRecognition locks/starves the mobile mic hardware, and any
+    // `await` before recognition.start() breaks iOS Safari's user-gesture requirement.
+    if (isMobileDevice && isSpeechRecognitionSupported) {
+      try {
+        if (mediaStreamRef.current) {
+          try {
+            mediaStreamRef.current.getTracks().forEach(t => t.stop());
+          } catch (e) {}
+          mediaStreamRef.current = null;
+        }
+        if (recognitionRef.current) {
+          try { recognitionRef.current.abort(); } catch (e) {}
+          recognitionRef.current = null;
+        }
+        const recognition = initSpeechRecognition();
+        if (recognition) {
+          recognitionRef.current = recognition;
+          recognition.start();
+          setIsListening(true);
+          return;
+        }
+      } catch (mobileSttErr) {
+        console.warn('Mobile synchronous SpeechRecognition start fallback to MediaRecorder:', mobileSttErr);
+      }
+    }
+
     // 1. Check browser mediaDevices support
     if (typeof navigator === 'undefined' || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
       const errMsg = 'Trình duyệt của bạn không hỗ trợ tính năng ghi âm qua Micro (navigator.mediaDevices.getUserMedia). Vui lòng sử dụng Google Chrome, Edge hoặc Safari và truy cập qua HTTPS.';
@@ -464,9 +506,6 @@ export function useSpeechEngine({
       ) {
         stream = await navigator.mediaDevices.getUserMedia({
           audio: {
-            channelCount: 1, // Mono eliminates stereo phase cancellation & room reverb
-            sampleRate: 48000,
-            sampleSize: 16,
             echoCancellation: true,
             noiseSuppression: true,
             autoGainControl: true
@@ -613,7 +652,7 @@ export function useSpeechEngine({
     } catch (recErr) {
       console.warn('Speech recognition setup warning:', recErr);
     }
-  }, [initSpeechRecognition]);
+  }, [initSpeechRecognition, isMobileDevice, isSpeechRecognitionSupported]);
 
   // Stop listening instantly and finalize audio clip (Flushes any pending interim words)
   const stopListening = useCallback(() => {
