@@ -58,6 +58,7 @@ import SpeakingSoundcheckModal from './speaking/SpeakingSoundcheckModal';
 
 const CUSTOM_CONV_STORAGE_KEY = 'ielts_conversation_custom_v1';
 const CONV_STATS_STORAGE_KEY = 'ielts_conversation_stats_v1';
+const CONV_RESUME_SESSION_KEY = 'ielts_conversation_resume_v1';
 
 export default function ConversationStudioModal({
   isOpen,
@@ -98,19 +99,24 @@ export default function ConversationStudioModal({
     })
   );
 
-  // Load dynamic conversations (Listening Studio R2 + Speaking Topics Bank) lazily
+  // Load dynamic conversations (Listening Studio R2 + Speaking Topics Bank + optional passed scenario)
   useEffect(() => {
     if (!isOpen) return;
     let mounted = true;
     loadDynamicConversations().then((loaded) => {
       if (mounted && Array.isArray(loaded)) {
-        setDynamicScenarios(loaded);
+        const extra = initialOptions?.customScenario ? [initialOptions.customScenario] : [];
+        const merged = [...extra, ...loaded.filter(d => !extra.some(e => e.id === d.id))];
+        setDynamicScenarios(merged);
+        if (initialOptions?.customScenario?.id) {
+          setSelectedScenarioId(initialOptions.customScenario.id);
+        }
       }
     });
     return () => {
       mounted = false;
     };
-  }, [isOpen]);
+  }, [isOpen, initialOptions?.customScenario?.id]);
 
   // 2. UI & Audio Settings
   const [isExpanded, setIsExpanded] = useState(() =>
@@ -285,8 +291,11 @@ export default function ConversationStudioModal({
 
   // Reset state when switching scenario or role
   const resetDialogueState = useCallback(
-    (nextRole = null) => {
+    (nextRole = null, clearSavedProgress = true) => {
       stopAllAudio();
+      if (clearSavedProgress && typeof window !== 'undefined') {
+        try { window.sessionStorage.removeItem(CONV_RESUME_SESSION_KEY); } catch (e) {}
+      }
       const targetRole = nextRole || currentScenario?.defaultUserRole || 'B';
       setUserRole(targetRole);
       setActiveTurnIndex(0);
@@ -316,13 +325,64 @@ export default function ConversationStudioModal({
     setIsMobileListOpen(false);
   };
 
+  // Restore saved in-progress session from sessionStorage if matching currentScenario
   useEffect(() => {
     if (!isOpen) {
       stopAllAudio();
       return;
     }
-    resetDialogueState(currentScenario?.defaultUserRole || 'B');
+    let restored = false;
+    if (typeof window !== 'undefined' && currentScenario?.id) {
+      try {
+        const raw = window.sessionStorage.getItem(CONV_RESUME_SESSION_KEY);
+        if (raw) {
+          const saved = JSON.parse(raw);
+          if (
+            saved &&
+            saved.scenarioId === currentScenario.id &&
+            typeof saved.activeTurnIndex === 'number' &&
+            saved.activeTurnIndex > 0 &&
+            saved.activeTurnIndex < (currentScenario.turns?.length || 0)
+          ) {
+            stopAllAudio();
+            setUserRole(saved.userRole || currentScenario.defaultUserRole || 'B');
+            setActiveTurnIndex(saved.activeTurnIndex);
+            setHasStartedDialogue(false);
+            setTurnResults(saved.turnResults || {});
+            setTurnAttempts(saved.turnAttempts || {});
+            setTotalSpeakingSec(saved.totalSpeakingSec || 0);
+            setEvaluationResult(null);
+            restored = true;
+          }
+        }
+      } catch (e) {}
+    }
+    if (!restored) {
+      resetDialogueState(currentScenario?.defaultUserRole || 'B', false);
+    }
   }, [currentScenario?.id, isOpen]);
+
+  // Persist in-progress turn state to sessionStorage for Auto-Resume
+  useEffect(() => {
+    if (!isOpen || !currentScenario?.id || typeof window === 'undefined') return;
+    try {
+      if (activeTurnIndex > 0 && !isCompleted) {
+        window.sessionStorage.setItem(
+          CONV_RESUME_SESSION_KEY,
+          JSON.stringify({
+            scenarioId: currentScenario.id,
+            userRole,
+            activeTurnIndex,
+            turnResults,
+            turnAttempts,
+            totalSpeakingSec
+          })
+        );
+      } else if (isCompleted) {
+        window.sessionStorage.removeItem(CONV_RESUME_SESSION_KEY);
+      }
+    } catch (e) {}
+  }, [isOpen, currentScenario?.id, userRole, activeTurnIndex, isCompleted, turnResults, turnAttempts, totalSpeakingSec]);
 
   // Keyboard shortcuts (Alt+Z fullscreen, Esc close)
   useEffect(() => {

@@ -63,6 +63,17 @@ export function useSubmissionAndTaskActions({
   };
 
   const handleExportAllData = () => {
+    let conversationStats = null;
+    let conversationCustom = null;
+    let pronunciationStats = null;
+    let pronunciationCustom = null;
+    try {
+      conversationStats = JSON.parse(localStorage.getItem('ielts_conversation_stats_v1') || 'null');
+      conversationCustom = JSON.parse(localStorage.getItem('ielts_conversation_custom_v1') || 'null');
+      pronunciationStats = JSON.parse(localStorage.getItem('ielts_pronunciation_stats_v1') || 'null');
+      pronunciationCustom = JSON.parse(localStorage.getItem('ielts_pronunciation_custom_drills_v1') || 'null');
+    } catch (e) {}
+
     const data = {
       allTasks,
       essays,
@@ -75,6 +86,10 @@ export function useSubmissionAndTaskActions({
       mistakes,
       personalNotes,
       streakCount,
+      conversationStats,
+      conversationCustom,
+      pronunciationStats,
+      pronunciationCustom,
       exportDate: new Date().toISOString()
     };
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -112,6 +127,12 @@ export function useSubmissionAndTaskActions({
     if (data.vocabList) setVocabList(data.vocabList);
     if (data.mistakes) setMistakes(data.mistakes);
     if (data.personalNotes) setPersonalNotes(data.personalNotes);
+    try {
+      if (data.conversationStats) localStorage.setItem('ielts_conversation_stats_v1', JSON.stringify(data.conversationStats));
+      if (data.conversationCustom) localStorage.setItem('ielts_conversation_custom_v1', JSON.stringify(data.conversationCustom));
+      if (data.pronunciationStats) localStorage.setItem('ielts_pronunciation_stats_v1', JSON.stringify(data.pronunciationStats));
+      if (data.pronunciationCustom) localStorage.setItem('ielts_pronunciation_custom_drills_v1', JSON.stringify(data.pronunciationCustom));
+    } catch (e) {}
     alert('Đã khôi phục dữ liệu thành công!');
   };
 

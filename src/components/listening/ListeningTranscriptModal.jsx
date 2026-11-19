@@ -11,10 +11,12 @@ import {
   Clock, 
   BookmarkPlus, 
   Layers,
-  ChevronRight
+  ChevronRight,
+  MessageSquare
 } from 'lucide-react';
 import { useTranslation } from '../../i18n';
 import { getEffectiveTranscripts } from '../../utils/transcriptParser';
+import { openModal } from '../../core/modalStore';
 
 export default function ListeningTranscriptModal({
   isOpen,
@@ -94,6 +96,48 @@ export default function ListeningTranscriptModal({
     return 'bg-slate-100 text-slate-700 border border-slate-200/50';
   };
 
+  const handleRoleplayInConversation = () => {
+    const validLines = transcripts.filter(
+      s => s.speaker !== 'Narrator' && s.text && s.text.split(/\s+/).length >= 2
+    ).slice(0, 8);
+    if (validLines.length < 2) return;
+
+    const turns = validLines.map((line, idx) => ({
+      id: `lconv-${selectedPartNum}-${idx + 1}`,
+      speaker: idx % 2 === 0 ? 'A' : 'B',
+      text: line.text,
+      audioStartSec: line.start,
+      audioEndSec: line.end,
+      meaningEn: `Listening Part ${selectedPartNum} (${line.speaker || 'Speaker'})`,
+      meaningVi: `Listening Part ${selectedPartNum} (${line.speaker || 'Người nói'})`,
+      mouthTipEn: 'Match the native recording rhythm and clear word endings.',
+      mouthTipVi: 'Bám sát nhịp độ bản thu âm và bật rõ phụ âm cuối.'
+    }));
+
+    const customScenario = {
+      id: `conv-listening-${currentTest.id}-p${selectedPartNum}`,
+      track: 'ielts',
+      bandLevel: '7.0',
+      sourceTag: 'Listening Roleplay',
+      audioUrl: currentTest.audioUrl || '',
+      fallbackAudioUrl: currentTest.fallbackAudioUrl || currentTest.audioUrl || '',
+      titleEn: `${currentTest.titleEn || currentTest.title} (Part ${selectedPartNum})`,
+      titleVi: `${currentTest.titleVi || currentTest.title} (Part ${selectedPartNum})`,
+      contextEn: activePartData?.contextEn || activePartData?.context || 'Roleplay adapted from Listening transcript.',
+      contextVi: activePartData?.contextVi || activePartData?.context || 'Đóng vai hội thoại từ transcript bài Listening.',
+      roles: {
+        A: { nameEn: validLines[0]?.speaker || 'Speaker A', nameVi: validLines[0]?.speaker || 'Người nói A', avatar: '🎧' },
+        B: { nameEn: validLines[1]?.speaker || 'Speaker B', nameVi: validLines[1]?.speaker || 'Người nói B', avatar: '🎙️' }
+      },
+      defaultUserRole: 'B',
+      xpReward: 100,
+      turns
+    };
+
+    onClose?.();
+    openModal('conversation', { customScenario });
+  };
+
   return (
     <div className="fixed inset-0 z-50 bg-slate-900/75 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5 animate-in fade-in duration-150">
       <div className="bg-white rounded-2xl w-full max-w-4xl max-h-[92dvh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden">
@@ -119,13 +163,26 @@ export default function ListeningTranscriptModal({
             </div>
           </div>
 
-          <button
-            onClick={onClose}
-            className="p-1.5 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors cursor-pointer"
-            aria-label={isEn ? "Close transcript modal" : "Đóng bảng transcript"}
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center space-x-2">
+            {transcripts.length >= 4 && (
+              <button
+                type="button"
+                onClick={handleRoleplayInConversation}
+                className="hidden sm:flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-cyan-50 hover:bg-cyan-100 text-cyan-800 border border-cyan-200 text-xs font-bold transition-colors cursor-pointer"
+                title={isEn ? 'Practice roleplaying this dialogue in /conversation' : 'Đóng vai hội thoại này trong /conversation'}
+              >
+                <MessageSquare className="w-3.5 h-3.5 text-cyan-600" />
+                <span>{isEn ? 'Roleplay (/conversation)' : 'Đóng vai (/conversation)'}</span>
+              </button>
+            )}
+            <button
+              onClick={onClose}
+              className="p-1.5 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors cursor-pointer"
+              aria-label={isEn ? "Close transcript modal" : "Đóng bảng transcript"}
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         {/* Filter Toolbar: Part Switcher & Search */}

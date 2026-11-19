@@ -239,6 +239,10 @@ export default function AppModalHost({
             onToggleMastered={resolvedToggleMastered}
             onOpenAuth={() => openModal('auth')}
             onOpenVocabNotebook={() => openModal('notebook', { openAdd: true })}
+            onOpenConversation={() => {
+              closeModal('pronunciation');
+              openModal('conversation');
+            }}
           />
         </WorkspaceErrorBoundary>
       )}
@@ -262,6 +266,10 @@ export default function AppModalHost({
             onToggleMastered={resolvedToggleMastered}
             onOpenAuth={() => openModal('auth')}
             onOpenVocabNotebook={() => openModal('notebook', { openAdd: true })}
+            onOpenConversation={() => {
+              closeModal('pronunciation');
+              openModal('conversation');
+            }}
           />
         </WorkspaceErrorBoundary>
       )}

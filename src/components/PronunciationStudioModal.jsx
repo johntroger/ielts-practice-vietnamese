@@ -29,7 +29,8 @@ import {
   Trophy,
   List,
   ChevronDown,
-  Lock
+  Lock,
+  MessageSquare
 } from 'lucide-react';
 import {
   PRONUNCIATION_TRACKS,
@@ -75,6 +76,7 @@ export default function PronunciationStudioModal({
   onToggleMastered,
   onOpenAuth,
   onOpenVocabNotebook,
+  onOpenConversation,
   initialOptions = null
 }) {
   const { isEn } = useTranslation();
@@ -971,8 +973,19 @@ export default function PronunciationStudioModal({
             </div>
           </div>
 
-          {/* Right: Actions (Create Drill, Share, Expand, Close) */}
+          {/* Right: Actions (Conversation Switch, Create Drill, Share, Expand, Close) */}
           <div className="flex items-center space-x-1.5 shrink-0">
+            {onOpenConversation && (
+              <button
+                type="button"
+                onClick={onOpenConversation}
+                className="hidden md:flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-cyan-950/70 hover:bg-cyan-900/80 text-cyan-300 border border-cyan-500/35 text-xs font-bold transition-colors cursor-pointer"
+                title={isEn ? 'Switch to Conversation Studio (/conversation)' : 'Chuyển sang Luyện Hội Thoại (/conversation)'}
+              >
+                <MessageSquare className="w-3.5 h-3.5" />
+                <span>/conversation</span>
+              </button>
+            )}
             <button
               type="button"
               onClick={() => setIsCreatorOpen(true)}
