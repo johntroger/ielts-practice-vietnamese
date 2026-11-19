@@ -548,7 +548,8 @@ export default function PronunciationStudioModal({
     const rateToUse = customRate || playbackSpeed;
     speechEngine.speak(textToSpeak, {
       examinerId: selectedExaminerId,
-      rate: rateToUse
+      rate: rateToUse,
+      silentChime: true
     });
   };
 
@@ -562,7 +563,7 @@ export default function PronunciationStudioModal({
     speechEngine.resetTranscript();
     speechEngine.speak(
       currentDrill.targetText,
-      { examinerId: selectedExaminerId, rate: 0.85 },
+      { examinerId: selectedExaminerId, rate: 0.85, silentChime: true },
       async () => {
         lastAutoEvaluatedRef.current = '';
         liveSpokenTextRef.current = '';

@@ -195,7 +195,9 @@ export function useSpeechEngine({
     }
 
     lastSpokenTextRef.current = text;
-    speakingSoundEffects.playExaminerChime();
+    if (!options.silentChime) {
+      speakingSoundEffects.playExaminerChime();
+    }
 
     const chunks = splitTextIntoUtteranceChunks(text, 140);
     if (chunks.length === 0) {

@@ -823,7 +823,7 @@ export function evaluatePronunciationAttempt({
         word: rawWord,
         cleanWord: '',
         status: 'correct',
-        similarity: 1,
+        similarity: 100,
         spokenMatch: rawWord
       };
     }
@@ -870,11 +870,24 @@ export function evaluatePronunciationAttempt({
   const avgWordSimilarity =
     wordBreakdown.reduce((sum, w) => sum + w.similarity, 0) / wordBreakdown.length;
 
-  // Blend lexical phonetic match (82%) with acoustic STT confidence (18%)
+  // Blend lexical phonetic match (85%) with acoustic STT confidence (15%)
   const safeConfidence = Math.max(0.6, Math.min(1.0, Number(confidence) || 0.88));
-  const rawScore = spokenWords.length === 0
+  let rawScore = spokenWords.length === 0
     ? 0
     : Math.round(avgWordSimilarity * 0.85 + safeConfidence * 100 * 0.15);
+
+  // Strict single-word gate: if a single word is mispronounced (< 95% match, e.g. phenomena vs phenomenon),
+  // prevent high STT confidence from inflating it past the 80% passing threshold.
+  if (spokenWords.length > 0 && rawTargetWords.length === 1 && avgWordSimilarity < 95) {
+    rawScore = Math.min(76, Math.round(avgWordSimilarity * 0.9));
+  }
+
+  // Penalize excessive filler/extra words beyond target length
+  const allowedSlack = rawTargetWords.length === 1 ? 0 : 1;
+  const extraWordsCount = Math.max(0, spokenWords.length - rawTargetWords.length - allowedSlack);
+  if (extraWordsCount > 0 && rawScore > 0) {
+    rawScore -= Math.min(20, extraWordsCount * 8);
+  }
 
   const overallAccuracy = Math.max(0, Math.min(100, rawScore));
 
