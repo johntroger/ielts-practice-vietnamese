@@ -27,7 +27,8 @@ import {
   Headphones,
   ArrowRight,
   Trophy,
-  List
+  List,
+  ChevronDown
 } from 'lucide-react';
 import {
   PRONUNCIATION_TRACKS,
@@ -201,6 +202,7 @@ export default function PronunciationStudioModal({
   );
   const [attemptCount, setAttemptCount] = useState(0);
   const [isWaitingForRetrySpeech, setIsWaitingForRetrySpeech] = useState(false);
+  const [showTips, setShowTips] = useState(false);
   const userAudioRef = useRef(null);
   const hasAwardedXpRef = useRef(false);
   const lastAutoEvaluatedRef = useRef('');
@@ -907,11 +909,11 @@ export default function PronunciationStudioModal({
         )}
 
         {/* ================================================================= */}
-        {/* 2. TRACK SWITCHER (WORDS / PHRASES / SENTENCES) & VOICE TOOLBAR   */}
+        {/* 2. COMPACT TRACK SWITCHER & ACCENT/SPEED BAR                      */}
         {/* ================================================================= */}
-        <div className="px-3 sm:px-6 py-2 bg-slate-950/80 border-b border-slate-800/90 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-2 shrink-0">
-          {/* 3 Track Tabs (Horizontal scroll on mobile) */}
-          <div className="flex items-center space-x-1.5 overflow-x-auto no-scrollbar">
+        <div className="px-3 sm:px-6 py-2 bg-slate-950/80 border-b border-slate-800/90 flex items-center justify-between gap-2 overflow-x-auto no-scrollbar shrink-0">
+          {/* 3 Track Tabs */}
+          <div className="flex items-center space-x-1.5 shrink-0">
             {PRONUNCIATION_TRACKS.map(track => {
               const isActive = activeTab === track.id;
               return (
@@ -919,72 +921,53 @@ export default function PronunciationStudioModal({
                   key={track.id}
                   type="button"
                   onClick={() => handleSelectTab(track.id)}
-                  className={`flex items-center space-x-1.5 sm:space-x-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-[11px] sm:text-xs font-black transition-all cursor-pointer whitespace-nowrap shrink-0 ${
+                  className={`px-3 sm:px-4 py-1.5 rounded-xl text-[11px] sm:text-xs font-black transition-all cursor-pointer whitespace-nowrap ${
                     isActive
-                      ? `bg-gradient-to-r ${track.badgeColor} text-white shadow-lg`
+                      ? `bg-gradient-to-r ${track.badgeColor} text-white shadow-md`
                       : 'bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-800'
                   }`}
                 >
-                  <span>{isEn ? track.labelEn : track.labelVi}</span>
-                  <span
-                    className={`px-1.5 py-0.2 rounded-full text-[9px] sm:text-[10px] font-extrabold ${
-                      isActive ? 'bg-black/25 text-white' : 'bg-slate-800 text-amber-400'
-                    }`}
-                  >
-                    +{track.baseXp} XP
-                  </span>
+                  {isEn ? track.labelEn : track.labelVi}
                 </button>
               );
             })}
           </div>
 
-          {/* Native Voice Accent & Speed Controls (Single scrollable row on mobile) */}
-          <div className="flex items-center space-x-2 overflow-x-auto no-scrollbar text-xs">
-            {/* Examiner Voice Selector */}
-            <div className="flex items-center space-x-1 bg-slate-900 border border-slate-800 rounded-xl p-1 shrink-0">
-              {SPEAKING_EXAMINER_PROFILES.map(ex => {
-                const isSelected = selectedExaminerId === ex.id;
-                const shortLabel =
-                  ex.id === 'examiner-arthur'
-                    ? '🇬🇧 UK Male'
-                    : ex.id === 'examiner-eleanor'
-                    ? '🇬🇧 UK Female'
-                    : '🇺🇸 US Male';
-                return (
-                  <button
-                    key={ex.id}
-                    type="button"
-                    onClick={() => setSelectedExaminerId(ex.id)}
-                    className={`px-2 sm:px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold transition-all cursor-pointer whitespace-nowrap ${
-                      isSelected
-                        ? 'bg-indigo-600 text-white shadow-xs'
-                        : 'text-slate-400 hover:text-white'
-                    }`}
-                  >
-                    {shortLabel}
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Playback Speed Selector */}
-            <div className="flex items-center space-x-1 bg-slate-900 border border-slate-800 rounded-xl p-1 shrink-0">
+          {/* Ultra-Compact Accent (UK / US) & Speed Toggle */}
+          <div className="flex items-center space-x-1.5 shrink-0">
+            <div className="flex items-center bg-slate-900 border border-slate-800 rounded-xl p-0.5">
               {[
-                { rate: 0.75, label: '0.75x' },
-                { rate: 0.9, label: '0.9x' },
-                { rate: 1.0, label: '1.0x' }
-              ].map(sp => (
+                { id: 'examiner-arthur', label: '🇬🇧 UK' },
+                { id: 'examiner-oliver', label: '🇺🇸 US' }
+              ].map(v => (
                 <button
-                  key={sp.rate}
+                  key={v.id}
                   type="button"
-                  onClick={() => setPlaybackSpeed(sp.rate)}
+                  onClick={() => setSelectedExaminerId(v.id)}
                   className={`px-2 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold transition-all cursor-pointer whitespace-nowrap ${
-                    playbackSpeed === sp.rate
-                      ? 'bg-purple-600 text-white shadow-xs'
+                    selectedExaminerId === v.id || (v.id === 'examiner-arthur' && selectedExaminerId === 'examiner-eleanor')
+                      ? 'bg-indigo-600 text-white'
                       : 'text-slate-400 hover:text-white'
                   }`}
                 >
-                  {sp.label}
+                  {v.label}
+                </button>
+              ))}
+            </div>
+
+            <div className="flex items-center bg-slate-900 border border-slate-800 rounded-xl p-0.5">
+              {[0.75, 0.9, 1.0].map(rate => (
+                <button
+                  key={rate}
+                  type="button"
+                  onClick={() => setPlaybackSpeed(rate)}
+                  className={`px-1.5 sm:px-2 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold transition-all cursor-pointer whitespace-nowrap ${
+                    playbackSpeed === rate
+                      ? 'bg-purple-600 text-white'
+                      : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  {rate}x
                 </button>
               ))}
             </div>
@@ -1205,45 +1188,35 @@ export default function PronunciationStudioModal({
             {currentDrill ? (
               <>
                 {/* ========================================================= */}
-                {/* CARD 1: TARGET PHONETIC & INTONATION DISPLAY              */}
+                {/* CARD 1: CLEAN TARGET DISPLAY & MODEL AUDIO                */}
                 {/* ========================================================= */}
-                <div className="p-4 sm:p-6 rounded-3xl bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950/40 border border-indigo-500/30 shadow-xl space-y-4">
-                  {/* Top Meta Row */}
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <div className="flex flex-wrap items-center gap-1.5">
-                      <span className="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
-                        {isEn ? currentDrill.categoryEn : currentDrill.categoryVi}
+                <div className="p-4 sm:p-6 rounded-3xl bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950/35 border border-indigo-500/30 shadow-xl space-y-3">
+                  {/* Minimal Top Meta Row */}
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-1.5">
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-500/15 text-amber-300 border border-amber-500/30">
+                        Band {currentDrill.bandLevel}
                       </span>
-                      <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-slate-800 text-slate-300">
-                        {isEn ? currentDrill.topicEn : currentDrill.topicVi}
-                      </span>
-                      <span className="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                        Target Band {currentDrill.bandLevel}
-                      </span>
-                      <span className="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center space-x-1">
-                        <Zap className="w-3 h-3 fill-current" />
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 flex items-center space-x-1">
+                        <Zap className="w-2.5 h-2.5 fill-current" />
                         <span>+{currentDrill.xpReward} XP</span>
                       </span>
                     </div>
 
-                    {/* Save to Vocab Vault & Mastered Buttons */}
-                    <div className="flex items-center space-x-2">
+                    {/* Icon-only Save & Mastered + Desktop Prev/Next */}
+                    <div className="flex items-center space-x-1.5">
                       {onSaveToNotebook && (
                         <button
                           type="button"
                           onClick={handleSaveCurrentToVocab}
-                          className="flex items-center space-x-1 px-2.5 py-1 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 text-xs font-bold border border-slate-700 transition-colors cursor-pointer"
+                          className={`p-1.5 rounded-xl border text-xs transition-colors cursor-pointer ${
+                            savedToVaultToast
+                              ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
+                              : 'bg-slate-800/80 hover:bg-slate-700 text-amber-300 border-slate-700'
+                          }`}
+                          title={isEn ? 'Save to Vocabulary Notebook' : 'Lưu vào Sổ Tay Từ Vựng'}
                         >
-                          <Bookmark className="w-3.5 h-3.5" />
-                          <span>
-                            {savedToVaultToast
-                              ? isEn
-                                ? 'Saved!'
-                                : 'Đã lưu!'
-                              : isEn
-                              ? 'Save to Vault'
-                              : 'Lưu Sổ Từ'}
-                          </span>
+                          {savedToVaultToast ? <Check className="w-3.5 h-3.5" /> : <Bookmark className="w-3.5 h-3.5" />}
                         </button>
                       )}
 
@@ -1251,44 +1224,56 @@ export default function PronunciationStudioModal({
                         <button
                           type="button"
                           onClick={() => onToggleMastered(currentDrill.id)}
-                          className={`flex items-center space-x-1 px-2.5 py-1 rounded-xl text-xs font-bold border transition-colors cursor-pointer ${
+                          className={`p-1.5 rounded-xl border text-xs transition-colors cursor-pointer ${
                             isMastered
                               ? 'bg-emerald-600 text-white border-emerald-500'
-                              : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700'
+                              : 'bg-slate-800/80 hover:bg-slate-700 text-slate-300 border-slate-700'
                           }`}
+                          title={isMastered ? (isEn ? 'Mastered' : 'Đã thuộc') : (isEn ? 'Mark as mastered' : 'Đánh dấu đã thuộc')}
                         >
                           <CheckCircle2 className="w-3.5 h-3.5" />
-                          <span>
-                            {isMastered
-                              ? isEn
-                                ? 'Mastered'
-                                : 'Đã thuộc'
-                              : isEn
-                              ? 'Mark Mastered'
-                              : 'Đánh dấu thuộc'}
-                          </span>
                         </button>
                       )}
+
+                      <div className="hidden lg:flex items-center space-x-1 pl-1 border-l border-slate-800">
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setSelectedIdx(prev => (prev > 0 ? prev - 1 : activeTrackDrills.length - 1))
+                          }
+                          className="p-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700 cursor-pointer"
+                          title={isEn ? 'Previous drill' : 'Bài trước'}
+                        >
+                          <ChevronLeft className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setSelectedIdx(prev => (prev < activeTrackDrills.length - 1 ? prev + 1 : 0))
+                          }
+                          className="p-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700 cursor-pointer"
+                          title={isEn ? 'Next drill' : 'Bài tiếp theo'}
+                        >
+                          <ChevronRight className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
                     </div>
                   </div>
 
                   {/* Main Target Text & Phonetic Breakdown */}
-                  <div className="space-y-2.5 py-2">
-                    <div className="text-xl sm:text-3xl font-black text-white tracking-tight leading-snug">
+                  <div className="space-y-2 py-1">
+                    <div className="text-2xl sm:text-3xl font-black text-white tracking-tight leading-snug">
                       {currentDrill.targetText}
                     </div>
 
                     {/* Track-specific visual pronunciation guide */}
                     {currentDrill.type === 'words' && currentDrill.syllables && (
-                      <div className="flex flex-wrap items-center gap-3 text-xs sm:text-sm">
-                        <span className="px-3 py-1 rounded-xl bg-indigo-950/90 border border-indigo-500/40 text-indigo-200 font-mono font-bold">
+                      <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm">
+                        <span className="px-2.5 py-1 rounded-xl bg-indigo-950/90 border border-indigo-500/40 text-indigo-200 font-mono font-bold">
                           {currentDrill.syllables}
                         </span>
                         {currentDrill.stressPattern && (
-                          <span
-                            className="px-2.5 py-1 rounded-xl bg-slate-900 border border-slate-800 text-amber-400 font-black tracking-widest"
-                            title={isEn ? 'Syllable stress rhythm (● = Stressed, ○ = Unstressed)' : 'Nhịp trọng âm (● = Nhấn mạnh, ○ = Không nhấn)'}
-                          >
+                          <span className="px-2 py-1 rounded-xl bg-slate-900 border border-slate-800 text-amber-400 font-black tracking-widest">
                             {currentDrill.stressPattern}
                           </span>
                         )}
@@ -1296,58 +1281,34 @@ export default function PronunciationStudioModal({
                     )}
 
                     {currentDrill.type === 'phrases' && currentDrill.connectedText && (
-                      <div className="p-3 rounded-2xl bg-indigo-950/60 border border-indigo-500/30 space-y-1">
-                        <div className="text-[10px] font-black uppercase tracking-wider text-indigo-300">
-                          {isEn
-                            ? 'Connected Speech & Linking Map (‿ = Link smoothly without pausing):'
-                            : 'Sơ Đồ Nối Âm Tự Nhiên (‿ = Nối liền phụ âm cuối sang nguyên âm đầu):'}
-                        </div>
-                        <div className="text-sm sm:text-base font-mono font-bold text-amber-300">
-                          {currentDrill.connectedText}
-                        </div>
+                      <div className="px-3 py-2 rounded-xl bg-indigo-950/50 border border-indigo-500/30 text-sm font-mono font-bold text-amber-300">
+                        {currentDrill.connectedText}
                       </div>
                     )}
 
                     {currentDrill.type === 'sentences' && currentDrill.intonationText && (
-                      <div className="p-3.5 rounded-2xl bg-indigo-950/60 border border-indigo-500/30 space-y-1.5">
-                        <div className="flex flex-wrap items-center justify-between gap-2">
-                          <span className="text-[10px] font-black uppercase tracking-wider text-indigo-300">
-                            {isEn
-                              ? 'Intonation & Thought-Group Pacing Map:'
-                              : 'Bản Đồ Ngữ Điệu & Ngắt Nhịp Cụm Tư Duy:'}
-                          </span>
-                          <span className="text-[10px] text-slate-400">
-                            {isEn
-                              ? '↗ Rise • ↘ Fall • / Short Pause • // Clause Break'
-                              : '↗ Lên giọng • ↘ Xuống giọng • / Nghỉ ngắn • // Ngắt mệnh đề'}
-                          </span>
-                        </div>
-                        <div className="text-sm sm:text-base font-bold text-amber-200 leading-relaxed">
-                          {currentDrill.intonationText}
-                        </div>
+                      <div className="px-3 py-2 rounded-xl bg-indigo-950/50 border border-indigo-500/30 text-sm font-bold text-amber-200 leading-relaxed">
+                        {currentDrill.intonationText}
                       </div>
                     )}
 
-                    {/* IPA UK / US Row & Meaning */}
-                    <div className="flex flex-wrap items-center gap-3 pt-1 text-xs">
+                    {/* Single Matching IPA (based on UK/US selection) + Meaning */}
+                    <div className="flex flex-wrap items-center gap-2 pt-0.5 text-xs">
                       <span className="px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 font-mono text-cyan-300">
-                        🇬🇧 UK: {currentDrill.ipaUk}
+                        {selectedExaminerId === 'examiner-oliver' ? `🇺🇸 ${currentDrill.ipaUs}` : `🇬🇧 ${currentDrill.ipaUk}`}
                       </span>
-                      <span className="px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 font-mono text-rose-300">
-                        🇺🇸 US: {currentDrill.ipaUs}
-                      </span>
-                      <span className="text-slate-300 font-semibold">
+                      <span className="text-slate-300 font-medium">
                         — {isEn ? currentDrill.meaningEn : currentDrill.meaningVi}
                       </span>
                     </div>
                   </div>
 
-                  {/* Action Row: Listen to Native Model (Normal & Slow 0.75x) */}
-                  <div className="pt-2 flex flex-wrap items-center gap-2.5">
+                  {/* Desktop Listen Buttons (Hidden on Mobile since Mobile has Sticky Bottom Thumb-Zone Bar) */}
+                  <div className="hidden lg:flex items-center gap-2.5 pt-1">
                     <button
                       type="button"
                       onClick={() => handlePlayModel(playbackSpeed)}
-                      className="flex-1 min-w-[180px] py-2.5 px-4 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs sm:text-sm font-black flex items-center justify-center space-x-2 shadow-lg shadow-indigo-950/50 transition-all active:scale-98 cursor-pointer"
+                      className="flex-1 py-2.5 px-4 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-black flex items-center justify-center space-x-2 shadow-lg shadow-indigo-950/50 transition-all active:scale-98 cursor-pointer"
                     >
                       <Volume2 className="w-4 h-4 shrink-0" />
                       <span>
@@ -1356,19 +1317,18 @@ export default function PronunciationStudioModal({
                             ? 'Speaking Model...'
                             : 'Đang phát giọng mẫu...'
                           : isEn
-                          ? `1. Listen to Native Model (${playbackSpeed}x)`
-                          : `1. Nghe Giọng Mẫu Bản Xứ (${playbackSpeed}x)`}
+                          ? `Listen Model (${playbackSpeed}x)`
+                          : `Nghe Giọng Mẫu (${playbackSpeed}x)`}
                       </span>
                     </button>
 
                     <button
                       type="button"
                       onClick={() => handlePlayModel(0.75)}
-                      className="py-2.5 px-4 rounded-2xl bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-cyan-500/30 text-xs sm:text-sm font-bold flex items-center justify-center space-x-1.5 transition-all active:scale-98 cursor-pointer"
-                      title={isEn ? 'Listen slowly at 0.75x to hear every phoneme clearly' : 'Nghe tách âm chậm 0.75x để nghe rõ từng âm tiết'}
+                      className="py-2.5 px-4 rounded-2xl bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-cyan-500/30 text-sm font-bold flex items-center justify-center space-x-1.5 transition-all active:scale-98 cursor-pointer"
                     >
                       <Headphones className="w-4 h-4 shrink-0" />
-                      <span>{isEn ? 'Slow Breakdown (0.75x)' : 'Nghe Chậm Tách Âm (0.75x)'}</span>
+                      <span>{isEn ? '0.75x Slow' : 'Nghe Chậm 0.75x'}</span>
                     </button>
                   </div>
                 </div>
@@ -1377,71 +1337,47 @@ export default function PronunciationStudioModal({
                 {/* CARD 2: MICROPHONE RECORDER, WAVEFORM & SCORING ENGINE    */}
                 {/* ========================================================= */}
                 <div
-                  className={`p-4 sm:p-6 rounded-3xl border transition-all space-y-4 ${
+                  className={`p-4 sm:p-5 rounded-3xl border transition-all space-y-3 ${
                     speechEngine.isListening
                       ? 'bg-slate-950 border-emerald-500/70 shadow-xl shadow-emerald-950/30 ring-1 ring-emerald-500/30'
                       : 'bg-slate-950/90 border-slate-800'
                   }`}
                 >
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="text-xs sm:text-sm font-black text-white uppercase tracking-wider">
+                    <button
+                      type="button"
+                      onClick={toggleAutoMode}
+                      className={`px-2.5 py-1 rounded-full text-[11px] font-black border transition-all cursor-pointer flex items-center space-x-1 ${
+                        isAutoMode
+                          ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/40'
+                          : 'bg-slate-800 text-slate-400 border-slate-700'
+                      }`}
+                    >
+                      <Zap className={`w-3 h-3 ${isAutoMode ? 'fill-current text-emerald-400' : ''}`} />
+                      <span>
                         {isEn
-                          ? '2. Speak & Get Instant Phonetic Score (+XP)'
-                          : '2. Phát Âm Qua Micro & Nhận Điểm Kinh Nghiệm (+XP)'}
+                          ? isAutoMode
+                            ? 'Auto-Grade & Auto-Stop: ON'
+                            : 'Auto-Grade: OFF'
+                          : isAutoMode
+                          ? 'Tự động chấm & dừng Mic: BẬT'
+                          : 'Tự động chấm: TẮT'}
                       </span>
-                      <button
-                        type="button"
-                        onClick={toggleAutoMode}
-                        className={`px-2.5 py-0.5 rounded-full text-[10px] font-black border transition-all cursor-pointer flex items-center space-x-1 ${
-                          isAutoMode
-                            ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
-                            : 'bg-slate-800 text-slate-400 border-slate-700'
-                        }`}
-                        title={
-                          isEn
-                            ? 'Automatically grade when you finish speaking, retry if <80%, and auto-stop mic when accurate'
-                            : 'Tự động chấm khi nói xong, nhắc đọc lại nếu <80% và tự tắt Mic khi phát âm chuẩn'
-                        }
-                      >
-                        <Zap className={`w-3 h-3 ${isAutoMode ? 'fill-current text-emerald-400' : ''}`} />
-                        <span>
-                          {isEn
-                            ? isAutoMode
-                              ? 'Auto-Grade & Auto-Stop: ON'
-                              : 'Auto-Grade: OFF'
-                            : isAutoMode
-                            ? 'Tự động chấm & dừng Mic: BẬT'
-                            : 'Tự động chấm: TẮT'}
-                        </span>
-                      </button>
-                    </div>
+                    </button>
 
                     <div className="flex items-center space-x-2">
-                      {speechEngine.isListening ? (
-                        <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[11px] font-black animate-pulse">
-                          {isWaitingForRetrySpeech
-                            ? isEn
-                              ? '🎙️ MIC OPEN • PRONOUNCE AGAIN!'
-                              : '🎙️ MIC ĐANG MỞ • HÃY ĐỌC LẠI!'
-                            : isEn
-                            ? '● REC • LISTENING'
-                            : '● REC • ĐANG NGHE'}
+                      {currentBest && !speechEngine.isListening && (
+                        <span className="px-2 py-0.5 rounded-full bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 text-[10px] font-bold">
+                          {isEn ? `Best: ${currentBest.accuracy}%` : `Kỷ lục: ${currentBest.accuracy}%`}
                         </span>
-                      ) : currentBest ? (
-                        <span className="px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-[11px] font-bold">
-                          {isEn
-                            ? `Personal Best: ${currentBest.accuracy}% (Band ${currentBest.band})`
-                            : `Kỷ lục bài này: ${currentBest.accuracy}% (Band ${currentBest.band})`}
-                        </span>
-                      ) : null}
+                      )}
 
                       <button
                         type="button"
                         onClick={() => setShowManualFallback(prev => !prev)}
                         className="text-[11px] text-slate-400 hover:text-indigo-300 underline cursor-pointer"
                       >
-                        {isEn ? 'No Mic / Text Test?' : 'Không có Mic / Nhập thử?'}
+                        {isEn ? 'Text Test?' : 'Nhập thử?'}
                       </button>
                     </div>
                   </div>
@@ -1517,30 +1453,18 @@ export default function PronunciationStudioModal({
                     </button>
 
                     {currentAudioClip?.url && !speechEngine.isListening && (
-                      <>
-                        <button
-                          type="button"
-                          onClick={handleReplayUserAudio}
-                          className={`py-3 px-4 rounded-2xl text-xs font-bold flex items-center space-x-1.5 border transition-all cursor-pointer ${
-                            isPlayingUserClip
-                              ? 'bg-amber-600 text-white border-amber-500'
-                              : 'bg-slate-900 hover:bg-slate-800 text-slate-200 border-slate-700'
-                          }`}
-                        >
-                          {isPlayingUserClip ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
-                          <span>{isEn ? 'Replay My Voice' : 'Nghe Lại Giọng Bạn'}</span>
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={handleCompareSideBySide}
-                          disabled={isComparingAudio}
-                          className="py-3 px-4 rounded-2xl bg-purple-600/30 hover:bg-purple-600/50 text-purple-200 border border-purple-500/40 text-xs font-bold flex items-center space-x-1.5 transition-all cursor-pointer disabled:opacity-50"
-                        >
-                          <RotateCcw className="w-3.5 h-3.5" />
-                          <span>{isEn ? 'Compare Model ➔ Yours' : 'So Sánh Mẫu ➔ Giọng Bạn'}</span>
-                        </button>
-                      </>
+                      <button
+                        type="button"
+                        onClick={handleReplayUserAudio}
+                        className={`py-3 px-4 rounded-2xl text-xs font-bold flex items-center space-x-1.5 border transition-all cursor-pointer ${
+                          isPlayingUserClip
+                            ? 'bg-amber-600 text-white border-amber-500'
+                            : 'bg-slate-900 hover:bg-slate-800 text-slate-200 border-slate-700'
+                        }`}
+                      >
+                        {isPlayingUserClip ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
+                        <span>{isEn ? 'Replay Voice' : 'Nghe Lại'}</span>
+                      </button>
                     )}
                   </div>
 
@@ -1652,10 +1576,10 @@ export default function PronunciationStudioModal({
                       )}
 
                       {/* Score Summary Row */}
-                      <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-800">
+                      <div className="flex items-center justify-between gap-3 pb-3 border-b border-slate-800">
                         <div className="flex items-center space-x-3">
                           <div
-                            className={`w-14 h-14 rounded-2xl flex flex-col items-center justify-center font-black border ${
+                            className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex flex-col items-center justify-center font-black border shrink-0 ${
                               evaluationResult.overallAccuracy >= 85
                                 ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
                                 : evaluationResult.overallAccuracy >= 65
@@ -1663,202 +1587,137 @@ export default function PronunciationStudioModal({
                                 : 'bg-rose-500/20 text-rose-300 border-rose-500/40'
                             }`}
                           >
-                            <span className="text-lg leading-none">{evaluationResult.overallAccuracy}%</span>
-                            <span className="text-[9px] uppercase tracking-wider mt-0.5">
-                              {isEn ? 'Score' : 'Độ chuẩn'}
-                            </span>
+                            <span className="text-base sm:text-lg leading-none">{evaluationResult.overallAccuracy}%</span>
                           </div>
 
-                          <div>
+                          <div className="min-w-0">
                             <div className="flex items-center space-x-2">
                               <span className="text-sm sm:text-base font-black text-white">
-                                {isEn
-                                  ? `Pronunciation Band: ${evaluationResult.estimatedBand}`
-                                  : `Band Phát Âm Ước Tính: ${evaluationResult.estimatedBand}`}
+                                Band {evaluationResult.estimatedBand}
                               </span>
                               {evaluationResult.xpEarned > 0 && (
-                                <span className="px-2.5 py-0.5 rounded-full text-xs font-black bg-amber-500 text-slate-950 shadow-sm">
+                                <span className="px-2 py-0.5 rounded-full text-[11px] font-black bg-amber-500 text-slate-950">
                                   +{evaluationResult.xpEarned} XP
                                 </span>
                               )}
                             </div>
-                            <p className="text-xs text-slate-400 mt-0.5">
-                              {isEn
-                                ? `Recognized speech: "${evaluationResult.spokenTranscript || '...'}"`
-                                : `Hệ thống ghi nhận: "${evaluationResult.spokenTranscript || '...'}"`}
+                            <p className="text-xs text-slate-400 truncate mt-0.5">
+                              "{evaluationResult.spokenTranscript || '...'}"
                             </p>
                           </div>
                         </div>
-
-                        {/* Legend */}
-                        <div className="flex items-center space-x-2 text-[10px] font-bold">
-                          <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                            {isEn ? '● Accurate (≥84%)' : '● Chuẩn xác (≥84%)'}
-                          </span>
-                          <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                            {isEn ? '● Near (52-83%)' : '● Gần đúng (52-83%)'}
-                          </span>
-                          <span className="px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30">
-                            {isEn ? '● Retry (<52%)' : '● Cần đọc lại (<52%)'}
-                          </span>
-                        </div>
                       </div>
 
-                      {/* Word-by-Word Interactive Chips (Click any word to hear it pronounced individually!) */}
-                      <div className="space-y-1.5">
-                        <div className="text-[11px] font-bold text-slate-400">
-                          {isEn
-                            ? 'Word-by-Word Phonetic Diagnosis (Click any word below to hear its isolated pronunciation):'
-                            : 'Chẩn Đoán Từng Từ (Nhấp vào bất kỳ từ nào bên dưới để nghe phát âm mẫu riêng từ đó):'}
-                        </div>
-                        <div className="flex flex-wrap gap-2">
-                          {evaluationResult.wordBreakdown.map((wb, i) => {
-                            const chipStyle =
-                              wb.status === 'correct'
-                                ? 'bg-emerald-950/90 text-emerald-300 border-emerald-500/50 hover:bg-emerald-900'
-                                : wb.status === 'near'
-                                ? 'bg-amber-950/90 text-amber-300 border-amber-500/50 hover:bg-amber-900'
-                                : 'bg-rose-950/90 text-rose-300 border-rose-500/50 hover:bg-rose-900';
-                            return (
-                              <button
-                                key={`${wb.word}-${i}`}
-                                type="button"
-                                onClick={() => handlePlayModel(0.85, wb.cleanWord || wb.word)}
-                                className={`px-3 py-1.5 rounded-xl border text-xs sm:text-sm font-black flex items-center space-x-1.5 transition-all cursor-pointer ${chipStyle}`}
-                                title={
-                                  isEn
-                                    ? `Click to listen to "${wb.word}" (${wb.similarity}% match)`
-                                    : `Bấm để nghe phát âm riêng từ "${wb.word}" (Khớp ${wb.similarity}%)`
-                                }
-                              >
-                                <Volume2 className="w-3 h-3 opacity-75 shrink-0" />
-                                <span>{wb.word}</span>
-                                <span className="text-[10px] opacity-80 font-mono">
-                                  {wb.similarity}%
-                                </span>
-                              </button>
-                            );
-                          })}
-                        </div>
+                      {/* Word-by-Word Interactive Chips */}
+                      <div className="flex flex-wrap gap-2">
+                        {evaluationResult.wordBreakdown.map((wb, i) => {
+                          const chipStyle =
+                            wb.status === 'correct'
+                              ? 'bg-emerald-950/90 text-emerald-300 border-emerald-500/50 hover:bg-emerald-900'
+                              : wb.status === 'near'
+                              ? 'bg-amber-950/90 text-amber-300 border-amber-500/50 hover:bg-amber-900'
+                              : 'bg-rose-950/90 text-rose-300 border-rose-500/50 hover:bg-rose-900';
+                          return (
+                            <button
+                              key={`${wb.word}-${i}`}
+                              type="button"
+                              onClick={() => handlePlayModel(0.85, wb.cleanWord || wb.word)}
+                              className={`px-3 py-1.5 rounded-xl border text-xs sm:text-sm font-black flex items-center space-x-1.5 transition-all cursor-pointer ${chipStyle}`}
+                              title={isEn ? `Listen to "${wb.word}"` : `Nghe từ "${wb.word}"`}
+                            >
+                              <Volume2 className="w-3 h-3 opacity-75 shrink-0" />
+                              <span>{wb.word}</span>
+                              <span className="text-[10px] opacity-80 font-mono">
+                                {wb.similarity}%
+                              </span>
+                            </button>
+                          );
+                        })}
                       </div>
 
-                      {/* Examiner Coach Feedback */}
-                      <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800 text-xs text-slate-200 flex items-start space-x-2.5">
-                        <Award className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-                        <div>
-                          <span className="font-black text-amber-400 mr-1.5">
-                            {isEn ? 'Examiner Feedback:' : 'Nhận xét từ Giám khảo:'}
-                          </span>
-                          <span>
-                            {isEn ? evaluationResult.coachFeedbackEn : evaluationResult.coachFeedbackVi}
-                          </span>
-                        </div>
-                      </div>
+                      {/* Concise Coach Feedback */}
+                      <p className="text-xs text-slate-300 leading-relaxed">
+                        {isEn ? evaluationResult.coachFeedbackEn : evaluationResult.coachFeedbackVi}
+                      </p>
                     </div>
                   )}
                 </div>
 
                 {/* ========================================================= */}
-                {/* CARD 3: ARTICULATION GUIDE, PRONUNCIATION TRAP & EXAMPLE  */}
+                {/* COLLAPSIBLE PRONUNCIATION TIPS & EXAMPLE ACCORDION        */}
                 {/* ========================================================= */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Common Pronunciation Trap & Mouth/Tongue Placement */}
-                  <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-3">
-                    <div className="space-y-1">
-                      <div className="text-[11px] font-black uppercase tracking-wider text-rose-400 flex items-center space-x-1.5">
-                        <AlertCircle className="w-3.5 h-3.5" />
-                        <span>
-                          {isEn ? 'Common Pronunciation Trap' : 'Bẫy Phát Âm Học Viên Hay Mắc'}
-                        </span>
-                      </div>
-                      <p className="text-xs text-slate-300 leading-relaxed">
-                        {isEn ? currentDrill.trapEn : currentDrill.trapVi}
-                      </p>
-                    </div>
+                <div className="rounded-2xl bg-slate-950/75 border border-slate-800 overflow-hidden">
+                  <button
+                    type="button"
+                    onClick={() => setShowTips(prev => !prev)}
+                    className="w-full px-4 py-3 flex items-center justify-between text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-900/60 transition-colors cursor-pointer"
+                  >
+                    <span className="flex items-center space-x-2">
+                      <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                      <span>
+                        {isEn
+                          ? 'Pronunciation Trap, Mouth Tip & Example'
+                          : 'Bẫy phát âm, Khẩu hình & Câu ví dụ'}
+                      </span>
+                    </span>
+                    <ChevronDown
+                      className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${
+                        showTips ? 'rotate-180' : ''
+                      }`}
+                    />
+                  </button>
 
-                    <div className="pt-2 border-t border-slate-800/80 space-y-1">
-                      <div className="text-[11px] font-black uppercase tracking-wider text-emerald-400 flex items-center space-x-1.5">
-                        <Sparkles className="w-3.5 h-3.5" />
-                        <span>
-                          {isEn
-                            ? 'Articulation & Mouth/Tongue Tip'
-                            : 'Bí Quyết Đặt Khẩu Hình & Lưỡi'}
-                        </span>
+                  {showTips && (
+                    <div className="px-4 pb-4 pt-1 border-t border-slate-800/80 space-y-3 text-xs animate-in fade-in duration-150">
+                      <div>
+                        <div className="font-bold text-rose-400 mb-0.5">
+                          {isEn ? 'Common Trap:' : 'Bẫy hay mắc:'}
+                        </div>
+                        <p className="text-slate-300 leading-relaxed">
+                          {isEn ? currentDrill.trapEn : currentDrill.trapVi}
+                        </p>
                       </div>
-                      <p className="text-xs text-slate-300 leading-relaxed">
-                        {isEn ? currentDrill.mouthTipEn : currentDrill.mouthTipVi}
-                      </p>
-                    </div>
-                  </div>
 
-                  {/* Contextual Example & Prev/Next Navigation */}
-                  <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 flex flex-col justify-between space-y-3">
-                    <div className="space-y-1.5">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[11px] font-black uppercase tracking-wider text-indigo-400 flex items-center space-x-1.5">
-                          <BookOpen className="w-3.5 h-3.5" />
-                          <span>
-                            {isEn ? 'IELTS Context & Example' : 'Ngữ Cảnh & Câu Ví Dụ IELTS'}
+                      <div>
+                        <div className="font-bold text-emerald-400 mb-0.5">
+                          {isEn ? 'Mouth & Tongue Tip:' : 'Đặt khẩu hình & lưỡi:'}
+                        </div>
+                        <p className="text-slate-300 leading-relaxed">
+                          {isEn ? currentDrill.mouthTipEn : currentDrill.mouthTipVi}
+                        </p>
+                      </div>
+
+                      <div className="pt-2 border-t border-slate-800/70">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="font-bold text-indigo-400">
+                            {isEn ? 'Example:' : 'Câu ví dụ:'}
                           </span>
-                        </span>
-                        {(currentDrill.exampleEn || currentDrill.targetText) && (
-                          <button
-                            type="button"
-                            onClick={() =>
-                              handlePlayModel(playbackSpeed, currentDrill.exampleEn || currentDrill.targetText)
-                            }
-                            className="px-2 py-0.5 rounded-lg bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 text-[10px] font-bold flex items-center space-x-1 cursor-pointer"
-                          >
-                            <Volume2 className="w-3 h-3" />
-                            <span>{isEn ? 'Listen Example' : 'Nghe câu ví dụ'}</span>
-                          </button>
+                          {(currentDrill.exampleEn || currentDrill.targetText) && (
+                            <button
+                              type="button"
+                              onClick={() =>
+                                handlePlayModel(playbackSpeed, currentDrill.exampleEn || currentDrill.targetText)
+                              }
+                              className="px-2 py-0.5 rounded-lg bg-indigo-500/20 text-indigo-300 text-[10px] font-bold flex items-center space-x-1 cursor-pointer"
+                            >
+                              <Volume2 className="w-3 h-3" />
+                              <span>{isEn ? 'Listen' : 'Nghe'}</span>
+                            </button>
+                          )}
+                        </div>
+                        <p className="font-semibold text-white">
+                          "{currentDrill.exampleEn || currentDrill.targetText}"
+                        </p>
+                        {!isEn && currentDrill.exampleVi && (
+                          <p className="text-[11px] text-slate-400 italic mt-0.5">
+                            {currentDrill.exampleVi}
+                          </p>
                         )}
                       </div>
-                      <p className="text-xs font-bold text-white leading-relaxed">
-                        "{currentDrill.exampleEn || currentDrill.targetText}"
-                      </p>
-                      {!isEn && currentDrill.exampleVi && (
-                        <p className="text-[11px] text-slate-400 italic">
-                          {currentDrill.exampleVi}
-                        </p>
-                      )}
                     </div>
-
-                    {/* Prev / Next Exercise Navigation Buttons */}
-                    <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between gap-2">
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setSelectedIdx(prev =>
-                            prev > 0 ? prev - 1 : activeTrackDrills.length - 1
-                          )
-                        }
-                        className="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 text-xs font-bold border border-slate-800 flex items-center space-x-1 cursor-pointer"
-                      >
-                        <ChevronLeft className="w-4 h-4" />
-                        <span>{isEn ? 'Previous' : 'Bài trước'}</span>
-                      </button>
-
-                      <span className="text-[11px] font-bold text-slate-400">
-                        {selectedIdx + 1} / {activeTrackDrills.length}
-                      </span>
-
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setSelectedIdx(prev =>
-                            prev < activeTrackDrills.length - 1 ? prev + 1 : 0
-                          )
-                        }
-                        className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold flex items-center space-x-1 shadow-md cursor-pointer"
-                      >
-                        <span>{isEn ? 'Next Drill' : 'Bài tiếp theo'}</span>
-                        <ChevronRight className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
+                  )}
                 </div>
-                <div className="h-4 lg:hidden" />
+                <div className="h-3 lg:hidden" />
               </>
             ) : null}
           </main>
