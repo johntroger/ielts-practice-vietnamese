@@ -237,6 +237,7 @@ export default function AppModalHost({
             masteredIds={resolvedMasteredIds}
             onToggleMastered={resolvedToggleMastered}
             onOpenAuth={() => openModal('auth')}
+            onOpenVocabNotebook={() => openModal('notebook', { openAdd: true })}
           />
         </WorkspaceErrorBoundary>
       )}
@@ -259,6 +260,7 @@ export default function AppModalHost({
             masteredIds={resolvedMasteredIds}
             onToggleMastered={resolvedToggleMastered}
             onOpenAuth={() => openModal('auth')}
+            onOpenVocabNotebook={() => openModal('notebook', { openAdd: true })}
           />
         </WorkspaceErrorBoundary>
       )}
@@ -413,6 +415,7 @@ export default function AppModalHost({
       {Boolean(modals.notebook) && (
         <VocabNotebookModal
           isOpen={Boolean(modals.notebook)}
+          initialOpenAdd={Boolean(modals.notebook && typeof modals.notebook === 'object' && modals.notebook.openAdd)}
           onClose={() => closeModal('notebook')}
           vocabList={vocabList}
           onAddVocab={(v) => {

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { 
   Bookmark, 
   Plus, 
@@ -46,6 +46,7 @@ const MASTERY_LABELS = {
 
 export default function VocabNotebookModal({
   isOpen,
+  initialOpenAdd = false,
   onClose,
   vocabList = [],
   onAddVocab,
@@ -67,15 +68,24 @@ export default function VocabNotebookModal({
   // Inline Edit State
   const [editingId, setEditingId] = useState(null);
   const [editPhrase, setEditPhrase] = useState('');
+  const [editCollocation, setEditCollocation] = useState('');
   const [editMeaningVi, setEditMeaningVi] = useState('');
   const [editExample, setEditExample] = useState('');
   const [editTopic, setEditTopic] = useState('tech');
 
   // Form State
   const [phrase, setPhrase] = useState('');
+  const [collocation, setCollocation] = useState('');
   const [meaningVi, setMeaningVi] = useState('');
   const [example, setExample] = useState('');
   const [topic, setTopic] = useState('tech');
+
+  useEffect(() => {
+    if (isOpen && initialOpenAdd) {
+      setActiveTab('list');
+      setIsAdding(true);
+    }
+  }, [isOpen, initialOpenAdd]);
 
   // Flashcard SRS State
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
@@ -96,6 +106,7 @@ export default function VocabNotebookModal({
       if (q) {
         const match =
           v.phrase?.toLowerCase().includes(q) ||
+          v.collocation?.toLowerCase().includes(q) ||
           v.meaningVi?.toLowerCase().includes(q) ||
           v.meaningEn?.toLowerCase().includes(q) ||
           v.example?.toLowerCase().includes(q);
@@ -131,13 +142,22 @@ export default function VocabNotebookModal({
   }
   const goToPage = (p) => setPage(Math.min(Math.max(1, p), totalPages));
 
+  const isAddFormValid = Boolean(
+    phrase.trim() &&
+    collocation.trim() &&
+    example.trim() &&
+    meaningVi.trim() &&
+    !existingPhrase
+  );
+
   const handleCreateVocab = (e) => {
     e.preventDefault();
-    if (!phrase.trim() || !meaningVi.trim()) return;
+    if (!phrase.trim() || !collocation.trim() || !example.trim() || !meaningVi.trim()) return;
     if (existingPhrase) return; // duplicate: warning is shown inline
     const newVocab = initSrsItem({
       id: `vocab-${Date.now()}`,
       phrase: phrase.trim(),
+      collocation: collocation.trim(),
       meaningVi: meaningVi.trim(),
       example: example.trim(),
       topic,
@@ -145,6 +165,7 @@ export default function VocabNotebookModal({
     });
     onAddVocab(newVocab);
     setPhrase('');
+    setCollocation('');
     setMeaningVi('');
     setExample('');
     setIsAdding(false);
@@ -153,6 +174,7 @@ export default function VocabNotebookModal({
   const startEditVocab = (item) => {
     setEditingId(item.id);
     setEditPhrase(item.phrase || '');
+    setEditCollocation(item.collocation || '');
     setEditMeaningVi(item.meaningVi || item.meaning || '');
     setEditExample(item.example || '');
     setEditTopic(item.topic || 'tech');
@@ -164,6 +186,7 @@ export default function VocabNotebookModal({
     onUpdateVocab({
       ...item,
       phrase: editPhrase.trim(),
+      collocation: editCollocation.trim(),
       meaningVi: editMeaningVi.trim(),
       example: editExample.trim(),
       topic: editTopic
@@ -350,20 +373,37 @@ export default function VocabNotebookModal({
             <div className="flex-1 overflow-y-auto p-5 space-y-3">
               {isAdding && (
                 <form onSubmit={handleCreateVocab} className="p-4 bg-amber-50/70 border border-amber-200 rounded-2xl space-y-3 shadow-2xs mb-4">
-                  <div className="font-bold text-xs text-amber-900">
-                    {isEn ? 'Add New Vocabulary to Vault' : 'Thêm Từ Vựng Mới Vào Sổ Tay'}
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+                    <div className="font-bold text-xs text-amber-900">
+                      {isEn ? 'Add New Vocabulary to Vault' : 'Thêm Từ Vựng Mới Vào Sổ Tay'}
+                    </div>
+                    <div className="text-[11px] font-medium text-amber-700">
+                      {isEn
+                        ? 'Required: Word + Collocation + Example Sentence (synced to Pronunciation Studio)'
+                        : 'Bắt buộc đủ 3 trường: Từ + Cụm từ đi kèm + Câu ví dụ (đồng bộ sang Luyện Phát Âm)'}
+                    </div>
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <input
                       type="text"
-                      placeholder={isEn ? "English phrase (Collocation)..." : "Cụm từ tiếng Anh (Collocation)..."}
+                      required
+                      placeholder={isEn ? "1. English word *" : "1. Từ tiếng Anh (Word) *"}
                       value={phrase}
                       onChange={e => setPhrase(e.target.value)}
                       className="px-3 py-2 rounded-xl border border-amber-200 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/20 font-bold"
                     />
                     <input
                       type="text"
-                      placeholder={isEn ? "Meaning / definition..." : "Nghĩa tiếng Việt..."}
+                      required
+                      placeholder={isEn ? "2. Common collocation / phrase *" : "2. Cụm từ hay đi kèm (Collocation) *"}
+                      value={collocation}
+                      onChange={e => setCollocation(e.target.value)}
+                      className="px-3 py-2 rounded-xl border border-amber-200 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/20 font-semibold"
+                    />
+                    <input
+                      type="text"
+                      required
+                      placeholder={isEn ? "Meaning / definition *" : "Nghĩa tiếng Việt *"}
                       value={meaningVi}
                       onChange={e => setMeaningVi(e.target.value)}
                       className="px-3 py-2 rounded-xl border border-amber-200 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/20"
@@ -371,7 +411,8 @@ export default function VocabNotebookModal({
                   </div>
                   <input
                     type="text"
-                    placeholder={isEn ? "Example sentence in IELTS context..." : "Ví dụ trong ngữ cảnh bài viết IELTS..."}
+                    required
+                    placeholder={isEn ? "3. Example sentence containing this word *" : "3. Câu ví dụ có chứa từ đó *"}
                     value={example}
                     onChange={e => setExample(e.target.value)}
                     className="w-full px-3 py-2 rounded-xl border border-amber-200 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/20"
@@ -383,7 +424,7 @@ export default function VocabNotebookModal({
                         : `"${existingPhrase.phrase}" đã tồn tại trong sổ tay của bạn.`}
                     </div>
                   )}
-                  <div className="flex items-center justify-between pt-1">
+                  <div className="flex items-center justify-between gap-2 pt-1">
                     <select
                       value={topic}
                       onChange={e => setTopic(e.target.value)}
@@ -393,13 +434,20 @@ export default function VocabNotebookModal({
                         <option key={t.id} value={t.id}>{isEn ? t.name : (t.vi || t.name)}</option>
                       ))}
                     </select>
-                    <button
-                      type="submit"
-                      disabled={Boolean(existingPhrase)}
-                      className="px-4 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold transition-all shadow-2xs cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {isEn ? 'Save Vocabulary' : 'Lưu Từ Vựng'}
-                    </button>
+                    <div className="flex items-center gap-2">
+                      {!isAddFormValid && !existingPhrase && (
+                        <span className="text-[11px] text-amber-700 font-medium hidden sm:inline">
+                          {isEn ? 'Fill all required fields (*) to save' : 'Nhập đủ các trường (*) để lưu'}
+                        </span>
+                      )}
+                      <button
+                        type="submit"
+                        disabled={!isAddFormValid}
+                        className="px-4 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold transition-all shadow-2xs cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {isEn ? 'Save Vocabulary' : 'Lưu Từ Vựng'}
+                      </button>
+                    </div>
                   </div>
                 </form>
               )}
@@ -414,8 +462,15 @@ export default function VocabNotebookModal({
                             type="text"
                             value={editPhrase}
                             onChange={(e) => setEditPhrase(e.target.value)}
-                            placeholder={isEn ? 'Phrase...' : 'Cụm từ...'}
+                            placeholder={isEn ? 'Word...' : 'Từ vựng...'}
                             className="w-full px-2.5 py-1.5 rounded-lg border border-amber-300 text-xs font-bold focus:outline-none"
+                          />
+                          <input
+                            type="text"
+                            value={editCollocation}
+                            onChange={(e) => setEditCollocation(e.target.value)}
+                            placeholder={isEn ? 'Collocation / phrase...' : 'Cụm từ hay đi kèm...'}
+                            className="w-full px-2.5 py-1.5 rounded-lg border border-slate-200 text-xs focus:outline-none"
                           />
                           <input
                             type="text"
@@ -428,7 +483,7 @@ export default function VocabNotebookModal({
                             type="text"
                             value={editExample}
                             onChange={(e) => setEditExample(e.target.value)}
-                            placeholder={isEn ? 'Example...' : 'Ví dụ...'}
+                            placeholder={isEn ? 'Example sentence...' : 'Câu ví dụ...'}
                             className="w-full px-2.5 py-1.5 rounded-lg border border-slate-200 text-xs focus:outline-none"
                           />
                           <select
@@ -508,6 +563,24 @@ export default function VocabNotebookModal({
                           <p className="text-xs text-slate-600 font-medium">
                             {getLocalizedVocabMeaning(v, isEn)}
                           </p>
+
+                          {v.collocation && (
+                            <div className="flex items-center justify-between gap-1.5 text-[11px] text-amber-800 bg-amber-50/70 px-2 py-1 rounded border border-amber-100">
+                              <span className="font-semibold truncate">
+                                <span className="text-amber-600 font-bold mr-1">{isEn ? 'Collocation:' : 'Cụm đi kèm:'}</span>
+                                {v.collocation}
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => speakText(v.collocation)}
+                                className="p-0.5 text-amber-500 hover:text-amber-700 transition-colors cursor-pointer shrink-0"
+                                title={isEn ? 'Listen collocation' : 'Nghe cụm từ'}
+                                aria-label={isEn ? 'Listen collocation' : 'Nghe cụm từ'}
+                              >
+                                <Volume2 className="w-3 h-3" />
+                              </button>
+                            </div>
+                          )}
 
                           {v.example && (
                             <p className="text-[11px] text-slate-500 italic bg-slate-50 p-2 rounded border border-slate-100">

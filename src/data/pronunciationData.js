@@ -1975,37 +1975,37 @@ export function buildCustomPronunciationDrill({
 
 /**
  * Converts a logged-in user's Personal Vocabulary Notebook entries (`vocabList`)
- * into ready-to-practice Pronunciation Drills (deduplicating against built-in drills).
+ * into ready-to-practice Pronunciation Drills (Word + Collocation + Example Sentence),
+ * deduplicating against built-in drills.
  */
 export function mapVocabListToPronunciationDrills(vocabList = [], existingTargetTexts = new Set()) {
   if (!Array.isArray(vocabList) || vocabList.length === 0) return [];
   const seen = new Set(Array.from(existingTargetTexts).map(t => String(t).toLowerCase().trim()));
   const result = [];
 
-  for (let i = 0; i < vocabList.length; i++) {
-    const v = vocabList[i];
-    const rawWord = String(v?.word || v?.term || '').trim().replace(/\s+/g, ' ');
-    if (!rawWord) continue;
-    const key = rawWord.toLowerCase();
-    if (seen.has(key)) continue;
+  const pushVaultDrill = ({ rawText, forcedType, suffix, v, bandRaw, meaning, exampleText }) => {
+    const clean = String(rawText || '').trim().replace(/\s+/g, ' ');
+    if (!clean) return;
+    const key = clean.toLowerCase();
+    if (seen.has(key)) return;
     seen.add(key);
 
-    const bandRaw = String(v?.band || v?.bandLevel || '7.0').replace(/[^0-9.]/g, '') || '7.0';
     const drill = buildCustomPronunciationDrill({
-      text: rawWord,
-      type: 'auto',
+      text: clean,
+      type: forcedType || 'auto',
       bandLevel: bandRaw,
       topic: v?.topic || 'Vocab Notebook',
-      meaning: v?.meaning || ''
+      meaning
     });
 
+    const baseId = v?.id || key.replace(/[^a-z0-9]/gi, '_');
     result.push({
       ...drill,
-      id: `pron-vault-${v.id || key.replace(/[^a-z0-9]/gi, '_')}`,
-      ipaUk: v?.ipa || drill.ipaUk,
-      ipaUs: v?.ipa || drill.ipaUs,
-      exampleEn: v?.example || drill.exampleEn,
-      exampleVi: v?.example || drill.exampleVi,
+      id: `pron-vault-${baseId}-${suffix}`,
+      ipaUk: suffix === 'w' ? (v?.ipa || drill.ipaUk) : drill.ipaUk,
+      ipaUs: suffix === 'w' ? (v?.ipa || drill.ipaUs) : drill.ipaUs,
+      exampleEn: exampleText || drill.exampleEn,
+      exampleVi: exampleText || drill.exampleVi,
       categoryEn: 'Vocab Notebook',
       categoryVi: 'Sổ Tay Từ Vựng',
       topicEn: v?.topic || 'Personal Vault',
@@ -2013,6 +2013,51 @@ export function mapVocabListToPronunciationDrills(vocabList = [], existingTarget
       isCustom: false,
       isFromVocabVault: true
     });
+  };
+
+  for (let i = 0; i < vocabList.length; i++) {
+    const v = vocabList[i];
+    const bandRaw = String(v?.band || v?.bandLevel || '7.0').replace(/[^0-9.]/g, '') || '7.0';
+    const meaning = String(v?.meaningVi || v?.meaningEn || v?.meaning || '').trim();
+    const rawWord = String(v?.word || v?.term || v?.phrase || '').trim().replace(/\s+/g, ' ');
+    const rawCollocation = String(v?.collocation || '').trim().replace(/\s+/g, ' ');
+    const rawExample = String(v?.example || '').trim().replace(/\s+/g, ' ');
+
+    if (rawWord) {
+      pushVaultDrill({
+        rawText: rawWord,
+        forcedType: 'auto',
+        suffix: 'w',
+        v,
+        bandRaw,
+        meaning,
+        exampleText: rawExample
+      });
+    }
+
+    if (rawCollocation) {
+      pushVaultDrill({
+        rawText: rawCollocation,
+        forcedType: 'phrases',
+        suffix: 'p',
+        v,
+        bandRaw,
+        meaning: meaning ? `${rawWord ? `${rawWord}: ` : ''}${meaning}` : '',
+        exampleText: rawExample
+      });
+    }
+
+    if (rawExample) {
+      pushVaultDrill({
+        rawText: rawExample,
+        forcedType: 'sentences',
+        suffix: 's',
+        v,
+        bandRaw,
+        meaning: meaning ? `${rawWord ? `${rawWord} — ` : ''}${meaning}` : '',
+        exampleText: rawExample
+      });
+    }
   }
 
   return result;

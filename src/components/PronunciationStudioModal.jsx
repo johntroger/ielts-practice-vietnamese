@@ -74,6 +74,7 @@ export default function PronunciationStudioModal({
   masteredIds = [],
   onToggleMastered,
   onOpenAuth,
+  onOpenVocabNotebook,
   initialOptions = null
 }) {
   const { isEn } = useTranslation();
@@ -1228,31 +1229,42 @@ export default function PronunciationStudioModal({
                   <p>
                     {passedCountInTab > 0 && hidePassed
                       ? isEn
-                        ? `🎉 You've mastered all ${passedCountInTab} drills in this track!`
-                        : `🎉 Bạn đã phát âm chuẩn toàn bộ ${passedCountInTab} bài trong mục này!`
+                        ? `🎉 You've mastered all ${passedCountInTab} drills! Add new words (with collocation & example sentence) to your Vocab Notebook to keep practicing.`
+                        : `🎉 Bạn đã phát âm chuẩn toàn bộ ${passedCountInTab} bài! Hãy chủ động thêm từ mới (kèm cụm từ đi kèm & câu ví dụ) vào Sổ Tay để luyện tiếp.`
                       : isEn
                       ? 'No pronunciation drills match your filter.'
                       : 'Không có bài tập phát âm nào khớp bộ lọc.'}
                   </p>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSearchQuery('');
-                      setBandFilter('all');
-                      if (hidePassed && passedCountInTab > 0) {
-                        toggleHidePassed();
-                      }
-                    }}
-                    className="px-3 py-1.5 rounded-xl bg-indigo-600 text-white font-bold cursor-pointer"
-                  >
-                    {passedCountInTab > 0 && hidePassed
-                      ? isEn
-                        ? `Show Passed Drills (${passedCountInTab})`
-                        : `Hiện lại bài đã đạt (${passedCountInTab})`
-                      : isEn
-                      ? 'Reset Filters'
-                      : 'Đặt lại bộ lọc'}
-                  </button>
+                  <div className="flex flex-col gap-1.5 items-center">
+                    {currentUser && onOpenVocabNotebook && passedCountInTab > 0 && hidePassed && (
+                      <button
+                        type="button"
+                        onClick={() => onOpenVocabNotebook()}
+                        className="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black cursor-pointer"
+                      >
+                        {isEn ? '+ Add Word to Notebook' : '+ Thêm từ vào Sổ Tay'}
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSearchQuery('');
+                        setBandFilter('all');
+                        if (hidePassed && passedCountInTab > 0) {
+                          toggleHidePassed();
+                        }
+                      }}
+                      className="px-3 py-1.5 rounded-xl bg-indigo-600 text-white font-bold cursor-pointer"
+                    >
+                      {passedCountInTab > 0 && hidePassed
+                        ? isEn
+                          ? `Show Passed Drills (${passedCountInTab})`
+                          : `Hiện lại bài đã đạt (${passedCountInTab})`
+                        : isEn
+                        ? 'Reset Filters'
+                        : 'Đặt lại bộ lọc'}
+                    </button>
+                  </div>
                 </div>
               ) : (
                 <>
@@ -1972,11 +1984,24 @@ export default function PronunciationStudioModal({
                     : 'Không có bài tập nào khớp bộ lọc hiện tại'}
                 </h3>
                 <p className="text-xs text-slate-400 max-w-md mx-auto">
-                  {isEn
+                  {passedCountInTab > 0 && hidePassed
+                    ? isEn
+                      ? 'You have completed all available drills in this bank! Proactively add new words (with a collocation & example sentence) to your Vocab Notebook to keep expanding your pronunciation bank.'
+                      : 'Bạn đã luyện xong toàn bộ ngân hàng hiện có! Hãy chủ động thêm từ mới (gồm từ, cụm từ hay đi kèm và câu ví dụ) vào Sổ Tay Từ Vựng để tiếp tục mở rộng ngân hàng phát âm.'
+                    : isEn
                     ? 'Passed drills are automatically hidden to keep your queue focused. You can reveal them anytime or switch to another track.'
-                    : 'Các bài bạn đã phát âm chuẩn (≥80%) được tự động ẩn đi để đỡ rối. Bạn có thể hiện lại bất cứ lúc nào hoặc tạo thêm bài mới.'}
+                    : 'Các bài bạn đã phát âm chuẩn (≥80%) được tự động ẩn đi để đỡ rối. Bạn có thể hiện lại bất cứ lúc nào hoặc thêm từ mới.'}
                 </p>
                 <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
+                  {currentUser && onOpenVocabNotebook && (
+                    <button
+                      type="button"
+                      onClick={() => onOpenVocabNotebook()}
+                      className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black cursor-pointer"
+                    >
+                      {isEn ? '+ Add Word to Vocab Notebook' : '+ Thêm từ mới vào Sổ Tay'}
+                    </button>
+                  )}
                   {passedCountInTab > 0 && hidePassed && (
                     <button
                       type="button"
@@ -1986,13 +2011,19 @@ export default function PronunciationStudioModal({
                       {isEn ? `Show Passed (${passedCountInTab})` : `Hiện lại bài đã đạt (${passedCountInTab})`}
                     </button>
                   )}
-                  {!currentUser && lockedCountForGuest > 0 && (
+                  {!currentUser && (
                     <button
                       type="button"
                       onClick={() => onOpenAuth?.()}
                       className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black cursor-pointer"
                     >
-                      {isEn ? `Sign in to unlock +${lockedCountForGuest} more` : `Đăng nhập mở thêm +${lockedCountForGuest} bài`}
+                      {lockedCountForGuest > 0
+                        ? isEn
+                          ? `Sign in to unlock +${lockedCountForGuest} drills & Vocab Notebook`
+                          : `Đăng nhập mở +${lockedCountForGuest} bài & Sổ Tay`
+                        : isEn
+                        ? 'Sign in to add your own words'
+                        : 'Đăng nhập để thêm từ vào Sổ Tay'}
                     </button>
                   )}
                 </div>
