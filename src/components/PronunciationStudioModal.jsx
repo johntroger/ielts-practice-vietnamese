@@ -1616,7 +1616,7 @@ export default function PronunciationStudioModal({
                     <button
                       type="button"
                       onClick={handleToggleRecording}
-                      className={`flex-1 min-w-[220px] py-3 px-5 rounded-2xl text-xs sm:text-sm font-black flex items-center justify-center space-x-2 shadow-lg transition-all cursor-pointer ${
+                      className={`hidden lg:flex flex-1 min-w-[220px] py-3 px-5 rounded-2xl text-xs sm:text-sm font-black items-center justify-center space-x-2 shadow-lg transition-all cursor-pointer ${
                         speechEngine.isListening
                           ? evaluationResult && !evaluationResult.isPassed
                             ? 'bg-amber-600 hover:bg-amber-500 text-white animate-pulse shadow-amber-950/50'
