@@ -26,7 +26,8 @@ import {
   Sliders,
   Headphones,
   ArrowRight,
-  Trophy
+  Trophy,
+  List
 } from 'lucide-react';
 import {
   PRONUNCIATION_TRACKS,
@@ -175,6 +176,7 @@ export default function PronunciationStudioModal({
   const [bandFilter, setBandFilter] = useState('all'); // 'all' | 'foundation' | 'band7' | 'band8'
   const [hideMastered, setHideMastered] = useState(false);
   const [selectedIdx, setSelectedIdx] = useState(0);
+  const [isMobileListOpen, setIsMobileListOpen] = useState(false);
 
   // 7. Create Custom Drill Modal / Drawer State
   const [isCreatorOpen, setIsCreatorOpen] = useState(false);
@@ -585,24 +587,32 @@ export default function PronunciationStudioModal({
         }`}
       >
         {/* ================================================================= */}
-        {/* 1. TOP HEADER BAR WITH LIVE XP, LEVEL PROGRESS & VOICE SETTINGS   */}
+        {/* 1. TOP HEADER BAR (COMPACT SINGLE-ROW ON MOBILE, FULL ON DESKTOP) */}
         {/* ================================================================= */}
-        <header className="px-3 sm:px-6 py-3 bg-gradient-to-r from-slate-950 via-indigo-950/70 to-slate-950 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2 shrink-0">
+        <header className="px-3 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-slate-950 via-indigo-950/70 to-slate-950 border-b border-slate-800 flex items-center justify-between gap-2 shrink-0">
           {/* Brand & URL Pill */}
-          <div className="flex items-center space-x-2.5 min-w-0">
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-rose-500 flex items-center justify-center text-white shadow-lg shadow-purple-900/40 shrink-0">
-              <Mic className="w-5 h-5" />
+          <div className="flex items-center space-x-2 sm:space-x-2.5 min-w-0">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-rose-500 flex items-center justify-center text-white shadow-lg shadow-purple-900/40 shrink-0">
+              <Mic className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
             <div className="min-w-0">
-              <div className="flex items-center space-x-2">
-                <h2 className="text-sm sm:text-base font-black text-white tracking-tight truncate">
-                  {isEn ? 'Pronunciation & Intonation Studio' : 'Phòng Luyện Phát Âm & Ngữ Điệu'}
+              <div className="flex items-center space-x-1.5 sm:space-x-2">
+                <h2 className="text-xs sm:text-base font-black text-white tracking-tight truncate">
+                  {isEn ? 'Pronunciation Studio' : 'Luyện Phát Âm'}
                 </h2>
                 <span className="hidden md:inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-black bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
                   /pronunciation
                 </span>
+                {/* Compact Mobile XP + Level Pill (< sm) */}
+                <span className={`sm:hidden px-1.5 py-0.5 rounded-md text-[10px] font-black border shrink-0 ${levelProgress.tier.badgeColor}`}>
+                  Lv.{levelProgress.level}
+                </span>
+                <span className="sm:hidden inline-flex items-center space-x-0.5 text-emerald-400 bg-emerald-950/80 border border-emerald-500/30 px-1.5 py-0.5 rounded-md text-[10px] font-black shrink-0">
+                  <Zap className="w-2.5 h-2.5 fill-current" />
+                  <span>+{sessionXp}</span>
+                </span>
               </div>
-              <p className="text-[11px] text-slate-400 truncate">
+              <p className="hidden sm:block text-[11px] text-slate-400 truncate">
                 {isEn
                   ? 'Cambridge phonological training for individual words, linked phrases & full sentences'
                   : 'Luyện phát âm chuẩn Cambridge cho từng từ đơn, cụm từ nối âm & ngữ điệu cả câu'}
@@ -610,8 +620,8 @@ export default function PronunciationStudioModal({
             </div>
           </div>
 
-          {/* Center: Live XP & Level Progress Bar */}
-          <div className="flex items-center space-x-2 sm:space-x-3 bg-slate-950/90 border border-slate-800 px-3 py-1.5 rounded-2xl shadow-inner">
+          {/* Center: Live XP & Level Progress Bar (Hidden on extra-small mobile to save vertical space) */}
+          <div className="hidden sm:flex items-center space-x-3 bg-slate-950/90 border border-slate-800 px-3 py-1.5 rounded-2xl shadow-inner">
             <div className="flex items-center space-x-1.5">
               <span className={`px-2 py-0.5 rounded-lg text-[10px] font-black border ${levelProgress.tier.badgeColor}`}>
                 Lv.{levelProgress.level}
@@ -622,7 +632,7 @@ export default function PronunciationStudioModal({
             </div>
 
             {/* XP Progress Bar */}
-            <div className="w-20 sm:w-28">
+            <div className="w-24 sm:w-28">
               <div className="flex items-center justify-between text-[9px] font-bold text-slate-400 mb-0.5">
                 <span className="text-amber-400 font-black">{userTotalXp.toLocaleString()} XP</span>
                 <span>{levelProgress.progressPercent}%</span>
@@ -656,11 +666,12 @@ export default function PronunciationStudioModal({
             <button
               type="button"
               onClick={() => setIsCreatorOpen(true)}
-              className="flex items-center space-x-1 px-2.5 sm:px-3 py-1.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-xs font-bold shadow-md transition-all active:scale-95 cursor-pointer"
+              className="flex items-center space-x-1 px-2.5 sm:px-3 min-h-[38px] sm:min-h-0 py-1.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-xs font-bold shadow-md transition-all active:scale-95 cursor-pointer"
               title={isEn ? 'Create custom word, phrase, or sentence drill' : 'Tạo bài tập phát âm từ, cụm từ hoặc câu mới'}
             >
               <Plus className="w-3.5 h-3.5" />
-              <span>{isEn ? 'Create Drill' : 'Tạo Bài Tập'}</span>
+              <span className="sm:hidden">{isEn ? 'New' : 'Tạo'}</span>
+              <span className="hidden sm:inline">{isEn ? 'Create Drill' : 'Tạo Bài Tập'}</span>
             </button>
 
             <button
@@ -685,7 +696,7 @@ export default function PronunciationStudioModal({
             <button
               type="button"
               onClick={onClose}
-              className="flex items-center justify-center w-8 h-8 rounded-xl bg-slate-800 hover:bg-rose-600 text-slate-300 hover:text-white border border-slate-700 transition-colors cursor-pointer"
+              className="flex items-center justify-center w-9 h-9 sm:w-8 sm:h-8 rounded-xl bg-slate-800 hover:bg-rose-600 text-slate-300 hover:text-white border border-slate-700 transition-colors cursor-pointer"
               title={isEn ? 'Close Pronunciation Studio (Esc)' : 'Đóng phòng luyện phát âm (Esc)'}
             >
               <X className="w-4 h-4" />
@@ -728,8 +739,8 @@ export default function PronunciationStudioModal({
         {/* ================================================================= */}
         {/* 2. TRACK SWITCHER (WORDS / PHRASES / SENTENCES) & VOICE TOOLBAR   */}
         {/* ================================================================= */}
-        <div className="px-3 sm:px-6 py-2.5 bg-slate-950/80 border-b border-slate-800/90 flex flex-wrap items-center justify-between gap-2 shrink-0">
-          {/* 3 Track Tabs */}
+        <div className="px-3 sm:px-6 py-2 bg-slate-950/80 border-b border-slate-800/90 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-2 shrink-0">
+          {/* 3 Track Tabs (Horizontal scroll on mobile) */}
           <div className="flex items-center space-x-1.5 overflow-x-auto no-scrollbar">
             {PRONUNCIATION_TRACKS.map(track => {
               const isActive = activeTab === track.id;
@@ -738,7 +749,7 @@ export default function PronunciationStudioModal({
                   key={track.id}
                   type="button"
                   onClick={() => handleSelectTab(track.id)}
-                  className={`flex items-center space-x-2 px-3 sm:px-4 py-2 rounded-xl text-xs font-black transition-all cursor-pointer whitespace-nowrap ${
+                  className={`flex items-center space-x-1.5 sm:space-x-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-[11px] sm:text-xs font-black transition-all cursor-pointer whitespace-nowrap shrink-0 ${
                     isActive
                       ? `bg-gradient-to-r ${track.badgeColor} text-white shadow-lg`
                       : 'bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-800'
@@ -746,7 +757,7 @@ export default function PronunciationStudioModal({
                 >
                   <span>{isEn ? track.labelEn : track.labelVi}</span>
                   <span
-                    className={`px-1.5 py-0.2 rounded-full text-[10px] font-extrabold ${
+                    className={`px-1.5 py-0.2 rounded-full text-[9px] sm:text-[10px] font-extrabold ${
                       isActive ? 'bg-black/25 text-white' : 'bg-slate-800 text-amber-400'
                     }`}
                   >
@@ -757,10 +768,10 @@ export default function PronunciationStudioModal({
             })}
           </div>
 
-          {/* Native Voice Accent & Speed Controls */}
-          <div className="flex items-center flex-wrap gap-2 text-xs">
+          {/* Native Voice Accent & Speed Controls (Single scrollable row on mobile) */}
+          <div className="flex items-center space-x-2 overflow-x-auto no-scrollbar text-xs">
             {/* Examiner Voice Selector */}
-            <div className="flex items-center space-x-1 bg-slate-900 border border-slate-800 rounded-xl p-1">
+            <div className="flex items-center space-x-1 bg-slate-900 border border-slate-800 rounded-xl p-1 shrink-0">
               {SPEAKING_EXAMINER_PROFILES.map(ex => {
                 const isSelected = selectedExaminerId === ex.id;
                 const shortLabel =
@@ -774,7 +785,7 @@ export default function PronunciationStudioModal({
                     key={ex.id}
                     type="button"
                     onClick={() => setSelectedExaminerId(ex.id)}
-                    className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
+                    className={`px-2 sm:px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold transition-all cursor-pointer whitespace-nowrap ${
                       isSelected
                         ? 'bg-indigo-600 text-white shadow-xs'
                         : 'text-slate-400 hover:text-white'
@@ -787,17 +798,17 @@ export default function PronunciationStudioModal({
             </div>
 
             {/* Playback Speed Selector */}
-            <div className="flex items-center space-x-1 bg-slate-900 border border-slate-800 rounded-xl p-1">
+            <div className="flex items-center space-x-1 bg-slate-900 border border-slate-800 rounded-xl p-1 shrink-0">
               {[
-                { rate: 0.75, label: isEn ? '0.75x Slow' : '0.75x Chậm' },
-                { rate: 0.9, label: isEn ? '0.9x Clear' : '0.9x Chuẩn' },
-                { rate: 1.0, label: isEn ? '1.0x Native' : '1.0x Tự nhiên' }
+                { rate: 0.75, label: '0.75x' },
+                { rate: 0.9, label: '0.9x' },
+                { rate: 1.0, label: '1.0x' }
               ].map(sp => (
                 <button
                   key={sp.rate}
                   type="button"
                   onClick={() => setPlaybackSpeed(sp.rate)}
-                  className={`px-2 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
+                  className={`px-2 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold transition-all cursor-pointer whitespace-nowrap ${
                     playbackSpeed === sp.rate
                       ? 'bg-purple-600 text-white shadow-xs'
                       : 'text-slate-400 hover:text-white'
@@ -810,12 +821,55 @@ export default function PronunciationStudioModal({
           </div>
         </div>
 
+        {/* MOBILE DRILL SELECTOR BAR (< lg): Frees up 100% of phone screen for practicing */}
+        <div className="lg:hidden px-3 py-2 bg-slate-900/95 border-b border-slate-800 flex items-center justify-between gap-2 shrink-0">
+          <button
+            type="button"
+            onClick={() => setIsMobileListOpen(true)}
+            className="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-indigo-300 border border-indigo-500/30 text-xs font-bold shrink-0 cursor-pointer active:scale-95"
+          >
+            <List className="w-3.5 h-3.5" />
+            <span>
+              {isEn ? `Drills (${activeTrackDrills.length})` : `Danh sách (${activeTrackDrills.length})`}
+            </span>
+          </button>
+
+          <div className="min-w-0 flex-1 text-center">
+            <div className="text-[11px] font-extrabold text-white truncate">
+              {selectedIdx + 1}/{activeTrackDrills.length} • {currentDrill?.targetText || ''}
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-1 shrink-0">
+            <button
+              type="button"
+              onClick={() =>
+                setSelectedIdx(prev => (prev > 0 ? prev - 1 : activeTrackDrills.length - 1))
+              }
+              className="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 flex items-center justify-center border border-slate-700 cursor-pointer active:scale-95"
+              aria-label={isEn ? 'Previous drill' : 'Bài trước'}
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <button
+              type="button"
+              onClick={() =>
+                setSelectedIdx(prev => (prev < activeTrackDrills.length - 1 ? prev + 1 : 0))
+              }
+              className="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 flex items-center justify-center border border-slate-700 cursor-pointer active:scale-95"
+              aria-label={isEn ? 'Next drill' : 'Bài tiếp'}
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+
         {/* ================================================================= */}
-        {/* 3. MAIN WORKSPACE: LEFT EXERCISE QUEUE + RIGHT PRACTICE STAGE     */}
+        {/* 3. MAIN WORKSPACE: DESKTOP SIDEBAR + MAIN PRACTICE STAGE          */}
         {/* ================================================================= */}
         <div className="flex-1 flex flex-col lg:flex-row min-h-0 overflow-hidden">
-          {/* LEFT SIDEBAR: Exercise List & Search/Band Filter */}
-          <aside className="w-full lg:w-80 xl:w-96 bg-slate-950/60 border-b lg:border-b-0 lg:border-r border-slate-800 flex flex-col shrink-0 max-h-52 lg:max-h-none">
+          {/* DESKTOP LEFT SIDEBAR (Hidden on < lg; on mobile, rendered as Bottom Sheet below) */}
+          <aside className="hidden lg:flex w-80 xl:w-96 bg-slate-950/60 border-r border-slate-800 flex-col shrink-0">
             {/* Search & Band Filter Bar */}
             <div className="p-3 border-b border-slate-800/80 space-y-2">
               <div className="relative">
@@ -1519,17 +1573,218 @@ export default function PronunciationStudioModal({
                     </div>
                   </div>
                 </div>
+                <div className="h-4 lg:hidden" />
               </>
             ) : null}
           </main>
         </div>
 
         {/* ================================================================= */}
+        {/* MOBILE STICKY BOTTOM THUMB-ZONE ACTION BAR (< lg)                 */}
+        {/* ================================================================= */}
+        {currentDrill && (
+          <div className="lg:hidden shrink-0 bg-slate-950/95 backdrop-blur-md border-t border-slate-800 px-3 py-2.5 pb-[max(0.625rem,env(safe-area-inset-bottom))] flex items-center gap-2 z-30">
+            <button
+              type="button"
+              onClick={() => handlePlayModel(playbackSpeed)}
+              className="min-h-[46px] px-3.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold flex items-center justify-center space-x-1.5 shadow-md active:scale-95 transition-all cursor-pointer shrink-0"
+              title={isEn ? 'Listen to native model' : 'Nghe giọng mẫu'}
+            >
+              <Volume2 className="w-4 h-4 shrink-0" />
+              <span>{isEn ? 'Listen' : 'Nghe'}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={handleToggleRecording}
+              className={`flex-1 min-h-[46px] px-4 rounded-2xl text-xs sm:text-sm font-black flex items-center justify-center space-x-2 shadow-lg active:scale-95 transition-all cursor-pointer ${
+                speechEngine.isListening
+                  ? 'bg-rose-600 hover:bg-rose-500 text-white animate-pulse'
+                  : 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white'
+              }`}
+            >
+              <Mic className="w-4 h-4 shrink-0" />
+              <span className="truncate">
+                {speechEngine.isListening
+                  ? isEn
+                    ? 'Stop & Score'
+                    : 'Dừng & Chấm'
+                  : isEn
+                  ? 'Tap to Speak'
+                  : 'Bấm để Nói'}
+              </span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() =>
+                setSelectedIdx(prev => (prev < activeTrackDrills.length - 1 ? prev + 1 : 0))
+              }
+              className="min-h-[46px] px-3.5 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-bold flex items-center justify-center space-x-1 active:scale-95 transition-all cursor-pointer shrink-0"
+              title={isEn ? 'Next drill' : 'Bài tiếp theo'}
+            >
+              <span>{isEn ? 'Next' : 'Tiếp'}</span>
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+
+        {/* ================================================================= */}
+        {/* MOBILE DRILL LIST BOTTOM SHEET (< lg)                             */}
+        {/* ================================================================= */}
+        {isMobileListOpen && (
+          <div
+            className="lg:hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-xs flex items-end justify-center animate-in fade-in duration-150"
+            onClick={() => setIsMobileListOpen(false)}
+          >
+            <div
+              className="w-full bg-slate-900 border-t border-slate-700 rounded-t-3xl h-[82dvh] flex flex-col overflow-hidden shadow-2xl pb-[max(0.75rem,env(safe-area-inset-bottom))] animate-in slide-in-from-bottom duration-200"
+              onClick={e => e.stopPropagation()}
+            >
+              <div className="px-4 py-3 border-b border-slate-800 flex items-center justify-between shrink-0">
+                <div className="flex items-center space-x-2">
+                  <List className="w-4 h-4 text-indigo-400" />
+                  <h3 className="text-sm font-black text-white">
+                    {isEn
+                      ? `Select Drill (${activeTrackDrills.length})`
+                      : `Chọn Bài Luyện Phát Âm (${activeTrackDrills.length})`}
+                  </h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsMobileListOpen(false)}
+                  className="w-9 h-9 rounded-xl bg-slate-800 text-slate-300 flex items-center justify-center cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Search & Band Filter inside Mobile Sheet */}
+              <div className="p-3 border-b border-slate-800/80 space-y-2 shrink-0">
+                <div className="relative">
+                  <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={e => {
+                      setSearchQuery(e.target.value);
+                      setSelectedIdx(0);
+                    }}
+                    placeholder={
+                      isEn
+                        ? 'Search words, phrases, or topics...'
+                        : 'Tìm từ, cụm từ, câu hoặc chủ đề...'
+                    }
+                    className="w-full pl-8 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                  />
+                </div>
+
+                <div className="flex items-center justify-between gap-1">
+                  <div className="flex items-center space-x-1 overflow-x-auto no-scrollbar">
+                    {[
+                      { id: 'all', label: isEn ? 'All' : 'Tất cả' },
+                      { id: 'foundation', label: 'Band 5.5-6.5' },
+                      { id: 'band7', label: 'Band 7.0-7.5' },
+                      { id: 'band8', label: 'Band 8.0+' }
+                    ].map(b => (
+                      <button
+                        key={b.id}
+                        type="button"
+                        onClick={() => {
+                          setBandFilter(b.id);
+                          setSelectedIdx(0);
+                        }}
+                        className={`px-2.5 py-1.5 rounded-lg text-[11px] font-bold whitespace-nowrap cursor-pointer ${
+                          bandFilter === b.id
+                            ? 'bg-indigo-600 text-white'
+                            : 'bg-slate-950 text-slate-400 border border-slate-800'
+                        }`}
+                      >
+                        {b.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setHideMastered(prev => !prev)}
+                    className={`px-2.5 py-1.5 rounded-lg text-[11px] font-bold whitespace-nowrap cursor-pointer border ${
+                      hideMastered
+                        ? 'bg-emerald-950/80 text-emerald-300 border-emerald-500/40'
+                        : 'bg-slate-950 text-slate-400 border-slate-800'
+                    }`}
+                  >
+                    {isEn ? 'Hide Mastered' : 'Ẩn đã thuộc'}
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex-1 overflow-y-auto p-3 space-y-2 overscroll-contain">
+                {activeTrackDrills.map((item, idx) => {
+                  const isSelected = currentDrill?.id === item.id;
+                  const best = pronStats.bestScores?.[item.id];
+                  const itemMastered = Array.isArray(masteredIds) && masteredIds.includes(item.id);
+                  return (
+                    <div
+                      key={item.id}
+                      onClick={() => {
+                        setSelectedIdx(idx);
+                        setIsMobileListOpen(false);
+                      }}
+                      className={`p-3 rounded-2xl border flex items-center justify-between gap-2 min-h-[54px] cursor-pointer active:scale-98 transition-all ${
+                        isSelected
+                          ? 'bg-indigo-950/80 border-indigo-500/60 shadow-md'
+                          : 'bg-slate-950/70 border-slate-800'
+                      }`}
+                    >
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center space-x-1.5 mb-0.5">
+                          <span className="text-[10px] font-black px-1.5 py-0.2 rounded bg-slate-800 text-indigo-300">
+                            Band {item.bandLevel}
+                          </span>
+                          <span className="text-[10px] text-slate-400 truncate">
+                            {isEn ? item.topicEn : item.topicVi}
+                          </span>
+                        </div>
+                        <div className="text-xs font-extrabold text-white truncate">
+                          {item.targetText}
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-1.5 shrink-0">
+                        {best ? (
+                          <span className="px-2 py-0.5 rounded-lg text-[10px] font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                            {best.accuracy}%
+                          </span>
+                        ) : (
+                          <span className="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-slate-800 text-amber-400">
+                            +{item.xpReward} XP
+                          </span>
+                        )}
+                        {itemMastered && <CheckCircle2 className="w-4 h-4 text-emerald-400" />}
+                        {item.isCustom && (
+                          <button
+                            type="button"
+                            onClick={e => handleDeleteCustomDrill(item.id, e)}
+                            className="p-1.5 rounded-lg bg-slate-800 text-rose-400"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ================================================================= */}
         {/* 4. CUSTOM PRONUNCIATION DRILL CREATOR MODAL OVERLAY               */}
         {/* ================================================================= */}
         {isCreatorOpen && (
-          <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-150">
-            <div className="bg-slate-900 border border-slate-700 rounded-3xl w-full max-w-lg p-5 sm:p-6 shadow-2xl space-y-4 text-slate-100">
+          <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 animate-in fade-in duration-150">
+            <div className="bg-slate-900 border-t sm:border border-slate-700 rounded-t-3xl sm:rounded-3xl w-full max-w-lg max-h-[92dvh] overflow-y-auto p-5 sm:p-6 pb-[max(1.25rem,env(safe-area-inset-bottom))] shadow-2xl space-y-4 text-slate-100">
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <div className="flex items-center space-x-2">
                   <Sparkles className="w-5 h-5 text-indigo-400" />
