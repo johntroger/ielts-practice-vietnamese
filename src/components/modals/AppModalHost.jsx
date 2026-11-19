@@ -258,6 +258,7 @@ export default function AppModalHost({
             }}
             masteredIds={resolvedMasteredIds}
             onToggleMastered={resolvedToggleMastered}
+            onOpenAuth={() => openModal('auth')}
           />
         </WorkspaceErrorBoundary>
       )}

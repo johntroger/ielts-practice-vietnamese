@@ -28,7 +28,8 @@ import {
   ArrowRight,
   Trophy,
   List,
-  ChevronDown
+  ChevronDown,
+  Lock
 } from 'lucide-react';
 import {
   PRONUNCIATION_TRACKS,
@@ -36,7 +37,8 @@ import {
   PRONUNCIATION_PHRASE_DRILLS,
   PRONUNCIATION_SENTENCE_DRILLS,
   evaluatePronunciationAttempt,
-  buildCustomPronunciationDrill
+  buildCustomPronunciationDrill,
+  mapVocabListToPronunciationDrills
 } from '../data/pronunciationData';
 import { SPEAKING_EXAMINER_PROFILES } from '../data/speakingTopics';
 import { useSpeechEngine } from '../hooks/useSpeechEngine';
@@ -71,6 +73,7 @@ export default function PronunciationStudioModal({
   onSaveToNotebook,
   masteredIds = [],
   onToggleMastered,
+  onOpenAuth,
   initialOptions = null
 }) {
   const { isEn } = useTranslation();
@@ -177,12 +180,31 @@ export default function PronunciationStudioModal({
 
   const levelProgress = useMemo(() => calculateLevelProgress(userTotalXp), [userTotalXp]);
 
-  // 6. Filters & Drill List
+  // 6. Filters, Passed Auto-Hide & Drill List
   const [searchQuery, setSearchQuery] = useState('');
   const [bandFilter, setBandFilter] = useState('all'); // 'all' | 'foundation' | 'band7' | 'band8'
-  const [hideMastered, setHideMastered] = useState(false);
+  const [hidePassed, setHidePassed] = useState(() =>
+    Boolean(safeGet('ielts_pronunciation_hide_passed', true))
+  );
+  const passedStorageKey = `ielts_pronunciation_passed_ids_v1_${currentUser?.id || 'guest'}`;
+  const [passedDrillIds, setPassedDrillIds] = useState(() =>
+    safeGet(passedStorageKey, [])
+  );
+  const [justPassedDrillId, setJustPassedDrillId] = useState(null);
   const [selectedIdx, setSelectedIdx] = useState(0);
   const [isMobileListOpen, setIsMobileListOpen] = useState(false);
+
+  useEffect(() => {
+    setPassedDrillIds(safeGet(passedStorageKey, []));
+  }, [passedStorageKey]);
+
+  const toggleHidePassed = () => {
+    setHidePassed(prev => {
+      const next = !prev;
+      safeSet('ielts_pronunciation_hide_passed', next);
+      return next;
+    });
+  };
 
   // 7. Create Custom Drill Modal / Drawer State
   const [isCreatorOpen, setIsCreatorOpen] = useState(false);
@@ -222,20 +244,50 @@ export default function PronunciationStudioModal({
     });
   };
 
-  // Combine built-in drills + custom drills for active tab
-  const activeTrackDrills = useMemo(() => {
-    const baseList =
+  // Combine built-in drills (Guest vs Registered) + User's Vocab Notebook + Custom drills
+  const allUnfilteredForTab = useMemo(() => {
+    const rawBase =
       activeTab === 'words'
         ? PRONUNCIATION_WORD_DRILLS
         : activeTab === 'phrases'
         ? PRONUNCIATION_PHRASE_DRILLS
         : PRONUNCIATION_SENTENCE_DRILLS;
 
+    // Guest users get free tier; Registered users unlock full Cambridge bank + Personal Vocab Notebook
+    const accessibleBase = currentUser
+      ? rawBase
+      : rawBase.filter(d => !d.requiresAuth);
+
+    const existingTexts = new Set(rawBase.map(d => d.targetText?.toLowerCase().trim()));
+    const vocabDrillsForTab = currentUser
+      ? mapVocabListToPronunciationDrills(vocabList, existingTexts).filter(d => d.type === activeTab)
+      : [];
+
     const customForTab = (Array.isArray(customDrills) ? customDrills : []).filter(
       d => d.type === activeTab
     );
 
-    let combined = [...customForTab, ...baseList];
+    return [...customForTab, ...vocabDrillsForTab, ...accessibleBase];
+  }, [activeTab, currentUser, vocabList, customDrills]);
+
+  const lockedCountForGuest = useMemo(() => {
+    if (currentUser) return 0;
+    const rawBase =
+      activeTab === 'words'
+        ? PRONUNCIATION_WORD_DRILLS
+        : activeTab === 'phrases'
+        ? PRONUNCIATION_PHRASE_DRILLS
+        : PRONUNCIATION_SENTENCE_DRILLS;
+    return rawBase.filter(d => d.requiresAuth).length;
+  }, [activeTab, currentUser]);
+
+  const passedCountInTab = useMemo(() => {
+    const passedSet = new Set(Array.isArray(passedDrillIds) ? passedDrillIds : []);
+    return allUnfilteredForTab.filter(d => passedSet.has(d.id)).length;
+  }, [allUnfilteredForTab, passedDrillIds]);
+
+  const activeTrackDrills = useMemo(() => {
+    let combined = allUnfilteredForTab;
 
     if (bandFilter === 'foundation') {
       combined = combined.filter(d => parseFloat(d.bandLevel) <= 6.5);
@@ -245,8 +297,13 @@ export default function PronunciationStudioModal({
       combined = combined.filter(d => parseFloat(d.bandLevel) >= 8.0);
     }
 
-    if (hideMastered && Array.isArray(masteredIds) && masteredIds.length > 0) {
-      combined = combined.filter(d => !masteredIds.includes(d.id));
+    // Auto-hide drills that the learner has already pronounced accurately (>= 80%),
+    // while keeping `justPassedDrillId` visible until the user advances to the next item.
+    if (hidePassed) {
+      const passedSet = new Set(Array.isArray(passedDrillIds) ? passedDrillIds : []);
+      combined = combined.filter(
+        d => d.id === justPassedDrillId || !passedSet.has(d.id)
+      );
     }
 
     if (searchQuery.trim()) {
@@ -264,11 +321,23 @@ export default function PronunciationStudioModal({
     }
 
     return combined;
-  }, [activeTab, customDrills, bandFilter, hideMastered, masteredIds, searchQuery]);
+  }, [allUnfilteredForTab, bandFilter, hidePassed, passedDrillIds, justPassedDrillId, searchQuery]);
 
   const currentDrill = activeTrackDrills[selectedIdx] || activeTrackDrills[0] || null;
   const clipKey = currentDrill ? `pron_clip_${currentDrill.id}` : 'pron_clip_default';
   const currentAudioClip = speechEngine.audioClips[clipKey];
+
+  const handleAdvanceToNextDrill = useCallback(() => {
+    const wasShowingJustPassed =
+      hidePassed && justPassedDrillId && currentDrill?.id === justPassedDrillId;
+    setJustPassedDrillId(null);
+    if (wasShowingJustPassed) {
+      // Removing the current passed item naturally shifts the next unpassed item into selectedIdx
+      setSelectedIdx(prev => Math.max(0, Math.min(prev, activeTrackDrills.length - 2)));
+    } else {
+      setSelectedIdx(prev => (prev < activeTrackDrills.length - 1 ? prev + 1 : 0));
+    }
+  }, [hidePassed, justPassedDrillId, currentDrill?.id, activeTrackDrills.length]);
 
   // Reset evaluation when switching drill
   useEffect(() => {
@@ -440,8 +509,16 @@ export default function PronunciationStudioModal({
       });
 
       if (isPassed) {
-        // Passed (>= 80%): Auto-stop microphone, play success feedback, and award XP
+        // Passed (>= 80%): Auto-stop microphone, record passed ID (auto-hide on next switch), play chime & award XP
         setIsWaitingForRetrySpeech(false);
+        setJustPassedDrillId(currentDrill.id);
+        setPassedDrillIds(prev => {
+          const prevList = Array.isArray(prev) ? prev : [];
+          if (prevList.includes(currentDrill.id)) return prevList;
+          const nextList = [...prevList, currentDrill.id];
+          safeSet(passedStorageKey, nextList);
+          return nextList;
+        });
         if (speechEngine.isListening) {
           speechEngine.stopListening();
         }
@@ -1066,9 +1143,7 @@ export default function PronunciationStudioModal({
             </button>
             <button
               type="button"
-              onClick={() =>
-                setSelectedIdx(prev => (prev < activeTrackDrills.length - 1 ? prev + 1 : 0))
-              }
+              onClick={handleAdvanceToNextDrill}
               className="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 flex items-center justify-center border border-slate-700 cursor-pointer active:scale-95"
               aria-label={isEn ? 'Next drill' : 'Bài tiếp'}
             >
@@ -1131,15 +1206,17 @@ export default function PronunciationStudioModal({
 
                 <button
                   type="button"
-                  onClick={() => setHideMastered(prev => !prev)}
+                  onClick={toggleHidePassed}
                   className={`px-2 py-1 rounded-lg text-[10px] font-bold whitespace-nowrap cursor-pointer border ${
-                    hideMastered
+                    hidePassed
                       ? 'bg-emerald-950/80 text-emerald-300 border-emerald-500/40'
                       : 'bg-slate-900 text-slate-400 border-slate-800'
                   }`}
-                  title={isEn ? 'Hide mastered items' : 'Ẩn các bài đã thuộc'}
+                  title={isEn ? 'Auto-hide items you already pronounced accurately (≥80%)' : 'Tự động ẩn bài đã phát âm chuẩn (≥80%)'}
                 >
-                  {isEn ? 'Hide Mastered' : 'Ẩn đã thuộc'}
+                  {isEn
+                    ? `Hide Passed (${passedCountInTab})`
+                    : `Ẩn đã đạt (${passedCountInTab})`}
                 </button>
               </div>
             </div>
@@ -1147,9 +1224,13 @@ export default function PronunciationStudioModal({
             {/* Drill Items Scroll List */}
             <div className="flex-1 overflow-y-auto p-2 space-y-1.5 overscroll-contain">
               {activeTrackDrills.length === 0 ? (
-                <div className="p-6 text-center text-xs text-slate-500 space-y-2">
+                <div className="p-6 text-center text-xs text-slate-400 space-y-2.5">
                   <p>
-                    {isEn
+                    {passedCountInTab > 0 && hidePassed
+                      ? isEn
+                        ? `🎉 You've mastered all ${passedCountInTab} drills in this track!`
+                        : `🎉 Bạn đã phát âm chuẩn toàn bộ ${passedCountInTab} bài trong mục này!`
+                      : isEn
                       ? 'No pronunciation drills match your filter.'
                       : 'Không có bài tập phát âm nào khớp bộ lọc.'}
                   </p>
@@ -1158,87 +1239,128 @@ export default function PronunciationStudioModal({
                     onClick={() => {
                       setSearchQuery('');
                       setBandFilter('all');
-                      setHideMastered(false);
+                      if (hidePassed && passedCountInTab > 0) {
+                        toggleHidePassed();
+                      }
                     }}
                     className="px-3 py-1.5 rounded-xl bg-indigo-600 text-white font-bold cursor-pointer"
                   >
-                    {isEn ? 'Reset Filters' : 'Đặt lại bộ lọc'}
+                    {passedCountInTab > 0 && hidePassed
+                      ? isEn
+                        ? `Show Passed Drills (${passedCountInTab})`
+                        : `Hiện lại bài đã đạt (${passedCountInTab})`
+                      : isEn
+                      ? 'Reset Filters'
+                      : 'Đặt lại bộ lọc'}
                   </button>
                 </div>
               ) : (
-                activeTrackDrills.map((item, idx) => {
-                  const isSelected = currentDrill?.id === item.id;
-                  const best = pronStats.bestScores?.[item.id];
-                  const itemMastered = Array.isArray(masteredIds) && masteredIds.includes(item.id);
+                <>
+                  {activeTrackDrills.map((item, idx) => {
+                    const isSelected = currentDrill?.id === item.id;
+                    const best = pronStats.bestScores?.[item.id];
+                    const itemMastered = Array.isArray(masteredIds) && masteredIds.includes(item.id);
 
-                  return (
-                    <div
-                      key={item.id}
-                      onClick={() => setSelectedIdx(idx)}
-                      className={`group w-full p-2.5 rounded-2xl border text-left transition-all cursor-pointer flex items-start justify-between gap-2 ${
-                        isSelected
-                          ? 'bg-indigo-950/70 border-indigo-500/60 shadow-md'
-                          : 'bg-slate-900/70 hover:bg-slate-900 border-slate-800/80'
-                      }`}
-                    >
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center space-x-1.5 mb-0.5">
-                          <span className="text-[10px] font-black px-1.5 py-0.2 rounded bg-slate-800 text-indigo-300">
-                            Band {item.bandLevel}
-                          </span>
-                          <span className="text-[10px] text-slate-400 truncate">
-                            {isEn ? item.topicEn : item.topicVi}
-                          </span>
-                          {item.isCustom && (
-                            <span className="text-[9px] font-black px-1.5 py-0.2 rounded bg-purple-500/20 text-purple-300">
-                              {isEn ? 'Custom' : 'Tự tạo'}
+                    return (
+                      <div
+                        key={item.id}
+                        onClick={() => {
+                          setJustPassedDrillId(null);
+                          setSelectedIdx(idx);
+                        }}
+                        className={`group w-full p-2.5 rounded-2xl border text-left transition-all cursor-pointer flex items-start justify-between gap-2 ${
+                          isSelected
+                            ? 'bg-indigo-950/70 border-indigo-500/60 shadow-md'
+                            : 'bg-slate-900/70 hover:bg-slate-900 border-slate-800/80'
+                        }`}
+                      >
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center space-x-1.5 mb-0.5">
+                            <span className="text-[10px] font-black px-1.5 py-0.2 rounded bg-slate-800 text-indigo-300">
+                              Band {item.bandLevel}
+                            </span>
+                            <span className="text-[10px] text-slate-400 truncate">
+                              {isEn ? item.topicEn : item.topicVi}
+                            </span>
+                            {item.isFromVocabVault && (
+                              <span className="text-[9px] font-black px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300">
+                                {isEn ? '📒 Vault' : '📒 Sổ Tay'}
+                              </span>
+                            )}
+                            {item.isCustom && (
+                              <span className="text-[9px] font-black px-1.5 py-0.2 rounded bg-purple-500/20 text-purple-300">
+                                {isEn ? 'Custom' : 'Tự tạo'}
+                              </span>
+                            )}
+                          </div>
+                          <div className="text-xs font-extrabold text-white truncate">
+                            {item.targetText}
+                          </div>
+                          <div className="text-[10px] text-slate-400 truncate mt-0.5">
+                            {isEn ? item.meaningEn : item.meaningVi}
+                          </div>
+                        </div>
+
+                        <div className="flex flex-col items-end space-y-1 shrink-0">
+                          {best ? (
+                            <span
+                              className={`px-1.5 py-0.5 rounded-lg text-[10px] font-black ${
+                                best.accuracy >= 85
+                                  ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                                  : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                              }`}
+                            >
+                              {best.accuracy}%
+                            </span>
+                          ) : (
+                            <span className="px-1.5 py-0.5 rounded-lg text-[10px] font-bold bg-slate-800 text-amber-400">
+                              +{item.xpReward} XP
                             </span>
                           )}
-                        </div>
-                        <div className="text-xs font-extrabold text-white truncate">
-                          {item.targetText}
-                        </div>
-                        <div className="text-[10px] text-slate-400 truncate mt-0.5">
-                          {isEn ? item.meaningEn : item.meaningVi}
+
+                          <div className="flex items-center space-x-1">
+                            {itemMastered && (
+                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                            )}
+                            {item.isCustom && (
+                              <button
+                                type="button"
+                                onClick={e => handleDeleteCustomDrill(item.id, e)}
+                                className="p-1 rounded hover:bg-rose-500/20 text-slate-500 hover:text-rose-400 transition-colors"
+                                title={isEn ? 'Delete custom drill' : 'Xóa bài tập tự tạo'}
+                              >
+                                <Trash2 className="w-3 h-3" />
+                              </button>
+                            )}
+                          </div>
                         </div>
                       </div>
+                    );
+                  })}
 
-                      <div className="flex flex-col items-end space-y-1 shrink-0">
-                        {best ? (
-                          <span
-                            className={`px-1.5 py-0.5 rounded-lg text-[10px] font-black ${
-                              best.accuracy >= 85
-                                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                                : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
-                            }`}
-                          >
-                            {best.accuracy}%
-                          </span>
-                        ) : (
-                          <span className="px-1.5 py-0.5 rounded-lg text-[10px] font-bold bg-slate-800 text-amber-400">
-                            +{item.xpReward} XP
-                          </span>
-                        )}
-
-                        <div className="flex items-center space-x-1">
-                          {itemMastered && (
-                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                          )}
-                          {item.isCustom && (
-                            <button
-                              type="button"
-                              onClick={e => handleDeleteCustomDrill(item.id, e)}
-                              className="p-1 rounded hover:bg-rose-500/20 text-slate-500 hover:text-rose-400 transition-colors"
-                              title={isEn ? 'Delete custom drill' : 'Xóa bài tập tự tạo'}
-                            >
-                              <Trash2 className="w-3 h-3" />
-                            </button>
-                          )}
-                        </div>
+                  {/* Guest Unlock Prompt Card */}
+                  {!currentUser && lockedCountForGuest > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => onOpenAuth?.()}
+                      className="w-full p-3 rounded-2xl bg-gradient-to-r from-indigo-950/70 to-purple-950/70 border border-indigo-500/30 hover:border-indigo-400/60 text-left space-y-1 transition-all cursor-pointer"
+                    >
+                      <div className="flex items-center space-x-1.5 text-xs font-black text-indigo-300">
+                        <Lock className="w-3.5 h-3.5" />
+                        <span>
+                          {isEn
+                            ? `Unlock +${lockedCountForGuest} Pro Drills & Vocab Sync`
+                            : `Mở khóa thêm +${lockedCountForGuest} bài & Sổ Tay Từ Vựng`}
+                        </span>
                       </div>
-                    </div>
-                  );
-                })
+                      <p className="text-[10px] text-slate-400">
+                        {isEn
+                          ? 'Sign in free to unlock Band 7.0-8.5+ drills and practice words from your personal notebook.'
+                          : 'Đăng nhập miễn phí để mở kho nâng cao và luyện phát âm chính các từ trong Sổ Tay của bạn.'}
+                      </p>
+                    </button>
+                  )}
+                </>
               )}
             </div>
           </aside>
@@ -1308,9 +1430,7 @@ export default function PronunciationStudioModal({
                         </button>
                         <button
                           type="button"
-                          onClick={() =>
-                            setSelectedIdx(prev => (prev < activeTrackDrills.length - 1 ? prev + 1 : 0))
-                          }
+                          onClick={handleAdvanceToNextDrill}
                           className="p-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700 cursor-pointer"
                           title={isEn ? 'Next drill' : 'Bài tiếp theo'}
                         >
@@ -1595,11 +1715,7 @@ export default function PronunciationStudioModal({
                           </div>
                           <button
                             type="button"
-                            onClick={() =>
-                              setSelectedIdx(prev =>
-                                prev < activeTrackDrills.length - 1 ? prev + 1 : 0
-                              )
-                            }
+                            onClick={handleAdvanceToNextDrill}
                             className="shrink-0 px-4 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-400 hover:to-purple-500 text-white text-xs sm:text-sm font-black shadow-lg shadow-indigo-950/50 ring-2 ring-indigo-400/60 flex items-center justify-center space-x-1.5 cursor-pointer active:scale-95 transition-all"
                           >
                             <span>{isEn ? 'Next Drill' : 'Qua từ tiếp theo'}</span>
@@ -1843,7 +1959,45 @@ export default function PronunciationStudioModal({
                 </div>
                 <div className="h-3 lg:hidden" />
               </>
-            ) : null}
+            ) : (
+              <div className="p-8 rounded-3xl bg-slate-950/80 border border-slate-800 text-center space-y-3 my-auto">
+                <Trophy className="w-10 h-10 text-amber-400 mx-auto" />
+                <h3 className="text-base font-black text-white">
+                  {passedCountInTab > 0 && hidePassed
+                    ? isEn
+                      ? `All ${passedCountInTab} drills in this track mastered!`
+                      : `Chúc mừng! Bạn đã phát âm chuẩn toàn bộ ${passedCountInTab} bài trong mục này!`
+                    : isEn
+                    ? 'No drills match your current filter'
+                    : 'Không có bài tập nào khớp bộ lọc hiện tại'}
+                </h3>
+                <p className="text-xs text-slate-400 max-w-md mx-auto">
+                  {isEn
+                    ? 'Passed drills are automatically hidden to keep your queue focused. You can reveal them anytime or switch to another track.'
+                    : 'Các bài bạn đã phát âm chuẩn (≥80%) được tự động ẩn đi để đỡ rối. Bạn có thể hiện lại bất cứ lúc nào hoặc tạo thêm bài mới.'}
+                </p>
+                <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
+                  {passedCountInTab > 0 && hidePassed && (
+                    <button
+                      type="button"
+                      onClick={toggleHidePassed}
+                      className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold cursor-pointer"
+                    >
+                      {isEn ? `Show Passed (${passedCountInTab})` : `Hiện lại bài đã đạt (${passedCountInTab})`}
+                    </button>
+                  )}
+                  {!currentUser && lockedCountForGuest > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => onOpenAuth?.()}
+                      className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black cursor-pointer"
+                    >
+                      {isEn ? `Sign in to unlock +${lockedCountForGuest} more` : `Đăng nhập mở thêm +${lockedCountForGuest} bài`}
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
           </main>
         </div>
 
@@ -1895,9 +2049,7 @@ export default function PronunciationStudioModal({
 
             <button
               type="button"
-              onClick={() =>
-                setSelectedIdx(prev => (prev < activeTrackDrills.length - 1 ? prev + 1 : 0))
-              }
+              onClick={handleAdvanceToNextDrill}
               className={`min-h-[46px] px-3.5 rounded-2xl border text-xs font-bold flex items-center justify-center space-x-1 active:scale-95 transition-all cursor-pointer shrink-0 ${
                 evaluationResult?.isPassed
                   ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white border-indigo-400 shadow-lg ring-2 ring-indigo-400/70 animate-pulse'
@@ -1989,14 +2141,14 @@ export default function PronunciationStudioModal({
 
                   <button
                     type="button"
-                    onClick={() => setHideMastered(prev => !prev)}
+                    onClick={toggleHidePassed}
                     className={`px-2.5 py-1.5 rounded-lg text-[11px] font-bold whitespace-nowrap cursor-pointer border ${
-                      hideMastered
+                      hidePassed
                         ? 'bg-emerald-950/80 text-emerald-300 border-emerald-500/40'
                         : 'bg-slate-950 text-slate-400 border-slate-800'
                     }`}
                   >
-                    {isEn ? 'Hide Mastered' : 'Ẩn đã thuộc'}
+                    {isEn ? `Hide Passed (${passedCountInTab})` : `Ẩn đã đạt (${passedCountInTab})`}
                   </button>
                 </div>
               </div>
@@ -2010,6 +2162,7 @@ export default function PronunciationStudioModal({
                     <div
                       key={item.id}
                       onClick={() => {
+                        setJustPassedDrillId(null);
                         setSelectedIdx(idx);
                         setIsMobileListOpen(false);
                       }}
@@ -2027,6 +2180,11 @@ export default function PronunciationStudioModal({
                           <span className="text-[10px] text-slate-400 truncate">
                             {isEn ? item.topicEn : item.topicVi}
                           </span>
+                          {item.isFromVocabVault && (
+                            <span className="text-[9px] font-black px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300">
+                              {isEn ? '📒 Vault' : '📒 Sổ Tay'}
+                            </span>
+                          )}
                         </div>
                         <div className="text-xs font-extrabold text-white truncate">
                           {item.targetText}
