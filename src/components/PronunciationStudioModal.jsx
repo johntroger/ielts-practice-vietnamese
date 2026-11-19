@@ -979,11 +979,12 @@ export default function PronunciationStudioModal({
               <button
                 type="button"
                 onClick={onOpenConversation}
-                className="hidden md:flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-cyan-950/70 hover:bg-cyan-900/80 text-cyan-300 border border-cyan-500/35 text-xs font-bold transition-colors cursor-pointer"
+                className="flex items-center justify-center space-x-1 w-9 h-9 md:w-auto md:px-2.5 md:py-1.5 rounded-xl bg-cyan-950/70 hover:bg-cyan-900/80 text-cyan-300 border border-cyan-500/35 text-xs font-bold transition-colors cursor-pointer"
                 title={isEn ? 'Switch to Conversation Studio (/conversation)' : 'Chuyển sang Luyện Hội Thoại (/conversation)'}
+                aria-label={isEn ? 'Switch to Conversation Studio' : 'Chuyển sang Luyện Hội Thoại'}
               >
-                <MessageSquare className="w-3.5 h-3.5" />
-                <span>/conversation</span>
+                <MessageSquare className="w-3.5 h-3.5 shrink-0" />
+                <span className="hidden md:inline">/conversation</span>
               </button>
             )}
             <button

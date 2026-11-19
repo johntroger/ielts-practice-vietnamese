@@ -1125,11 +1125,12 @@ Return ONLY plain dialogue lines starting with "A:" and "B:", 1-2 sentences per 
             <button
               type="button"
               onClick={() => setIsSoundcheckOpen(true)}
-              className="hidden md:flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold border border-slate-700 cursor-pointer"
+              className="flex items-center justify-center space-x-1 w-9 h-9 md:w-auto md:px-2.5 md:py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold border border-slate-700 cursor-pointer"
               title={isEn ? 'Test Mic & Speaker' : 'Kiểm tra Micro & Loa'}
+              aria-label={isEn ? 'Test Mic & Speaker' : 'Kiểm tra Micro & Loa'}
             >
-              <Radio className="w-3.5 h-3.5 text-emerald-400" />
-              <span>{isEn ? 'Mic Test' : 'Test Mic'}</span>
+              <Radio className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+              <span className="hidden md:inline">{isEn ? 'Mic Test' : 'Test Mic'}</span>
             </button>
 
             <button
@@ -1647,9 +1648,9 @@ Return ONLY plain dialogue lines starting with "A:" and "B:", 1-2 sentences per 
                   ? speechEngine.speak(activeTurn.text, { examinerId: selectedExaminerId, rate: 0.85, silentChime: true })
                   : playPartnerTurnAudio(activeTurn, playbackSpeed)
               }
-              className="min-h-[46px] px-3.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold flex items-center space-x-1.5 shrink-0 cursor-pointer"
+              className="min-h-[48px] px-3.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white text-xs font-bold flex items-center space-x-1.5 shrink-0 cursor-pointer transition-all"
             >
-              <Volume2 className="w-4 h-4" />
+              <Volume2 className="w-4 h-4 shrink-0" />
               <span>{isEn ? 'Model' : 'Nghe mẫu'}</span>
             </button>
 
@@ -1657,7 +1658,7 @@ Return ONLY plain dialogue lines starting with "A:" and "B:", 1-2 sentences per 
               <button
                 type="button"
                 onClick={handleToggleRecording}
-                className={`flex-1 min-h-[46px] px-4 rounded-2xl text-xs sm:text-sm font-black flex items-center justify-center space-x-2 shadow-lg cursor-pointer ${
+                className={`flex-1 min-h-[48px] px-4 rounded-2xl text-xs sm:text-sm font-black flex items-center justify-center space-x-2 shadow-lg active:scale-95 transition-all cursor-pointer ${
                   speechEngine.isListening
                     ? evaluationResult && !evaluationResult.isPassed
                       ? 'bg-amber-600 text-white animate-pulse'
@@ -1668,7 +1669,11 @@ Return ONLY plain dialogue lines starting with "A:" and "B:", 1-2 sentences per 
                 <Mic className="w-4 h-4 shrink-0" />
                 <span className="truncate">
                   {speechEngine.isListening
-                    ? isAutoMode
+                    ? evaluationResult && !evaluationResult.isPassed
+                      ? isEn
+                        ? `Speak Again (#${(turnAttempts[activeTurn.id] || 0) + 1})`
+                        : `Đọc lại (#${(turnAttempts[activeTurn.id] || 0) + 1})`
+                      : isAutoMode
                       ? isEn ? 'Auto-Listening...' : 'Đang nghe...'
                       : isEn ? 'Stop & Score' : 'Dừng & Chấm'
                     : isEn
@@ -1680,10 +1685,22 @@ Return ONLY plain dialogue lines starting with "A:" and "B:", 1-2 sentences per 
               <button
                 type="button"
                 onClick={handleStartDialogue}
-                className="flex-1 min-h-[46px] px-4 rounded-2xl bg-gradient-to-r from-cyan-600 to-indigo-600 text-white text-xs sm:text-sm font-black flex items-center justify-center space-x-2 cursor-pointer"
+                className="flex-1 min-h-[48px] px-4 rounded-2xl bg-gradient-to-r from-cyan-600 to-indigo-600 active:scale-95 text-white text-xs sm:text-sm font-black flex items-center justify-center space-x-2 cursor-pointer transition-all"
               >
-                <Play className="w-4 h-4 fill-current" />
+                <Play className="w-4 h-4 fill-current shrink-0" />
                 <span>{isEn ? 'Play Partner Line' : 'Phát Lượt Máy'}</span>
+              </button>
+            )}
+
+            {isActiveUserTurn && currentAudioClip?.url && !speechEngine.isListening && (
+              <button
+                type="button"
+                onClick={() => handleReplayUserClip(activeTurn.id)}
+                className="min-h-[48px] px-3 rounded-2xl bg-slate-800 hover:bg-slate-700 active:scale-95 text-emerald-300 border border-slate-700 text-xs font-bold flex items-center justify-center shrink-0 cursor-pointer"
+                title={isEn ? 'Replay your voice' : 'Nghe lại giọng bạn'}
+                aria-label={isEn ? 'Replay your voice' : 'Nghe lại giọng bạn'}
+              >
+                <Play className="w-4 h-4" />
               </button>
             )}
           </div>
@@ -1692,39 +1709,89 @@ Return ONLY plain dialogue lines starting with "A:" and "B:", 1-2 sentences per 
         {/* MOBILE SCENARIO LIST BOTTOM SHEET (< lg) */}
         {isMobileListOpen && (
           <div
-            className="lg:hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-xs flex items-end justify-center"
+            className="lg:hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-xs flex items-end justify-center animate-in fade-in duration-150"
             onClick={() => setIsMobileListOpen(false)}
           >
             <div
-              className="w-full bg-slate-900 border-t border-slate-700 rounded-t-3xl h-[80dvh] flex flex-col overflow-hidden pb-[max(0.75rem,env(safe-area-inset-bottom))]"
+              className="w-full bg-slate-900 border-t border-slate-700 rounded-t-3xl h-[85dvh] flex flex-col overflow-hidden pb-[max(0.75rem,env(safe-area-inset-bottom))] animate-in slide-in-from-bottom duration-200"
               onClick={e => e.stopPropagation()}
             >
-              <div className="px-4 py-3 border-b border-slate-800 flex items-center justify-between">
+              <div className="px-4 py-3 border-b border-slate-800 flex items-center justify-between shrink-0">
                 <h3 className="text-sm font-black text-white">
                   {isEn ? `Select Scenario (${filteredScenarios.length})` : `Chọn Kịch Bản (${filteredScenarios.length})`}
                 </h3>
                 <button
                   type="button"
                   onClick={() => setIsMobileListOpen(false)}
-                  className="w-9 h-9 rounded-xl bg-slate-800 text-slate-300 flex items-center justify-center cursor-pointer"
+                  className="w-10 h-10 rounded-xl bg-slate-800 text-slate-300 flex items-center justify-center cursor-pointer"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
-              <div className="flex-1 overflow-y-auto p-3 space-y-2">
+
+              {/* Search & Band Filter inside Mobile Sheet */}
+              <div className="p-3 border-b border-slate-800/80 space-y-2 shrink-0">
+                <div className="relative">
+                  <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={e => setSearchQuery(e.target.value)}
+                    placeholder={isEn ? 'Search scenarios or topics...' : 'Tìm kịch bản hoặc chủ đề...'}
+                    className="w-full pl-8 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500"
+                  />
+                </div>
+                <div className="flex items-center justify-between gap-1">
+                  <div className="flex items-center space-x-1 overflow-x-auto no-scrollbar">
+                    {[
+                      { id: 'all', label: isEn ? 'All' : 'Tất cả' },
+                      { id: 'foundation', label: '5.5-6.5' },
+                      { id: 'band7', label: '7.0-7.5' },
+                      { id: 'band8', label: '8.0+' }
+                    ].map(b => (
+                      <button
+                        key={b.id}
+                        type="button"
+                        onClick={() => setBandFilter(b.id)}
+                        className={`px-2.5 py-1.5 rounded-lg text-[11px] font-bold whitespace-nowrap cursor-pointer ${
+                          bandFilter === b.id ? 'bg-cyan-600 text-white' : 'bg-slate-950 text-slate-400 border border-slate-800'
+                        }`}
+                      >
+                        {b.label}
+                      </button>
+                    ))}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setHideCompleted(prev => !prev)}
+                    className={`px-2.5 py-1.5 rounded-lg text-[11px] font-bold whitespace-nowrap cursor-pointer border ${
+                      hideCompleted
+                        ? 'bg-emerald-950/80 text-emerald-300 border-emerald-500/40'
+                        : 'bg-slate-950 text-slate-400 border-slate-800'
+                    }`}
+                  >
+                    {isEn ? 'Hide Done' : 'Ẩn đã xong'}
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex-1 overflow-y-auto p-3 space-y-2 overscroll-contain">
                 {filteredScenarios.map(item => (
                   <div
                     key={item.id}
                     onClick={() => handleSelectScenario(item)}
-                    className={`p-3 rounded-2xl border flex items-center justify-between gap-2 cursor-pointer ${
+                    className={`p-3 rounded-2xl border flex items-center justify-between gap-2 min-h-[54px] active:scale-98 transition-all cursor-pointer ${
                       currentScenario?.id === item.id
                         ? 'bg-cyan-950/70 border-cyan-500/60'
                         : 'bg-slate-950/70 border-slate-800'
                     }`}
                   >
                     <div className="min-w-0 flex-1">
-                      <div className="text-[10px] font-black text-cyan-300">
-                        Band {item.bandLevel} • {item.turns?.length || 0} {isEn ? 'turns' : 'lượt'}
+                      <div className="flex items-center space-x-1.5 text-[10px] font-black text-cyan-300">
+                        <span>Band {item.bandLevel} • {item.turns?.length || 0} {isEn ? 'turns' : 'lượt'}</span>
+                        {item.sourceTag && (
+                          <span className="px-1.5 py-0.2 rounded bg-indigo-500/20 text-indigo-300">{item.sourceTag}</span>
+                        )}
                       </div>
                       <div className="text-xs font-extrabold text-white truncate">
                         {isEn ? item.titleEn : item.titleVi}
@@ -1751,7 +1818,7 @@ Return ONLY plain dialogue lines starting with "A:" and "B:", 1-2 sentences per 
           <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
             <form
               onSubmit={handleCreateCustomScenario}
-              className="bg-slate-900 border-t sm:border border-slate-700 rounded-t-3xl sm:rounded-3xl w-full max-w-xl max-h-[92dvh] overflow-y-auto p-5 sm:p-6 space-y-4 text-slate-100 shadow-2xl"
+              className="bg-slate-900 border-t sm:border border-slate-700 rounded-t-3xl sm:rounded-3xl w-full max-w-xl max-h-[92dvh] overflow-y-auto p-5 sm:p-6 pb-[max(1.25rem,env(safe-area-inset-bottom))] space-y-4 text-slate-100 shadow-2xl"
             >
               <div className="flex items-center justify-between">
                 <h3 className="text-base font-black text-white">

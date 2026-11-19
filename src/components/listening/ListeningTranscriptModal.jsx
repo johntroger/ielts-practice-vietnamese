@@ -163,16 +163,17 @@ export default function ListeningTranscriptModal({
             </div>
           </div>
 
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
             {transcripts.length >= 4 && (
               <button
                 type="button"
                 onClick={handleRoleplayInConversation}
-                className="hidden sm:flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-cyan-50 hover:bg-cyan-100 text-cyan-800 border border-cyan-200 text-xs font-bold transition-colors cursor-pointer"
+                className="flex items-center space-x-1 px-2.5 sm:px-3 py-1.5 rounded-xl bg-cyan-50 hover:bg-cyan-100 text-cyan-800 border border-cyan-200 text-[11px] sm:text-xs font-bold transition-colors cursor-pointer"
                 title={isEn ? 'Practice roleplaying this dialogue in /conversation' : 'Đóng vai hội thoại này trong /conversation'}
               >
-                <MessageSquare className="w-3.5 h-3.5 text-cyan-600" />
-                <span>{isEn ? 'Roleplay (/conversation)' : 'Đóng vai (/conversation)'}</span>
+                <MessageSquare className="w-3.5 h-3.5 text-cyan-600 shrink-0" />
+                <span className="sm:hidden">{isEn ? 'Roleplay' : 'Đóng vai'}</span>
+                <span className="hidden sm:inline">{isEn ? 'Roleplay (/conversation)' : 'Đóng vai (/conversation)'}</span>
               </button>
             )}
             <button
