@@ -872,6 +872,110 @@ Rules:
 }
 
 /**
- * Algorithmic Heuristic Fallback for Thesis Statement Validation
+ * Layer 2 Native Multimodal Audio Pronunciation Assessment with Gemini AI.
+ * Listens directly to the learner's raw audio blob (without relying on STT text)
+ * to detect stress errors, phoneme substitutions (/θ/, /ð/, /ʃ/, /tʃ/), missing endings, and intonation.
  */
+export async function evaluatePronunciationWithGeminiAudio({
+  audioBlob,
+  targetText,
+  ipa = '',
+  itemType = 'words',
+  apiKey,
+  model = DEFAULT_MODEL,
+  language = 'vi'
+}) {
+  if (!apiKey) throw new Error(language === 'en' ? 'Please configure your AI API Key in Settings.' : 'Vui lòng cấu hình AI API Key trong Cài đặt.');
+  if (!audioBlob) throw new Error(language === 'en' ? 'No recorded audio found.' : 'Không tìm thấy tệp âm thanh ghi âm.');
+
+  const base64Audio = await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      try {
+        const res = reader.result;
+        resolve(typeof res === 'string' ? res.split(',')[1] : '');
+      } catch (e) {
+        reject(e);
+      }
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(audioBlob);
+  });
+
+  if (!base64Audio) throw new Error('Failed to encode audio blob.');
+
+  let mimeType = audioBlob.type || 'audio/webm';
+  if (mimeType.includes(';')) {
+    mimeType = mimeType.split(';')[0];
+  }
+
+  const isEnglish = language === 'en';
+  const prompt = `You are a strict Cambridge IELTS Phonetics & Pronunciation Examiner.
+Listen carefully to the candidate's raw audio recording attempting to pronounce this target:
+Target (${itemType}): "${targetText}"
+${ipa ? `Reference IPA: ${ipa}` : ''}
+
+Assess the ACTUAL acoustic pronunciation in the audio (word stress, vowel quality, consonant clusters, final/ending consonants /s/ /z/ /t/ /d/ /k/, linking, and intonation). Do NOT be overly generous if stress is misplaced or ending consonants are dropped.
+
+Return ONLY valid JSON matching this schema:
+{
+  "overallAccuracy": 84,
+  "estimatedBand": "7.5",
+  "heardTranscript": "exact phonetic/word impression of what was spoken",
+  "stressFeedback": "${isEnglish ? 'Brief English note on word/sentence stress accuracy' : 'Nhận xét ngắn gọn bằng tiếng Việt về trọng âm từ/câu'}",
+  "endingFeedback": "${isEnglish ? 'Brief English note on final consonants & linking' : 'Nhận xét ngắn gọn bằng tiếng Việt về âm đuôi & nối âm'}",
+  "wordBreakdown": [
+    {
+      "word": "word_from_target",
+      "status": "correct",
+      "similarity": 92,
+      "phonemeNote": "${isEnglish ? 'Short note if near/missed' : 'Ghi chú ngắn nếu chưa chuẩn'}"
+    }
+  ],
+  "coachFeedback": "${isEnglish ? '1-2 actionable English sentences telling the learner exactly how to improve' : '1-2 câu tiếng Việt chỉ rõ âm/trọng âm cần sửa để đạt Band 8.0+'}"
+}`;
+
+  const response = await callGeminiApi({
+    model,
+    apiKey,
+    body: {
+      contents: [
+        {
+          parts: [
+            { inlineData: { mimeType, data: base64Audio } },
+            { text: prompt }
+          ]
+        }
+      ],
+      generationConfig: {
+        temperature: 0.15,
+        maxOutputTokens: 1500,
+        responseMimeType: 'application/json'
+      }
+    }
+  });
+
+  if (!response || !response.ok) {
+    const errorData = await response?.json().catch(() => ({}));
+    throw new Error(formatFriendlyGeminiError(errorData, response?.status));
+  }
+
+  const result = await response.json();
+  const rawText = result?.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
+  const parsed = robustJsonParse(rawText, null);
+  if (!parsed || typeof parsed.overallAccuracy !== 'number') {
+    throw new Error(isEnglish ? 'Could not parse AI audio evaluation.' : 'Không thể phân tích kết quả chấm âm thanh AI.');
+  }
+
+  const acc = Math.max(0, Math.min(100, Math.round(parsed.overallAccuracy)));
+  return {
+    overallAccuracy: acc,
+    estimatedBand: String(parsed.estimatedBand || (acc >= 88 ? '8.0' : acc >= 75 ? '7.0' : '6.0')),
+    heardTranscript: parsed.heardTranscript || targetText,
+    stressFeedback: parsed.stressFeedback || '',
+    endingFeedback: parsed.endingFeedback || '',
+    wordBreakdown: Array.isArray(parsed.wordBreakdown) ? parsed.wordBreakdown : [],
+    coachFeedback: parsed.coachFeedback || ''
+  };
+}
 

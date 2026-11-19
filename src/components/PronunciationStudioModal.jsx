@@ -64,6 +64,8 @@ const PRONUNCIATION_PASS_THRESHOLD = 80;
 export default function PronunciationStudioModal({
   isOpen,
   onClose,
+  apiKey = '',
+  model = 'gemini-3.6-flash',
   currentUser = null,
   vocabList = [],
   onSaveToNotebook,
@@ -203,6 +205,8 @@ export default function PronunciationStudioModal({
   const [attemptCount, setAttemptCount] = useState(0);
   const [isWaitingForRetrySpeech, setIsWaitingForRetrySpeech] = useState(false);
   const [showTips, setShowTips] = useState(false);
+  const [isDeepAiGrading, setIsDeepAiGrading] = useState(false);
+  const [deepAiError, setDeepAiError] = useState('');
   const userAudioRef = useRef(null);
   const hasAwardedXpRef = useRef(false);
   const lastAutoEvaluatedRef = useRef('');
@@ -286,6 +290,8 @@ export default function PronunciationStudioModal({
     setManualSpokenInput('');
     setAttemptCount(0);
     setIsWaitingForRetrySpeech(false);
+    setIsDeepAiGrading(false);
+    setDeepAiError('');
     attemptCountRef.current = 0;
     hasAwardedXpRef.current = false;
     lastAutoEvaluatedRef.current = '';
@@ -406,14 +412,20 @@ export default function PronunciationStudioModal({
       if (!currentDrill) return;
       const cleanSpoken = String(spokenTextToEvaluate || '').trim();
       const confidence = speechEngine.speechConfidenceStats?.averageConfidence || 0.88;
+      const alternatives = speechEngine.speechAlternativesRef?.current || [];
+      const acousticMetrics = speechEngine.getAcousticMetrics ? speechEngine.getAcousticMetrics() : null;
 
       const result = evaluatePronunciationAttempt({
         targetText: currentDrill.targetText,
         spokenText: cleanSpoken,
         confidence,
         itemType: currentDrill.type,
-        streak: pronStats.streak || 0
+        streak: pronStats.streak || 0,
+        alternatives,
+        acousticMetrics
       });
+
+      setDeepAiError('');
 
       const isPassed = result.overallAccuracy >= PRONUNCIATION_PASS_THRESHOLD;
       const nextAttempt = attemptCountRef.current + 1;
@@ -469,6 +481,53 @@ export default function PronunciationStudioModal({
   useEffect(() => {
     handleRunEvaluationRef.current = handleRunEvaluation;
   }, [handleRunEvaluation]);
+
+  // Layer 2: Native Multimodal AI Audio Deep Check (listens directly to raw voice blob)
+  const handleDeepAiAudioCheck = async () => {
+    if (!currentDrill || !currentAudioClip?.blob || !apiKey || isDeepAiGrading) return;
+    setIsDeepAiGrading(true);
+    setDeepAiError('');
+    try {
+      const { evaluatePronunciationWithGeminiAudio } = await import('../services/ai/speakingAiService');
+      const aiRes = await evaluatePronunciationWithGeminiAudio({
+        audioBlob: currentAudioClip.blob,
+        targetText: currentDrill.targetText,
+        ipa: selectedExaminerId === 'examiner-oliver' ? currentDrill.ipaUs : currentDrill.ipaUk,
+        itemType: currentDrill.type,
+        apiKey,
+        model,
+        language: isEn ? 'en' : 'vi'
+      });
+
+      const isPassed = aiRes.overallAccuracy >= PRONUNCIATION_PASS_THRESHOLD;
+      setEvaluationResult(prev => ({
+        ...(prev || {}),
+        overallAccuracy: aiRes.overallAccuracy,
+        estimatedBand: aiRes.estimatedBand,
+        spokenTranscript: aiRes.heardTranscript || prev?.spokenTranscript || currentDrill.targetText,
+        wordBreakdown:
+          aiRes.wordBreakdown && aiRes.wordBreakdown.length > 0
+            ? aiRes.wordBreakdown.map(w => ({
+                word: w.word,
+                cleanWord: w.word,
+                status: w.status || (w.similarity >= 84 ? 'correct' : w.similarity >= 52 ? 'near' : 'missed'),
+                similarity: Number(w.similarity) || 80,
+                phonemeNote: w.phonemeNote || ''
+              }))
+            : prev?.wordBreakdown || [],
+        stressFeedback: aiRes.stressFeedback,
+        endingFeedback: aiRes.endingFeedback,
+        coachFeedbackEn: aiRes.coachFeedback,
+        coachFeedbackVi: aiRes.coachFeedback,
+        isPassed,
+        engineTier: 'layer2_gemini_audio'
+      }));
+    } catch (err) {
+      setDeepAiError(err.message || (isEn ? 'AI Audio evaluation failed.' : 'Không thể chấm sâu bằng AI Audio.'));
+    } finally {
+      setIsDeepAiGrading(false);
+    }
+  };
 
   // Keep liveSpokenTextRef synced and run Smart End-of-Utterance Auto-Evaluation when Auto Mode is enabled
   const liveSpokenText = useMemo(() => {
@@ -1607,7 +1666,71 @@ export default function PronunciationStudioModal({
                             </p>
                           </div>
                         </div>
+
+                        {/* Engine Tier Badge & Optional Layer 2 Gemini Native Audio Deep Check */}
+                        <div className="flex flex-col items-end gap-1.5 shrink-0">
+                          <span
+                            className={`px-2 py-0.5 rounded-full text-[10px] font-black border ${
+                              evaluationResult.engineTier === 'layer2_gemini_audio'
+                                ? 'bg-purple-500/20 text-purple-300 border-purple-500/40'
+                                : 'bg-slate-800 text-slate-300 border-slate-700'
+                            }`}
+                          >
+                            {evaluationResult.engineTier === 'layer2_gemini_audio'
+                              ? '🤖 Gemini Native Audio'
+                              : '⚡ Phonetic + N-Best DSP'}
+                          </span>
+
+                          {apiKey && currentAudioClip?.blob && !speechEngine.isListening && evaluationResult.engineTier !== 'layer2_gemini_audio' && (
+                            <button
+                              type="button"
+                              onClick={handleDeepAiAudioCheck}
+                              disabled={isDeepAiGrading}
+                              className="px-2.5 py-1 rounded-xl bg-purple-600/30 hover:bg-purple-600/50 text-purple-200 border border-purple-500/40 text-[11px] font-bold flex items-center space-x-1 transition-all cursor-pointer disabled:opacity-50"
+                              title={isEn ? 'Let Gemini AI listen directly to your raw voice for stress & IPA precision' : 'Cho Gemini AI nghe trực tiếp sóng âm giọng bạn để bắt lỗi trọng âm & IPA'}
+                            >
+                              <Sparkles className={`w-3 h-3 ${isDeepAiGrading ? 'animate-spin' : ''}`} />
+                              <span>
+                                {isDeepAiGrading
+                                  ? isEn
+                                    ? 'AI Listening...'
+                                    : 'AI đang nghe...'
+                                  : isEn
+                                  ? 'AI Audio Deep Check'
+                                  : 'AI Nghe & Chấm Sâu'}
+                              </span>
+                            </button>
+                          )}
+                        </div>
                       </div>
+
+                      {deepAiError && (
+                        <div className="text-[11px] text-rose-400 font-semibold">
+                          {deepAiError}
+                        </div>
+                      )}
+
+                      {/* Layer 2 Stress & Ending Consonants Breakdown (if AI Audio checked) */}
+                      {(evaluationResult.stressFeedback || evaluationResult.endingFeedback) && (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px]">
+                          {evaluationResult.stressFeedback && (
+                            <div className="p-2.5 rounded-xl bg-purple-950/40 border border-purple-500/30 text-purple-200">
+                              <span className="font-black text-purple-300 mr-1">
+                                {isEn ? 'Stress:' : 'Trọng âm:'}
+                              </span>
+                              <span>{evaluationResult.stressFeedback}</span>
+                            </div>
+                          )}
+                          {evaluationResult.endingFeedback && (
+                            <div className="p-2.5 rounded-xl bg-cyan-950/40 border border-cyan-500/30 text-cyan-200">
+                              <span className="font-black text-cyan-300 mr-1">
+                                {isEn ? 'Endings & Linking:' : 'Âm đuôi & Nối âm:'}
+                              </span>
+                              <span>{evaluationResult.endingFeedback}</span>
+                            </div>
+                          )}
+                        </div>
+                      )}
 
                       {/* Word-by-Word Interactive Chips */}
                       <div className="flex flex-wrap gap-2">

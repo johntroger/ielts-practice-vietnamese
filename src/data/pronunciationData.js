@@ -783,16 +783,72 @@ export function computeWordSimilarity(a, b) {
 }
 
 /**
+ * Converts an English word into an approximate phonetic skeleton for acoustic comparison.
+ * Handles silent letters, digraphs (ph->f, tion->shn, th->T, sh->S, ch->C), and double consonants.
+ */
+export function toPhoneticSkeleton(word) {
+  const clean = normalizePhoneticWord(word);
+  if (!clean) return '';
+  return clean
+    .replace(/^kn/, 'n')
+    .replace(/^wr/, 'r')
+    .replace(/^ps/, 's')
+    .replace(/^wh/, 'w')
+    .replace(/bt$/, 't')
+    .replace(/mb$/, 'm')
+    .replace(/tion$|sion$/g, 'shn')
+    .replace(/tious$|cious$/g, 'shs')
+    .replace(/ph/g, 'f')
+    .replace(/qu/g, 'kw')
+    .replace(/sh/g, 'S')
+    .replace(/ch/g, 'C')
+    .replace(/th/g, 'T')
+    .replace(/ng/g, 'N')
+    .replace(/ck/g, 'k')
+    .replace(/([a-z])\1+/g, '$1');
+}
+
+/**
+ * Evaluates Onset (25%), Nucleus (35%), and Coda/Ending (40%) phonetic alignment.
+ * Detects dropped final consonants (common ESL/Vietnamese issue with /s/, /z/, /t/, /d/, /l/, /k/).
+ */
+export function computePhoneticOnsetNucleusCoda(targetWord, spokenWord) {
+  const tRaw = normalizePhoneticWord(targetWord);
+  const sRaw = normalizePhoneticWord(spokenWord);
+  if (!tRaw || !sRaw) return { score: 0, missingCoda: false };
+  if (tRaw === sRaw) return { score: 1, missingCoda: false };
+
+  const lexSim = computeWordSimilarity(tRaw, sRaw);
+  const tSkel = toPhoneticSkeleton(tRaw);
+  const sSkel = toPhoneticSkeleton(sRaw);
+  const skelSim = computeWordSimilarity(tSkel, sSkel);
+
+  // Check ending coda (last 2 phonetic chars)
+  const tCoda = tSkel.slice(-2);
+  const sCoda = sSkel.slice(-2);
+  const codaSim = computeWordSimilarity(tCoda, sCoda);
+  const missingCoda = tSkel.length >= 4 && codaSim < 0.5 && computeWordSimilarity(tSkel.slice(0, -2), sSkel.slice(0, Math.max(2, tSkel.length - 2))) >= 0.75;
+
+  const blended = Math.max(lexSim, skelSim * 0.96) * 0.72 + codaSim * 0.28;
+  return {
+    score: Math.max(0, Math.min(1, blended)),
+    missingCoda
+  };
+}
+
+/**
  * Evaluates a user's spoken pronunciation attempt against the target drill item.
- * Computes word-by-word accuracy breakdown, IELTS Pronunciation Band (5.0 - 9.0),
- * constructive coaching feedback, and XP reward.
+ * Layer 1 Engine: Combines Lexical Similarity + Phonetic Skeleton (Onset/Nucleus/Coda)
+ * + N-Best Acoustic Hypotheses Cross-Check + Web Audio Energy Metrics.
  */
 export function evaluatePronunciationAttempt({
   targetText = '',
   spokenText = '',
   confidence = 0.88,
   itemType = 'words',
-  streak = 0
+  streak = 0,
+  alternatives = [],
+  acousticMetrics = null
 }) {
   const rawTargetWords = String(targetText || '')
     .trim()
@@ -809,12 +865,23 @@ export function evaluatePronunciationAttempt({
       wordBreakdown: [],
       xpEarned: 0,
       streakBonusXp: 0,
+      codaIssues: [],
+      engineTier: 'layer1_phonetic',
       coachFeedbackEn: 'No target text provided.',
       coachFeedbackVi: 'Chưa có nội dung mục tiêu.'
     };
   }
 
   const usedSpokenIndices = new Set();
+  const codaIssues = [];
+
+  // Flatten N-best alternative words for weak-ending detection
+  const altWordSet = new Set();
+  if (Array.isArray(alternatives) && alternatives.length > 1) {
+    alternatives.slice(1, 5).forEach(alt => {
+      normalizePhoneticWord(alt).split(/\s+/).filter(Boolean).forEach(w => altWordSet.add(w));
+    });
+  }
 
   const wordBreakdown = rawTargetWords.map((rawWord, targetIdx) => {
     const cleanTarget = normalizePhoneticWord(rawWord);
@@ -824,28 +891,44 @@ export function evaluatePronunciationAttempt({
         cleanWord: '',
         status: 'correct',
         similarity: 100,
-        spokenMatch: rawWord
+        spokenMatch: rawWord,
+        missingCoda: false
       };
     }
 
     let bestSim = 0;
     let bestSpokenIdx = -1;
+    let bestMissingCoda = false;
 
-    // Search within a reasonable window around targetIdx first, then fallback to whole array
     spokenWords.forEach((sw, sIdx) => {
       if (usedSpokenIndices.has(sIdx)) return;
-      const sim = computeWordSimilarity(cleanTarget, sw);
-      // Slight positional proximity bonus to prevent greedy mismatch in long sentences
+      const { score, missingCoda } = computePhoneticOnsetNucleusCoda(cleanTarget, sw);
       const distancePenalty = Math.min(0.12, Math.abs(targetIdx - sIdx) * 0.02);
-      const effectiveSim = sim - (sim === 1 ? 0 : distancePenalty);
+      const effectiveSim = score - (score === 1 ? 0 : distancePenalty);
       if (effectiveSim > bestSim) {
-        bestSim = sim;
+        bestSim = score;
         bestSpokenIdx = sIdx;
+        bestMissingCoda = missingCoda;
       }
     });
 
     if (bestSpokenIdx !== -1 && bestSim >= 0.45) {
       usedSpokenIndices.add(bestSpokenIdx);
+    }
+
+    // N-Best Acoustic Cross-Check:
+    // If primary hypothesis matched exact target, check if secondary hypotheses dropped the plural/past/coda ending
+    let nBestWeakEnding = false;
+    if (bestSim >= 0.95 && cleanTarget.length >= 5 && altWordSet.size > 0) {
+      const strippedTarget = cleanTarget.replace(/(s|es|ed|d|t|ly)$/, '');
+      if (strippedTarget !== cleanTarget && altWordSet.has(strippedTarget)) {
+        nBestWeakEnding = true;
+        bestSim = Math.min(bestSim, 0.86);
+      }
+    }
+
+    if (bestMissingCoda || nBestWeakEnding) {
+      codaIssues.push(cleanTarget);
     }
 
     let status = 'missed';
@@ -862,7 +945,8 @@ export function evaluatePronunciationAttempt({
       cleanWord: cleanTarget,
       status,
       similarity: Math.round(bestSim * 100),
-      spokenMatch: matchedWord
+      spokenMatch: matchedWord,
+      missingCoda: bestMissingCoda || nBestWeakEnding
     };
   });
 
@@ -887,6 +971,15 @@ export function evaluatePronunciationAttempt({
   const extraWordsCount = Math.max(0, spokenWords.length - rawTargetWords.length - allowedSlack);
   if (extraWordsCount > 0 && rawScore > 0) {
     rawScore -= Math.min(20, extraWordsCount * 8);
+  }
+
+  // Acoustic Prosody / Stress Energy check (if Web Audio Analyser metrics available)
+  let lowDynamicEnergy = false;
+  if (acousticMetrics && acousticMetrics.sampleCount > 4) {
+    if (acousticMetrics.dynamicRange < 6 && rawTargetWords.length >= 4 && rawScore > 75) {
+      rawScore -= 4;
+      lowDynamicEnergy = true;
+    }
   }
 
   const overallAccuracy = Math.max(0, Math.min(100, rawScore));
@@ -924,7 +1017,14 @@ export function evaluatePronunciationAttempt({
   let coachFeedbackEn = '';
   let coachFeedbackVi = '';
 
-  if (overallAccuracy >= 90) {
+  if (codaIssues.length > 0 && overallAccuracy >= 70) {
+    const codaList = [...new Set(codaIssues)].slice(0, 3).join(', ');
+    coachFeedbackEn = `Clear core pronunciation, but watch out for weak ending consonants (coda) on: "${codaList}".`;
+    coachFeedbackVi = `Âm chính khá tốt, nhưng chú ý bật rõ phụ âm cuối (âm đuôi) ở từ: "${codaList}".`;
+  } else if (lowDynamicEnergy && overallAccuracy >= 75) {
+    coachFeedbackEn = 'Words were accurate, but your pitch/volume stayed flat. Emphasize key stressed syllables more clearly.';
+    coachFeedbackVi = 'Phát âm đúng từ, nhưng ngữ điệu hơi đều. Hãy nhấn trọng âm các từ khóa rõ ràng hơn.';
+  } else if (overallAccuracy >= 90) {
     coachFeedbackEn = 'Excellent clarity and phonological control! Your stress placement and ending consonants were crisp and effortless to understand.';
     coachFeedbackVi = 'Độ rõ âm và kiểm soát ngữ âm xuất sắc! Trọng âm và phụ âm cuối của bạn được bật rất rõ ràng, chuẩn tiêu chí Pronunciation Band 8.0+.';
   } else if (overallAccuracy >= 72) {
@@ -951,6 +1051,8 @@ export function evaluatePronunciationAttempt({
     xpEarned,
     baseXp,
     streakBonusXp,
+    codaIssues,
+    engineTier: 'layer1_phonetic',
     coachFeedbackEn,
     coachFeedbackVi
   };

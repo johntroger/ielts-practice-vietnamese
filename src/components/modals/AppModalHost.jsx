@@ -248,6 +248,8 @@ export default function AppModalHost({
             isOpen={Boolean(modals.pronunciation)}
             initialOptions={typeof modals.pronunciation === 'object' && modals.pronunciation !== null ? modals.pronunciation : null}
             onClose={() => closeModal('pronunciation')}
+            apiKey={apiKey}
+            model={model}
             currentUser={currentUser}
             vocabList={vocabList}
             onSaveToNotebook={(v) => {

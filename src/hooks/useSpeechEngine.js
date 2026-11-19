@@ -76,6 +76,15 @@ export function useSpeechEngine({
     lowConfidenceCount: 0
   });
   const confidenceHistoryRef = useRef([]);
+  const [speechAlternatives, setSpeechAlternatives] = useState([]);
+  const speechAlternativesRef = useRef([]);
+  const acousticMetricsRef = useRef({
+    peakLevel: 0,
+    totalLevel: 0,
+    sampleCount: 0,
+    activeCount: 0,
+    startedAt: 0
+  });
 
   // 2. TTS State
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -323,16 +332,24 @@ export function useSpeechEngine({
 
     recognition.continuous = true;
     recognition.interimResults = true;
+    recognition.maxAlternatives = 5;
     recognition.lang = 'en-US'; // Best recognition accuracy across accents
 
     recognition.onresult = (event) => {
       let liveInterim = '';
       let newlyFinalized = '';
+      const latestAlts = [];
 
       for (let i = event.resultIndex; i < event.results.length; ++i) {
         const item = event.results[i];
         if (item && item[0]) {
           const piece = item[0].transcript || '';
+          for (let altIdx = 0; altIdx < Math.min(5, item.length); altIdx++) {
+            const altText = (item[altIdx]?.transcript || '').trim();
+            if (altText && !latestAlts.includes(altText)) {
+              latestAlts.push(altText);
+            }
+          }
           if (item.isFinal) {
             newlyFinalized += piece.trim() + ' ';
             const conf = typeof item[0].confidence === 'number' && item[0].confidence > 0
@@ -343,6 +360,11 @@ export function useSpeechEngine({
             liveInterim += piece;
           }
         }
+      }
+
+      if (latestAlts.length > 0) {
+        speechAlternativesRef.current = latestAlts;
+        setSpeechAlternatives(latestAlts);
       }
 
       if (newlyFinalized) {
@@ -489,7 +511,14 @@ export function useSpeechEngine({
         source.connect(analyser);
         setAnalyserNode(analyser);
 
-        // Volume Level Polling
+        // Volume Level Polling & Acoustic Energy Envelope Tracking
+        acousticMetricsRef.current = {
+          peakLevel: 0,
+          totalLevel: 0,
+          sampleCount: 0,
+          activeCount: 0,
+          startedAt: Date.now()
+        };
         const dataArray = new Uint8Array(analyser.frequencyBinCount);
         if (volumeIntervalRef.current) clearInterval(volumeIntervalRef.current);
         volumeIntervalRef.current = setInterval(() => {
@@ -498,6 +527,11 @@ export function useSpeechEngine({
           for (let i = 0; i < 8; i++) sum += dataArray[i];
           const level = Math.min(100, Math.round((sum / 8) * (100 / 128)));
           setMicLevel(level);
+          const m = acousticMetricsRef.current;
+          m.sampleCount += 1;
+          m.totalLevel += level;
+          if (level > m.peakLevel) m.peakLevel = level;
+          if (level >= 12) m.activeCount += 1;
         }, 80);
       }
     } catch (actxErr) {
@@ -622,8 +656,17 @@ export function useSpeechEngine({
     accumulatedTranscriptRef.current = '';
     interimTranscriptRef.current = '';
     confidenceHistoryRef.current = [];
+    speechAlternativesRef.current = [];
+    acousticMetricsRef.current = {
+      peakLevel: 0,
+      totalLevel: 0,
+      sampleCount: 0,
+      activeCount: 0,
+      startedAt: Date.now()
+    };
     setTranscript('');
     setInterimTranscript('');
+    setSpeechAlternatives([]);
     setSpeechConfidenceStats({
       averageConfidence: 1.0,
       confidenceHistory: [],
@@ -634,6 +677,20 @@ export function useSpeechEngine({
         recognitionRef.current.abort();
       } catch (e) {}
     }
+  }, []);
+
+  const getAcousticMetrics = useCallback(() => {
+    const m = acousticMetricsRef.current;
+    const avgLevel = m.sampleCount > 0 ? Math.round(m.totalLevel / m.sampleCount) : 0;
+    const activeMs = m.activeCount * 80;
+    const elapsedMs = m.startedAt ? Date.now() - m.startedAt : activeMs;
+    return {
+      peakLevel: m.peakLevel,
+      avgLevel,
+      dynamicRange: Math.max(0, m.peakLevel - avgLevel),
+      activeMs,
+      elapsedMs
+    };
   }, []);
 
   const setCustomTranscript = useCallback((text, clipId = null) => {
@@ -746,6 +803,9 @@ export function useSpeechEngine({
     interimTranscript,
     speechError,
     speechConfidenceStats,
+    speechAlternatives,
+    speechAlternativesRef,
+    getAcousticMetrics,
     isSpeechRecognitionSupported,
     startListening,
     stopListening,
