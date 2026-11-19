@@ -616,7 +616,7 @@ export function useSpeechEngine({
     }
   }, []);
 
-  const resetTranscript = useCallback(() => {
+  const resetTranscript = useCallback((options = {}) => {
     accumulatedTranscriptRef.current = '';
     interimTranscriptRef.current = '';
     confidenceHistoryRef.current = [];
@@ -627,6 +627,11 @@ export function useSpeechEngine({
       confidenceHistory: [],
       lowConfidenceCount: 0
     });
+    if (options?.restartRecognition && isIntentionalListeningRef.current && recognitionRef.current) {
+      try {
+        recognitionRef.current.abort();
+      } catch (e) {}
+    }
   }, []);
 
   const setCustomTranscript = useCallback((text, clipId = null) => {

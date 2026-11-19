@@ -53,9 +53,12 @@ import {
 } from '../services/gamification/levelEngine';
 import { addGold } from '../services/gamification/atlasWalletService';
 import { getUnifiedStreakCount } from '../services/gamification/leagueEngine';
+import { speakingSoundEffects } from '../utils/speakingSoundEffects';
+import { triggerHaptic } from '../utils/hapticHelper';
 
 const CUSTOM_DRILLS_STORAGE_KEY = 'ielts_pronunciation_custom_drills_v1';
 const PRONUNCIATION_STATS_STORAGE_KEY = 'ielts_pronunciation_stats_v1';
+const PRONUNCIATION_PASS_THRESHOLD = 80;
 
 export default function PronunciationStudioModal({
   isOpen,
@@ -193,7 +196,25 @@ export default function PronunciationStudioModal({
   const [isComparingAudio, setIsComparingAudio] = useState(false);
   const [copiedUrl, setCopiedUrl] = useState(false);
   const [savedToVaultToast, setSavedToVaultToast] = useState(false);
+  const [isAutoMode, setIsAutoMode] = useState(() =>
+    Boolean(safeGet('ielts_pronunciation_auto_mode', true))
+  );
+  const [attemptCount, setAttemptCount] = useState(0);
+  const [isWaitingForRetrySpeech, setIsWaitingForRetrySpeech] = useState(false);
   const userAudioRef = useRef(null);
+  const hasAwardedXpRef = useRef(false);
+  const lastAutoEvaluatedRef = useRef('');
+  const liveSpokenTextRef = useRef('');
+  const attemptCountRef = useRef(0);
+  const handleRunEvaluationRef = useRef(null);
+
+  const toggleAutoMode = () => {
+    setIsAutoMode(prev => {
+      const next = !prev;
+      safeSet('ielts_pronunciation_auto_mode', next);
+      return next;
+    });
+  };
 
   // Combine built-in drills + custom drills for active tab
   const activeTrackDrills = useMemo(() => {
@@ -261,6 +282,12 @@ export default function PronunciationStudioModal({
     setIsComparingAudio(false);
     setEvaluationResult(null);
     setManualSpokenInput('');
+    setAttemptCount(0);
+    setIsWaitingForRetrySpeech(false);
+    attemptCountRef.current = 0;
+    hasAwardedXpRef.current = false;
+    lastAutoEvaluatedRef.current = '';
+    liveSpokenTextRef.current = '';
     speechEngine.resetTranscript();
   }, [currentDrill?.id]);
 
@@ -371,9 +398,9 @@ export default function PronunciationStudioModal({
     [pronStats, userTotalXp, currentUser]
   );
 
-  // Run scoring on spoken transcript
+  // Run scoring on spoken transcript (with Auto-Retry on < 80% and Auto-Stop on >= 80%)
   const handleRunEvaluation = useCallback(
-    (spokenTextToEvaluate) => {
+    (spokenTextToEvaluate, { isAutoTriggered = false } = {}) => {
       if (!currentDrill) return;
       const cleanSpoken = String(spokenTextToEvaluate || '').trim();
       const confidence = speechEngine.speechConfidenceStats?.averageConfidence || 0.88;
@@ -386,17 +413,128 @@ export default function PronunciationStudioModal({
         streak: pronStats.streak || 0
       });
 
+      const isPassed = result.overallAccuracy >= PRONUNCIATION_PASS_THRESHOLD;
+      const nextAttempt = attemptCountRef.current + 1;
+      attemptCountRef.current = nextAttempt;
+      setAttemptCount(nextAttempt);
+
       setEvaluationResult({
         ...result,
-        spokenTranscript: cleanSpoken
+        spokenTranscript: cleanSpoken,
+        isPassed,
+        attemptNumber: nextAttempt
       });
 
-      if (result.overallAccuracy > 0 && result.xpEarned > 0) {
-        awardPronunciationXp(result, currentDrill);
+      if (isPassed) {
+        // Passed (>= 80%): Auto-stop microphone, play success feedback, and award XP
+        setIsWaitingForRetrySpeech(false);
+        if (speechEngine.isListening) {
+          speechEngine.stopListening();
+        }
+        speakingSoundEffects.playCompletionChime();
+        triggerHaptic('combo');
+        if (result.overallAccuracy > 0 && result.xpEarned > 0 && !hasAwardedXpRef.current) {
+          hasAwardedXpRef.current = true;
+          awardPronunciationXp(result, currentDrill);
+        }
+      } else {
+        // Needs Retry (< 80%): Play gentle retry cue, keep mic active & reset buffer if in Auto Mode
+        speakingSoundEffects.playRetryChime();
+        triggerHaptic('wrong');
+        if (isAutoMode && speechEngine.isListening) {
+          setIsWaitingForRetrySpeech(true);
+          lastAutoEvaluatedRef.current = '';
+          liveSpokenTextRef.current = '';
+          speechEngine.resetTranscript({ restartRecognition: true });
+        } else if (!isAutoTriggered && result.overallAccuracy > 0 && result.xpEarned > 0 && !hasAwardedXpRef.current) {
+          hasAwardedXpRef.current = true;
+          awardPronunciationXp(result, currentDrill);
+        }
       }
     },
-    [currentDrill, speechEngine.speechConfidenceStats, pronStats.streak, awardPronunciationXp]
+    [
+      currentDrill,
+      speechEngine.speechConfidenceStats,
+      speechEngine.isListening,
+      speechEngine.stopListening,
+      speechEngine.resetTranscript,
+      pronStats.streak,
+      awardPronunciationXp,
+      isAutoMode
+    ]
   );
+
+  useEffect(() => {
+    handleRunEvaluationRef.current = handleRunEvaluation;
+  }, [handleRunEvaluation]);
+
+  // Keep liveSpokenTextRef synced and run Smart End-of-Utterance Auto-Evaluation when Auto Mode is enabled
+  const liveSpokenText = useMemo(() => {
+    return [speechEngine.transcript, speechEngine.interimTranscript]
+      .filter(Boolean)
+      .join(' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }, [speechEngine.transcript, speechEngine.interimTranscript]);
+
+  useEffect(() => {
+    liveSpokenTextRef.current = liveSpokenText;
+  }, [liveSpokenText]);
+
+  useEffect(() => {
+    if (!isOpen || !isAutoMode || !speechEngine.isListening || !currentDrill || !liveSpokenText) {
+      return;
+    }
+
+    // User has started speaking again
+    setIsWaitingForRetrySpeech(false);
+
+    if (liveSpokenText === lastAutoEvaluatedRef.current) {
+      return;
+    }
+
+    const targetWordCount = currentDrill.targetText
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean).length;
+    const spokenWordCount = liveSpokenText.split(/\s+/).filter(Boolean).length;
+    const isFinalized = Boolean(speechEngine.transcript && !speechEngine.interimTranscript);
+
+    let delayMs = 950;
+    if (spokenWordCount >= targetWordCount) {
+      if (targetWordCount <= 1) {
+        delayMs = isFinalized ? 380 : 550;
+      } else if (targetWordCount <= 5) {
+        delayMs = 750;
+      } else {
+        delayMs = 950;
+      }
+    } else {
+      if (targetWordCount <= 1) {
+        delayMs = 950;
+      } else if (targetWordCount <= 5) {
+        delayMs = 1500;
+      } else {
+        delayMs = 2100;
+      }
+    }
+
+    const timer = setTimeout(() => {
+      if (!speechEngine.isListening) return;
+      lastAutoEvaluatedRef.current = liveSpokenText;
+      handleRunEvaluationRef.current?.(liveSpokenText, { isAutoTriggered: true });
+    }, delayMs);
+
+    return () => clearTimeout(timer);
+  }, [
+    isOpen,
+    isAutoMode,
+    speechEngine.isListening,
+    speechEngine.transcript,
+    speechEngine.interimTranscript,
+    liveSpokenText,
+    currentDrill
+  ]);
 
   // Play native TTS model
   const handlePlayModel = (customRate = null, textOverride = null) => {
@@ -412,21 +550,50 @@ export default function PronunciationStudioModal({
     });
   };
 
+  // Play native model at 0.85x and automatically open microphone immediately after for seamless retry
+  const handleListenAndRetry = () => {
+    if (!currentDrill) return;
+    if (speechEngine.isListening) {
+      speechEngine.stopListening();
+    }
+    setIsWaitingForRetrySpeech(false);
+    speechEngine.resetTranscript();
+    speechEngine.speak(
+      currentDrill.targetText,
+      { examinerId: selectedExaminerId, rate: 0.85 },
+      async () => {
+        lastAutoEvaluatedRef.current = '';
+        liveSpokenTextRef.current = '';
+        if (speechEngine.deleteAudioClip) {
+          speechEngine.deleteAudioClip(clipKey);
+        }
+        try {
+          await speechEngine.startListening(clipKey);
+          setIsWaitingForRetrySpeech(true);
+        } catch (err) {
+          setShowManualFallback(true);
+        }
+      }
+    );
+  };
+
   // Start / Stop Microphone Recording
   const handleToggleRecording = async () => {
     if (!currentDrill) return;
 
     if (speechEngine.isListening) {
+      const capturedBeforeStop = liveSpokenTextRef.current;
       speechEngine.stopListening();
+      setIsWaitingForRetrySpeech(false);
       // Wait 250ms for final transcript buffer flush, then evaluate
       setTimeout(() => {
         const captured =
-          speechEngine.transcript ||
-          speechEngine.interimTranscript ||
+          liveSpokenTextRef.current ||
+          capturedBeforeStop ||
           speechEngine.transcriptsByClip?.[clipKey] ||
           '';
         if (captured.trim()) {
-          handleRunEvaluation(captured);
+          handleRunEvaluationRef.current?.(captured, { isAutoTriggered: false });
         } else {
           // If browser STT didn't return text (e.g. Firefox/Safari without Web Speech STT), open quick self-check / transcript box
           setShowManualFallback(true);
@@ -437,6 +604,9 @@ export default function PronunciationStudioModal({
         speechEngine.stopSpeaking();
       }
       setEvaluationResult(null);
+      setIsWaitingForRetrySpeech(false);
+      lastAutoEvaluatedRef.current = '';
+      liveSpokenTextRef.current = '';
       speechEngine.resetTranscript();
       if (speechEngine.deleteAudioClip) {
         speechEngine.deleteAudioClip(clipKey);
@@ -1214,18 +1384,49 @@ export default function PronunciationStudioModal({
                   }`}
                 >
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <div className="flex items-center space-x-2">
+                    <div className="flex flex-wrap items-center gap-2">
                       <span className="text-xs sm:text-sm font-black text-white uppercase tracking-wider">
                         {isEn
                           ? '2. Speak & Get Instant Phonetic Score (+XP)'
                           : '2. Phát Âm Qua Micro & Nhận Điểm Kinh Nghiệm (+XP)'}
                       </span>
+                      <button
+                        type="button"
+                        onClick={toggleAutoMode}
+                        className={`px-2.5 py-0.5 rounded-full text-[10px] font-black border transition-all cursor-pointer flex items-center space-x-1 ${
+                          isAutoMode
+                            ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                            : 'bg-slate-800 text-slate-400 border-slate-700'
+                        }`}
+                        title={
+                          isEn
+                            ? 'Automatically grade when you finish speaking, retry if <80%, and auto-stop mic when accurate'
+                            : 'Tự động chấm khi nói xong, nhắc đọc lại nếu <80% và tự tắt Mic khi phát âm chuẩn'
+                        }
+                      >
+                        <Zap className={`w-3 h-3 ${isAutoMode ? 'fill-current text-emerald-400' : ''}`} />
+                        <span>
+                          {isEn
+                            ? isAutoMode
+                              ? 'Auto-Grade & Auto-Stop: ON'
+                              : 'Auto-Grade: OFF'
+                            : isAutoMode
+                            ? 'Tự động chấm & dừng Mic: BẬT'
+                            : 'Tự động chấm: TẮT'}
+                        </span>
+                      </button>
                     </div>
 
                     <div className="flex items-center space-x-2">
                       {speechEngine.isListening ? (
                         <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[11px] font-black animate-pulse">
-                          {isEn ? '● REC • LISTENING TO YOUR VOICE' : '● REC • ĐANG NGHE BẠN PHÁT ÂM'}
+                          {isWaitingForRetrySpeech
+                            ? isEn
+                              ? '🎙️ MIC OPEN • PRONOUNCE AGAIN!'
+                              : '🎙️ MIC ĐANG MỞ • HÃY ĐỌC LẠI!'
+                            : isEn
+                            ? '● REC • LISTENING'
+                            : '● REC • ĐANG NGHE'}
                         </span>
                       ) : currentBest ? (
                         <span className="px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-[11px] font-bold">
@@ -1258,13 +1459,28 @@ export default function PronunciationStudioModal({
                       analyserNode={speechEngine.analyserNode}
                       className="w-full h-full"
                     />
-                    {(speechEngine.transcript || speechEngine.interimTranscript) && (
-                      <div className="absolute inset-0 bg-slate-950/75 backdrop-blur-2xs flex items-center justify-center px-4 text-center">
-                        <p className="text-xs sm:text-sm font-bold text-emerald-300 truncate">
-                          "{speechEngine.transcript} {speechEngine.interimTranscript}"
+                    {liveSpokenText ? (
+                      <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-2xs flex flex-col items-center justify-center px-4 text-center">
+                        <p className="text-xs sm:text-sm font-bold text-emerald-300 truncate max-w-full">
+                          "{liveSpokenText}"
+                        </p>
+                        {isAutoMode && speechEngine.isListening && (
+                          <span className="text-[10px] text-slate-400 font-semibold">
+                            {isEn
+                              ? '⚡ Auto-grading right after you pause...'
+                              : '⚡ Máy sẽ tự chấm ngay khi bạn nói xong...'}
+                          </span>
+                        )}
+                      </div>
+                    ) : speechEngine.isListening && isWaitingForRetrySpeech ? (
+                      <div className="absolute inset-0 bg-amber-950/40 flex items-center justify-center px-4 text-center">
+                        <p className="text-xs font-extrabold text-amber-300 animate-pulse">
+                          {isEn
+                            ? '🎙️ Mic is still open — pronounce it again clearly now!'
+                            : '🎙️ Micro vẫn đang mở — bạn hãy đọc lại rõ ràng ngay bây giờ!'}
                         </p>
                       </div>
-                    )}
+                    ) : null}
                   </div>
 
                   {/* Primary Record / Stop Button */}
@@ -1274,14 +1490,24 @@ export default function PronunciationStudioModal({
                       onClick={handleToggleRecording}
                       className={`flex-1 min-w-[220px] py-3 px-5 rounded-2xl text-xs sm:text-sm font-black flex items-center justify-center space-x-2 shadow-lg transition-all cursor-pointer ${
                         speechEngine.isListening
-                          ? 'bg-rose-600 hover:bg-rose-500 text-white animate-pulse shadow-rose-950/50'
+                          ? evaluationResult && !evaluationResult.isPassed
+                            ? 'bg-amber-600 hover:bg-amber-500 text-white animate-pulse shadow-amber-950/50'
+                            : 'bg-rose-600 hover:bg-rose-500 text-white animate-pulse shadow-rose-950/50'
                           : 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-emerald-950/50'
                       }`}
                     >
                       <Mic className="w-4 h-4 shrink-0" />
                       <span>
                         {speechEngine.isListening
-                          ? isEn
+                          ? evaluationResult && !evaluationResult.isPassed
+                            ? isEn
+                              ? `Mic Listening — Speak Again Now (Try #${attemptCount + 1})`
+                              : `Micro Đang Mở — Đọc Lại Ngay (Lần #${attemptCount + 1})`
+                            : isAutoMode
+                            ? isEn
+                              ? 'Listening (Auto-Grade ON) • Tap to Stop'
+                              : 'Đang Nghe (Tự Chấm Bật) • Bấm Để Dừng'
+                            : isEn
                             ? 'Stop Recording & Score Pronunciation'
                             : 'Dừng Ghi Âm & Chấm Điểm Phát Âm'
                           : isEn
@@ -1365,7 +1591,66 @@ export default function PronunciationStudioModal({
                   {/* WORD-BY-WORD DIAGNOSTIC & SCORE REPORT                  */}
                   {/* ======================================================= */}
                   {evaluationResult && (
-                    <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-slate-900 via-indigo-950/40 to-slate-900 border border-indigo-500/40 space-y-4 animate-in fade-in duration-200">
+                    <div
+                      className={`p-4 sm:p-5 rounded-2xl border space-y-4 animate-in fade-in duration-200 ${
+                        evaluationResult.isPassed
+                          ? 'bg-gradient-to-br from-emerald-950/50 via-slate-900 to-indigo-950/40 border-emerald-500/50'
+                          : 'bg-gradient-to-br from-amber-950/40 via-slate-900 to-rose-950/30 border-amber-500/50'
+                      }`}
+                    >
+                      {/* Pass / Retry Status Action Banner */}
+                      {evaluationResult.isPassed ? (
+                        <div className="p-3.5 rounded-2xl bg-emerald-500/15 border border-emerald-500/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                          <div className="flex items-start sm:items-center space-x-2.5 text-xs sm:text-sm font-bold text-emerald-200">
+                            <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5 sm:mt-0" />
+                            <span>
+                              {isEn
+                                ? `✅ Accurate pronunciation (${evaluationResult.overallAccuracy}%)! Mic auto-stopped — Tap [Next Drill ➔] below to continue.`
+                                : `✅ Phát âm chuẩn xác (${evaluationResult.overallAccuracy}%)! Hệ thống đã tự động tắt Mic — Hãy nhấn [Qua từ tiếp theo ➔] bên dưới.`}
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setSelectedIdx(prev =>
+                                prev < activeTrackDrills.length - 1 ? prev + 1 : 0
+                              )
+                            }
+                            className="shrink-0 px-4 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-400 hover:to-purple-500 text-white text-xs sm:text-sm font-black shadow-lg shadow-indigo-950/50 ring-2 ring-indigo-400/60 flex items-center justify-center space-x-1.5 cursor-pointer active:scale-95 transition-all"
+                          >
+                            <span>{isEn ? 'Next Drill' : 'Qua từ tiếp theo'}</span>
+                            <ArrowRight className="w-4 h-4" />
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="p-3.5 rounded-2xl bg-amber-500/15 border border-amber-500/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                          <div className="flex items-start sm:items-center space-x-2.5 text-xs sm:text-sm font-bold text-amber-200">
+                            <RotateCcw className="w-5 h-5 text-amber-400 shrink-0 mt-0.5 sm:mt-0 animate-spin" style={{ animationDuration: '4s' }} />
+                            <span>
+                              {isEn
+                                ? `🔄 Pronunciation needs retry (${evaluationResult.overallAccuracy}% — need ≥ ${PRONUNCIATION_PASS_THRESHOLD}% • Try #${evaluationResult.attemptNumber || 1}). ${
+                                    speechEngine.isListening
+                                      ? 'Mic is still open — pronounce it again now!'
+                                      : 'Tap the Mic to try again!'
+                                  }`
+                                : `🔄 Phát âm chưa chuẩn (${evaluationResult.overallAccuracy}% — cần ≥ ${PRONUNCIATION_PASS_THRESHOLD}% • Lần #${evaluationResult.attemptNumber || 1}). ${
+                                    speechEngine.isListening
+                                      ? 'Micro vẫn đang mở, bạn hãy phát âm lại ngay!'
+                                      : 'Hãy bấm Micro để phát âm lại!'
+                                  }`}
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={handleListenAndRetry}
+                            className="shrink-0 px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black shadow-md flex items-center justify-center space-x-1.5 cursor-pointer active:scale-95 transition-all"
+                          >
+                            <Volume2 className="w-4 h-4 shrink-0" />
+                            <span>{isEn ? '🔊 Listen Model & Retry' : '🔊 Nghe mẫu & Đọc lại'}</span>
+                          </button>
+                        </div>
+                      )}
+
                       {/* Score Summary Row */}
                       <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-800">
                         <div className="flex items-center space-x-3">
@@ -1599,14 +1884,24 @@ export default function PronunciationStudioModal({
               onClick={handleToggleRecording}
               className={`flex-1 min-h-[46px] px-4 rounded-2xl text-xs sm:text-sm font-black flex items-center justify-center space-x-2 shadow-lg active:scale-95 transition-all cursor-pointer ${
                 speechEngine.isListening
-                  ? 'bg-rose-600 hover:bg-rose-500 text-white animate-pulse'
+                  ? evaluationResult && !evaluationResult.isPassed
+                    ? 'bg-amber-600 hover:bg-amber-500 text-white animate-pulse'
+                    : 'bg-rose-600 hover:bg-rose-500 text-white animate-pulse'
                   : 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white'
               }`}
             >
               <Mic className="w-4 h-4 shrink-0" />
               <span className="truncate">
                 {speechEngine.isListening
-                  ? isEn
+                  ? evaluationResult && !evaluationResult.isPassed
+                    ? isEn
+                      ? `Speak Again... (#${attemptCount + 1})`
+                      : `Đọc lại ngay... (Lần #${attemptCount + 1})`
+                    : isAutoMode
+                    ? isEn
+                      ? 'Auto-Listening...'
+                      : 'Đang nghe (Tự chấm)...'
+                    : isEn
                     ? 'Stop & Score'
                     : 'Dừng & Chấm'
                   : isEn
@@ -1620,10 +1915,14 @@ export default function PronunciationStudioModal({
               onClick={() =>
                 setSelectedIdx(prev => (prev < activeTrackDrills.length - 1 ? prev + 1 : 0))
               }
-              className="min-h-[46px] px-3.5 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-bold flex items-center justify-center space-x-1 active:scale-95 transition-all cursor-pointer shrink-0"
+              className={`min-h-[46px] px-3.5 rounded-2xl border text-xs font-bold flex items-center justify-center space-x-1 active:scale-95 transition-all cursor-pointer shrink-0 ${
+                evaluationResult?.isPassed
+                  ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white border-indigo-400 shadow-lg ring-2 ring-indigo-400/70 animate-pulse'
+                  : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700'
+              }`}
               title={isEn ? 'Next drill' : 'Bài tiếp theo'}
             >
-              <span>{isEn ? 'Next' : 'Tiếp'}</span>
+              <span>{evaluationResult?.isPassed ? (isEn ? 'Next Word' : 'Từ tiếp') : (isEn ? 'Next' : 'Tiếp')}</span>
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>

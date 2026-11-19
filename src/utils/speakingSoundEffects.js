@@ -158,6 +158,41 @@ class SpeakingSoundEffects {
       });
     } catch (e) {}
   }
+
+  /**
+   * Gentle descending double-tone cue when pronunciation accuracy is below passing threshold
+   */
+  playRetryChime() {
+    try {
+      const ctx = this.getAudioContext();
+      if (!ctx) return;
+
+      const now = ctx.currentTime;
+      const notes = [
+        { freq: 440.0, offset: 0 },     // A4
+        { freq: 349.23, offset: 0.14 }  // F4
+      ];
+
+      notes.forEach(({ freq, offset }) => {
+        const time = now + offset;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, time);
+
+        gain.gain.setValueAtTime(0.001, time);
+        gain.gain.linearRampToValueAtTime(0.08, time + 0.03);
+        gain.gain.exponentialRampToValueAtTime(0.0001, time + 0.14);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(time);
+        osc.stop(time + 0.15);
+      });
+    } catch (e) {}
+  }
 }
 
 export const speakingSoundEffects = new SpeakingSoundEffects();
