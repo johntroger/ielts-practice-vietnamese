@@ -1139,6 +1139,112 @@ export default function App() {
     }
   }, [modals.pronunciation]);
 
+  // Dedicated Two-Way URL Routing & Deep-Linking for Conversation Studio (/conversation & /luyen-hoi-thoai)
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const checkIsConversationRoute = () => {
+      const pathname = window.location.pathname.toLowerCase().replace(/\/+$/, '');
+      const hash = window.location.hash.toLowerCase();
+      const search = new URLSearchParams(window.location.search);
+
+      const isPathMatch = (
+        pathname === '/conversation' ||
+        pathname.endsWith('/conversation') ||
+        pathname.startsWith('/conversation/') ||
+        pathname === '/luyen-hoi-thoai' ||
+        pathname.endsWith('/luyen-hoi-thoai')
+      );
+
+      const isHashMatch = (
+        hash === '#conversation' ||
+        hash === '#luyen-hoi-thoai' ||
+        hash.startsWith('#conversation')
+      );
+
+      const modal = search.get('modal');
+      const mode = search.get('mode');
+      const view = search.get('view');
+      const page = search.get('page');
+
+      const isSearchMatch = (
+        modal === 'conversation' ||
+        mode === 'conversation' ||
+        view === 'conversation' ||
+        page === 'conversation'
+      );
+
+      return isPathMatch || isHashMatch || isSearchMatch;
+    };
+
+    const extractConversationParams = () => {
+      const search = new URLSearchParams(window.location.search);
+      const track = search.get('track');
+      const scenario = search.get('scenario');
+      return (track || scenario) ? { track: track || undefined, scenario: scenario || undefined } : true;
+    };
+
+    if (checkIsConversationRoute()) {
+      openModal('conversation', extractConversationParams());
+    }
+
+    const handleLocationChange = () => {
+      if (checkIsConversationRoute()) {
+        openModal('conversation', extractConversationParams());
+      } else {
+        closeModal('conversation');
+      }
+    };
+
+    window.addEventListener('popstate', handleLocationChange);
+    window.addEventListener('hashchange', handleLocationChange);
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange);
+      window.removeEventListener('hashchange', handleLocationChange);
+    };
+  }, [openModal, closeModal]);
+
+  // Sync address bar when modals.conversation opens or closes
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const isConvOpen = Boolean(modals.conversation);
+    const pathname = window.location.pathname.toLowerCase().replace(/\/+$/, '');
+    const hash = window.location.hash.toLowerCase();
+    const isCurrentlyOnConversationUrl = (
+      pathname === '/conversation' ||
+      pathname.endsWith('/conversation') ||
+      pathname.startsWith('/conversation/') ||
+      pathname === '/luyen-hoi-thoai' ||
+      pathname.endsWith('/luyen-hoi-thoai') ||
+      hash === '#conversation' ||
+      hash === '#luyen-hoi-thoai' ||
+      hash.startsWith('#conversation')
+    );
+
+    if (isConvOpen && !isCurrentlyOnConversationUrl) {
+      try {
+        const payload = typeof modals.conversation === 'object' && modals.conversation !== null ? modals.conversation : null;
+        let targetUrl = '/conversation';
+        if (payload?.track && payload.track !== 'all') {
+          targetUrl = `/conversation?track=${payload.track}`;
+        }
+        window.history.pushState({ modal: 'conversation' }, '', targetUrl);
+      } catch (e) {
+        window.location.hash = 'conversation';
+      }
+    } else if (!isConvOpen && isCurrentlyOnConversationUrl) {
+      try {
+        if (hash.startsWith('#conversation') || hash === '#luyen-hoi-thoai') {
+          window.history.pushState(null, '', window.location.pathname + window.location.search);
+        } else {
+          window.history.pushState(null, '', '/');
+        }
+      } catch (e) {
+        window.history.replaceState(null, '', '/');
+      }
+    }
+  }, [modals.conversation]);
+
   // 5. Automated Content Deduplication & Sanitization & Theme init on startup
   useEffect(() => {
     initTheme();
@@ -1413,6 +1519,7 @@ export default function App() {
           streakCount={streakCount}
           onOpenVocabGrammar={() => openModal('vocabGrammar')}
           onOpenPronunciation={() => openModal('pronunciation')}
+          onOpenConversation={() => openModal('conversation')}
           onOpenDrills={() => openModal('drills')}
           onOpenWeeklyReport={() => openModal('weeklyReport')}
           onOpenMockTest={() => openModal('mockTest')}

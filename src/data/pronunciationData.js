@@ -1573,6 +1573,72 @@ export function normalizePhoneticWord(str) {
     .trim();
 }
 
+const NUMBER_WORDS_MAP = {
+  '0': 'zero', '1': 'one', '2': 'two', '3': 'three', '4': 'four',
+  '5': 'five', '6': 'six', '7': 'seven', '8': 'eight', '9': 'nine',
+  '10': 'ten', '11': 'eleven', '12': 'twelve', '13': 'thirteen', '14': 'fourteen',
+  '15': 'fifteen', '16': 'sixteen', '17': 'seventeen', '18': 'eighteen', '19': 'nineteen',
+  '20': 'twenty', '25': 'twenty five', '30': 'thirty', '40': 'forty',
+  '45': 'forty five', '50': 'fifty', '60': 'sixty', '100': 'hundred', '1000': 'thousand'
+};
+
+const CONVERSATION_CONTRACTIONS_MAP = {
+  "i'm": 'i am', "you're": 'you are', "we're": 'we are', "they're": 'they are',
+  "he's": 'he is', "she's": 'she is', "it's": 'it is', "that's": 'that is',
+  "there's": 'there is', "here's": 'here is', "what's": 'what is', "who's": 'who is',
+  "don't": 'do not', "doesn't": 'does not', "didn't": 'did not',
+  "can't": 'cannot', "couldn't": 'could not', "won't": 'will not',
+  "wouldn't": 'would not', "shouldn't": 'should not', "isn't": 'is not',
+  "aren't": 'are not', "wasn't": 'was not', "weren't": 'were not',
+  "haven't": 'have not', "hasn't": 'has not', "hadn't": 'had not',
+  "i've": 'i have', "you've": 'you have', "we've": 'we have', "they've": 'they have',
+  "i'll": 'i will', "you'll": 'you will', "we'll": 'we will', "they'll": 'they will',
+  "i'd": 'i would', "you'd": 'you would', "we'd": 'we would', "let's": 'let us',
+  "ok": 'okay', "o.k.": 'okay', "mr": 'mister', "mrs": 'missus', "dr": 'doctor'
+};
+
+/**
+ * Expands conversational contractions, numbers, times (11:00 -> eleven o clock),
+ * and currencies ($5 -> five dollars) into normalized phonetic word tokens.
+ */
+export function expandConversationalTokens(text) {
+  if (!text || typeof text !== 'string') return [];
+  let s = text.toLowerCase().replace(/[’‘]/g, "'");
+
+  // Currency symbols before numbers
+  s = s.replace(/\$(\d+)/g, (_, num) => `${NUMBER_WORDS_MAP[num] || num} dollars`);
+  s = s.replace(/£(\d+)/g, (_, num) => `${NUMBER_WORDS_MAP[num] || num} pounds`);
+  // Time expressions like 11:00 or 1:45
+  s = s.replace(/\b(\d{1,2}):00\b/g, (_, h) => `${NUMBER_WORDS_MAP[h] || h}`);
+  s = s.replace(/\b(\d{1,2}):(\d{2})\b/g, (_, h, m) => `${NUMBER_WORDS_MAP[h] || h} ${NUMBER_WORDS_MAP[m] || m}`);
+
+  const rawTokens = s
+    .replace(/[↗↘/\\‿•●○◐ˈˌ"“”,!?;:()[\]-]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .split(' ')
+    .filter(Boolean);
+
+  const expanded = [];
+  for (const tok of rawTokens) {
+    const cleanDot = tok.replace(/\.+$/g, '');
+    if (CONVERSATION_CONTRACTIONS_MAP[cleanDot]) {
+      expanded.push(...CONVERSATION_CONTRACTIONS_MAP[cleanDot].split(' '));
+      continue;
+    }
+    const stripped = normalizePhoneticWord(tok);
+    if (!stripped) continue;
+    for (const part of stripped.split(' ')) {
+      if (NUMBER_WORDS_MAP[part]) {
+        expanded.push(...NUMBER_WORDS_MAP[part].split(' '));
+      } else {
+        expanded.push(part);
+      }
+    }
+  }
+  return expanded;
+}
+
 /**
  * Computes normalized character similarity (0 to 1) using Levenshtein distance.
  */
@@ -1692,8 +1758,7 @@ export function evaluatePronunciationAttempt({
     .split(/\s+/)
     .filter(Boolean);
 
-  const normalizedSpoken = normalizePhoneticWord(spokenText);
-  const spokenWords = normalizedSpoken ? normalizedSpoken.split(/\s+/).filter(Boolean) : [];
+  const spokenWords = expandConversationalTokens(spokenText);
 
   if (rawTargetWords.length === 0) {
     return {
@@ -1711,18 +1776,23 @@ export function evaluatePronunciationAttempt({
 
   const usedSpokenIndices = new Set();
   const codaIssues = [];
+  let expandedTargetCount = 0;
 
   // Flatten N-best alternative words for weak-ending detection
   const altWordSet = new Set();
   if (Array.isArray(alternatives) && alternatives.length > 1) {
     alternatives.slice(1, 5).forEach(alt => {
-      normalizePhoneticWord(alt).split(/\s+/).filter(Boolean).forEach(w => altWordSet.add(w));
+      expandConversationalTokens(alt).forEach(w => altWordSet.add(w));
     });
   }
 
   const wordBreakdown = rawTargetWords.map((rawWord, targetIdx) => {
     const cleanTarget = normalizePhoneticWord(rawWord);
-    if (!cleanTarget) {
+    const subTargets = expandConversationalTokens(rawWord);
+    const targetsToMatch = subTargets.length > 0 ? subTargets : (cleanTarget ? [cleanTarget] : []);
+    expandedTargetCount += targetsToMatch.length;
+
+    if (targetsToMatch.length === 0) {
       return {
         word: rawWord,
         cleanWord: '',
@@ -1733,25 +1803,36 @@ export function evaluatePronunciationAttempt({
       };
     }
 
-    let bestSim = 0;
-    let bestSpokenIdx = -1;
+    let totalSubSim = 0;
     let bestMissingCoda = false;
+    const matchedParts = [];
 
-    spokenWords.forEach((sw, sIdx) => {
-      if (usedSpokenIndices.has(sIdx)) return;
-      const { score, missingCoda } = computePhoneticOnsetNucleusCoda(cleanTarget, sw);
-      const distancePenalty = Math.min(0.12, Math.abs(targetIdx - sIdx) * 0.02);
-      const effectiveSim = score - (score === 1 ? 0 : distancePenalty);
-      if (effectiveSim > bestSim) {
-        bestSim = score;
-        bestSpokenIdx = sIdx;
-        bestMissingCoda = missingCoda;
+    targetsToMatch.forEach((subTarget) => {
+      let bestSim = 0;
+      let bestSpokenIdx = -1;
+      let subMissingCoda = false;
+
+      spokenWords.forEach((sw, sIdx) => {
+        if (usedSpokenIndices.has(sIdx)) return;
+        const { score, missingCoda } = computePhoneticOnsetNucleusCoda(subTarget, sw);
+        const distancePenalty = Math.min(0.12, Math.abs(targetIdx - sIdx) * 0.02);
+        const effectiveSim = score - (score === 1 ? 0 : distancePenalty);
+        if (effectiveSim > bestSim) {
+          bestSim = score;
+          bestSpokenIdx = sIdx;
+          subMissingCoda = missingCoda;
+        }
+      });
+
+      if (bestSpokenIdx !== -1 && bestSim >= 0.45) {
+        usedSpokenIndices.add(bestSpokenIdx);
+        matchedParts.push(spokenWords[bestSpokenIdx]);
       }
+      if (subMissingCoda) bestMissingCoda = true;
+      totalSubSim += bestSim;
     });
 
-    if (bestSpokenIdx !== -1 && bestSim >= 0.45) {
-      usedSpokenIndices.add(bestSpokenIdx);
-    }
+    let bestSim = totalSubSim / targetsToMatch.length;
 
     // N-Best Acoustic Cross-Check:
     // If primary hypothesis matched exact target, check if secondary hypotheses dropped the plural/past/coda ending
@@ -1775,7 +1856,7 @@ export function evaluatePronunciationAttempt({
       status = 'near';
     }
 
-    const matchedWord = bestSpokenIdx !== -1 ? spokenWords[bestSpokenIdx] : '';
+    const matchedWord = matchedParts.join(' ');
 
     return {
       word: rawWord,
@@ -1804,8 +1885,9 @@ export function evaluatePronunciationAttempt({
   }
 
   // Penalize excessive filler/extra words beyond target length
+  const effectiveTargetLen = Math.max(rawTargetWords.length, expandedTargetCount);
   const allowedSlack = rawTargetWords.length === 1 ? 0 : 1;
-  const extraWordsCount = Math.max(0, spokenWords.length - rawTargetWords.length - allowedSlack);
+  const extraWordsCount = Math.max(0, spokenWords.length - effectiveTargetLen - allowedSlack);
   if (extraWordsCount > 0 && rawScore > 0) {
     rawScore -= Math.min(20, extraWordsCount * 8);
   }

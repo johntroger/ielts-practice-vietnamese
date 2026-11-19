@@ -724,6 +724,7 @@ export function useSpeechEngine({
     const activeMs = m.activeCount * 80;
     const elapsedMs = m.startedAt ? Date.now() - m.startedAt : activeMs;
     return {
+      sampleCount: m.sampleCount,
       peakLevel: m.peakLevel,
       avgLevel,
       dynamicRange: Math.max(0, m.peakLevel - avgLevel),

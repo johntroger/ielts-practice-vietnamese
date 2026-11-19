@@ -37,7 +37,8 @@ import {
   Zap,
   Swords,
   Globe,
-  Home
+  Home,
+  MessageSquare
 } from 'lucide-react';
 import { openModal } from '../core/modalStore';
 import { useAppStore } from '../core/appStore';
@@ -58,6 +59,7 @@ export default function Navbar({
   onOpenDiagnostic,
   onOpenVocabGrammar,
   onOpenPronunciation,
+  onOpenConversation,
   onOpenDrills,
   onOpenWeeklyReport,
   onOpenMockTest,
@@ -88,6 +90,7 @@ export default function Navbar({
   const doOpenDiagnostic = onOpenDiagnostic || (() => openModal('diagnostic'));
   const doOpenVocabGrammar = onOpenVocabGrammar || (() => openModal('vocabGrammar'));
   const doOpenPronunciation = onOpenPronunciation || (() => openModal('pronunciation'));
+  const doOpenConversation = onOpenConversation || (() => openModal('conversation'));
   const doOpenDrills = onOpenDrills || (() => openModal('drills'));
   const doOpenWeeklyReport = onOpenWeeklyReport || (() => openModal('weeklyReport'));
   const doOpenMockTest = onOpenMockTest || (() => openModal('mockTest'));
@@ -733,6 +736,23 @@ export default function Navbar({
                       </div>
                     </button>
                     <button
+                      onClick={() => { doOpenConversation(); setIsToolsMenuOpen(false); }}
+                      className="w-full flex items-center justify-between p-2 rounded-xl hover:bg-cyan-50/70 text-left text-xs font-semibold text-slate-700 hover:text-cyan-900 transition-colors cursor-pointer"
+                    >
+                      <div className="flex items-center space-x-2.5">
+                        <div className="p-1.5 rounded-lg bg-cyan-100 text-cyan-700">
+                          <MessageSquare className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <div className="font-bold flex items-center space-x-1.5">
+                            <span>{isEn ? 'Conversation Studio' : 'Luyện Hội Thoại Đối Đáp'}</span>
+                            <span className="px-1.5 py-0.2 rounded-full text-[9px] font-black bg-cyan-100 text-cyan-700">NEW</span>
+                          </div>
+                          <div className="text-[10px] text-slate-400 font-normal">{isEn ? 'Turn-gated roleplay & pronunciation check (/conversation)' : 'Hội thoại thay phiên & chấm phát âm qua câu (/conversation)'}</div>
+                        </div>
+                      </div>
+                    </button>
+                    <button
                       onClick={() => { doOpenCDIDisplay(); setIsToolsMenuOpen(false); }}
                       className="w-full flex items-center space-x-2.5 p-2 rounded-xl hover:bg-blue-50 text-left text-xs font-semibold text-blue-900 transition-colors cursor-pointer border-t border-slate-100 mt-1 pt-1.5"
                     >
@@ -1310,6 +1330,18 @@ export default function Navbar({
                       <span className="truncate whitespace-nowrap">{isEn ? 'Pronunciation Studio (+XP)' : 'Luyện Phát Âm & Ngữ Điệu (+XP)'}</span>
                     </div>
                     <span className="text-[10px] text-indigo-700 font-extrabold bg-white border border-indigo-200 px-1.5 py-0.5 rounded-full shrink-0">/pronunciation</span>
+                  </button>
+
+                  {/* Conversation Studio (/conversation) */}
+                  <button
+                    onClick={() => { doOpenConversation(); setIsMobileDrawerOpen(false); }}
+                    className="w-full flex items-center justify-between p-2.5 rounded-xl bg-cyan-50/70 hover:bg-cyan-100 text-left text-xs font-bold text-cyan-900 border border-cyan-200/70 min-h-[44px] cursor-pointer"
+                  >
+                    <div className="flex items-center space-x-2.5 min-w-0">
+                      <MessageSquare className="w-4 h-4 text-cyan-600 shrink-0" />
+                      <span className="truncate whitespace-nowrap">{isEn ? 'Conversation Studio (NEW)' : 'Luyện Hội Thoại Đối Đáp (MỚI)'}</span>
+                    </div>
+                    <span className="text-[10px] text-cyan-700 font-extrabold bg-white border border-cyan-200 px-1.5 py-0.5 rounded-full shrink-0">/conversation</span>
                   </button>
 
                   {/* Import Prompts & Samples */}

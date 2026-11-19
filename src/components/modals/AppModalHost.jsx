@@ -36,6 +36,7 @@ const SpeakingResultModal = React.lazy(() => import('../speaking/SpeakingResultM
 const AdaptiveSprintModal = React.lazy(() => import('../AdaptiveSprintModal'));
 const AtlasEnglishArenaModal = React.lazy(() => import('../arena/AtlasEnglishArenaModal'));
 const PronunciationStudioModal = React.lazy(() => import('../PronunciationStudioModal'));
+const ConversationStudioModal = React.lazy(() => import('../ConversationStudioModal'));
 
 // 3. System & Profile Cluster
 const SettingsModal = React.lazy(() => import('../SettingsModal'));
@@ -261,6 +262,29 @@ export default function AppModalHost({
             onToggleMastered={resolvedToggleMastered}
             onOpenAuth={() => openModal('auth')}
             onOpenVocabNotebook={() => openModal('notebook', { openAdd: true })}
+          />
+        </WorkspaceErrorBoundary>
+      )}
+
+      {/* 2.1.c Conversation Roleplay Studio (/conversation) */}
+      {Boolean(modals.conversation) && (
+        <WorkspaceErrorBoundary skillName="IELTS Conversation Studio">
+          <ConversationStudioModal
+            isOpen={Boolean(modals.conversation)}
+            initialOptions={typeof modals.conversation === 'object' && modals.conversation !== null ? modals.conversation : null}
+            onClose={() => closeModal('conversation')}
+            apiKey={apiKey}
+            model={model}
+            currentUser={currentUser}
+            onSaveToNotebook={(v) => {
+              if (!addVocabUnique(vocabList, v, setVocabList)) return;
+              if (onSaveUserVocab) onSaveUserVocab(v);
+            }}
+            onSaveMistake={(m) => setMistakes(prev => [m, ...prev])}
+            onOpenPronunciation={() => {
+              closeModal('conversation');
+              openModal('pronunciation');
+            }}
           />
         </WorkspaceErrorBoundary>
       )}

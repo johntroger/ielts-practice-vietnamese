@@ -73,6 +73,8 @@ export function trackModalView(modalName) {
     drills: 'Targeted Micro-Drills Studio',
     theory: 'Cambridge Theory & Distractor Traps Handbook',
     vocabGrammar: 'Vocab, Grammar & 100 Spelling Demons',
+    pronunciation: 'Cambridge Pronunciation & Intonation Studio (/pronunciation)',
+    conversation: 'Conversation Roleplay Studio (/conversation)',
     diagnostic: 'Diagnostic Placement Test & 30-Day Plan',
     adaptiveSprint: 'Adaptive 30-Minute Sprint Coach',
     atlasArena: 'Atlas English Arena (High-Speed eSports Reflex Battle)',

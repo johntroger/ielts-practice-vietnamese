@@ -39,7 +39,8 @@ let state = {
   cdiDisplay: false,
   evaluationProgress: false,
   beginnerGuide: false,
-  pronunciation: false
+  pronunciation: false,
+  conversation: false
 };
 
 const listeners = new Set();

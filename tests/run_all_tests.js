@@ -216,7 +216,8 @@ const testSuites = [
   { name: 'Step 207: Atlas Sprint Surge, Mistake Recovery & 30-Learner Cohorts', file: 'tests/test_step167_atlas_sprint_surge_and_mistake_recovery.js' },
   { name: 'Step 208: 4 Skill Realms & Gate Progression System', file: 'tests/test_step208_arena_4_skills_rooms_and_gates.js' },
   { name: 'Step 209: Atlas Treasury Dual-Currency Wallet & Economy Engine', file: 'tests/test_step209_atlas_treasury_wallet_and_currency_economy.js' },
-  { name: 'Step 210: Heading Info Tooltip & UI Cleanliness Verification', file: 'tests/test_step210_heading_info_tip_ui_cleanliness.js' }
+  { name: 'Step 210: Heading Info Tooltip & UI Cleanliness Verification', file: 'tests/test_step210_heading_info_tip_ui_cleanliness.js' },
+  { name: 'Step 211: Conversation Roleplay Studio (/conversation) & Turn-Gating', file: 'tests/test_step211_conversation_studio.js' }
 ];
 
 console.log('===============================================================');
