@@ -276,7 +276,10 @@ export default function ConversationStudioModal({
   const lastAutoEvaluatedRef = useRef('');
   const handleRunEvaluationRef = useRef(null);
   const advanceTimerRef = useRef(null);
+  const micAutoStartTimerRef = useRef(null);
   const completedScenarioAwardedRef = useRef(false);
+  const dialogueSessionTokenRef = useRef(0);
+  const lastAutoHandledTurnKeyRef = useRef('');
 
   const turns = currentScenario?.turns || [];
   const isCompleted = turns.length > 0 && activeTurnIndex >= turns.length;
@@ -285,15 +288,21 @@ export default function ConversationStudioModal({
   const currentClipKey = activeTurn ? `conv_${currentScenario.id}_${activeTurn.id}` : 'conv_default';
   const currentAudioClip = speechEngine.audioClips[currentClipKey];
 
+  const ua = typeof navigator !== 'undefined' ? (navigator.userAgent || '') : '';
   const isMobileDevice =
-    typeof navigator !== 'undefined' &&
-    /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || '');
+    /Android|iPhone|iPad|iPod|Mobile/i.test(ua) ||
+    (/Macintosh/i.test(ua) && typeof navigator !== 'undefined' && navigator.maxTouchPoints > 1);
 
   // Stop all audio helper
   const stopAllAudio = useCallback(() => {
+    dialogueSessionTokenRef.current += 1;
     if (advanceTimerRef.current) {
       clearTimeout(advanceTimerRef.current);
       advanceTimerRef.current = null;
+    }
+    if (micAutoStartTimerRef.current) {
+      clearTimeout(micAutoStartTimerRef.current);
+      micAutoStartTimerRef.current = null;
     }
     if (r2SegmentTimerRef.current) {
       clearTimeout(r2SegmentTimerRef.current);
@@ -312,16 +321,17 @@ export default function ConversationStudioModal({
       } catch (e) {}
     }
     setPlayingUserClipTurnId(null);
-    if (speechEngine.isSpeaking) speechEngine.stopSpeaking();
-    if (speechEngine.isListening) speechEngine.stopListening();
+    speechEngine.stopSpeaking();
+    speechEngine.stopListening();
     fullReplayCancelRef.current = true;
     setIsFullReplaying(false);
-  }, [speechEngine]);
+  }, [speechEngine.stopSpeaking, speechEngine.stopListening]);
 
   // Reset state when switching scenario or role
   const resetDialogueState = useCallback(
     (nextRole = null, clearSavedProgress = true) => {
       stopAllAudio();
+      lastAutoHandledTurnKeyRef.current = '';
       if (clearSavedProgress && typeof window !== 'undefined') {
         try { window.sessionStorage.removeItem(CONV_RESUME_SESSION_KEY); } catch (e) {}
       }
@@ -344,7 +354,7 @@ export default function ConversationStudioModal({
       lastAutoEvaluatedRef.current = '';
       speechEngine.resetTranscript();
     },
-    [stopAllAudio, currentScenario?.defaultUserRole, speechEngine]
+    [stopAllAudio, currentScenario?.defaultUserRole, speechEngine.resetTranscript]
   );
 
   // Switch scenario
@@ -374,6 +384,7 @@ export default function ConversationStudioModal({
             saved.activeTurnIndex < (currentScenario.turns?.length || 0)
           ) {
             stopAllAudio();
+            lastAutoHandledTurnKeyRef.current = '';
             setUserRole(saved.userRole || currentScenario.defaultUserRole || 'B');
             setActiveTurnIndex(saved.activeTurnIndex);
             setHasStartedDialogue(false);
@@ -451,8 +462,8 @@ export default function ConversationStudioModal({
         if (onEnd) onEnd();
         return;
       }
-      if (speechEngine.isListening) speechEngine.stopListening();
-      if (speechEngine.isSpeaking) speechEngine.stopSpeaking();
+      speechEngine.stopListening();
+      speechEngine.stopSpeaking();
       if (r2SegmentTimerRef.current) {
         clearTimeout(r2SegmentTimerRef.current);
         r2SegmentTimerRef.current = null;
@@ -515,19 +526,25 @@ export default function ConversationStudioModal({
         onEnd
       );
     },
-    [currentScenario?.audioUrl, playbackSpeed, selectedExaminerId, speechEngine]
+    [
+      currentScenario?.audioUrl,
+      playbackSpeed,
+      selectedExaminerId,
+      speechEngine.stopListening,
+      speechEngine.stopSpeaking,
+      speechEngine.speak
+    ]
   );
 
   // Triggered when entering a Partner turn during an active dialogue
   const runPartnerTurnSequence = useCallback(
     (turn) => {
       if (!turn) return;
+      const token = ++dialogueSessionTokenRef.current;
       playPartnerTurnAudio(turn, playbackSpeed, () => {
+        if (token !== dialogueSessionTokenRef.current) return;
         speakingSoundEffects.playReadyToSpeakChime();
-        setActiveTurnIndex((prev) => {
-          const nextIdx = prev + 1;
-          return nextIdx;
-        });
+        setActiveTurnIndex((prev) => prev + 1);
       });
     },
     [playPartnerTurnAudio, playbackSpeed]
@@ -536,17 +553,24 @@ export default function ConversationStudioModal({
   // Auto-open mic on Desktop when transitioning into a User turn during active dialogue
   useEffect(() => {
     if (!isOpen || studioTab !== 'roleplay' || !hasStartedDialogue || isCompleted || !activeTurn) return;
+    const turnKey = `${currentScenario?.id || ''}:${userRole}:${activeTurnIndex}`;
+    if (lastAutoHandledTurnKeyRef.current === turnKey) return;
+    lastAutoHandledTurnKeyRef.current = turnKey;
 
     if (activeTurn.speaker !== userRole) {
       // Partner turn -> speak automatically
+      const token = ++dialogueSessionTokenRef.current;
       const timer = setTimeout(() => {
+        if (token !== dialogueSessionTokenRef.current) return;
         runPartnerTurnSequence(activeTurn);
-      }, 280);
+      }, 240);
       return () => clearTimeout(timer);
-    } else if (isAutoMode && !isMobileDevice && !speechEngine.isListening) {
-      // User turn on Desktop Auto-Mode -> open mic automatically
+    } else if (isAutoMode && !isMobileDevice) {
+      // User turn on Desktop Auto-Mode -> open mic automatically after chime finishes
       const clipKey = `conv_${currentScenario.id}_${activeTurn.id}`;
-      const timer = setTimeout(() => {
+      const token = dialogueSessionTokenRef.current;
+      micAutoStartTimerRef.current = setTimeout(() => {
+        if (token !== dialogueSessionTokenRef.current) return;
         setEvaluationResult(null);
         setIsWaitingForRetrySpeech(true);
         lastAutoEvaluatedRef.current = '';
@@ -555,15 +579,36 @@ export default function ConversationStudioModal({
         speechEngine.startListening(clipKey).catch(() => {
           setShowManualFallback(true);
         });
-      }, 320);
-      return () => clearTimeout(timer);
+      }, 500);
+      return () => {
+        if (micAutoStartTimerRef.current) {
+          clearTimeout(micAutoStartTimerRef.current);
+          micAutoStartTimerRef.current = null;
+        }
+      };
     }
-  }, [activeTurnIndex, hasStartedDialogue, isOpen, isCompleted]);
+  }, [
+    activeTurnIndex,
+    hasStartedDialogue,
+    isOpen,
+    isCompleted,
+    studioTab,
+    currentScenario?.id,
+    userRole,
+    activeTurn,
+    isAutoMode,
+    isMobileDevice,
+    runPartnerTurnSequence,
+    speechEngine.resetTranscript,
+    speechEngine.startListening
+  ]);
 
   // Start / Resume Dialogue button handler
   const handleStartDialogue = () => {
-    setHasStartedDialogue(true);
     if (!activeTurn) return;
+    const turnKey = `${currentScenario?.id || ''}:${userRole}:${activeTurnIndex}`;
+    lastAutoHandledTurnKeyRef.current = turnKey;
+    setHasStartedDialogue(true);
     if (activeTurn.speaker !== userRole) {
       runPartnerTurnSequence(activeTurn);
     } else {
@@ -815,8 +860,15 @@ export default function ConversationStudioModal({
   }, [isCompleted, sessionSummary]);
 
   // Toggle Microphone Recording
-  const handleToggleRecording = async () => {
+  const handleToggleRecording = () => {
     if (!activeTurn || activeTurn.speaker !== userRole) return;
+    const turnKey = `${currentScenario?.id || ''}:${userRole}:${activeTurnIndex}`;
+    lastAutoHandledTurnKeyRef.current = turnKey;
+    dialogueSessionTokenRef.current += 1;
+    if (micAutoStartTimerRef.current) {
+      clearTimeout(micAutoStartTimerRef.current);
+      micAutoStartTimerRef.current = null;
+    }
     setHasStartedDialogue(true);
 
     if (speechEngine.isListening) {
@@ -836,7 +888,7 @@ export default function ConversationStudioModal({
         }
       }, 260);
     } else {
-      if (speechEngine.isSpeaking) speechEngine.stopSpeaking();
+      speechEngine.stopSpeaking();
       if (r2AudioRef.current) {
         try { r2AudioRef.current.pause(); } catch (e) {}
       }
@@ -848,33 +900,45 @@ export default function ConversationStudioModal({
       if (speechEngine.deleteAudioClip) {
         speechEngine.deleteAudioClip(currentClipKey);
       }
-      try {
-        await speechEngine.startListening(currentClipKey);
-      } catch (err) {
+      speechEngine.startListening(currentClipKey).catch(() => {
         setShowManualFallback(true);
-      }
+      });
     }
   };
 
   const handleListenAndRetry = () => {
     if (!activeTurn) return;
-    if (speechEngine.isListening) speechEngine.stopListening();
+    if (micAutoStartTimerRef.current) {
+      clearTimeout(micAutoStartTimerRef.current);
+      micAutoStartTimerRef.current = null;
+    }
+    const turnKey = `${currentScenario?.id || ''}:${userRole}:${activeTurnIndex}`;
+    lastAutoHandledTurnKeyRef.current = turnKey;
+    setHasStartedDialogue(true);
+    speechEngine.stopListening();
+    speechEngine.stopSpeaking();
+    const token = ++dialogueSessionTokenRef.current;
     setIsWaitingForRetrySpeech(false);
     speechEngine.resetTranscript();
     speechEngine.speak(
       activeTurn.text,
       { examinerId: selectedExaminerId, rate: 0.85, silentChime: true },
-      async () => {
+      () => {
+        if (token !== dialogueSessionTokenRef.current) return;
+        speakingSoundEffects.playReadyToSpeakChime();
         lastAutoEvaluatedRef.current = '';
         liveSpokenTextRef.current = '';
         if (speechEngine.deleteAudioClip) {
           speechEngine.deleteAudioClip(currentClipKey);
         }
-        try {
-          await speechEngine.startListening(currentClipKey);
-          setIsWaitingForRetrySpeech(true);
-        } catch (err) {
-          setShowManualFallback(true);
+        setIsWaitingForRetrySpeech(true);
+        if (!isMobileDevice) {
+          micAutoStartTimerRef.current = setTimeout(() => {
+            if (token !== dialogueSessionTokenRef.current) return;
+            speechEngine.startListening(currentClipKey).catch(() => {
+              setShowManualFallback(true);
+            });
+          }, 420);
         }
       }
     );
@@ -941,25 +1005,30 @@ export default function ConversationStudioModal({
       });
 
       const isPassed = aiRes.overallAccuracy >= passThreshold;
-      setEvaluationResult(prev => ({
-        ...(prev || {}),
+      const mappedWords =
+        aiRes.wordBreakdown && aiRes.wordBreakdown.length > 0
+          ? aiRes.wordBreakdown.map(w => ({
+              word: w.word,
+              cleanWord: w.word,
+              status: w.status || (w.similarity >= 84 ? 'correct' : w.similarity >= 52 ? 'near' : 'missed'),
+              similarity: Number(w.similarity) || 80
+            }))
+          : evaluationResult?.wordBreakdown || [];
+      const updatedEval = {
+        ...(evaluationResult || {}),
         overallAccuracy: aiRes.overallAccuracy,
         estimatedBand: aiRes.estimatedBand,
-        spokenTranscript: aiRes.heardTranscript || prev?.spokenTranscript || activeTurn.text,
-        wordBreakdown:
-          aiRes.wordBreakdown && aiRes.wordBreakdown.length > 0
-            ? aiRes.wordBreakdown.map(w => ({
-                word: w.word,
-                cleanWord: w.word,
-                status: w.status || (w.similarity >= 84 ? 'correct' : w.similarity >= 52 ? 'near' : 'missed'),
-                similarity: Number(w.similarity) || 80
-              }))
-            : prev?.wordBreakdown || [],
+        spokenTranscript: aiRes.heardTranscript || evaluationResult?.spokenTranscript || activeTurn.text,
+        wordBreakdown: mappedWords,
         coachFeedbackEn: aiRes.coachFeedback,
         coachFeedbackVi: aiRes.coachFeedback,
         isPassed,
         engineTier: 'layer2_gemini_audio'
-      }));
+      };
+      setEvaluationResult(updatedEval);
+      if (isPassed) {
+        setTurnResults(prev => ({ ...prev, [activeTurn.id]: updatedEval }));
+      }
     } catch (err) {
       setDeepAiError(err.message || (isEn ? 'AI Audio evaluation failed.' : 'Không thể chấm sâu bằng AI Audio.'));
     } finally {
@@ -1667,15 +1736,18 @@ Return ONLY plain dialogue lines starting with "A:" and "B:", 1-2 sentences per 
                     revealThisTurn={revealCurrentTurn}
                     onToggleRevealThisTurn={() => setRevealCurrentTurn(prev => !prev)}
                     onPlayPartnerLine={(t, rate) => playPartnerTurnAudio(t, rate)}
-                    onPlayUserModel={(t, rate) =>
-                      speechEngine.speak(t.text, { examinerId: selectedExaminerId, rate, silentChime: true })
-                    }
+                    onPlayUserModel={(t, rate) => {
+                      speechEngine.stopListening();
+                      speechEngine.speak(t.text, { examinerId: selectedExaminerId, rate, silentChime: true });
+                    }}
                     isListening={isActive && speechEngine.isListening}
                     isAutoMode={isAutoMode}
                     liveSpokenText={isActive ? liveSpokenText : ''}
                     isWaitingForRetrySpeech={isActive && isWaitingForRetrySpeech}
                     speechError={isActive ? speechEngine.speechError : null}
                     analyserNode={speechEngine.analyserNode}
+                    micLevel={speechEngine.micLevel || 0}
+                    hasAnalyser={Boolean(speechEngine.analyserNode)}
                     evaluationResult={isActive ? evaluationResult : turnResults[turn.id]}
                     attemptCount={turnAttempts[turn.id] || 0}
                     passThreshold={passThreshold}
@@ -1761,11 +1833,14 @@ Return ONLY plain dialogue lines starting with "A:" and "B:", 1-2 sentences per 
           <div className="lg:hidden shrink-0 bg-slate-950/95 backdrop-blur-md border-t border-slate-800 px-3 py-2.5 pb-[max(0.625rem,env(safe-area-inset-bottom))] flex items-center gap-2 z-30">
             <button
               type="button"
-              onClick={() =>
-                isActiveUserTurn
-                  ? speechEngine.speak(activeTurn.text, { examinerId: selectedExaminerId, rate: 0.85, silentChime: true })
-                  : playPartnerTurnAudio(activeTurn, playbackSpeed)
-              }
+              onClick={() => {
+                speechEngine.stopListening();
+                if (isActiveUserTurn) {
+                  speechEngine.speak(activeTurn.text, { examinerId: selectedExaminerId, rate: 0.85, silentChime: true });
+                } else {
+                  playPartnerTurnAudio(activeTurn, playbackSpeed);
+                }
+              }}
               className="min-h-[48px] px-3.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white text-xs font-bold flex items-center space-x-1.5 shrink-0 cursor-pointer transition-all"
             >
               <Volume2 className="w-4 h-4 shrink-0" />

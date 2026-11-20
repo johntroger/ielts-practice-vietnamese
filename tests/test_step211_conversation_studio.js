@@ -114,4 +114,23 @@ assert.ok(modalStoreSrc.includes('conversation: false'), 'modalStore.js must reg
 assert.ok(modalHostSrc.includes('ConversationStudioModal'), 'AppModalHost.jsx must mount ConversationStudioModal');
 assert.ok(speechEngineSrc.includes('sampleCount: m.sampleCount'), 'useSpeechEngine.js must expose sampleCount');
 
+// 8. Voice capture race & STT hardening regression guards
+const convModalSrc = fs.readFileSync(path.join(root, 'src/components/ConversationStudioModal.jsx'), 'utf8');
+assert.ok(
+  speechEngineSrc.includes('recognitionRef.current !== recognition'),
+  'useSpeechEngine.js must guard STT callbacks against stale aborted recognition instances'
+);
+assert.ok(
+  speechEngineSrc.includes('pendingInterim') && speechEngineSrc.includes('interimTranscriptRef.current'),
+  'useSpeechEngine.js must flush pending interim transcript inside onend before restart/stop'
+);
+assert.ok(
+  speechEngineSrc.includes('clearInterval(volumeIntervalRef.current)') && speechEngineSrc.includes('listenStartIdRef'),
+  'useSpeechEngine.js must clear volume polling in stopListening and cancel stale async getUserMedia starts'
+);
+assert.ok(
+  convModalSrc.includes('lastAutoHandledTurnKeyRef') && convModalSrc.includes('dialogueSessionTokenRef'),
+  'ConversationStudioModal.jsx must prevent useEffect mic-abort / double partner read races'
+);
+
 console.log('✅ Step 211 passed all Conversation Studio tests!');

@@ -50,7 +50,7 @@ export default function SpeechWaveVisualizer({
           const avg = sum / 16;
           energy = Math.max(0.2, Math.min(1.2, avg / 80));
         } else {
-          energy = 0.6;
+          energy = 0.48 + Math.sin(phaseRef.current * 1.8) * 0.22;
         }
       } else if (mode === 'examiner_speaking') {
         energy = 0.55 + Math.sin(phaseRef.current * 1.5) * 0.3;

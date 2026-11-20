@@ -152,4 +152,16 @@ assert.ok(appSrc.includes("'/shadowing'") && appSrc.includes("tab === 'shadowing
 assert.ok(backupSrc.includes('ielts_shadowing_stats_v1') && backupSrc.includes('ielts_shadowing_custom_v1'), 'Backup hook must include shadowing stats and custom samples');
 assert.ok(summarySrc.includes("mode === 'shadowing'"), 'ConversationSummaryCard must support shadowing mode');
 
+// 8. Voice capture race regression guards for SpeechShadowingWorkspace
+const shadowingWsSrc = fs.readFileSync(path.join(root, 'src/components/conversation/SpeechShadowingWorkspace.jsx'), 'utf8');
+assert.ok(
+  shadowingWsSrc.includes('lastAutoReadKeyRef') && shadowingWsSrc.includes('runMachineReadForSegment'),
+  'SpeechShadowingWorkspace.jsx must guard auto-read useEffect with lastAutoReadKeyRef so Start Mic / Skip never kills recording'
+);
+const retryFnMatch = shadowingWsSrc.match(/const handleListenAndRetry =[\s\S]*?\n  \};/);
+assert.ok(
+  retryFnMatch && retryFnMatch[0].includes('!isMobileDevice') && !retryFnMatch[0].includes('async () =>'),
+  'handleListenAndRetry must skip non-gesture auto startListening on mobile devices'
+);
+
 console.log('✅ Step 212 passed all Speech Shadowing tests!');

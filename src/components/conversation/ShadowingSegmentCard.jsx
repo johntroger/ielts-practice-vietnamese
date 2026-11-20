@@ -58,6 +58,8 @@ export default function ShadowingSegmentCard({
   isWaitingForRetrySpeech,
   speechError,
   analyserNode,
+  micLevel = 0,
+  hasAnalyser = false,
   evaluationResult,
   attemptCount,
   passThreshold,
@@ -410,8 +412,28 @@ export default function ShadowingSegmentCard({
             </div>
           ) : isListening && isWaitingForRetrySpeech ? (
             <div className="absolute inset-0 bg-amber-950/45 flex items-center justify-center px-3 text-center">
-              <p className="text-xs font-extrabold text-amber-300 animate-pulse">
-                {isEn ? '🎙️ Mic is open — repeat this segment now!' : '🎙️ Micro đang mở — hãy lặp lại ngay bây giờ!'}
+              <p className="text-xs font-extrabold text-amber-300 animate-pulse flex items-center gap-2">
+                <span>{isEn ? '🎙️ Mic is open — repeat now!' : '🎙️ Micro đang mở — hãy lặp lại ngay!'}</span>
+                {hasAnalyser && (
+                  <span className="px-1.5 py-0.5 rounded bg-amber-500/20 border border-amber-400/40 text-[10px] font-mono">
+                    {micLevel}%
+                  </span>
+                )}
+              </p>
+            </div>
+          ) : isListening ? (
+            <div className="absolute inset-0 bg-emerald-950/35 flex items-center justify-center px-3 text-center">
+              <p className="text-xs font-extrabold text-emerald-300 animate-pulse flex items-center gap-2">
+                <span>
+                  {hasAnalyser
+                    ? isEn ? '🎙️ Listening...' : '🎙️ Đang nghe...'
+                    : isEn ? '🎙️ Mic active — speak now!' : '🎙️ Micro đang bật — hãy nói ngay!'}
+                </span>
+                {hasAnalyser && (
+                  <span className="px-1.5 py-0.5 rounded bg-emerald-500/20 border border-emerald-400/40 text-[10px] font-mono">
+                    Mic {micLevel}%
+                  </span>
+                )}
               </p>
             </div>
           ) : null}
@@ -425,9 +447,17 @@ export default function ShadowingSegmentCard({
                 ? isEn
                   ? 'Microphone permission is blocked. Allow Microphone access in browser site settings (🔒 icon).'
                   : 'Trình duyệt đang chặn quyền Micro. Hãy bấm biểu tượng 🔒 cạnh thanh địa chỉ để cho phép Micro.'
+                : speechError === 'audio-capture'
+                ? isEn
+                  ? 'Could not capture audio from your microphone. Close other apps or tabs using the mic and try again.'
+                  : 'Không thể thu âm từ Micro. Hãy đóng các ứng dụng hoặc tab khác đang dùng micro rồi thử lại.'
+                : speechError === 'network'
+                ? isEn
+                  ? 'Speech recognition network error. Check your internet connection, retry, or use AI Deep Check / Text Test.'
+                  : 'Lỗi mạng khi nhận diện giọng nói. Hãy kiểm tra kết nối, thử lại hoặc dùng AI Chấm Sâu / Nhập thử.'
                 : isEn
-                ? 'Speech recognition unavailable on this browser. Use Chrome/Safari HTTPS or tap "Text Test?".'
-                : 'Nhận diện giọng nói chưa khả dụng trên trình duyệt này. Hãy dùng Chrome/Safari HTTPS hoặc bấm "Nhập thử?".'}
+                ? 'Speech recognition unavailable on this browser. Use Chrome/Safari HTTPS, AI Deep Check, or tap "Text Test?".'
+                : 'Nhận diện giọng nói chưa khả dụng trên trình duyệt này. Hãy dùng Chrome/Safari HTTPS, AI Chấm Sâu hoặc bấm "Nhập thử?".'}
             </span>
           </div>
         )}
@@ -490,13 +520,30 @@ export default function ShadowingSegmentCard({
               <span className="font-bold text-slate-300">
                 {isEn ? 'Fallback Verification:' : 'Kiểm tra dự phòng (khi không dùng được Mic):'}
               </span>
-              <button
-                type="button"
-                onClick={() => onRunManualEvaluation(segment.text)}
-                className="px-2.5 py-1 rounded-lg bg-emerald-600/30 hover:bg-emerald-600/50 text-emerald-300 border border-emerald-500/30 text-[11px] font-bold cursor-pointer"
-              >
-                {isEn ? '✓ I Shadowed It Clearly' : '✓ Tôi đã lặp lại rõ theo mẫu'}
-              </button>
+              <div className="flex flex-wrap items-center gap-1.5">
+                {apiKey && currentAudioClip?.blob && !isListening && (
+                  <button
+                    type="button"
+                    onClick={onDeepAiAudioCheck}
+                    disabled={isDeepAiGrading}
+                    className="px-2.5 py-1 rounded-lg bg-purple-600/35 hover:bg-purple-600/55 text-purple-200 border border-purple-500/40 text-[11px] font-bold flex items-center space-x-1 cursor-pointer disabled:opacity-50"
+                  >
+                    <Sparkles className={`w-3 h-3 ${isDeepAiGrading ? 'animate-spin' : ''}`} />
+                    <span>
+                      {isDeepAiGrading
+                        ? isEn ? 'AI Grading...' : 'AI đang chấm...'
+                        : isEn ? 'Grade Recorded Voice with AI' : 'AI Nghe & Chấm File Ghi Âm'}
+                    </span>
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => onRunManualEvaluation(segment.text)}
+                  className="px-2.5 py-1 rounded-lg bg-emerald-600/30 hover:bg-emerald-600/50 text-emerald-300 border border-emerald-500/30 text-[11px] font-bold cursor-pointer"
+                >
+                  {isEn ? '✓ I Shadowed It Clearly' : '✓ Tôi đã lặp lại rõ theo mẫu'}
+                </button>
+              </div>
             </div>
             <div className="flex items-center gap-2">
               <input

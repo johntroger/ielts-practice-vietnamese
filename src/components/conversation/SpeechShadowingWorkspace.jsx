@@ -192,15 +192,17 @@ export default function SpeechShadowingWorkspace({
   const promptAdvanceTimerRef = useRef(null);
   const completedAwardedRef = useRef(false);
   const sessionTokenRef = useRef(0);
+  const lastAutoReadKeyRef = useRef('');
 
   const isCompleted = resolvedSegments.length > 0 && activeSegIndex >= resolvedSegments.length;
   const activeSeg = !isCompleted ? resolvedSegments[activeSegIndex] : null;
   const currentClipKey = activeSeg ? `shad_${currentTask.id}_${activeSeg.id}` : 'shad_default';
   const currentAudioClip = speechEngine.audioClips[currentClipKey];
 
+  const ua = typeof navigator !== 'undefined' ? (navigator.userAgent || '') : '';
   const isMobileDevice =
-    typeof navigator !== 'undefined' &&
-    /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || '');
+    /Android|iPhone|iPad|iPod|Mobile/i.test(ua) ||
+    (/Macintosh/i.test(ua) && typeof navigator !== 'undefined' && navigator.maxTouchPoints > 1);
 
   // Open creator when triggered from ConversationStudioModal header button
   const lastCreatorTriggerRef = useRef(creatorTrigger);
@@ -232,11 +234,11 @@ export default function SpeechShadowingWorkspace({
       } catch (e) {}
     }
     setPlayingUserClipSegId(null);
-    if (speechEngine.isSpeaking) speechEngine.stopSpeaking();
-    if (speechEngine.isListening) speechEngine.stopListening();
+    speechEngine.stopSpeaking();
+    speechEngine.stopListening();
     fullReplayCancelRef.current = true;
     setIsFullReplaying(false);
-  }, [speechEngine]);
+  }, [speechEngine.stopSpeaking, speechEngine.stopListening]);
 
   // Clean up on unmount
   useEffect(() => {
@@ -248,6 +250,7 @@ export default function SpeechShadowingWorkspace({
   const resetShadowingState = useCallback(
     (clearSavedProgress = true) => {
       invalidateAndStopAudio();
+      lastAutoReadKeyRef.current = '';
       if (clearSavedProgress && typeof window !== 'undefined') {
         try { window.sessionStorage.removeItem(SHADOW_RESUME_SESSION_KEY); } catch (e) {}
       }
@@ -269,7 +272,7 @@ export default function SpeechShadowingWorkspace({
       lastAutoEvaluatedRef.current = '';
       speechEngine.resetTranscript();
     },
-    [invalidateAndStopAudio, speechEngine]
+    [invalidateAndStopAudio, speechEngine.resetTranscript]
   );
 
   // Restore saved progress from sessionStorage when opening or switching task/chunkMode
@@ -294,6 +297,7 @@ export default function SpeechShadowingWorkspace({
             saved.activeSegIndex < resolvedSegments.length
           ) {
             invalidateAndStopAudio();
+            lastAutoReadKeyRef.current = '';
             setActiveSegIndex(saved.activeSegIndex);
             setHasStarted(false);
             setPhase('idle');
@@ -350,8 +354,16 @@ export default function SpeechShadowingWorkspace({
   const runMachineReadForSegment = useCallback(
     (seg) => {
       if (!seg) return;
-      if (speechEngine.isListening) speechEngine.stopListening();
-      if (speechEngine.isSpeaking) speechEngine.stopSpeaking();
+      if (micAutoStartTimerRef.current) {
+        clearTimeout(micAutoStartTimerRef.current);
+        micAutoStartTimerRef.current = null;
+      }
+      if (promptAdvanceTimerRef.current) {
+        clearTimeout(promptAdvanceTimerRef.current);
+        promptAdvanceTimerRef.current = null;
+      }
+      speechEngine.stopListening();
+      speechEngine.stopSpeaking();
 
       const token = ++sessionTokenRef.current;
       setPhase('machine_reading');
@@ -389,32 +401,49 @@ export default function SpeechShadowingWorkspace({
               speechEngine.startListening(clipKey).catch(() => {
                 setShowManualFallback(true);
               });
-            }, 220);
+            }, 500);
           }
         }
       );
     },
-    [currentTask?.id, isAutoMode, isMobileDevice, playbackSpeed, selectedExaminerId, speechEngine]
+    [
+      currentTask?.id,
+      isAutoMode,
+      isMobileDevice,
+      playbackSpeed,
+      selectedExaminerId,
+      speechEngine.speak,
+      speechEngine.stopListening,
+      speechEngine.stopSpeaking,
+      speechEngine.resetTranscript,
+      speechEngine.startListening
+    ]
   );
 
   // Auto-start machine reading whenever activeSegIndex advances during an active session
   useEffect(() => {
     if (!isOpen || !hasStarted || isCompleted || !activeSeg) return;
+    const segKey = `${currentTask?.id || ''}:${chunkMode}:${activeSegIndex}`;
+    if (lastAutoReadKeyRef.current === segKey) return;
+    lastAutoReadKeyRef.current = segKey;
     const timer = setTimeout(() => {
       runMachineReadForSegment(activeSeg);
     }, 220);
     return () => clearTimeout(timer);
-  }, [activeSegIndex, hasStarted, isOpen, isCompleted]);
+  }, [activeSegIndex, hasStarted, isOpen, isCompleted, currentTask?.id, chunkMode, activeSeg, runMachineReadForSegment]);
 
   const handleStartShadowing = () => {
+    if (!activeSeg) return;
+    const segKey = `${currentTask?.id || ''}:${chunkMode}:${activeSegIndex}`;
+    lastAutoReadKeyRef.current = segKey;
     setHasStarted(true);
-    if (activeSeg) {
-      runMachineReadForSegment(activeSeg);
-    }
+    runMachineReadForSegment(activeSeg);
   };
 
-  const handleSkipReadingToSpeak = async () => {
+  const handleSkipReadingToSpeak = () => {
     if (!activeSeg || activeSeg.unitType === 'prompt_only') return;
+    const segKey = `${currentTask?.id || ''}:${chunkMode}:${activeSegIndex}`;
+    lastAutoReadKeyRef.current = segKey;
     invalidateAndStopAudio();
     setHasStarted(true);
     setPhase('user_shadowing');
@@ -426,11 +455,9 @@ export default function SpeechShadowingWorkspace({
     if (speechEngine.deleteAudioClip) {
       speechEngine.deleteAudioClip(currentClipKey);
     }
-    try {
-      await speechEngine.startListening(currentClipKey);
-    } catch (err) {
+    speechEngine.startListening(currentClipKey).catch(() => {
       setShowManualFallback(true);
-    }
+    });
   };
 
   const advanceAfterPass = useCallback(() => {
@@ -640,8 +667,15 @@ export default function SpeechShadowingWorkspace({
     }
   }, [isCompleted, sessionSummary]);
 
-  const handleToggleRecording = async () => {
+  const handleToggleRecording = () => {
     if (!activeSeg || activeSeg.unitType === 'prompt_only') return;
+    const segKey = `${currentTask?.id || ''}:${chunkMode}:${activeSegIndex}`;
+    lastAutoReadKeyRef.current = segKey;
+    sessionTokenRef.current += 1;
+    if (micAutoStartTimerRef.current) {
+      clearTimeout(micAutoStartTimerRef.current);
+      micAutoStartTimerRef.current = null;
+    }
     setHasStarted(true);
     setPhase('user_shadowing');
 
@@ -662,7 +696,7 @@ export default function SpeechShadowingWorkspace({
         }
       }, 260);
     } else {
-      if (speechEngine.isSpeaking) speechEngine.stopSpeaking();
+      speechEngine.stopSpeaking();
       setEvaluationResult(null);
       setIsWaitingForRetrySpeech(false);
       lastAutoEvaluatedRef.current = '';
@@ -671,17 +705,23 @@ export default function SpeechShadowingWorkspace({
       if (speechEngine.deleteAudioClip) {
         speechEngine.deleteAudioClip(currentClipKey);
       }
-      try {
-        await speechEngine.startListening(currentClipKey);
-      } catch (err) {
+      speechEngine.startListening(currentClipKey).catch(() => {
         setShowManualFallback(true);
-      }
+      });
     }
   };
 
   const handleListenAndRetry = () => {
     if (!activeSeg) return;
-    if (speechEngine.isListening) speechEngine.stopListening();
+    if (micAutoStartTimerRef.current) {
+      clearTimeout(micAutoStartTimerRef.current);
+      micAutoStartTimerRef.current = null;
+    }
+    const segKey = `${currentTask?.id || ''}:${chunkMode}:${activeSegIndex}`;
+    lastAutoReadKeyRef.current = segKey;
+    setHasStarted(true);
+    speechEngine.stopListening();
+    speechEngine.stopSpeaking();
     const token = ++sessionTokenRef.current;
     setPhase('machine_reading');
     setIsWaitingForRetrySpeech(false);
@@ -690,19 +730,23 @@ export default function SpeechShadowingWorkspace({
     speechEngine.speak(
       activeSeg.text,
       { examinerId: selectedExaminerId, rate: 0.85, silentChime: true },
-      async () => {
+      () => {
         if (token !== sessionTokenRef.current) return;
+        speakingSoundEffects.playReadyToSpeakChime();
         setPhase('user_shadowing');
         lastAutoEvaluatedRef.current = '';
         liveSpokenTextRef.current = '';
         if (speechEngine.deleteAudioClip) {
           speechEngine.deleteAudioClip(currentClipKey);
         }
-        try {
-          await speechEngine.startListening(currentClipKey);
-          setIsWaitingForRetrySpeech(true);
-        } catch (err) {
-          setShowManualFallback(true);
+        setIsWaitingForRetrySpeech(true);
+        if (!isMobileDevice) {
+          micAutoStartTimerRef.current = setTimeout(() => {
+            if (token !== sessionTokenRef.current) return;
+            speechEngine.startListening(currentClipKey).catch(() => {
+              setShowManualFallback(true);
+            });
+          }, 420);
         }
       }
     );
@@ -769,25 +813,30 @@ export default function SpeechShadowingWorkspace({
       });
 
       const isPassed = aiRes.overallAccuracy >= passThreshold;
-      setEvaluationResult(prev => ({
-        ...(prev || {}),
+      const mappedWords =
+        aiRes.wordBreakdown && aiRes.wordBreakdown.length > 0
+          ? aiRes.wordBreakdown.map(w => ({
+              word: w.word,
+              cleanWord: w.word,
+              status: w.status || (w.similarity >= 84 ? 'correct' : w.similarity >= 52 ? 'near' : 'missed'),
+              similarity: Number(w.similarity) || 80
+            }))
+          : evaluationResult?.wordBreakdown || [];
+      const updatedEval = {
+        ...(evaluationResult || {}),
         overallAccuracy: aiRes.overallAccuracy,
         estimatedBand: aiRes.estimatedBand,
-        spokenTranscript: aiRes.heardTranscript || prev?.spokenTranscript || activeSeg.text,
-        wordBreakdown:
-          aiRes.wordBreakdown && aiRes.wordBreakdown.length > 0
-            ? aiRes.wordBreakdown.map(w => ({
-                word: w.word,
-                cleanWord: w.word,
-                status: w.status || (w.similarity >= 84 ? 'correct' : w.similarity >= 52 ? 'near' : 'missed'),
-                similarity: Number(w.similarity) || 80
-              }))
-            : prev?.wordBreakdown || [],
+        spokenTranscript: aiRes.heardTranscript || evaluationResult?.spokenTranscript || activeSeg.text,
+        wordBreakdown: mappedWords,
         coachFeedbackEn: aiRes.coachFeedback,
         coachFeedbackVi: aiRes.coachFeedback,
         isPassed,
         engineTier: 'layer2_gemini_audio'
-      }));
+      };
+      setEvaluationResult(updatedEval);
+      if (isPassed) {
+        setSegmentResults(prev => ({ ...prev, [activeSeg.id]: updatedEval }));
+      }
     } catch (err) {
       setDeepAiError(err.message || (isEn ? 'AI Audio evaluation failed.' : 'Không thể chấm sâu bằng AI Audio.'));
     } finally {
@@ -1229,9 +1278,10 @@ Separate paragraphs with a blank line. If ${customPart} is part1 or part3, prefi
                   keywordsOnly={keywordsOnly}
                   revealThisSeg={revealCurrentSeg}
                   onToggleRevealThisSeg={() => setRevealCurrentSeg(prev => !prev)}
-                  onPlayModel={(s, rate) =>
-                    speechEngine.speak(s.text, { examinerId: selectedExaminerId, rate, silentChime: true })
-                  }
+                  onPlayModel={(s, rate) => {
+                    speechEngine.stopListening();
+                    speechEngine.speak(s.text, { examinerId: selectedExaminerId, rate, silentChime: true });
+                  }}
                   onSkipReadingToSpeak={handleSkipReadingToSpeak}
                   isListening={isActive && speechEngine.isListening}
                   isAutoMode={isAutoMode}
@@ -1239,6 +1289,8 @@ Separate paragraphs with a blank line. If ${customPart} is part1 or part3, prefi
                   isWaitingForRetrySpeech={isActive && isWaitingForRetrySpeech}
                   speechError={isActive ? speechEngine.speechError : null}
                   analyserNode={speechEngine.analyserNode}
+                  micLevel={speechEngine.micLevel || 0}
+                  hasAnalyser={Boolean(speechEngine.analyserNode)}
                   evaluationResult={isActive ? evaluationResult : segmentResults[seg.id]}
                   attemptCount={segmentAttempts[seg.id] || 0}
                   passThreshold={passThreshold}
@@ -1324,9 +1376,10 @@ Separate paragraphs with a blank line. If ${customPart} is part1 or part3, prefi
         <div className="lg:hidden shrink-0 bg-slate-950/95 backdrop-blur-md border-t border-slate-800 px-3 py-2.5 pb-[max(0.625rem,env(safe-area-inset-bottom))] flex items-center gap-2 z-30">
           <button
             type="button"
-            onClick={() =>
-              speechEngine.speak(activeSeg.text, { examinerId: selectedExaminerId, rate: 0.85, silentChime: true })
-            }
+            onClick={() => {
+              speechEngine.stopListening();
+              speechEngine.speak(activeSeg.text, { examinerId: selectedExaminerId, rate: 0.85, silentChime: true });
+            }}
             className="min-h-[48px] px-3.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white text-xs font-bold flex items-center space-x-1.5 shrink-0 cursor-pointer transition-all"
           >
             <Volume2 className="w-4 h-4 shrink-0" />

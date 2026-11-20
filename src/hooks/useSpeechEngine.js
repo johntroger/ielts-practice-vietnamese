@@ -109,17 +109,38 @@ export function useSpeechEngine({
   // Internal Refs for Engine Logic
   const recognitionRef = useRef(null);
   const isIntentionalListeningRef = useRef(false);
+  const listenStartIdRef = useRef(0);
+  const mediaSourceRef = useRef(null);
+  const consecutiveEmptyRestartsRef = useRef(0);
+  const lastSttActivityAtRef = useRef(0);
   const accumulatedTranscriptRef = useRef('');
   const interimTranscriptRef = useRef('');
   const ttsKeepAliveTimerRef = useRef(null);
   const ttsSessionIdRef = useRef(0);
   const currentUtteranceRef = useRef(null);
 
-  // Check Web Speech API support & mobile platform
+  // Check Web Speech API support & mobile / Safari platform
   const isSpeechRecognitionSupported = typeof window !== 'undefined' && 
     !!(window.SpeechRecognition || window.webkitSpeechRecognition);
-  const isMobileDevice = typeof navigator !== 'undefined' &&
-    /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || '');
+  const ua = typeof navigator !== 'undefined' ? (navigator.userAgent || '') : '';
+  const isMobileDevice =
+    /Android|iPhone|iPad|iPod|Mobile/i.test(ua) ||
+    (/Macintosh/i.test(ua) && typeof navigator !== 'undefined' && navigator.maxTouchPoints > 1);
+  const isSafariDesktop =
+    !isMobileDevice && /Safari/i.test(ua) && !/Chrome|Chromium|Edg|OPR|CriOS|FxiOS/i.test(ua);
+
+  const detachRecognition = useCallback((rec) => {
+    if (!rec) return;
+    try {
+      rec.onstart = null;
+      rec.onresult = null;
+      rec.onerror = null;
+      rec.onend = null;
+    } catch (e) {}
+    try {
+      rec.abort();
+    } catch (e) {}
+  }, []);
 
   // =========================================================================
   // 1. INITIALIZE & PRELOAD VOICES (TTS)
@@ -224,10 +245,16 @@ export function useSpeechEngine({
 
     let currentIndex = 0;
     let hasEnded = false;
+    let chunkStartedAt = Date.now();
+    let chunkHasStarted = false;
 
     const finishSpeech = () => {
       if (hasEnded) return;
       hasEnded = true;
+      if (ttsKeepAliveTimerRef.current) {
+        clearInterval(ttsKeepAliveTimerRef.current);
+        ttsKeepAliveTimerRef.current = null;
+      }
       setIsSpeaking(false);
       currentUtteranceRef.current = null;
       if (typeof window !== 'undefined' && window.__ielts_active_utterance) {
@@ -237,14 +264,18 @@ export function useSpeechEngine({
     };
 
     const playNextChunk = () => {
-      if (sessionId !== ttsSessionIdRef.current) return;
+      if (sessionId !== ttsSessionIdRef.current || hasEnded) return;
 
       if (currentIndex >= chunks.length) {
         finishSpeech();
         return;
       }
 
-      const chunkText = chunks[currentIndex];
+      const myChunkIndex = currentIndex;
+      chunkStartedAt = Date.now();
+      chunkHasStarted = false;
+
+      const chunkText = chunks[myChunkIndex];
       const utterance = new SpeechSynthesisUtterance(chunkText);
 
       if (voice) {
@@ -262,23 +293,25 @@ export function useSpeechEngine({
       }
 
       utterance.onstart = () => {
-        if (sessionId !== ttsSessionIdRef.current) return;
+        if (sessionId !== ttsSessionIdRef.current || currentIndex !== myChunkIndex) return;
+        chunkHasStarted = true;
         setIsSpeaking(true);
       };
 
       utterance.onend = () => {
-        if (sessionId !== ttsSessionIdRef.current) return;
+        if (sessionId !== ttsSessionIdRef.current || hasEnded || currentIndex !== myChunkIndex) return;
         currentIndex++;
         // Small 30ms gap between sentence clauses avoids audio queue stutter
         setTimeout(playNextChunk, 30);
       };
 
       utterance.onerror = (e) => {
-        if (sessionId !== ttsSessionIdRef.current) return;
+        if (sessionId !== ttsSessionIdRef.current || hasEnded) return;
         if (e.error === 'interrupted' || e.error === 'canceled') {
           return;
         }
         console.warn('Speech synthesis chunk error:', e);
+        if (currentIndex !== myChunkIndex) return;
         currentIndex++;
         if (currentIndex < chunks.length) {
           setTimeout(playNextChunk, 40);
@@ -293,6 +326,33 @@ export function useSpeechEngine({
 
       window.speechSynthesis.speak(utterance);
     };
+
+    // Stall recovery watchdog: prevents long segments or dropped Chromium/Safari onend from freezing state
+    ttsKeepAliveTimerRef.current = setInterval(() => {
+      if (sessionId !== ttsSessionIdRef.current || hasEnded) {
+        clearInterval(ttsKeepAliveTimerRef.current);
+        ttsKeepAliveTimerRef.current = null;
+        return;
+      }
+      const chunkIdx = currentIndex;
+      if (chunkIdx >= chunks.length) return;
+      const elapsed = Date.now() - chunkStartedAt;
+      const maxChunkMs = Math.max(12000, (chunks[chunkIdx]?.length || 20) * 165);
+      const isIdleBetweenChunks =
+        !window.speechSynthesis.speaking && !window.speechSynthesis.pending;
+
+      if (
+        (chunkHasStarted && isIdleBetweenChunks && elapsed > 900) ||
+        (!chunkHasStarted && isIdleBetweenChunks && elapsed > 3800) ||
+        elapsed > maxChunkMs
+      ) {
+        if (elapsed > maxChunkMs) {
+          try { window.speechSynthesis.cancel(); } catch (e) {}
+        }
+        currentIndex = chunkIdx + 1;
+        playNextChunk();
+      }
+    }, 900);
 
     setIsSpeaking(true);
     setTimeout(playNextChunk, 25);
@@ -339,7 +399,18 @@ export function useSpeechEngine({
     recognition.maxAlternatives = 5;
     recognition.lang = 'en-US'; // Best recognition accuracy across accents
 
+    recognition.onstart = () => {
+      if (recognitionRef.current !== recognition) return;
+      lastSttActivityAtRef.current = Date.now();
+      setSpeechError(prev => (prev === 'network' || prev === 'no-speech' ? null : prev));
+    };
+
     recognition.onresult = (event) => {
+      if (recognitionRef.current !== recognition) return;
+      consecutiveEmptyRestartsRef.current = 0;
+      lastSttActivityAtRef.current = Date.now();
+      setSpeechError(prev => (prev === 'network' ? null : prev));
+
       let liveInterim = '';
       let newlyFinalized = '';
       const latestAlts = [];
@@ -399,6 +470,7 @@ export function useSpeechEngine({
     };
 
     recognition.onerror = (event) => {
+      if (recognitionRef.current !== recognition) return;
       console.warn('Speech recognition status notice:', event.error);
       const hasActiveRecorder =
         mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive';
@@ -418,51 +490,92 @@ export function useSpeechEngine({
       } else if (event.error === 'no-speech') {
         // Silence pause detected, watchdog will auto-restart if still intentional
       } else if (event.error === 'network') {
-        // Network drop in cloud STT - do not crash candidate audio recording
-        console.warn('Speech recognition network warning');
+        // Surface network warning while keeping any active MediaRecorder alive
+        setSpeechError('network');
       } else if (event.error === 'aborted') {
         // Normal abort
       }
     };
 
     recognition.onend = () => {
+      if (recognitionRef.current !== recognition) return;
+
+      // Flush pending interim transcript before restarting or stopping (especially vital on Mobile single-utterance mode)
+      const pendingInterim = (interimTranscriptRef.current || '').trim();
+      if (pendingInterim) {
+        const prevAcc = accumulatedTranscriptRef.current || '';
+        if (!prevAcc.toLowerCase().endsWith(pendingInterim.toLowerCase())) {
+          accumulatedTranscriptRef.current = sanitizeSpeakingTranscript(
+            (prevAcc + ' ' + pendingInterim).replace(/\s+/g, ' ').trim()
+          );
+          const currentClip = currentClipIdRef.current;
+          setTranscript(accumulatedTranscriptRef.current);
+          if (currentClip) {
+            setTranscriptsByClip(prev => ({ ...prev, [currentClip]: accumulatedTranscriptRef.current }));
+          }
+        }
+        interimTranscriptRef.current = '';
+        setInterimTranscript('');
+      }
+
       // Watchdog Auto-Reconnect: if candidate is still actively recording, restart STT cleanly
       if (isIntentionalListeningRef.current) {
+        const msSinceActivity = Date.now() - (lastSttActivityAtRef.current || 0);
+        if (msSinceActivity < 1500 && !pendingInterim) {
+          consecutiveEmptyRestartsRef.current += 1;
+        } else {
+          consecutiveEmptyRestartsRef.current = 0;
+        }
+
+        if (consecutiveEmptyRestartsRef.current >= 6) {
+          setSpeechError(prev => prev || 'stt-service-unavailable');
+          return;
+        }
+
         setTimeout(() => {
-          if (isIntentionalListeningRef.current) {
+          if (!isIntentionalListeningRef.current || recognitionRef.current !== recognition) return;
+          try {
+            recognition.start();
+          } catch (err) {
+            // If current recognition instance is in invalid state, recreate fresh instance
             try {
-              recognition.start();
-            } catch (err) {
-              // If current recognition instance is in invalid state, recreate fresh instance
-              try {
-                const fresh = initSpeechRecognition();
-                recognitionRef.current = fresh;
-                if (fresh) fresh.start();
-              } catch (e) {
-                console.warn('Watchdog STT restart warning:', e);
-              }
+              detachRecognition(recognition);
+              const fresh = initSpeechRecognition();
+              recognitionRef.current = fresh;
+              if (fresh) fresh.start();
+            } catch (e) {
+              console.warn('Watchdog STT restart warning:', e);
             }
           }
-        }, 120);
+        }, 150);
       } else {
         setInterimTranscript('');
       }
     };
 
     return recognition;
-  }, [isSpeechRecognitionSupported]);
+  }, [detachRecognition, isMobileDevice, isSpeechRecognitionSupported]);
 
   // Start candidate microphone listening + media recorder (Fault-Tolerant & Reliable)
   const startListening = useCallback(async (clipId = 'clip_current') => {
+    const myStartId = ++listenStartIdRef.current;
+    consecutiveEmptyRestartsRef.current = 0;
     setSpeechError(null);
     currentClipIdRef.current = clipId;
     setActiveClipId(clipId);
     isIntentionalListeningRef.current = true;
 
-    // MOBILE FAST-PATH: On iOS Safari & Android Chrome, opening getUserMedia + MediaRecorder
-    // simultaneously with SpeechRecognition locks/starves the mobile mic hardware, and any
-    // `await` before recognition.start() breaks iOS Safari's user-gesture requirement.
-    if (isMobileDevice && isSpeechRecognitionSupported) {
+    // MOBILE / SAFARI FAST-PATH: On iOS Safari, iPadOS & Android Chrome (and macOS Safari), opening
+    // getUserMedia + MediaRecorder simultaneously with SpeechRecognition locks the mic hardware, and any
+    // `await` before recognition.start() breaks Safari's user-gesture requirement.
+    if ((isMobileDevice || isSafariDesktop) && isSpeechRecognitionSupported) {
+      acousticMetricsRef.current = {
+        peakLevel: 0,
+        totalLevel: 0,
+        sampleCount: 0,
+        activeCount: 0,
+        startedAt: Date.now()
+      };
       try {
         if (mediaStreamRef.current) {
           try {
@@ -471,7 +584,7 @@ export function useSpeechEngine({
           mediaStreamRef.current = null;
         }
         if (recognitionRef.current) {
-          try { recognitionRef.current.abort(); } catch (e) {}
+          detachRecognition(recognitionRef.current);
           recognitionRef.current = null;
         }
         const recognition = initSpeechRecognition();
@@ -482,7 +595,31 @@ export function useSpeechEngine({
           return;
         }
       } catch (mobileSttErr) {
-        console.warn('Mobile synchronous SpeechRecognition start fallback to MediaRecorder:', mobileSttErr);
+        if (mobileSttErr?.name === 'NotAllowedError' || mobileSttErr?.name === 'SecurityError') {
+          setSpeechError('not-allowed');
+          isIntentionalListeningRef.current = false;
+          setIsListening(false);
+          throw mobileSttErr;
+        }
+        if (mobileSttErr?.name === 'InvalidStateError') {
+          setIsListening(true);
+          setTimeout(() => {
+            if (!isIntentionalListeningRef.current || myStartId !== listenStartIdRef.current) return;
+            try {
+              detachRecognition(recognitionRef.current);
+              const fresh = initSpeechRecognition();
+              recognitionRef.current = fresh;
+              if (fresh) fresh.start();
+            } catch (retryErr) {
+              console.warn('Mobile STT InvalidState retry warning:', retryErr);
+              setSpeechError('audio-capture');
+              isIntentionalListeningRef.current = false;
+              setIsListening(false);
+            }
+          }, 180);
+          return;
+        }
+        console.warn('Mobile/Safari synchronous SpeechRecognition fallback to MediaRecorder:', mobileSttErr);
       }
     }
 
@@ -502,7 +639,7 @@ export function useSpeechEngine({
         !mediaStreamRef.current || 
         !mediaStreamRef.current.active || 
         mediaStreamRef.current.getAudioTracks().length === 0 || 
-        mediaStreamRef.current.getAudioTracks().some(t => t.readyState === 'ended')
+        mediaStreamRef.current.getAudioTracks().some(t => t.readyState === 'ended' || t.muted)
       ) {
         stream = await navigator.mediaDevices.getUserMedia({
           audio: {
@@ -511,6 +648,10 @@ export function useSpeechEngine({
             autoGainControl: true
           }
         });
+        if (!isIntentionalListeningRef.current || myStartId !== listenStartIdRef.current) {
+          stream.getTracks().forEach(t => { try { t.stop(); } catch (e) {} });
+          return;
+        }
         mediaStreamRef.current = stream;
       } else {
         stream = mediaStreamRef.current;
@@ -529,6 +670,8 @@ export function useSpeechEngine({
       }
     }
 
+    if (!isIntentionalListeningRef.current || myStartId !== listenStartIdRef.current) return;
+
     // Microphone acquired! Turn UI to listening immediately
     setIsListening(true);
 
@@ -543,8 +686,14 @@ export function useSpeechEngine({
         }
         if (actx.state === 'suspended') {
           await actx.resume();
+          if (!isIntentionalListeningRef.current || myStartId !== listenStartIdRef.current) return;
+        }
+        if (mediaSourceRef.current) {
+          try { mediaSourceRef.current.disconnect(); } catch (e) {}
+          mediaSourceRef.current = null;
         }
         const source = actx.createMediaStreamSource(stream);
+        mediaSourceRef.current = source;
         const analyser = actx.createAnalyser();
         analyser.fftSize = 64;
         source.connect(analyser);
@@ -632,10 +781,12 @@ export function useSpeechEngine({
       console.warn('MediaRecorder error:', mrErr);
     }
 
+    if (!isIntentionalListeningRef.current || myStartId !== listenStartIdRef.current) return;
+
     // 5. Start Speech Recognition (Safely isolated so STT issues do NOT break audio recording)
     try {
       if (recognitionRef.current) {
-        try { recognitionRef.current.abort(); } catch (e) {}
+        detachRecognition(recognitionRef.current);
         recognitionRef.current = null;
       }
 
@@ -647,18 +798,36 @@ export function useSpeechEngine({
           recognition.start();
         } catch (sttErr) {
           console.warn('Speech recognition immediate start notice:', sttErr);
+          setTimeout(() => {
+            if (!isIntentionalListeningRef.current || myStartId !== listenStartIdRef.current) return;
+            try {
+              detachRecognition(recognitionRef.current);
+              const fresh = initSpeechRecognition();
+              recognitionRef.current = fresh;
+              if (fresh) fresh.start();
+            } catch (retryErr) {
+              console.warn('Speech recognition retry failed:', retryErr);
+              setSpeechError('stt-service-unavailable');
+            }
+          }, 200);
         }
       }
     } catch (recErr) {
       console.warn('Speech recognition setup warning:', recErr);
     }
-  }, [initSpeechRecognition, isMobileDevice, isSpeechRecognitionSupported]);
+  }, [detachRecognition, initSpeechRecognition, isMobileDevice, isSafariDesktop, isSpeechRecognitionSupported]);
 
   // Stop listening instantly and finalize audio clip (Flushes any pending interim words)
   const stopListening = useCallback(() => {
+    listenStartIdRef.current += 1;
     isIntentionalListeningRef.current = false;
     // OPTIMISTIC UI: Instant visual feedback to user (0ms lag)
     setIsListening(false);
+    if (volumeIntervalRef.current) {
+      clearInterval(volumeIntervalRef.current);
+      volumeIntervalRef.current = null;
+    }
+    setMicLevel(0);
 
     // FLUSH INTERIM BUFFER: Prevent word truncation/loss at sentence end
     if (interimTranscriptRef.current && interimTranscriptRef.current.trim()) {
@@ -794,9 +963,10 @@ export function useSpeechEngine({
       }
 
       // 2. Stop Recognition
+      listenStartIdRef.current += 1;
       isIntentionalListeningRef.current = false;
       if (recognitionRef.current) {
-        try { recognitionRef.current.abort(); } catch (e) {}
+        detachRecognition(recognitionRef.current);
         recognitionRef.current = null;
       }
 
@@ -815,6 +985,10 @@ export function useSpeechEngine({
       }
 
       // 5. Close Audio Context & clear interval
+      if (mediaSourceRef.current) {
+        try { mediaSourceRef.current.disconnect(); } catch (e) {}
+        mediaSourceRef.current = null;
+      }
       if (volumeIntervalRef.current) {
         clearInterval(volumeIntervalRef.current);
         volumeIntervalRef.current = null;
