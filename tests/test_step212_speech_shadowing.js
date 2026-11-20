@@ -139,7 +139,15 @@ assert.ok(bankTasks.some(t => t.part === 'part2'), 'Should include Part 2 Cue Ca
 assert.ok(bankTasks.some(t => t.part === 'part3'), 'Should include Part 3 Discussion tasks');
 bankTasks.forEach((t) => {
   assert.ok(!t.titleEn.includes('undefined') && !t.titleVi.includes('undefined'), `Task ${t.id} title must not contain undefined`);
+  assert.notStrictEqual(t.requiresAuth, true, `Task ${t.id} must not require auth`);
+  assert.ok(Array.isArray(t.segments) && t.segments.length >= 1, `Task ${t.id} must have >= 1 segment`);
+  assert.ok(!/@ieltsbank|!JFMUTCBOL/i.test(t.titleEn + ' ' + t.segments.map(s => s.text).join(' ')), `Task ${t.id} must not contain watermarks`);
 });
+const target9Tasks = bankTasks.filter((t) => t.sourceTag === 'Target 9 Bank');
+target9Tasks.forEach((t) => assert.strictEqual(t.requiresAuth, false, `Target 9 task ${t.id} must have requiresAuth === false`));
+assert.ok(target9Tasks.filter((t) => t.part === 'part1').length === 30, 'Expected 30 Target 9 Part 1 sets');
+assert.ok(target9Tasks.filter((t) => t.part === 'part2').length === 255, 'Expected 255 Target 9 Part 2 cue cards');
+assert.ok(target9Tasks.filter((t) => t.part === 'part3').length === 139, 'Expected 139 Target 9 Part 3 sets');
 
 // 7. Source-Level Integration & Routing Verification
 const root = process.cwd();

@@ -1063,6 +1063,175 @@ export async function loadSpeakingBankShadowingTasks() {
     console.warn('[ShadowingData] Failed to adapt Speaking Bank topics:', err);
   }
 
+  // 4. Lazy-load Target 9 IELTS Speaking Bank (Part 1, Part 2, Part 3)
+  try {
+    const darshan = await import('./shadowingDarshanBank.js');
+
+    (darshan.DARSHAN_PART1_SETS || []).forEach((set, idx) => {
+      const segments = [];
+      (set.items || []).forEach((qa, qIdx) => {
+        if (!qa?.q || !qa?.a) return;
+        segments.push({
+          id: `${set.id}-q${qIdx + 1}`,
+          unitType: 'prompt_only',
+          phaseLabelEn: `Examiner Question ${qIdx + 1}`,
+          phaseLabelVi: `Câu hỏi Giám khảo ${qIdx + 1}`,
+          text: qa.q,
+          intonationText: buildAutoIntonation(qa.q),
+          meaningEn: 'Speaking Part 1 general round question',
+          meaningVi: 'Câu hỏi Speaking Part 1',
+          mouthTipEn: 'Listen to the question stress before shadowing the model answer.',
+          mouthTipVi: 'Nghe trọng âm câu hỏi trước khi nhại câu trả lời mẫu.'
+        });
+        const blocks = splitLongTextIntoReadableBlocks(qa.a);
+        blocks.forEach((blk, bIdx) => {
+          const sentCount = blk.split(/[.!?]+/).filter(s => s.trim().length > 0).length;
+          segments.push({
+            id: `${set.id}-a${qIdx + 1}-${bIdx + 1}`,
+            unitType: sentCount >= 2 ? 'paragraph' : 'sentence',
+            phaseLabelEn: blocks.length > 1 ? `Model Answer ${qIdx + 1} (${bIdx + 1}/${blocks.length})` : `Model Answer ${qIdx + 1}`,
+            phaseLabelVi: blocks.length > 1 ? `Trả lời mẫu ${qIdx + 1} (${bIdx + 1}/${blocks.length})` : `Trả lời mẫu ${qIdx + 1}`,
+            text: blk,
+            intonationText: buildAutoIntonation(blk),
+            meaningEn: 'Speaking Part 1 sample response',
+            meaningVi: 'Câu trả lời mẫu Speaking Part 1',
+            mouthTipEn: 'Keep a natural conversational pace and clear word endings.',
+            mouthTipVi: 'Giữ nhịp tự nhiên và bật rõ âm cuối.'
+          });
+        });
+      });
+
+      if (segments.length >= 2) {
+        tasks.push(normalizeShadowingTask({
+          id: `shad-${set.id}`,
+          part: 'part1',
+          bandLevel: '7.5',
+          topicEn: 'General Round',
+          topicVi: 'General Round',
+          titleEn: `Part 1: ${set.title}`,
+          titleVi: `Part 1: ${set.title}`,
+          promptEn: set.items?.[0]?.q || set.title,
+          promptVi: set.items?.[0]?.q || set.title,
+          sourceTag: 'Target 9 Bank',
+          xpReward: 100,
+          segments
+        }, idx));
+      }
+    });
+
+    (darshan.DARSHAN_PART2_CARDS || []).forEach((card, idx) => {
+      if (!card?.sampleAnswer) return;
+      const rawParas = String(card.sampleAnswer)
+        .split(/\n\s*\n/)
+        .map(p => p.trim())
+        .filter(Boolean);
+
+      const phaseNames = [
+        { en: 'Opening Hook', vi: 'Mở đầu & Giới thiệu' },
+        { en: 'Background & Context', vi: 'Bối cảnh & Hoàn cảnh' },
+        { en: 'Core Details', vi: 'Chi tiết chính' },
+        { en: 'Highlights & Experience', vi: 'Điểm nhấn & Trải nghiệm' },
+        { en: 'Reflection & Closing', vi: 'Đúc kết & Cảm nhận' }
+      ];
+
+      const segments = [];
+      let segIdx = 0;
+      rawParas.forEach((paraText, pIdx) => {
+        const blocks = splitLongTextIntoReadableBlocks(paraText);
+        blocks.forEach((blk, bIdx) => {
+          segIdx += 1;
+          const sentCount = blk.split(/[.!?]+/).filter(s => s.trim().length > 0).length;
+          const phaseMeta = phaseNames[Math.min(pIdx, phaseNames.length - 1)];
+          segments.push({
+            id: `${card.id}-seg${segIdx}`,
+            unitType: sentCount >= 2 ? 'paragraph' : 'sentence',
+            phaseLabelEn: blocks.length > 1 ? `${phaseMeta.en} (${bIdx + 1}/${blocks.length})` : phaseMeta.en,
+            phaseLabelVi: blocks.length > 1 ? `${phaseMeta.vi} (${bIdx + 1}/${blocks.length})` : phaseMeta.vi,
+            text: blk,
+            intonationText: buildAutoIntonation(blk),
+            meaningEn: 'Speaking Part 2 Cue Card model segment',
+            meaningVi: 'Đoạn bài mẫu Speaking Part 2',
+            mouthTipEn: 'Match natural Part 2 storytelling rhythm and pause at commas.',
+            mouthTipVi: 'Giữ nhịp kể chuyện Part 2 tự nhiên và ngắt nhẹ ở dấu phẩy.'
+          });
+        });
+      });
+
+      if (segments.length >= 1) {
+        tasks.push(normalizeShadowingTask({
+          id: `shad-${card.id}`,
+          part: 'part2',
+          bandLevel: '8.0',
+          topicEn: 'Cue Card Topic',
+          topicVi: 'Cue Card Topic',
+          titleEn: `Cue Card: ${card.title}`,
+          titleVi: `Cue Card: ${card.title}`,
+          promptEn: card.title,
+          promptVi: card.title,
+          cueBulletsEn: card.bullets || [],
+          cueBulletsVi: card.bullets || [],
+          sourceTag: 'Target 9 Bank',
+          xpReward: 125,
+          segments
+        }, idx));
+      }
+    });
+
+    (darshan.DARSHAN_PART3_SETS || []).forEach((set, idx) => {
+      const segments = [];
+      (set.items || []).forEach((qa, qIdx) => {
+        if (!qa?.q || !qa?.a) return;
+        segments.push({
+          id: `${set.id}-q${qIdx + 1}`,
+          unitType: 'prompt_only',
+          phaseLabelEn: `Examiner Prompt ${qIdx + 1}`,
+          phaseLabelVi: `Câu hỏi Part 3 #${qIdx + 1}`,
+          text: qa.q,
+          intonationText: buildAutoIntonation(qa.q),
+          meaningEn: 'Part 3 follow-up question',
+          meaningVi: 'Câu hỏi thảo luận Part 3',
+          mouthTipEn: 'Listen for analytical emphasis.',
+          mouthTipVi: 'Nghe nhấn trọng âm lập luận.'
+        });
+        const blocks = splitLongTextIntoReadableBlocks(qa.a);
+        blocks.forEach((blk, bIdx) => {
+          const sentCount = blk.split(/[.!?]+/).filter(s => s.trim().length > 0).length;
+          segments.push({
+            id: `${set.id}-a${qIdx + 1}-${bIdx + 1}`,
+            unitType: sentCount >= 2 ? 'paragraph' : 'sentence',
+            phaseLabelEn: blocks.length > 1 ? `Analytical Answer ${qIdx + 1} (${bIdx + 1}/${blocks.length})` : `Analytical Answer ${qIdx + 1}`,
+            phaseLabelVi: blocks.length > 1 ? `Luận điểm mẫu ${qIdx + 1} (${bIdx + 1}/${blocks.length})` : `Luận điểm mẫu ${qIdx + 1}`,
+            text: blk,
+            intonationText: buildAutoIntonation(blk),
+            meaningEn: 'Part 3 follow-up sample response',
+            meaningVi: 'Câu trả lời mẫu Part 3',
+            mouthTipEn: 'Pause cleanly after discourse markers and keep steady rhythm.',
+            mouthTipVi: 'Ngắt nhẹ sau từ nối và giữ nhịp đều.'
+          });
+        });
+      });
+
+      if (segments.length >= 2) {
+        tasks.push(normalizeShadowingTask({
+          id: `shad-${set.id}`,
+          part: 'part3',
+          bandLevel: '8.0',
+          topicEn: set.topic || 'Part 3 Discussion',
+          topicVi: set.topic || 'Part 3 Discussion',
+          titleEn: `Part 3: ${set.topic}`,
+          titleVi: `Part 3: ${set.topic}`,
+          promptEn: `Follow-up discussion on ${set.topic}.`,
+          promptVi: `Thảo luận chuyên sâu Part 3 chủ đề ${set.topic}.`,
+          sourceTag: 'Target 9 Bank',
+          xpReward: 125,
+          segments
+        }, idx));
+      }
+    });
+  } catch (err) {
+    console.warn('[ShadowingData] Failed to load Target 9 Speaking Bank:', err);
+  }
+
   cachedSpeakingShadowTasks = tasks;
   return tasks;
 }

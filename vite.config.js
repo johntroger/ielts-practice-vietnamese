@@ -75,6 +75,9 @@ export default defineConfig({
             if (id.includes('speakingTopics')) {
               return 'data-speaking-topics';
             }
+            if (id.includes('shadowingDarshanBank')) {
+              return 'data-shadowing-darshan';
+            }
             // Skill-specific Dynamic Chunks for Theory & Strategy Guides
             if (id.includes('writingTheoryData')) {
               return 'data-theory-writing';
