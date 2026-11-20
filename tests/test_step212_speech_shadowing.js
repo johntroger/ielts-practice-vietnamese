@@ -164,4 +164,16 @@ assert.ok(
   'handleListenAndRetry must skip non-gesture auto startListening on mobile devices'
 );
 
+// 9. Mobile active-segment focus scroll & compact locked preview guards
+assert.ok(
+  shadowingWsSrc.includes('activeSegRef') &&
+    shadowingWsSrc.includes('getBoundingClientRect') &&
+    !shadowingWsSrc.includes('segContainerRef.current.scrollHeight'),
+  'SpeechShadowingWorkspace.jsx must scroll specifically to activeSegRef via getBoundingClientRect (never scrollHeight past active segment)'
+);
+assert.ok(
+  shadowingWsSrc.includes('remainingLocked') && shadowingWsSrc.includes('if (idx > activeSegIndex) return null;'),
+  'SpeechShadowingWorkspace.jsx must collapse upcoming locked segments into a compact indicator bar'
+);
+
 console.log('✅ Step 212 passed all Speech Shadowing tests!');

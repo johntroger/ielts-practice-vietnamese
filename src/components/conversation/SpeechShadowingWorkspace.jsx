@@ -13,7 +13,9 @@ import {
   ChevronDown,
   ChevronUp,
   BookOpen,
-  Layers
+  Layers,
+  Lock,
+  Sliders
 } from 'lucide-react';
 import {
   SHADOWING_DEFAULT_THRESHOLD,
@@ -96,6 +98,7 @@ export default function SpeechShadowingWorkspace({
     initialTaskId || SHADOWING_STARTER_TASKS[0].id
   );
   const [isMobileListOpen, setIsMobileListOpen] = useState(false);
+  const [isMobileDisplayOpen, setIsMobileDisplayOpen] = useState(false);
 
   const [showPromptCard, setShowPromptCard] = useState(() =>
     typeof window !== 'undefined' ? window.innerWidth >= 640 : true
@@ -183,6 +186,8 @@ export default function SpeechShadowingWorkspace({
 
   // Refs & Monotonic Session Guard
   const segContainerRef = useRef(null);
+  const activeSegRef = useRef(null);
+  const summaryRef = useRef(null);
   const userAudioRef = useRef(null);
   const liveSpokenTextRef = useRef('');
   const lastAutoEvaluatedRef = useRef('');
@@ -338,17 +343,34 @@ export default function SpeechShadowingWorkspace({
     } catch (e) {}
   }, [isOpen, currentTask?.id, chunkMode, activeSegIndex, isCompleted, segmentResults, segmentAttempts, totalSpeakingSec]);
 
-  // Auto-scroll active segment into view
+  // Auto-scroll active segment (or completion summary) cleanly into view inside container
   useEffect(() => {
-    if (segContainerRef.current) {
+    if (!isOpen) return;
+    const rafId = requestAnimationFrame(() => {
+      const container = segContainerRef.current;
+      const targetEl = isCompleted ? summaryRef.current : activeSegRef.current;
+      if (!container || !targetEl) return;
       try {
-        segContainerRef.current.scrollTo({
-          top: segContainerRef.current.scrollHeight,
+        const containerRect = container.getBoundingClientRect();
+        const targetRect = targetEl.getBoundingClientRect();
+        const paddingTop = targetRect.height + 64 <= containerRect.height ? 32 : 8;
+        const desiredTop = container.scrollTop + (targetRect.top - containerRect.top) - paddingTop;
+        container.scrollTo({
+          top: Math.max(0, desiredTop),
           behavior: 'smooth'
         });
       } catch (e) {}
-    }
-  }, [activeSegIndex, isCompleted, evaluationResult, phase]);
+    });
+    return () => cancelAnimationFrame(rafId);
+  }, [
+    isOpen,
+    activeSegIndex,
+    isCompleted,
+    evaluationResult,
+    phase,
+    hasStarted,
+    speechEngine.isListening
+  ]);
 
   // Trigger machine reading for a given segment with monotonic session guard
   const runMachineReadForSegment = useCallback(
@@ -961,15 +983,15 @@ Separate paragraphs with a blank line. If ${customPart} is part1 or part3, prefi
 
   return (
     <>
-      {/* PART & CHUNK FLOW FILTER STRIP */}
-      <div className="px-3 sm:px-6 py-2 bg-slate-950/70 border-b border-slate-800/90 flex items-center justify-between gap-2 overflow-x-auto no-scrollbar shrink-0">
+      {/* PART & CHUNK FLOW FILTER STRIP (Desktop/Tablet lg+) */}
+      <div className="hidden lg:flex px-6 py-2 bg-slate-950/70 border-b border-slate-800/90 items-center justify-between gap-2 overflow-x-auto no-scrollbar shrink-0">
         <div className="flex items-center space-x-1.5 shrink-0">
           {SHADOWING_PARTS.map(p => (
             <button
               key={p.id}
               type="button"
               onClick={() => setActivePart(p.id)}
-              className={`px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-black transition-all cursor-pointer whitespace-nowrap ${
+              className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer whitespace-nowrap ${
                 activePart === p.id
                   ? `bg-gradient-to-r ${p.badgeColor} text-white shadow-md`
                   : 'bg-slate-900 hover:bg-slate-800 text-slate-400 border border-slate-800'
@@ -981,7 +1003,7 @@ Separate paragraphs with a blank line. If ${customPart} is part1 or part3, prefi
         </div>
 
         {/* Chunk Flow Mode Pills (Desktop/Tablet) */}
-        <div className="hidden sm:flex items-center bg-slate-900 border border-slate-800 rounded-xl p-0.5 shrink-0">
+        <div className="flex items-center bg-slate-900 border border-slate-800 rounded-xl p-0.5 shrink-0">
           <Layers className="w-3 h-3 text-cyan-400 mx-1.5 shrink-0" />
           {SHADOWING_CHUNK_MODES.map(m => (
             <button
@@ -989,7 +1011,7 @@ Separate paragraphs with a blank line. If ${customPart} is part1 or part3, prefi
               type="button"
               onClick={() => handleSelectChunkMode(m.id)}
               title={isEn ? m.descEn : m.descVi}
-              className={`px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-black cursor-pointer whitespace-nowrap transition-all ${
+              className={`px-2.5 py-1 rounded-lg text-[11px] font-black cursor-pointer whitespace-nowrap transition-all ${
                 chunkMode === m.id
                   ? 'bg-cyan-600 text-white'
                   : 'text-slate-400 hover:text-white'
@@ -1002,29 +1024,100 @@ Separate paragraphs with a blank line. If ${customPart} is part1 or part3, prefi
       </div>
 
       {/* MOBILE TASK SELECTOR & CHUNK MODE BAR (< lg) */}
-      <div className="lg:hidden px-3 py-2 bg-slate-900/95 border-b border-slate-800 flex items-center justify-between gap-2 shrink-0">
-        <button
-          type="button"
-          onClick={() => setIsMobileListOpen(true)}
-          className="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl bg-slate-800 text-purple-300 border border-purple-500/30 text-xs font-bold shrink-0 cursor-pointer"
-        >
-          <List className="w-3.5 h-3.5" />
-          <span>{isEn ? `Tasks (${filteredTasks.length})` : `Bài mẫu (${filteredTasks.length})`}</span>
-        </button>
+      <div className="lg:hidden bg-slate-900/95 border-b border-slate-800 shrink-0">
+        <div className="px-3 py-1.5 flex items-center justify-between gap-1.5">
+          <button
+            type="button"
+            onClick={() => setIsMobileListOpen(true)}
+            className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-slate-800 text-purple-300 border border-purple-500/30 text-[11px] font-bold shrink-0 cursor-pointer"
+          >
+            <List className="w-3.5 h-3.5" />
+            <span>{isEn ? `Tasks (${filteredTasks.length})` : `Bài mẫu (${filteredTasks.length})`}</span>
+          </button>
 
-        <div className="min-w-0 flex-1 text-center text-[11px] font-extrabold text-white truncate">
-          {isEn ? currentTask.titleEn : currentTask.titleVi}
+          <div className="min-w-0 flex-1 flex items-center justify-center space-x-1.5">
+            <span className="text-[11px] font-extrabold text-white truncate">
+              {isEn ? currentTask.titleEn : currentTask.titleVi}
+            </span>
+            <span className="px-1.5 py-0.2 rounded-full text-[10px] font-black bg-purple-500/15 text-purple-300 border border-purple-500/30 shrink-0">
+              {Math.min(activeSegIndex + 1, resolvedSegments.length)}/{resolvedSegments.length}
+            </span>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleCycleChunkMode}
+            className="px-2 py-1.5 rounded-xl bg-slate-800 text-cyan-300 border border-cyan-500/30 text-[11px] font-bold flex items-center space-x-1 shrink-0 cursor-pointer"
+            title={isEn ? 'Switch segmentation mode (Smart Flow / 1 Sentence / Paragraph)' : 'Đổi kiểu ngắt câu/đoạn'}
+          >
+            <Layers className="w-3 h-3" />
+            <span className="hidden sm:inline">{isEn ? currentChunkMeta.labelEn : currentChunkMeta.labelVi}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setIsMobileDisplayOpen(prev => !prev)}
+            className={`p-1.5 rounded-xl border shrink-0 cursor-pointer transition-colors ${
+              isMobileDisplayOpen
+                ? 'bg-purple-600 text-white border-purple-400'
+                : 'bg-slate-800 text-slate-300 border-slate-700'
+            }`}
+            title={isEn ? 'Cue Card & Display Options' : 'Đề bài & Tùy chọn hiển thị'}
+            aria-label={isEn ? 'Cue Card & Display Options' : 'Đề bài & Tùy chọn hiển thị'}
+          >
+            <Sliders className="w-3.5 h-3.5" />
+          </button>
+
+          <button
+            type="button"
+            onClick={() => resetShadowingState(true)}
+            className="p-1.5 rounded-xl bg-slate-800 text-slate-300 border border-slate-700 shrink-0 cursor-pointer"
+            title={isEn ? 'Restart task' : 'Làm lại từ đầu'}
+            aria-label={isEn ? 'Restart task' : 'Làm lại từ đầu'}
+          >
+            <RotateCcw className="w-3.5 h-3.5" />
+          </button>
         </div>
 
-        <button
-          type="button"
-          onClick={handleCycleChunkMode}
-          className="px-2.5 py-1.5 rounded-xl bg-slate-800 text-cyan-300 border border-cyan-500/30 text-[11px] font-bold flex items-center space-x-1 shrink-0 cursor-pointer"
-          title={isEn ? 'Switch segmentation mode (Smart Flow / 1 Sentence / Paragraph)' : 'Đổi kiểu ngắt câu/đoạn'}
-        >
-          <Layers className="w-3 h-3" />
-          <span>{isEn ? currentChunkMeta.labelEn : currentChunkMeta.labelVi}</span>
-        </button>
+        {isMobileDisplayOpen && (
+          <div className="px-3 pb-2 pt-1 border-t border-slate-800/80 flex items-center justify-between gap-1.5 overflow-x-auto no-scrollbar animate-in fade-in duration-150">
+            <button
+              type="button"
+              onClick={() => setShowPromptCard(prev => !prev)}
+              className={`px-2.5 py-1 rounded-xl text-[10px] font-bold border cursor-pointer flex items-center space-x-1 whitespace-nowrap ${
+                showPromptCard
+                  ? 'bg-indigo-600/25 text-indigo-200 border-indigo-500/40'
+                  : 'bg-slate-950 text-slate-400 border-slate-800'
+              }`}
+            >
+              <BookOpen className="w-3 h-3" />
+              <span>{isEn ? 'Cue Card' : 'Đề bài'}</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowIntonation(prev => !prev)}
+              className={`px-2.5 py-1 rounded-xl text-[10px] font-bold border cursor-pointer whitespace-nowrap ${
+                showIntonation
+                  ? 'bg-amber-500/15 text-amber-300 border-amber-500/40'
+                  : 'bg-slate-950 text-slate-400 border-slate-800'
+              }`}
+            >
+              {isEn ? 'Intonation' : 'Ngữ điệu'}
+            </button>
+            <button
+              type="button"
+              onClick={() => setKeywordsOnly(prev => !prev)}
+              className={`px-2.5 py-1 rounded-xl text-[10px] font-bold border cursor-pointer flex items-center space-x-1 whitespace-nowrap ${
+                keywordsOnly
+                  ? 'bg-purple-500/20 text-purple-300 border-purple-500/40'
+                  : 'bg-slate-950 text-slate-400 border-slate-800'
+              }`}
+            >
+              <Eye className="w-3 h-3" />
+              <span>{isEn ? 'Keywords' : 'Ẩn chữ'}</span>
+            </button>
+          </div>
+        )}
       </div>
 
       {/* MAIN TWO-PANE WORKSPACE */}
@@ -1145,8 +1238,8 @@ Separate paragraphs with a blank line. If ${customPart} is part1 or part3, prefi
 
         {/* MAIN SHADOWING STAGE */}
         <main className="flex-1 flex flex-col min-h-0 overflow-hidden bg-slate-900/40">
-          {/* Task Header & Display Controls */}
-          <div className="px-4 sm:px-6 py-3 bg-slate-950/70 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2 shrink-0">
+          {/* Task Header & Display Controls (Desktop lg+) */}
+          <div className="hidden lg:flex px-6 py-3 bg-slate-950/70 border-b border-slate-800 flex-wrap items-center justify-between gap-2 shrink-0">
             <div className="min-w-0 flex-1">
               <div className="flex items-center space-x-2">
                 <h3 className="text-sm sm:text-base font-black text-white truncate">
@@ -1235,7 +1328,7 @@ Separate paragraphs with a blank line. If ${customPart} is part1 or part3, prefi
             className="flex-1 overflow-y-auto p-3 sm:p-6 space-y-3.5 overscroll-contain"
           >
             {!hasStarted && !isCompleted && (
-              <div className="p-4 rounded-2xl bg-gradient-to-r from-purple-950/60 via-indigo-950/50 to-slate-900 border border-purple-500/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="hidden lg:flex p-4 rounded-2xl bg-gradient-to-r from-purple-950/60 via-indigo-950/50 to-slate-900 border border-purple-500/40 sm:items-center justify-between gap-3">
                 <div className="text-xs sm:text-sm text-slate-200">
                   <strong className="text-purple-300">
                     {isEn ? 'Speech Shadowing Ready' : 'Sẵn sàng Speech Shadowing'}
@@ -1256,67 +1349,89 @@ Separate paragraphs with a blank line. If ${customPart} is part1 or part3, prefi
             )}
 
             {resolvedSegments.map((seg, idx) => {
-              const status =
-                idx < activeSegIndex
-                  ? 'past_done'
-                  : idx === activeSegIndex
-                  ? 'active'
-                  : 'locked';
+              if (idx > activeSegIndex) return null;
+              const status = idx < activeSegIndex ? 'past_done' : 'active';
               const isActive = status === 'active';
               const clip = speechEngine.audioClips[`shad_${currentTask.id}_${seg.id}`];
 
               return (
-                <ShadowingSegmentCard
-                  key={seg.id}
-                  segment={seg}
-                  segmentIndex={idx}
-                  totalSegments={resolvedSegments.length}
-                  status={status}
-                  phase={isActive ? phase : 'idle'}
-                  isMachineSpeakingNow={isActive && phase === 'machine_reading' && speechEngine.isSpeaking}
-                  showIntonation={showIntonation}
-                  keywordsOnly={keywordsOnly}
-                  revealThisSeg={revealCurrentSeg}
-                  onToggleRevealThisSeg={() => setRevealCurrentSeg(prev => !prev)}
-                  onPlayModel={(s, rate) => {
-                    speechEngine.stopListening();
-                    speechEngine.speak(s.text, { examinerId: selectedExaminerId, rate, silentChime: true });
-                  }}
-                  onSkipReadingToSpeak={handleSkipReadingToSpeak}
-                  isListening={isActive && speechEngine.isListening}
-                  isAutoMode={isAutoMode}
-                  liveSpokenText={isActive ? liveSpokenText : ''}
-                  isWaitingForRetrySpeech={isActive && isWaitingForRetrySpeech}
-                  speechError={isActive ? speechEngine.speechError : null}
-                  analyserNode={speechEngine.analyserNode}
-                  micLevel={speechEngine.micLevel || 0}
-                  hasAnalyser={Boolean(speechEngine.analyserNode)}
-                  evaluationResult={isActive ? evaluationResult : segmentResults[seg.id]}
-                  attemptCount={segmentAttempts[seg.id] || 0}
-                  passThreshold={passThreshold}
-                  currentAudioClip={clip}
-                  isPlayingUserClip={playingUserClipSegId === seg.id}
-                  onToggleRecording={handleToggleRecording}
-                  onReplayUserClip={handleReplayUserClip}
-                  onListenAndRetry={handleListenAndRetry}
-                  onSkipSegment={handleSkipSegment}
-                  onAdvanceAfterPass={advanceAfterPass}
-                  showManualFallback={isActive && showManualFallback}
-                  onToggleManualFallback={() => setShowManualFallback(prev => !prev)}
-                  manualSpokenInput={manualSpokenInput}
-                  onChangeManualSpokenInput={setManualSpokenInput}
-                  onRunManualEvaluation={(txt) => handleRunEvaluation(txt)}
-                  apiKey={apiKey}
-                  isDeepAiGrading={isDeepAiGrading}
-                  deepAiError={deepAiError}
-                  onDeepAiAudioCheck={handleDeepAiAudioCheck}
-                  isEn={isEn}
-                />
+                <div key={seg.id} ref={isActive ? activeSegRef : null}>
+                  <ShadowingSegmentCard
+                    segment={seg}
+                    segmentIndex={idx}
+                    totalSegments={resolvedSegments.length}
+                    status={status}
+                    phase={isActive ? phase : 'idle'}
+                    isMachineSpeakingNow={isActive && phase === 'machine_reading' && speechEngine.isSpeaking}
+                    showIntonation={showIntonation}
+                    keywordsOnly={keywordsOnly}
+                    revealThisSeg={revealCurrentSeg}
+                    onToggleRevealThisSeg={() => setRevealCurrentSeg(prev => !prev)}
+                    onPlayModel={(s, rate) => {
+                      speechEngine.stopListening();
+                      speechEngine.speak(s.text, { examinerId: selectedExaminerId, rate, silentChime: true });
+                    }}
+                    onSkipReadingToSpeak={handleSkipReadingToSpeak}
+                    isListening={isActive && speechEngine.isListening}
+                    isAutoMode={isAutoMode}
+                    liveSpokenText={isActive ? liveSpokenText : ''}
+                    isWaitingForRetrySpeech={isActive && isWaitingForRetrySpeech}
+                    speechError={isActive ? speechEngine.speechError : null}
+                    analyserNode={speechEngine.analyserNode}
+                    micLevel={speechEngine.micLevel || 0}
+                    hasAnalyser={Boolean(speechEngine.analyserNode)}
+                    evaluationResult={isActive ? evaluationResult : segmentResults[seg.id]}
+                    attemptCount={segmentAttempts[seg.id] || 0}
+                    passThreshold={passThreshold}
+                    currentAudioClip={clip}
+                    isPlayingUserClip={playingUserClipSegId === seg.id}
+                    onToggleRecording={handleToggleRecording}
+                    onReplayUserClip={handleReplayUserClip}
+                    onListenAndRetry={handleListenAndRetry}
+                    onSkipSegment={handleSkipSegment}
+                    onAdvanceAfterPass={advanceAfterPass}
+                    showManualFallback={isActive && showManualFallback}
+                    onToggleManualFallback={() => setShowManualFallback(prev => !prev)}
+                    manualSpokenInput={manualSpokenInput}
+                    onChangeManualSpokenInput={setManualSpokenInput}
+                    onRunManualEvaluation={(txt) => handleRunEvaluation(txt)}
+                    apiKey={apiKey}
+                    isDeepAiGrading={isDeepAiGrading}
+                    deepAiError={deepAiError}
+                    onDeepAiAudioCheck={handleDeepAiAudioCheck}
+                    isEn={isEn}
+                  />
+                </div>
               );
             })}
 
+            {/* Compact Next-Segment Locked Preview Bar (keeps active segment front-and-center) */}
+            {!isCompleted && activeSegIndex < resolvedSegments.length - 1 && (() => {
+              const nextSeg = resolvedSegments[activeSegIndex + 1];
+              const remainingLocked = resolvedSegments.length - 1 - activeSegIndex;
+              const nextLabel =
+                nextSeg.unitType === 'prompt_only'
+                  ? isEn ? 'Examiner Prompt' : 'Câu hỏi Giám khảo'
+                  : nextSeg.unitType === 'paragraph'
+                  ? isEn ? 'Paragraph' : 'Đoạn văn'
+                  : isEn ? '1 Sentence' : '1 Câu';
+              return (
+                <div className={`flex ${nextSeg.unitType === 'prompt_only' ? 'justify-start' : 'justify-end'} opacity-65 select-none`}>
+                  <div className="px-3.5 py-2 rounded-2xl bg-slate-900/75 border border-slate-800/90 flex items-center space-x-2 text-[11px] text-slate-400">
+                    <Lock className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+                    <span className="font-semibold">
+                      {isEn
+                        ? `Next: #${activeSegIndex + 2} (${nextLabel})${remainingLocked > 1 ? ` (+${remainingLocked - 1} more)` : ''} — Pass ≥${passThreshold}% to unlock`
+                        : `Tiếp theo: #${activeSegIndex + 2} (${nextLabel})${remainingLocked > 1 ? ` (+${remainingLocked - 1} phần)` : ''} — Đạt ≥${passThreshold}% để mở`}
+                    </span>
+                  </div>
+                </div>
+              );
+            })()}
+
             {isCompleted && sessionSummary && (
-              <ConversationSummaryCard
+              <div ref={summaryRef}>
+                <ConversationSummaryCard
                 scenario={currentTask}
                 summary={sessionSummary}
                 mode="shadowing"
@@ -1365,6 +1480,7 @@ Separate paragraphs with a blank line. If ${customPart} is part1 or part3, prefi
                 onOpenInPronunciation={onOpenPronunciation}
                 isEn={isEn}
               />
+              </div>
             )}
             <div className="h-3 lg:hidden" />
           </div>
@@ -1479,6 +1595,22 @@ Separate paragraphs with a blank line. If ${customPart} is part1 or part3, prefi
             </div>
 
             <div className="p-3 border-b border-slate-800/80 space-y-2 shrink-0">
+              <div className="flex items-center space-x-1.5 overflow-x-auto no-scrollbar pb-0.5">
+                {SHADOWING_PARTS.map(p => (
+                  <button
+                    key={p.id}
+                    type="button"
+                    onClick={() => setActivePart(p.id)}
+                    className={`px-2.5 py-1.5 rounded-xl text-[11px] font-black transition-all cursor-pointer whitespace-nowrap shrink-0 ${
+                      activePart === p.id
+                        ? `bg-gradient-to-r ${p.badgeColor} text-white shadow-sm`
+                        : 'bg-slate-950 text-slate-400 border border-slate-800'
+                    }`}
+                  >
+                    {isEn ? p.labelEn : p.labelVi}
+                  </button>
+                ))}
+              </div>
               <div className="relative">
                 <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input

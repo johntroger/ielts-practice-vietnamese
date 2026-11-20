@@ -133,4 +133,16 @@ assert.ok(
   'ConversationStudioModal.jsx must prevent useEffect mic-abort / double partner read races'
 );
 
+// 9. Mobile active-turn focus scroll & compact locked preview guards
+assert.ok(
+  convModalSrc.includes('activeTurnRef') &&
+    convModalSrc.includes('getBoundingClientRect') &&
+    !convModalSrc.includes('turnsContainerRef.current.scrollHeight'),
+  'ConversationStudioModal.jsx must scroll specifically to activeTurnRef via getBoundingClientRect (never scrollHeight past active turn)'
+);
+assert.ok(
+  convModalSrc.includes('remainingLocked') && convModalSrc.includes('if (idx > activeTurnIndex) return null;'),
+  'ConversationStudioModal.jsx must collapse upcoming locked turns into a compact indicator bar'
+);
+
 console.log('✅ Step 211 passed all Conversation Studio tests!');
