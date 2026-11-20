@@ -9,18 +9,18 @@
 
 <a id="feat-conversation-studio"></a>
 
-## 1. Phòng Luyện Hội Thoại Đối Đáp Có Kiểm Định Phát Âm (/conversation)
+## 1. Phòng Luyện Hội Thoại & Speech Shadowing (/conversation)
 
 > **Phiên bản**: `v3.6` | **Huy hiệu**: `Mới Ra Mắt` | **Kỹ năng**: **Speaking** • **Listening** | **Phím tắt**: _Không có_
 
 ### 📝 Mô Tả Tính Năng
-Máy và người thay phiên đối thoại theo kịch bản chuẩn Cambridge & đời sống; mỗi lượt nói của bạn được chấm phát âm trực tiếp và chỉ mở khóa câu tiếp theo khi đạt chuẩn tối thiểu (mặc định 75%).
+Tích hợp 2 chế độ: (1) Hội Thoại Đối Đáp thay phiên và (2) Speech Shadowing bài mẫu Speaking Part 1/2/3 — máy đọc trước từng câu hoặc từng đoạn theo mạch bài, bạn lặp lại đạt chuẩn tối thiểu (mặc định 75%) mới mở khóa phần tiếp theo.
 
 ### 💎 Điểm Nổi Bật & Giá Trị Học Thuật
-- Cơ Chế Khóa Ngưỡng Phát Âm Theo Lượt (/conversation): Máy nói trước hoặc người mở lời, đọc đạt ngưỡng tối thiểu (mặc định 75%, tùy chỉnh 70%/75%/80%/88%) mới mở khóa câu kế tiếp.
-- Tích Hợp Hybrid Audio Phòng Thu R2 & Kho Đề Speaking: Tận dụng trực tiếp giọng thu âm chuẩn Cambridge R2 và các bộ câu hỏi Part 1 & Part 3 kèm đổi vai A↔B.
-- Tổng Kết Trọn Vẹn & Phân Tích Độ Trôi Chảy: Phát lại toàn bộ cuộc đối thoại ghép giọng Máy + giọng ghi âm thật của bạn, đếm từ đệm và lưu từ vấp sang Sổ Tay / Sổ Lỗi Sai.
-- Trình Tạo Kịch Bản Tự Chọn & AI: Nhập thoại tay (A: / B:) hoặc tạo nhanh bằng Gemini AI và mở toàn quyền truy cập cho mọi người học.
+- Cơ Chế Khóa Ngưỡng Phát Âm Theo Lượt (/conversation): Đạt chuẩn tối thiểu (mặc định 75%, tùy chỉnh 70%/75%/80%/88%) mới mở khóa câu tiếp theo trong hội thoại.
+- Tab Speech Shadowing Mới (/conversation?tab=shadowing): Luyện bài mẫu IELTS Speaking Part 1, Part 2 Cue Card & Part 3 theo chế độ Theo mạch bài / Từng câu / Theo đoạn; máy đọc trước, bạn lặp lại đạt chuẩn để đi tiếp.
+- Tích Hợp Hybrid Audio Phòng Thu R2 & Kho Đề Speaking: Tận dụng trực tiếp giọng thu âm chuẩn Cambridge R2, bài mẫu Part 1/2/3 có sẵn và đổi vai A↔B.
+- Tổng Kết Trọn Vẹn & Trình Tạo Tự Chọn: Phát lại toàn bộ bài nói/hội thoại ghép giọng thật, phân tích từ đệm, lưu từ vấp sang Sổ Tay / Sổ Lỗi Sai và nhập liệu bài mẫu mới tức thì.
 
 ### 🎯 Hướng Dẫn Thao Tác Từng Bước
 ```text

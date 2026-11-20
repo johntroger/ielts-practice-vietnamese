@@ -45,14 +45,14 @@ export const BADGE_LOCALIZATION_EN = {
 
 export const FEATURE_LOCALIZATION_EN = {
   'feat-conversation-studio': {
-    title: 'Turn-Gated Conversation & Pronunciation Studio (/conversation)',
-    shortDesc: 'Interactive machine-and-learner roleplay dialogues where each spoken line is scored in real time and unlocks the next turn only after meeting the pronunciation pass threshold (default 75%).',
+    title: 'Conversation Roleplay & Speech Shadowing Studio (/conversation)',
+    shortDesc: 'Dual-mode speaking studio combining (1) Turn-Gated Dialogue Roleplay and (2) Speech Shadowing for IELTS Speaking Part 1/2/3 sample tasks — the machine reads each sentence or paragraph first and unlocks the next segment only after meeting your minimum accuracy threshold (default 75%).',
     badge: 'New Release',
     highlights: [
-      'Turn-Gated Pronunciation Progression (/conversation): Alternate turns with the AI partner and pass the minimum pronunciation accuracy gate (default 75%, configurable 70%/75%/80%/88%) to unlock the next line.',
-      'Hybrid Studio Audio & Speaking Bank Integration: Combines authentic Cloudflare R2 studio recordings, Speaking Part 1 & Part 3 topics, and 1-click A↔B role swapping.',
-      'Full Dialogue Replay & Fluency Diagnostics: Replay the complete conversation alternating partner audio and your recorded voice, analyze filler words, and save struggled words to Notebook or Mistake Log.',
-      'Custom Script & AI Dialogue Creator: Paste custom A:/B: scripts or generate new scenarios with Gemini AI with full open access for all learners.'
+      'Turn-Gated Dialogue Roleplay (/conversation): Alternate turns with the AI partner and pass the minimum pronunciation accuracy gate (default 75%, configurable 70%/75%/80%/88%) to unlock the next line.',
+      'New Speech Shadowing Tab (/conversation?tab=shadowing): Practice IELTS Speaking Part 1, Part 2 Cue Cards, and Part 3 samples in Smart Flow, 1 Sentence, or Paragraph modes with listen-then-repeat gating.',
+      'Hybrid Studio Audio & Speaking Bank Integration: Combines authentic Cloudflare R2 studio recordings, Speaking Part 1/2/3 sample banks, and 1-click A↔B role swapping.',
+      'Full Speech Replay, Fluency Diagnostics & Custom Importer: Replay your complete shadowed speech or dialogue, analyze filler words, save struggled words, and import custom sample tasks anytime.'
     ],
     usageGuide: 'Open the "Tools" menu on the Navbar and select "Conversation Studio" or navigate directly to /conversation.',
     quickActionLabel: 'Open Conversation Studio'

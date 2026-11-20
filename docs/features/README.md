@@ -43,9 +43,9 @@ Hệ thống tích hợp toàn bộ các phím tắt tiêu chuẩn quốc tế g
 
 Dưới đây là các tính năng học thuật mới nhất được nâng cấp trên hệ thống:
 
-### ✦ [Phòng Luyện Hội Thoại Đối Đáp Có Kiểm Định Phát Âm (/conversation)](practice-tools.md#feat-conversation-studio)
+### ✦ [Phòng Luyện Hội Thoại & Speech Shadowing (/conversation)](practice-tools.md#feat-conversation-studio)
 - **Phiên bản**: `v3.6` | **Kỹ năng**: **Speaking** • **Listening**
-- **Tóm tắt**: Máy và người thay phiên đối thoại theo kịch bản chuẩn Cambridge & đời sống; mỗi lượt nói của bạn được chấm phát âm trực tiếp và chỉ mở khóa câu tiếp theo khi đạt chuẩn tối thiểu (mặc định 75%).
+- **Tóm tắt**: Tích hợp 2 chế độ: (1) Hội Thoại Đối Đáp thay phiên và (2) Speech Shadowing bài mẫu Speaking Part 1/2/3 — máy đọc trước từng câu hoặc từng đoạn theo mạch bài, bạn lặp lại đạt chuẩn tối thiểu (mặc định 75%) mới mở khóa phần tiếp theo.
 - **Cách dùng nhanh**: Mở menu "Công Cụ" trên thanh Navbar và chọn "Luyện Hội Thoại Đối Đáp" hoặc truy cập trực tiếp đường dẫn /conversation.
 
 ### ✦ [Phòng Luyện Phát Âm & Ngữ Điệu Chuẩn Cambridge (/pronunciation)](practice-tools.md#feat-pronunciation-studio)

@@ -65,11 +65,15 @@ export function useSubmissionAndTaskActions({
   const handleExportAllData = () => {
     let conversationStats = null;
     let conversationCustom = null;
+    let shadowingStats = null;
+    let shadowingCustom = null;
     let pronunciationStats = null;
     let pronunciationCustom = null;
     try {
       conversationStats = JSON.parse(localStorage.getItem('ielts_conversation_stats_v1') || 'null');
       conversationCustom = JSON.parse(localStorage.getItem('ielts_conversation_custom_v1') || 'null');
+      shadowingStats = JSON.parse(localStorage.getItem('ielts_shadowing_stats_v1') || 'null');
+      shadowingCustom = JSON.parse(localStorage.getItem('ielts_shadowing_custom_v1') || 'null');
       pronunciationStats = JSON.parse(localStorage.getItem('ielts_pronunciation_stats_v1') || 'null');
       pronunciationCustom = JSON.parse(localStorage.getItem('ielts_pronunciation_custom_drills_v1') || 'null');
     } catch (e) {}
@@ -88,6 +92,8 @@ export function useSubmissionAndTaskActions({
       streakCount,
       conversationStats,
       conversationCustom,
+      shadowingStats,
+      shadowingCustom,
       pronunciationStats,
       pronunciationCustom,
       exportDate: new Date().toISOString()
@@ -130,6 +136,8 @@ export function useSubmissionAndTaskActions({
     try {
       if (data.conversationStats) localStorage.setItem('ielts_conversation_stats_v1', JSON.stringify(data.conversationStats));
       if (data.conversationCustom) localStorage.setItem('ielts_conversation_custom_v1', JSON.stringify(data.conversationCustom));
+      if (data.shadowingStats) localStorage.setItem('ielts_shadowing_stats_v1', JSON.stringify(data.shadowingStats));
+      if (data.shadowingCustom) localStorage.setItem('ielts_shadowing_custom_v1', JSON.stringify(data.shadowingCustom));
       if (data.pronunciationStats) localStorage.setItem('ielts_pronunciation_stats_v1', JSON.stringify(data.pronunciationStats));
       if (data.pronunciationCustom) localStorage.setItem('ielts_pronunciation_custom_drills_v1', JSON.stringify(data.pronunciationCustom));
     } catch (e) {}

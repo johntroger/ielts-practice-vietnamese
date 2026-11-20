@@ -18,6 +18,7 @@ import SpeakingFillerTracker from '../speaking/SpeakingFillerTracker';
 export default function ConversationSummaryCard({
   scenario,
   summary,
+  mode = 'roleplay',
   combinedUserTranscript = '',
   totalSpeakingDurationSec = 30,
   isFullReplaying,
@@ -35,6 +36,8 @@ export default function ConversationSummaryCard({
   const [savedMistakeWords, setSavedMistakeWords] = useState({});
 
   if (!scenario || !summary) return null;
+
+  const isShadowing = mode === 'shadowing';
 
   const handleSaveVocab = (w) => {
     onSaveWordToNotebook?.(w);
@@ -56,7 +59,13 @@ export default function ConversationSummaryCard({
           </div>
           <div>
             <h3 className="text-base sm:text-lg font-black text-white">
-              {isEn ? 'Conversation Completed!' : 'Hoàn Thành Hội Thoại!'}
+              {isShadowing
+                ? isEn
+                  ? 'Shadowing Completed!'
+                  : 'Hoàn Thành Speech Shadowing!'
+                : isEn
+                ? 'Conversation Completed!'
+                : 'Hoàn Thành Hội Thoại!'}
             </h3>
             <p className="text-xs text-slate-300">
               {isEn ? scenario.titleEn : scenario.titleVi}
@@ -78,22 +87,28 @@ export default function ConversationSummaryCard({
             <span>
               {isFullReplaying
                 ? isEn
-                  ? `Stop Replay (Turn ${replayTurnIdx + 1})`
-                  : `Dừng Phát (Lượt ${replayTurnIdx + 1})`
+                  ? `Stop Replay (${isShadowing ? 'Seg' : 'Turn'} ${replayTurnIdx + 1})`
+                  : `Dừng Phát (${isShadowing ? 'Đoạn' : 'Lượt'} ${replayTurnIdx + 1})`
+                : isShadowing
+                ? isEn
+                  ? 'Replay Full Speech'
+                  : 'Phát Lại Toàn Bộ Bài Nói'
                 : isEn
                 ? 'Replay Full Dialogue'
                 : 'Phát Lại Trọn Đoạn Hội Thoại'}
             </span>
           </button>
 
-          <button
-            type="button"
-            onClick={onSwapRolesAndRestart}
-            className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-indigo-300 border border-indigo-500/30 text-xs font-bold flex items-center space-x-1.5 cursor-pointer"
-          >
-            <ArrowLeftRight className="w-3.5 h-3.5" />
-            <span>{isEn ? 'Swap Roles & Retry' : 'Đổi Vai & Luyện Lại'}</span>
-          </button>
+          {!isShadowing && onSwapRolesAndRestart && (
+            <button
+              type="button"
+              onClick={onSwapRolesAndRestart}
+              className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-indigo-300 border border-indigo-500/30 text-xs font-bold flex items-center space-x-1.5 cursor-pointer"
+            >
+              <ArrowLeftRight className="w-3.5 h-3.5" />
+              <span>{isEn ? 'Swap Roles & Retry' : 'Đổi Vai & Luyện Lại'}</span>
+            </button>
+          )}
 
           <button
             type="button"
@@ -183,7 +198,11 @@ export default function ConversationSummaryCard({
 
         {summary.struggledWords.length === 0 ? (
           <p className="text-xs text-emerald-300">
-            {isEn
+            {isShadowing
+              ? isEn
+                ? 'Every word across your segments scored ≥84%. Try Paragraph mode or raise the pass threshold!'
+                : 'Mọi từ trong các đoạn vừa đọc đều đạt ≥84%. Hãy thử chế độ Theo đoạn hoặc nâng ngưỡng chuẩn lên 80–88%!'
+              : isEn
               ? 'Every word across your turns scored ≥84%. Ready to swap roles or try a higher Band threshold!'
               : 'Mọi từ trong các lượt nói của bạn đều đạt ≥84%. Hãy thử đổi vai hoặc nâng ngưỡng chuẩn lên 80–88%!'}
           </p>

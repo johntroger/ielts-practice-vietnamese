@@ -1152,14 +1152,21 @@ export default function App() {
         pathname === '/conversation' ||
         pathname.endsWith('/conversation') ||
         pathname.startsWith('/conversation/') ||
+        pathname === '/shadowing' ||
+        pathname.endsWith('/shadowing') ||
+        pathname === '/speech-shadowing' ||
+        pathname.endsWith('/speech-shadowing') ||
         pathname === '/luyen-hoi-thoai' ||
         pathname.endsWith('/luyen-hoi-thoai')
       );
 
       const isHashMatch = (
         hash === '#conversation' ||
+        hash === '#shadowing' ||
+        hash === '#speech-shadowing' ||
         hash === '#luyen-hoi-thoai' ||
-        hash.startsWith('#conversation')
+        hash.startsWith('#conversation') ||
+        hash.startsWith('#shadowing')
       );
 
       const modal = search.get('modal');
@@ -1170,7 +1177,9 @@ export default function App() {
       const isSearchMatch = (
         modal === 'conversation' ||
         mode === 'conversation' ||
+        mode === 'shadowing' ||
         view === 'conversation' ||
+        view === 'shadowing' ||
         page === 'conversation'
       );
 
@@ -1178,10 +1187,34 @@ export default function App() {
     };
 
     const extractConversationParams = () => {
+      const pathname = window.location.pathname.toLowerCase().replace(/\/+$/, '');
+      const hash = window.location.hash.toLowerCase();
       const search = new URLSearchParams(window.location.search);
       const track = search.get('track');
       const scenario = search.get('scenario');
-      return (track || scenario) ? { track: track || undefined, scenario: scenario || undefined } : true;
+      const shadowingTask = search.get('task');
+      let tab = search.get('tab');
+      if (
+        !tab &&
+        (
+          pathname.endsWith('/shadowing') ||
+          pathname.endsWith('/speech-shadowing') ||
+          hash.startsWith('#shadowing') ||
+          hash.startsWith('#speech-shadowing') ||
+          search.get('mode') === 'shadowing' ||
+          search.get('view') === 'shadowing'
+        )
+      ) {
+        tab = 'shadowing';
+      }
+      return (track || scenario || tab || shadowingTask)
+        ? {
+            track: track || undefined,
+            scenario: scenario || undefined,
+            tab: tab || undefined,
+            shadowingTask: shadowingTask || undefined
+          }
+        : true;
     };
 
     if (checkIsConversationRoute()) {
@@ -1214,18 +1247,27 @@ export default function App() {
       pathname === '/conversation' ||
       pathname.endsWith('/conversation') ||
       pathname.startsWith('/conversation/') ||
+      pathname === '/shadowing' ||
+      pathname.endsWith('/shadowing') ||
+      pathname === '/speech-shadowing' ||
+      pathname.endsWith('/speech-shadowing') ||
       pathname === '/luyen-hoi-thoai' ||
       pathname.endsWith('/luyen-hoi-thoai') ||
       hash === '#conversation' ||
+      hash === '#shadowing' ||
+      hash === '#speech-shadowing' ||
       hash === '#luyen-hoi-thoai' ||
-      hash.startsWith('#conversation')
+      hash.startsWith('#conversation') ||
+      hash.startsWith('#shadowing')
     );
 
     if (isConvOpen && !isCurrentlyOnConversationUrl) {
       try {
         const payload = typeof modals.conversation === 'object' && modals.conversation !== null ? modals.conversation : null;
         let targetUrl = '/conversation';
-        if (payload?.track && payload.track !== 'all') {
+        if (payload?.tab === 'shadowing') {
+          targetUrl = '/conversation?tab=shadowing';
+        } else if (payload?.track && payload.track !== 'all') {
           targetUrl = `/conversation?track=${payload.track}`;
         }
         window.history.pushState({ modal: 'conversation' }, '', targetUrl);
@@ -1234,7 +1276,7 @@ export default function App() {
       }
     } else if (!isConvOpen && isCurrentlyOnConversationUrl) {
       try {
-        if (hash.startsWith('#conversation') || hash === '#luyen-hoi-thoai') {
+        if (hash.startsWith('#conversation') || hash.startsWith('#shadowing') || hash === '#speech-shadowing' || hash === '#luyen-hoi-thoai') {
           window.history.pushState(null, '', window.location.pathname + window.location.search);
         } else {
           window.history.pushState(null, '', '/');
