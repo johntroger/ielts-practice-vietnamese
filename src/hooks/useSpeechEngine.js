@@ -92,12 +92,14 @@ export function useSpeechEngine({
   const lastSpokenTextRef = useRef('');
 
   // 3. Audio Recorder & RAM-only storage
+  const MAX_RAM_AUDIO_CLIPS = 30;
   const [audioClips, setAudioClips] = useState({}); // { [clipId]: { blob, url, duration } }
   const audioClipsRef = useRef({});
   const currentClipIdRef = useRef('clip_current');
   const mediaRecorderRef = useRef(null);
-  const recordedChunksRef = useRef([]);
-  const recordingStartTimeRef = useRef(null);
+  const discardActiveRecorderRef = useRef(null);
+  const clipGenRef = useRef({});
+  const clearEpochRef = useRef(0);
 
   // 4. Web Audio Analyser for Visualizer
   const [analyserNode, setAnalyserNode] = useState(null);
@@ -556,6 +558,101 @@ export function useSpeechEngine({
     return recognition;
   }, [detachRecognition, isMobileDevice, isSpeechRecognitionSupported]);
 
+  // Isolated per-segment MediaRecorder starter (prevents late onstop cross-clip corruption & stitch contamination)
+  const startMediaRecorderSegment = useCallback((stream, clipId) => {
+    try {
+      if (typeof window === 'undefined' || !window.MediaRecorder || !stream) return;
+
+      if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+        try { mediaRecorderRef.current.requestData(); } catch (e) {}
+        try { mediaRecorderRef.current.stop(); } catch (e) {}
+      }
+
+      const preferredMimes = [
+        'audio/webm;codecs=opus',
+        'audio/webm',
+        'audio/mp4',
+        'audio/ogg;codecs=opus'
+      ];
+      const mimeType =
+        typeof MediaRecorder.isTypeSupported === 'function'
+          ? preferredMimes.find(t => MediaRecorder.isTypeSupported(t)) || ''
+          : '';
+
+      const localChunks = [];
+      const capturedClipId = clipId || currentClipIdRef.current;
+      const capturedGen = clipGenRef.current[capturedClipId] || 0;
+      const capturedEpoch = clearEpochRef.current;
+      const startedAt = Date.now();
+      let discardOnStop = false;
+      discardActiveRecorderRef.current = () => {
+        discardOnStop = true;
+      };
+
+      const recorderOptions = { audioBitsPerSecond: 128000 };
+      if (mimeType) recorderOptions.mimeType = mimeType;
+
+      const recorder = new MediaRecorder(stream, recorderOptions);
+
+      recorder.ondataavailable = (e) => {
+        if (e.data && e.data.size > 0) {
+          localChunks.push(e.data);
+        }
+      };
+
+      recorder.onstop = () => {
+        if (
+          discardOnStop ||
+          localChunks.length === 0 ||
+          capturedEpoch !== clearEpochRef.current ||
+          (clipGenRef.current[capturedClipId] || 0) !== capturedGen
+        ) {
+          return;
+        }
+        const blob = new Blob(localChunks, { type: recorder.mimeType || mimeType || 'audio/webm' });
+        if (!blob || blob.size === 0) return;
+
+        const duration = Math.max(1, Math.round((Date.now() - startedAt) / 1000));
+        const url = URL.createObjectURL(blob);
+
+        setAudioClips(prev => {
+          const updated = { ...prev };
+          if (updated[capturedClipId]?.url) {
+            try { URL.revokeObjectURL(updated[capturedClipId].url); } catch (e) {}
+          }
+          updated[capturedClipId] = {
+            blob,
+            url,
+            duration,
+            createdAt: Date.now()
+          };
+
+          const keys = Object.keys(updated);
+          if (keys.length > MAX_RAM_AUDIO_CLIPS) {
+            keys
+              .filter(k => k !== capturedClipId)
+              .sort((a, b) => (updated[a]?.createdAt || 0) - (updated[b]?.createdAt || 0))
+              .slice(0, keys.length - MAX_RAM_AUDIO_CLIPS)
+              .forEach((oldKey) => {
+                if (updated[oldKey]?.url) {
+                  try { URL.revokeObjectURL(updated[oldKey].url); } catch (e) {}
+                }
+                delete updated[oldKey];
+              });
+          }
+
+          audioClipsRef.current = updated;
+          return updated;
+        });
+      };
+
+      recorder.start(250);
+      mediaRecorderRef.current = recorder;
+    } catch (mrErr) {
+      console.warn('MediaRecorder segment error:', mrErr);
+    }
+  }, []);
+
   // Start candidate microphone listening + media recorder (Fault-Tolerant & Reliable)
   const startListening = useCallback(async (clipId = 'clip_current') => {
     const myStartId = ++listenStartIdRef.current;
@@ -726,60 +823,8 @@ export function useSpeechEngine({
       console.warn('AudioContext visualizer warning (recording continues):', actxErr);
     }
 
-    // 4. Setup MediaRecorder for RAM-only audio clip (Safely isolated)
-    try {
-      if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
-        try { mediaRecorderRef.current.stop(); } catch (e) {}
-      }
-
-      if (window.MediaRecorder && stream) {
-        recordedChunksRef.current = [];
-        const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
-          ? 'audio/webm;codecs=opus'
-          : MediaRecorder.isTypeSupported('audio/mp4')
-          ? 'audio/mp4'
-          : '';
-
-        const recorderOptions = { audioBitsPerSecond: 128000 };
-        if (mimeType) recorderOptions.mimeType = mimeType;
-
-        const recorder = new MediaRecorder(stream, recorderOptions);
-
-        recorder.ondataavailable = (e) => {
-          if (e.data && e.data.size > 0) {
-            recordedChunksRef.current.push(e.data);
-          }
-        };
-
-        recorder.onstop = () => {
-          const duration = recordingStartTimeRef.current 
-            ? Math.round((Date.now() - recordingStartTimeRef.current) / 1000) 
-            : 0;
-          const blob = new Blob(recordedChunksRef.current, { type: recorder.mimeType || 'audio/webm' });
-          const url = URL.createObjectURL(blob);
-
-          setAudioClips(prev => {
-            const updated = {
-              ...prev,
-              [currentClipIdRef.current]: {
-                blob,
-                url,
-                duration,
-                createdAt: Date.now()
-              }
-            };
-            audioClipsRef.current = updated;
-            return updated;
-          });
-        };
-
-        recordingStartTimeRef.current = Date.now();
-        recorder.start(250); // Slice chunks every 250ms
-        mediaRecorderRef.current = recorder;
-      }
-    } catch (mrErr) {
-      console.warn('MediaRecorder error:', mrErr);
-    }
+    // 4. Setup MediaRecorder for RAM-only audio clip (isolated per-instance chunks & clipId)
+    startMediaRecorderSegment(stream, clipId);
 
     if (!isIntentionalListeningRef.current || myStartId !== listenStartIdRef.current) return;
 
@@ -815,9 +860,9 @@ export function useSpeechEngine({
     } catch (recErr) {
       console.warn('Speech recognition setup warning:', recErr);
     }
-  }, [detachRecognition, initSpeechRecognition, isMobileDevice, isSafariDesktop, isSpeechRecognitionSupported]);
+  }, [detachRecognition, initSpeechRecognition, isMobileDevice, isSafariDesktop, isSpeechRecognitionSupported, startMediaRecorderSegment]);
 
-  // Stop listening instantly and finalize audio clip (Flushes any pending interim words)
+  // Stop listening instantly and finalize audio clip (Flushes any pending interim words & tail audio)
   const stopListening = useCallback(() => {
     listenStartIdRef.current += 1;
     isIntentionalListeningRef.current = false;
@@ -854,10 +899,19 @@ export function useSpeechEngine({
     }
 
     if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+      try { mediaRecorderRef.current.requestData(); } catch (e) {}
       try {
         mediaRecorderRef.current.stop();
       } catch (e) {}
     }
+  }, []);
+
+  const getLatestTranscript = useCallback(() => {
+    return [accumulatedTranscriptRef.current, interimTranscriptRef.current]
+      .filter(Boolean)
+      .join(' ')
+      .replace(/\s+/g, ' ')
+      .trim();
   }, []);
 
   const resetTranscript = useCallback((options = {}) => {
@@ -880,12 +934,23 @@ export function useSpeechEngine({
       confidenceHistory: [],
       lowConfidenceCount: 0
     });
-    if (options?.restartRecognition && isIntentionalListeningRef.current && recognitionRef.current) {
-      try {
-        recognitionRef.current.abort();
-      } catch (e) {}
+    if (options?.restartRecognition && isIntentionalListeningRef.current) {
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.abort();
+        } catch (e) {}
+      }
+      if (
+        options?.restartRecorder !== false &&
+        mediaStreamRef.current?.active &&
+        mediaRecorderRef.current &&
+        mediaRecorderRef.current.state !== 'inactive'
+      ) {
+        discardActiveRecorderRef.current?.();
+        startMediaRecorderSegment(mediaStreamRef.current, currentClipIdRef.current);
+      }
     }
-  }, []);
+  }, [startMediaRecorderSegment]);
 
   const getAcousticMetrics = useCallback(() => {
     const m = acousticMetricsRef.current;
@@ -918,6 +983,9 @@ export function useSpeechEngine({
   // 4. ZERO PERMANENT VOICE STORAGE CLEANUP
   // =========================================================================
   const deleteAudioClip = useCallback((clipId) => {
+    if (clipId) {
+      clipGenRef.current[clipId] = (clipGenRef.current[clipId] || 0) + 1;
+    }
     setAudioClips(prev => {
       const target = prev[clipId];
       if (target && target.url) {
@@ -937,6 +1005,8 @@ export function useSpeechEngine({
   }, []);
 
   const clearAudioClips = useCallback(() => {
+    clearEpochRef.current += 1;
+    clipGenRef.current = {};
     // Revoke all in-memory Blob URLs immediately to free browser RAM
     Object.values(audioClipsRef.current).forEach(clip => {
       if (clip && clip.url) {
@@ -970,7 +1040,8 @@ export function useSpeechEngine({
         recognitionRef.current = null;
       }
 
-      // 3. Stop MediaRecorder
+      // 3. Stop MediaRecorder (discarding any unmounted tail so no setState runs after unmount)
+      discardActiveRecorderRef.current?.();
       if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
         try { mediaRecorderRef.current.stop(); } catch (e) {}
         mediaRecorderRef.current = null;
@@ -1025,6 +1096,7 @@ export function useSpeechEngine({
     stopListening,
     resetTranscript,
     setCustomTranscript,
+    getLatestTranscript,
 
     // TTS State & Methods
     isSpeaking,

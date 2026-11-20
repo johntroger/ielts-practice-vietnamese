@@ -537,6 +537,27 @@ export const SHADOWING_STARTER_TASKS = [
 ];
 
 /**
+ * Splits prose into sentences safely without breaking on abbreviations (Dr., Mr., e.g., U.K.)
+ * or decimal numbers (7.5).
+ */
+export function splitIntoSentencesSafe(text = '') {
+  const raw = String(text || '').trim();
+  if (!raw) return [];
+
+  const DOT_PLACEHOLDER = '__ABBR_DOT__';
+  const protectedText = raw
+    .replace(/(\d)\.(\d)/g, `$1${DOT_PLACEHOLDER}$2`)
+    .replace(/\b(e\.g|i\.e|a\.m|p\.m|U\.S|U\.K)\./gi, (m) => m.replace(/\./g, DOT_PLACEHOLDER))
+    .replace(/\b(Mr|Mrs|Ms|Dr|Prof|Sr|Jr|St|vs)\./gi, (_, abbr) => `${abbr}${DOT_PLACEHOLDER}`)
+    .replace(/\betc\.(?=\s+[a-z,])/gi, () => `etc${DOT_PLACEHOLDER}`);
+
+  return protectedText
+    .split(/(?<=[.!?])\s+/)
+    .map(s => s.replace(new RegExp(DOT_PLACEHOLDER, 'g'), '.').trim())
+    .filter(Boolean);
+}
+
+/**
  * Resolves a task's segments according to the selected chunk mode:
  * - 'auto': preserves the author's natural mix of 1-sentence & paragraph segments
  * - 'sentence': splits paragraph segments into single sentences (keeps prompt_only cues intact)
@@ -554,10 +575,7 @@ export function resolveShadowingSegments(task, chunkMode = 'auto') {
         out.push(seg);
         return;
       }
-      const sentences = String(seg.text || '')
-        .split(/(?<=[.!?])\s+/)
-        .map(s => s.trim())
-        .filter(Boolean);
+      const sentences = splitIntoSentencesSafe(seg.text || '');
 
       if (sentences.length <= 1) {
         out.push({ ...seg, unitType: 'sentence' });
@@ -588,7 +606,7 @@ export function resolveShadowingSegments(task, chunkMode = 'auto') {
     if (bucket.length === 1) {
       merged.push({
         ...bucket[0],
-        unitType: bucket[0].text.split(/[.!?]+/).filter(Boolean).length > 1 ? 'paragraph' : bucket[0].unitType
+        unitType: splitIntoSentencesSafe(bucket[0].text || '').length > 1 ? 'paragraph' : bucket[0].unitType
       });
       bucket = [];
       return;
@@ -670,10 +688,7 @@ export function evaluateShadowingSegment({
  * Splits overly long pasted paragraphs (> 60 words) into 2-sentence chunks for reliable STT grading.
  */
 function splitLongTextIntoReadableBlocks(text = '') {
-  const sentences = String(text || '')
-    .split(/(?<=[.!?])\s+/)
-    .map(s => s.trim())
-    .filter(Boolean);
+  const sentences = splitIntoSentencesSafe(text);
   if (sentences.length <= 2) return [sentences.join(' ')].filter(Boolean);
 
   const blocks = [];
@@ -713,7 +728,7 @@ export function buildCustomShadowingTask({
   if (Array.isArray(providedSegments) && providedSegments.length > 0) {
     segments = providedSegments.map((seg, i) => ({
       id: seg.id || `cs-${i + 1}`,
-      unitType: seg.unitType || (String(seg.text || '').split(/[.!?]+/).filter(Boolean).length > 1 ? 'paragraph' : 'sentence'),
+      unitType: seg.unitType || (splitIntoSentencesSafe(seg.text || '').length > 1 ? 'paragraph' : 'sentence'),
       phaseLabelEn: seg.phaseLabelEn || `Segment ${i + 1}`,
       phaseLabelVi: seg.phaseLabelVi || `Đoạn ${i + 1}`,
       text: String(seg.text || '').trim(),
@@ -742,7 +757,7 @@ export function buildCustomShadowingTask({
         const subBlocks = splitLongTextIntoReadableBlocks(joined);
         subBlocks.forEach((txt) => {
           segCounter += 1;
-          const sentCount = txt.split(/[.!?]+/).filter(s => s.trim().length > 0).length;
+          const sentCount = splitIntoSentencesSafe(txt).length;
           const unitType = sentCount >= 2 ? 'paragraph' : 'sentence';
           segments.push({
             id: `cs-${segCounter}`,
@@ -1050,4 +1065,110 @@ export async function loadSpeakingBankShadowingTasks() {
 
   cachedSpeakingShadowTasks = tasks;
   return tasks;
+}
+
+/**
+ * Validates & normalizes an external/bulk-ingested IELTS Speaking sample task so it works seamlessly
+ * with open access, bilingual labels, Smart Flow chunking, and pass-gated scoring.
+ */
+export function normalizeShadowingTask(rawTask = {}, fallbackIndex = 0) {
+  const partRaw = String(rawTask.part || '').toLowerCase().trim();
+  const part =
+    partRaw === '1' || partRaw === 'part1' || partRaw === 'part 1'
+      ? 'part1'
+      : partRaw === '3' || partRaw === 'part3' || partRaw === 'part 3'
+      ? 'part3'
+      : 'part2';
+
+  const titleEn = String(rawTask.titleEn || rawTask.title || rawTask.topic || `Speaking Sample #${fallbackIndex + 1}`).trim();
+  const titleVi = String(rawTask.titleVi || titleEn).trim();
+  const topicEn = String(rawTask.topicEn || rawTask.category || 'IELTS Speaking').trim();
+  const topicVi = String(rawTask.topicVi || topicEn).trim();
+  const promptEn = String(rawTask.promptEn || rawTask.prompt || rawTask.question || titleEn).trim();
+  const promptVi = String(rawTask.promptVi || promptEn).trim();
+
+  let segments = [];
+  if (Array.isArray(rawTask.segments) && rawTask.segments.length > 0) {
+    segments = rawTask.segments
+      .map((seg, i) => {
+        const cleanText = String(seg?.text || '').trim();
+        if (!cleanText) return null;
+        const inferredType =
+          seg.unitType ||
+          (splitIntoSentencesSafe(cleanText).length >= 2 ? 'paragraph' : 'sentence');
+        return {
+          id: String(seg.id || `seg-${i + 1}`),
+          unitType: ['prompt_only', 'sentence', 'paragraph'].includes(inferredType)
+            ? inferredType
+            : 'sentence',
+          phaseLabelEn: String(seg.phaseLabelEn || (inferredType === 'paragraph' ? `Paragraph ${i + 1}` : `Sentence ${i + 1}`)).trim(),
+          phaseLabelVi: String(seg.phaseLabelVi || seg.phaseLabelEn || (inferredType === 'paragraph' ? `Đoạn ${i + 1}` : `Câu ${i + 1}`)).trim(),
+          text: cleanText,
+          intonationText: seg.intonationText || buildAutoIntonation(cleanText),
+          meaningEn: String(seg.meaningEn || '').trim(),
+          meaningVi: String(seg.meaningVi || seg.meaningEn || '').trim(),
+          mouthTipEn: String(seg.mouthTipEn || 'Articulate stressed syllables and final consonants cleanly.').trim(),
+          mouthTipVi: String(seg.mouthTipVi || seg.mouthTipEn || 'Nhấn rõ trọng âm và bật gọn phụ âm cuối.').trim(),
+          keyPhrases: Array.isArray(seg.keyPhrases) ? seg.keyPhrases : []
+        };
+      })
+      .filter(Boolean);
+  } else {
+    if (rawTask.question) {
+      const qText = String(rawTask.question).trim();
+      segments.push({
+        id: 'seg-q1',
+        unitType: 'prompt_only',
+        phaseLabelEn: 'Examiner Question',
+        phaseLabelVi: 'Câu hỏi Giám khảo',
+        text: qText,
+        intonationText: buildAutoIntonation(qText),
+        meaningEn: 'Examiner prompt question.',
+        meaningVi: 'Câu hỏi gợi mở từ Giám khảo.',
+        mouthTipEn: 'Listen carefully before shadowing.',
+        mouthTipVi: 'Lắng nghe câu hỏi trước khi nhại lại.'
+      });
+    }
+    const rawBody = String(rawTask.sampleAnswer || rawTask.answer || rawTask.text || '').trim();
+    const rawParas = rawBody.split(/\n\s*\n/).map(p => p.trim()).filter(Boolean);
+    let idx = 0;
+    rawParas.forEach((p) => {
+      splitLongTextIntoReadableBlocks(p).forEach((blk) => {
+        idx += 1;
+        const unitType = splitIntoSentencesSafe(blk).length >= 2 ? 'paragraph' : 'sentence';
+        segments.push({
+          id: `seg-${idx}`,
+          unitType,
+          phaseLabelEn: unitType === 'paragraph' ? `Paragraph ${idx}` : `Sentence ${idx}`,
+          phaseLabelVi: unitType === 'paragraph' ? `Đoạn ${idx}` : `Câu ${idx}`,
+          text: blk,
+          intonationText: buildAutoIntonation(blk),
+          meaningEn: `${part.toUpperCase()} model segment`,
+          meaningVi: `Đoạn bài mẫu ${part.toUpperCase()}`,
+          mouthTipEn: 'Keep natural pacing and crisp ending consonants.',
+          mouthTipVi: 'Giữ nhịp tự nhiên và bật rõ âm cuối.',
+          keyPhrases: []
+        });
+      });
+    });
+  }
+
+  const shadowableCount = segments.filter(s => s.unitType !== 'prompt_only').length;
+  return {
+    id: String(rawTask.id || `shad-ext-${fallbackIndex + 1}`),
+    part,
+    bandLevel: String(rawTask.bandLevel || rawTask.band || '7.5'),
+    requiresAuth: false,
+    topicEn,
+    topicVi,
+    titleEn,
+    titleVi,
+    promptEn,
+    promptVi,
+    cueBulletsEn: Array.isArray(rawTask.cueBulletsEn) ? rawTask.cueBulletsEn : (Array.isArray(rawTask.cueBullets) ? rawTask.cueBullets : []),
+    cueBulletsVi: Array.isArray(rawTask.cueBulletsVi) ? rawTask.cueBulletsVi : (Array.isArray(rawTask.cueBullets) ? rawTask.cueBullets : []),
+    sourceTag: String(rawTask.sourceTag || 'Official Bank').trim(),
+    xpReward: Number(rawTask.xpReward) || Math.max(60, shadowableCount * 25),
+    segments
+  };
 }

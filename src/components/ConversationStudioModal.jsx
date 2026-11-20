@@ -281,6 +281,7 @@ export default function ConversationStudioModal({
   const handleRunEvaluationRef = useRef(null);
   const advanceTimerRef = useRef(null);
   const micAutoStartTimerRef = useRef(null);
+  const fullReplayTimerRef = useRef(null);
   const completedScenarioAwardedRef = useRef(false);
   const dialogueSessionTokenRef = useRef(0);
   const lastAutoHandledTurnKeyRef = useRef('');
@@ -307,6 +308,10 @@ export default function ConversationStudioModal({
     if (micAutoStartTimerRef.current) {
       clearTimeout(micAutoStartTimerRef.current);
       micAutoStartTimerRef.current = null;
+    }
+    if (fullReplayTimerRef.current) {
+      clearTimeout(fullReplayTimerRef.current);
+      fullReplayTimerRef.current = null;
     }
     if (r2SegmentTimerRef.current) {
       clearTimeout(r2SegmentTimerRef.current);
@@ -814,7 +819,9 @@ export default function ConversationStudioModal({
 
     // Longer pause allowance for multi-clause conversational sentences
     let delayMs = 1200;
-    if (spokenWordCount >= targetWordCount) {
+    if (targetWordCount >= 10 && spokenWordCount <= 1) {
+      delayMs = 4500;
+    } else if (spokenWordCount >= targetWordCount) {
       delayMs = targetWordCount <= 5 ? 850 : 1150;
     } else if (spokenWordCount >= Math.ceil(targetWordCount * 0.6)) {
       delayMs = 1750;
@@ -893,14 +900,16 @@ export default function ConversationStudioModal({
     setHasStartedDialogue(true);
 
     if (speechEngine.isListening) {
+      const stopToken = dialogueSessionTokenRef.current;
       const capturedBeforeStop = liveSpokenTextRef.current;
       speechEngine.stopListening();
       setIsWaitingForRetrySpeech(false);
       setTimeout(() => {
+        if (stopToken !== dialogueSessionTokenRef.current) return;
         const captured =
+          speechEngine.getLatestTranscript?.() ||
           liveSpokenTextRef.current ||
           capturedBeforeStop ||
-          speechEngine.transcriptsByClip?.[currentClipKey] ||
           '';
         if (captured.trim()) {
           handleRunEvaluationRef.current?.(captured, { isAutoTriggered: false });
@@ -913,6 +922,13 @@ export default function ConversationStudioModal({
       if (r2AudioRef.current) {
         try { r2AudioRef.current.pause(); } catch (e) {}
       }
+      if (userAudioRef.current) {
+        try {
+          userAudioRef.current.pause();
+          userAudioRef.current.currentTime = 0;
+        } catch (e) {}
+      }
+      setPlayingUserClipTurnId(null);
       setEvaluationResult(null);
       setIsWaitingForRetrySpeech(false);
       lastAutoEvaluatedRef.current = '';
@@ -986,11 +1002,14 @@ export default function ConversationStudioModal({
     const clipKey = `conv_${currentScenario.id}_${turnId}`;
     const clip = speechEngine.audioClips[clipKey];
     if (!clip?.url) return;
-    if (speechEngine.isSpeaking) speechEngine.stopSpeaking();
+    speechEngine.stopListening();
+    speechEngine.stopSpeaking();
 
     if (!userAudioRef.current) {
       userAudioRef.current = new Audio(clip.url);
     } else if (userAudioRef.current.src !== clip.url) {
+      userAudioRef.current.pause();
+      userAudioRef.current.currentTime = 0;
       userAudioRef.current.src = clip.url;
     }
 
@@ -1035,6 +1054,7 @@ export default function ConversationStudioModal({
               similarity: Number(w.similarity) || 80
             }))
           : evaluationResult?.wordBreakdown || [];
+      const earnedXp = isPassed ? (aiRes.overallAccuracy >= 92 ? 35 : 25) : evaluationResult?.xpEarned || 0;
       const updatedEval = {
         ...(evaluationResult || {}),
         overallAccuracy: aiRes.overallAccuracy,
@@ -1043,12 +1063,20 @@ export default function ConversationStudioModal({
         wordBreakdown: mappedWords,
         coachFeedbackEn: aiRes.coachFeedback,
         coachFeedbackVi: aiRes.coachFeedback,
+        xpEarned: earnedXp,
         isPassed,
         engineTier: 'layer2_gemini_audio'
       };
       setEvaluationResult(updatedEval);
       if (isPassed) {
+        const alreadyPassed = Boolean(turnResults[activeTurn.id]?.isPassed);
+        speechEngine.stopListening();
+        speakingSoundEffects.playCompletionChime();
+        triggerHaptic('combo');
         setTurnResults(prev => ({ ...prev, [activeTurn.id]: updatedEval }));
+        if (!alreadyPassed && earnedXp > 0) {
+          awardXp(earnedXp, `Conversation AI Deep Check: ${currentScenario.titleEn}`);
+        }
       }
     } catch (err) {
       setDeepAiError(err.message || (isEn ? 'AI Audio evaluation failed.' : 'Không thể chấm sâu bằng AI Audio.'));
@@ -1057,17 +1085,25 @@ export default function ConversationStudioModal({
     }
   };
 
-  // Full Dialogue Replay (alternating Partner R2/TTS + User RAM clip)
+  // Full Dialogue Replay (alternating Partner R2/TTS + User RAM clip, properly tracked against Stop/Close leaks)
   const handleToggleFullReplay = () => {
     if (isFullReplaying) {
-      fullReplayCancelRef.current = true;
-      setIsFullReplaying(false);
       stopAllAudio();
       return;
     }
 
+    stopAllAudio();
     fullReplayCancelRef.current = false;
     setIsFullReplaying(true);
+
+    const scheduleNext = (nextIdx) => {
+      if (fullReplayTimerRef.current) clearTimeout(fullReplayTimerRef.current);
+      fullReplayTimerRef.current = setTimeout(() => {
+        if (!fullReplayCancelRef.current) {
+          playStep(nextIdx);
+        }
+      }, 350);
+    };
 
     const playStep = (idx) => {
       if (fullReplayCancelRef.current || idx >= turns.length) {
@@ -1078,15 +1114,24 @@ export default function ConversationStudioModal({
       const t = turns[idx];
       const isUser = t.speaker === userRole;
 
+      if (userAudioRef.current) {
+        try {
+          userAudioRef.current.pause();
+          userAudioRef.current.currentTime = 0;
+        } catch (e) {}
+      }
+
       if (isUser) {
         const clip = speechEngine.audioClips[`conv_${currentScenario.id}_${t.id}`];
         if (clip?.url) {
           const audio = new Audio(clip.url);
-          audio.onended = () => setTimeout(() => playStep(idx + 1), 350);
-          audio.onerror = () => setTimeout(() => playStep(idx + 1), 350);
+          userAudioRef.current = audio;
+          audio.onended = () => scheduleNext(idx + 1);
+          audio.onerror = () => scheduleNext(idx + 1);
           audio.play().catch(() => {
+            if (fullReplayCancelRef.current) return;
             speechEngine.speak(t.text, { examinerId: selectedExaminerId, rate: 1.0, silentChime: true }, () => {
-              setTimeout(() => playStep(idx + 1), 350);
+              scheduleNext(idx + 1);
             });
           });
           return;
@@ -1094,7 +1139,7 @@ export default function ConversationStudioModal({
       }
 
       playPartnerTurnAudio(t, 1.0, () => {
-        setTimeout(() => playStep(idx + 1), 350);
+        scheduleNext(idx + 1);
       });
     };
 

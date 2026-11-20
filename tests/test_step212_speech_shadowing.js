@@ -10,7 +10,9 @@ import {
   evaluateShadowingSegment,
   buildCustomShadowingTask,
   summarizeShadowingSession,
-  loadSpeakingBankShadowingTasks
+  loadSpeakingBankShadowingTasks,
+  splitIntoSentencesSafe,
+  normalizeShadowingTask
 } from '../src/data/shadowingData.js';
 
 console.log('🧪 Running Step 212: Speech Shadowing Tab (/conversation?tab=shadowing) Tests...');
@@ -174,6 +176,29 @@ assert.ok(
 assert.ok(
   shadowingWsSrc.includes('remainingLocked') && shadowingWsSrc.includes('if (idx > activeSegIndex) return null;'),
   'SpeechShadowingWorkspace.jsx must collapse upcoming locked segments into a compact indicator bar'
+);
+
+// 10. Abbreviation-safe sentence splitter, bulk bank normalizer & workspace replay/memo guards
+const splitSentences = splitIntoSentencesSafe('Dr. Smith scored 7.5 in the U.K. today. He was thrilled!');
+assert.strictEqual(splitSentences.length, 2, 'splitIntoSentencesSafe must not split on Dr., 7.5, or U.K.');
+assert.strictEqual(splitSentences[0], 'Dr. Smith scored 7.5 in the U.K. today.');
+
+const normalizedBulkTask = normalizeShadowingTask({
+  part: 'Part 2',
+  title: 'Memorable Journey',
+  question: 'Describe a memorable journey you took.',
+  sampleAnswer: 'Last summer I visited Da Nang with my close friends. It was unforgettable.\n\nWe explored the marble mountains and enjoyed local seafood every evening.'
+}, 0);
+assert.strictEqual(normalizedBulkTask.part, 'part2');
+assert.strictEqual(normalizedBulkTask.requiresAuth, false, 'Bulk-ingested tasks must remain open access');
+assert.ok(normalizedBulkTask.segments.length >= 3, 'Normalized task must preserve prompt and multi-paragraph segments');
+assert.strictEqual(normalizedBulkTask.segments[0].unitType, 'prompt_only');
+
+assert.ok(
+  shadowingWsSrc.includes('segmentCountByTaskId') &&
+    shadowingWsSrc.includes('fullReplayTimerRef') &&
+    shadowingWsSrc.includes('stopToken'),
+  'SpeechShadowingWorkspace.jsx must memoize segmentCountByTaskId, track fullReplayTimerRef, and guard stop eval with stopToken'
 );
 
 console.log('✅ Step 212 passed all Speech Shadowing tests!');

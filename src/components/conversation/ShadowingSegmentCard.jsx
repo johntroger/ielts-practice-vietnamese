@@ -18,6 +18,7 @@ import {
   GraduationCap
 } from 'lucide-react';
 import SpeechWaveVisualizer from '../speaking/SpeechWaveVisualizer';
+import { expandConversationalTokens } from '../../data/pronunciationData';
 
 function maskToKeywords(text = '') {
   const functionWords = new Set([
@@ -232,13 +233,7 @@ export default function ShadowingSegmentCard({
   const displayScript =
     keywordsOnly && !revealThisSeg ? maskToKeywords(segment.text) : segment.text;
 
-  const spokenSet = new Set(
-    String(liveSpokenText || '')
-      .toLowerCase()
-      .replace(/[^a-z0-9'\s]/g, ' ')
-      .split(/\s+/)
-      .filter(Boolean)
-  );
+  const spokenSet = new Set(expandConversationalTokens(liveSpokenText || ''));
 
   const isReadingPhase = phase === 'machine_reading' || isMachineSpeakingNow;
 
@@ -342,8 +337,11 @@ export default function ShadowingSegmentCard({
           {isListening && !keywordsOnly && liveSpokenText ? (
             <p className="text-base sm:text-xl font-black leading-relaxed flex flex-wrap gap-x-1.5 gap-y-1">
               {segment.text.split(/\s+/).map((w, idx) => {
-                const clean = w.toLowerCase().replace(/[^a-z0-9']/g, '');
-                const matched = clean && spokenSet.has(clean);
+                const expandedTokens = expandConversationalTokens(w);
+                const matched =
+                  expandedTokens.length > 0 &&
+                  (expandedTokens.every(tok => spokenSet.has(tok)) ||
+                    (expandedTokens.length >= 2 && spokenSet.has(expandedTokens.join(''))));
                 return (
                   <span
                     key={`${w}-${idx}`}

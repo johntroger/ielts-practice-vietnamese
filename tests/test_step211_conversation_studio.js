@@ -9,7 +9,7 @@ import {
   buildCustomConversation,
   summarizeConversationSession
 } from '../src/data/conversationData.js';
-import { expandConversationalTokens } from '../src/data/pronunciationData.js';
+import { expandConversationalTokens, alignPhoneticTokens } from '../src/data/pronunciationData.js';
 import { loadDynamicConversations } from '../src/data/conversationAdapters.js';
 
 console.log('🧪 Running Step 211: Conversation Roleplay Studio (/conversation) Tests...');
@@ -143,6 +143,60 @@ assert.ok(
 assert.ok(
   convModalSrc.includes('remainingLocked') && convModalSrc.includes('if (idx > activeTurnIndex) return null;'),
   'ConversationStudioModal.jsx must collapse upcoming locked turns into a compact indicator bar'
+);
+
+// 10. Advanced normalization (years, %, decimals, ordinals, UK/US), Needleman-Wunsch DP & MediaRecorder isolation
+assert.deepStrictEqual(expandConversationalTokens('In 2024 it rose 7.5% on the 1st day'), [
+  'in', 'twenty', 'twenty', 'four', 'it', 'rose', 'seven', 'point', 'five', 'percent', 'on', 'the', 'first', 'day'
+]);
+assert.deepStrictEqual(
+  expandConversationalTokens('Behavioural centre programmes organise neighbours'),
+  expandConversationalTokens('Behavioral center programs organize neighbors')
+);
+assert.deepStrictEqual(expandConversationalTokens("I can't wait"), expandConversationalTokens('I cannot wait'));
+
+// Unrelated speech must score 0% (no confidence inflation)
+const unrelatedEval = evaluateConversationTurn({
+  targetText: 'Sustainable infrastructure reduces traffic congestion.',
+  spokenText: 'bananas are yellow',
+  confidence: 0.99,
+  threshold: 75
+});
+assert.strictEqual(unrelatedEval.overallAccuracy, 0, 'Completely unrelated speech must score 0% without confidence inflation');
+assert.strictEqual(unrelatedEval.isPassed, false);
+
+// Monotonic DP alignment prevents repeated words from being stolen across skipped sentences
+const repeatEval = evaluateConversationTurn({
+  targetText: 'the cat chased the mouse',
+  spokenText: 'chased the mouse',
+  confidence: 0.9,
+  threshold: 75
+});
+assert.strictEqual(repeatEval.wordBreakdown[0].status, 'missed', 'Skipped leading "the" must not steal trailing "the"');
+assert.strictEqual(repeatEval.wordBreakdown[3].status, 'correct', 'Second "the" must stay matched accurately');
+
+// Self-correction & hyphenated compound matching (e-books <-> ebooks)
+const selfCorr = evaluateConversationTurn({
+  targetText: 'I love e-books',
+  spokenText: 'I would wait I love ebooks',
+  confidence: 0.92,
+  threshold: 75
+});
+assert.strictEqual(selfCorr.wordBreakdown[2].status, 'correct', 'Hyphenated "e-books" must align with "ebooks"');
+assert.ok(selfCorr.overallAccuracy >= 75, 'Mild self-correction should remain fair under proportional slack');
+
+// MediaRecorder isolation, auto-retry discard & replay leak guards
+assert.ok(
+  speechEngineSrc.includes('localChunks') &&
+    speechEngineSrc.includes('capturedClipId') &&
+    speechEngineSrc.includes('discardActiveRecorderRef') &&
+    speechEngineSrc.includes('MAX_RAM_AUDIO_CLIPS') &&
+    speechEngineSrc.includes('getLatestTranscript'),
+  'useSpeechEngine.js must isolate per-recorder chunks/clipId, discard failed retries, cap RAM clips & expose getLatestTranscript'
+);
+assert.ok(
+  convModalSrc.includes('fullReplayTimerRef') && convModalSrc.includes('stopToken'),
+  'ConversationStudioModal.jsx must track fullReplayTimerRef and guard manual-stop evaluation with stopToken'
 );
 
 console.log('✅ Step 211 passed all Conversation Studio tests!');

@@ -112,6 +112,16 @@ export default function SpeechShadowingWorkspace({
     return [...customList, ...SHADOWING_STARTER_TASKS, ...dynamicTasks];
   }, [customTasks, dynamicTasks]);
 
+  const segmentCountByTaskId = useMemo(() => {
+    const counts = {};
+    allTasks.forEach((task) => {
+      counts[task.id] = resolveShadowingSegments(task, chunkMode).filter(
+        s => s.unitType !== 'prompt_only'
+      ).length;
+    });
+    return counts;
+  }, [allTasks, chunkMode]);
+
   const filteredTasks = useMemo(() => {
     let list = allTasks;
     if (activePart !== 'all') {
@@ -195,6 +205,7 @@ export default function SpeechShadowingWorkspace({
   const advanceTimerRef = useRef(null);
   const micAutoStartTimerRef = useRef(null);
   const promptAdvanceTimerRef = useRef(null);
+  const fullReplayTimerRef = useRef(null);
   const completedAwardedRef = useRef(false);
   const sessionTokenRef = useRef(0);
   const lastAutoReadKeyRef = useRef('');
@@ -231,6 +242,10 @@ export default function SpeechShadowingWorkspace({
     if (promptAdvanceTimerRef.current) {
       clearTimeout(promptAdvanceTimerRef.current);
       promptAdvanceTimerRef.current = null;
+    }
+    if (fullReplayTimerRef.current) {
+      clearTimeout(fullReplayTimerRef.current);
+      fullReplayTimerRef.current = null;
     }
     if (userAudioRef.current) {
       try {
@@ -621,7 +636,9 @@ export default function SpeechShadowingWorkspace({
     const isLongParagraph = activeSeg.unitType === 'paragraph' || targetWordCount >= 20;
 
     let delayMs = 2000;
-    if (isLongParagraph) {
+    if (targetWordCount >= 10 && spokenWordCount <= 1) {
+      delayMs = 5000;
+    } else if (isLongParagraph) {
       if (ratio >= 0.92) delayMs = 1400;
       else if (ratio >= 0.55) delayMs = 3300;
       else delayMs = 4200;
@@ -702,14 +719,16 @@ export default function SpeechShadowingWorkspace({
     setPhase('user_shadowing');
 
     if (speechEngine.isListening) {
+      const stopToken = sessionTokenRef.current;
       const capturedBeforeStop = liveSpokenTextRef.current;
       speechEngine.stopListening();
       setIsWaitingForRetrySpeech(false);
       setTimeout(() => {
+        if (stopToken !== sessionTokenRef.current) return;
         const captured =
+          speechEngine.getLatestTranscript?.() ||
           liveSpokenTextRef.current ||
           capturedBeforeStop ||
-          speechEngine.transcriptsByClip?.[currentClipKey] ||
           '';
         if (captured.trim()) {
           handleRunEvaluationRef.current?.(captured);
@@ -719,6 +738,13 @@ export default function SpeechShadowingWorkspace({
       }, 260);
     } else {
       speechEngine.stopSpeaking();
+      if (userAudioRef.current) {
+        try {
+          userAudioRef.current.pause();
+          userAudioRef.current.currentTime = 0;
+        } catch (e) {}
+      }
+      setPlayingUserClipSegId(null);
       setEvaluationResult(null);
       setIsWaitingForRetrySpeech(false);
       lastAutoEvaluatedRef.current = '';
@@ -795,11 +821,14 @@ export default function SpeechShadowingWorkspace({
     const clipKey = `shad_${currentTask.id}_${segId}`;
     const clip = speechEngine.audioClips[clipKey];
     if (!clip?.url) return;
-    if (speechEngine.isSpeaking) speechEngine.stopSpeaking();
+    speechEngine.stopListening();
+    speechEngine.stopSpeaking();
 
     if (!userAudioRef.current) {
       userAudioRef.current = new Audio(clip.url);
     } else if (userAudioRef.current.src !== clip.url) {
+      userAudioRef.current.pause();
+      userAudioRef.current.currentTime = 0;
       userAudioRef.current.src = clip.url;
     }
 
@@ -844,6 +873,7 @@ export default function SpeechShadowingWorkspace({
               similarity: Number(w.similarity) || 80
             }))
           : evaluationResult?.wordBreakdown || [];
+      const earnedXp = isPassed ? (aiRes.overallAccuracy >= 92 ? 45 : 35) : evaluationResult?.xpEarned || 0;
       const updatedEval = {
         ...(evaluationResult || {}),
         overallAccuracy: aiRes.overallAccuracy,
@@ -852,12 +882,20 @@ export default function SpeechShadowingWorkspace({
         wordBreakdown: mappedWords,
         coachFeedbackEn: aiRes.coachFeedback,
         coachFeedbackVi: aiRes.coachFeedback,
+        xpEarned: earnedXp,
         isPassed,
         engineTier: 'layer2_gemini_audio'
       };
       setEvaluationResult(updatedEval);
       if (isPassed) {
+        const alreadyPassed = Boolean(segmentResults[activeSeg.id]?.isPassed);
+        speechEngine.stopListening();
+        speakingSoundEffects.playCompletionChime();
+        triggerHaptic('combo');
         setSegmentResults(prev => ({ ...prev, [activeSeg.id]: updatedEval }));
+        if (!alreadyPassed && earnedXp > 0 && awardXp) {
+          awardXp(earnedXp, `Speech Shadowing AI Deep Check: ${currentTask.titleEn}`);
+        }
       }
     } catch (err) {
       setDeepAiError(err.message || (isEn ? 'AI Audio evaluation failed.' : 'Không thể chấm sâu bằng AI Audio.'));
@@ -866,15 +904,25 @@ export default function SpeechShadowingWorkspace({
     }
   };
 
-  // Full Shadowing Speech Replay
+  // Full Shadowing Speech Replay (properly tracked so Stop/Close kills pending Audio & timers cleanly)
   const handleToggleFullReplay = () => {
     if (isFullReplaying) {
       invalidateAndStopAudio();
       return;
     }
 
+    invalidateAndStopAudio();
     fullReplayCancelRef.current = false;
     setIsFullReplaying(true);
+
+    const scheduleNext = (nextIdx) => {
+      if (fullReplayTimerRef.current) clearTimeout(fullReplayTimerRef.current);
+      fullReplayTimerRef.current = setTimeout(() => {
+        if (!fullReplayCancelRef.current) {
+          playStep(nextIdx);
+        }
+      }, 300);
+    };
 
     const playStep = (idx) => {
       if (fullReplayCancelRef.current || idx >= resolvedSegments.length) {
@@ -883,22 +931,30 @@ export default function SpeechShadowingWorkspace({
       }
       setReplaySegIdx(idx);
       const seg = resolvedSegments[idx];
+      if (userAudioRef.current) {
+        try {
+          userAudioRef.current.pause();
+          userAudioRef.current.currentTime = 0;
+        } catch (e) {}
+      }
       if (seg.unitType !== 'prompt_only') {
         const clip = speechEngine.audioClips[`shad_${currentTask.id}_${seg.id}`];
         if (clip?.url) {
           const audio = new Audio(clip.url);
-          audio.onended = () => setTimeout(() => playStep(idx + 1), 300);
-          audio.onerror = () => setTimeout(() => playStep(idx + 1), 300);
+          userAudioRef.current = audio;
+          audio.onended = () => scheduleNext(idx + 1);
+          audio.onerror = () => scheduleNext(idx + 1);
           audio.play().catch(() => {
+            if (fullReplayCancelRef.current) return;
             speechEngine.speak(seg.text, { examinerId: selectedExaminerId, rate: 1.0, silentChime: true }, () => {
-              setTimeout(() => playStep(idx + 1), 300);
+              scheduleNext(idx + 1);
             });
           });
           return;
         }
       }
       speechEngine.speak(seg.text, { examinerId: selectedExaminerId, rate: 1.0, silentChime: true }, () => {
-        setTimeout(() => playStep(idx + 1), 300);
+        scheduleNext(idx + 1);
       });
     };
 
@@ -1174,7 +1230,7 @@ Separate paragraphs with a blank line. If ${customPart} is part1 or part3, prefi
             {filteredTasks.map(item => {
               const isSelected = currentTask?.id === item.id;
               const best = shadowStats.bestScores?.[item.id];
-              const segCount = resolveShadowingSegments(item, chunkMode).filter(s => s.unitType !== 'prompt_only').length;
+              const segCount = segmentCountByTaskId[item.id] ?? 0;
               return (
                 <div
                   key={item.id}
@@ -1657,7 +1713,7 @@ Separate paragraphs with a blank line. If ${customPart} is part1 or part3, prefi
 
             <div className="flex-1 overflow-y-auto p-3 space-y-2 overscroll-contain">
               {filteredTasks.map(item => {
-                const segCount = resolveShadowingSegments(item, chunkMode).filter(s => s.unitType !== 'prompt_only').length;
+                const segCount = segmentCountByTaskId[item.id] ?? 0;
                 return (
                   <div
                     key={item.id}

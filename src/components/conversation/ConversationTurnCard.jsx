@@ -17,6 +17,7 @@ import {
   Zap
 } from 'lucide-react';
 import SpeechWaveVisualizer from '../speaking/SpeechWaveVisualizer';
+import { expandConversationalTokens } from '../../data/pronunciationData';
 
 /**
  * Masks function words in Keywords-Only mode so learners practice recall & natural phrasing.
@@ -237,14 +238,8 @@ export default function ConversationTurnCard({
   const displayScript =
     keywordsOnly && !revealThisTurn ? maskToKeywords(turn.text) : turn.text;
 
-  // Live spoken word matching preview while speaking
-  const spokenSet = new Set(
-    String(liveSpokenText || '')
-      .toLowerCase()
-      .replace(/[^a-z0-9'\s]/g, ' ')
-      .split(/\s+/)
-      .filter(Boolean)
-  );
+  // Live spoken word matching preview while speaking (supports numbers, contractions & UK/US forms)
+  const spokenSet = new Set(expandConversationalTokens(liveSpokenText || ''));
 
   return (
     <div className="flex justify-end animate-in fade-in duration-200">
@@ -306,8 +301,11 @@ export default function ConversationTurnCard({
           {isListening && !keywordsOnly && liveSpokenText ? (
             <p className="text-lg sm:text-xl font-black leading-relaxed flex flex-wrap gap-x-1.5 gap-y-1">
               {turn.text.split(/\s+/).map((w, idx) => {
-                const clean = w.toLowerCase().replace(/[^a-z0-9']/g, '');
-                const matched = clean && spokenSet.has(clean);
+                const expandedTokens = expandConversationalTokens(w);
+                const matched =
+                  expandedTokens.length > 0 &&
+                  (expandedTokens.every(tok => spokenSet.has(tok)) ||
+                    (expandedTokens.length >= 2 && spokenSet.has(expandedTokens.join(''))));
                 return (
                   <span
                     key={`${w}-${idx}`}

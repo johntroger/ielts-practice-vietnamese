@@ -800,7 +800,9 @@ export async function transcribeAudioWithGemini({
   model = DEFAULT_MODEL
 }) {
   if (!apiKey) throw new Error('Vui lòng cấu hình AI API Key trong phần Cài đặt.');
-  if (!audioBlob) throw new Error('Không tìm thấy tệp âm thanh ghi âm.');
+  if (!audioBlob || (typeof audioBlob.size === 'number' && audioBlob.size < 400)) {
+    throw new Error('Tệp âm thanh ghi âm quá ngắn hoặc trống (<400 bytes). Vui lòng nói rõ hơn rồi thử lại.');
+  }
 
   // Convert Blob to Base64 in browser
   const base64Audio = await new Promise((resolve, reject) => {
@@ -886,7 +888,13 @@ export async function evaluatePronunciationWithGeminiAudio({
   language = 'vi'
 }) {
   if (!apiKey) throw new Error(language === 'en' ? 'Please configure your AI API Key in Settings.' : 'Vui lòng cấu hình AI API Key trong Cài đặt.');
-  if (!audioBlob) throw new Error(language === 'en' ? 'No recorded audio found.' : 'Không tìm thấy tệp âm thanh ghi âm.');
+  if (!audioBlob || (typeof audioBlob.size === 'number' && audioBlob.size < 400)) {
+    throw new Error(
+      language === 'en'
+        ? 'Recorded audio is empty or too short to evaluate. Please speak clearly and try again.'
+        : 'Tệp ghi âm bị trống hoặc quá ngắn. Hãy nói rõ hơn rồi thử lại.'
+    );
+  }
 
   const base64Audio = await new Promise((resolve, reject) => {
     const reader = new FileReader();

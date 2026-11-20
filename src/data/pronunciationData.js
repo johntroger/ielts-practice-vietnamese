@@ -1573,44 +1573,241 @@ export function normalizePhoneticWord(str) {
     .trim();
 }
 
-const NUMBER_WORDS_MAP = {
-  '0': 'zero', '1': 'one', '2': 'two', '3': 'three', '4': 'four',
-  '5': 'five', '6': 'six', '7': 'seven', '8': 'eight', '9': 'nine',
-  '10': 'ten', '11': 'eleven', '12': 'twelve', '13': 'thirteen', '14': 'fourteen',
-  '15': 'fifteen', '16': 'sixteen', '17': 'seventeen', '18': 'eighteen', '19': 'nineteen',
-  '20': 'twenty', '25': 'twenty five', '30': 'thirty', '40': 'forty',
-  '45': 'forty five', '50': 'fifty', '60': 'sixty', '100': 'hundred', '1000': 'thousand'
+const ONES_WORDS = [
+  'zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine',
+  'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'
+];
+const TENS_WORDS = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
+const ORDINAL_EXCEPTIONS = {
+  1: 'first', 2: 'second', 3: 'third', 4: 'fourth', 5: 'fifth', 6: 'sixth', 7: 'seventh', 8: 'eighth', 9: 'ninth',
+  10: 'tenth', 11: 'eleventh', 12: 'twelfth', 13: 'thirteenth', 14: 'fourteenth', 15: 'fifteenth',
+  16: 'sixteenth', 17: 'seventeenth', 18: 'eighteenth', 19: 'nineteenth',
+  20: 'twentieth', 30: 'thirtieth', 40: 'fortieth', 50: 'fiftieth', 60: 'sixtieth', 70: 'seventieth', 80: 'eightieth', 90: 'ninetieth'
 };
+
+export function numberToEnglishWords(rawNum, { yearStyle = false } = {}) {
+  const n = Number(rawNum);
+  if (!Number.isFinite(n) || n < 0 || n > 9999) return String(rawNum);
+  const intVal = Math.floor(n);
+
+  if (intVal < 20) return ONES_WORDS[intVal];
+  if (intVal < 100) {
+    const tens = Math.floor(intVal / 10);
+    const rem = intVal % 10;
+    return rem === 0 ? TENS_WORDS[tens] : `${TENS_WORDS[tens]} ${ONES_WORDS[rem]}`;
+  }
+
+  // Natural spoken year formatting (e.g. 1995 -> nineteen ninety five, 2024 -> twenty twenty four)
+  if (yearStyle && intVal >= 1900 && intVal <= 2099) {
+    if (intVal === 2000) return 'two thousand';
+    if (intVal > 2000 && intVal < 2010) return `two thousand ${ONES_WORDS[intVal % 10]}`;
+    const hi = Math.floor(intVal / 100);
+    const lo = intVal % 100;
+    const hiWords = numberToEnglishWords(hi);
+    if (lo === 0) return `${hiWords} hundred`;
+    if (lo < 10) return `${hiWords} oh ${ONES_WORDS[lo]}`;
+    return `${hiWords} ${numberToEnglishWords(lo)}`;
+  }
+
+  if (intVal < 1000) {
+    const hundreds = Math.floor(intVal / 100);
+    const rem = intVal % 100;
+    return rem === 0
+      ? `${ONES_WORDS[hundreds]} hundred`
+      : `${ONES_WORDS[hundreds]} hundred ${numberToEnglishWords(rem)}`;
+  }
+
+  const thousands = Math.floor(intVal / 1000);
+  const rem = intVal % 1000;
+  return rem === 0
+    ? `${ONES_WORDS[thousands]} thousand`
+    : `${ONES_WORDS[thousands]} thousand ${numberToEnglishWords(rem)}`;
+}
+
+function ordinalToEnglishWords(rawNum) {
+  const n = Math.floor(Number(rawNum));
+  if (!Number.isFinite(n) || n <= 0 || n > 99) return String(rawNum);
+  if (ORDINAL_EXCEPTIONS[n]) return ORDINAL_EXCEPTIONS[n];
+  if (n > 20 && n < 100) {
+    const tens = Math.floor(n / 10) * 10;
+    const rem = n % 10;
+    return rem === 0
+      ? ORDINAL_EXCEPTIONS[tens]
+      : `${TENS_WORDS[tens / 10]} ${ORDINAL_EXCEPTIONS[rem]}`;
+  }
+  return `${numberToEnglishWords(n)}th`;
+}
+
+function decimalOrIntToWords(numStr, { yearStyle = false } = {}) {
+  const s = String(numStr || '').trim();
+  if (s.includes('.')) {
+    const [whole, frac] = s.split('.');
+    const wholeWords = numberToEnglishWords(Number(whole || 0));
+    const fracWords = frac
+      .split('')
+      .map(d => ONES_WORDS[Number(d)] ?? d)
+      .join(' ');
+    return `${wholeWords} point ${fracWords}`.trim();
+  }
+  return numberToEnglishWords(Number(s), { yearStyle });
+}
+
+const UK_TO_US_SPELLING_MAP = {
+  labour: 'labor',
+  humour: 'humor',
+  honour: 'honor',
+  favour: 'favor',
+  favourite: 'favorite',
+  colour: 'color',
+  colourful: 'colorful',
+  behaviour: 'behavior',
+  behavioural: 'behavioral',
+  behaviours: 'behaviors',
+  neighbour: 'neighbor',
+  neighbours: 'neighbors',
+  neighbourhood: 'neighborhood',
+  neighbourhoods: 'neighborhoods',
+  flavour: 'flavor',
+  flavours: 'flavors',
+  rumour: 'rumor',
+  harbour: 'harbor',
+  centre: 'center',
+  centres: 'centers',
+  theatre: 'theater',
+  theatres: 'theaters',
+  metre: 'meter',
+  metres: 'meters',
+  kilometre: 'kilometer',
+  kilometres: 'kilometers',
+  litre: 'liter',
+  litres: 'liters',
+  programme: 'program',
+  programmes: 'programs',
+  dialogue: 'dialog',
+  catalogue: 'catalog',
+  grey: 'gray',
+  defence: 'defense',
+  offence: 'offense',
+  licence: 'license',
+  practise: 'practice',
+  practised: 'practiced',
+  practising: 'practicing',
+  travelling: 'traveling',
+  travelled: 'traveled',
+  traveller: 'traveler',
+  cancelled: 'canceled',
+  cancelling: 'canceling',
+  modelling: 'modeling',
+  modelled: 'modeled',
+  fulfil: 'fulfill',
+  fulfilling: 'fulfilling',
+  enrol: 'enroll',
+  analyse: 'analyze',
+  analysed: 'analyzed',
+  analysing: 'analyzing',
+  recognise: 'recognize',
+  recognised: 'recognized',
+  organise: 'organize',
+  organised: 'organized',
+  organising: 'organizing',
+  organisation: 'organization',
+  organisations: 'organizations',
+  realise: 'realize',
+  realised: 'realized',
+  realising: 'realizing',
+  prioritise: 'prioritize',
+  prioritised: 'prioritized',
+  modernise: 'modernize',
+  modernised: 'modernized',
+  modernising: 'modernizing',
+  urbanisation: 'urbanization',
+  globalisation: 'globalization',
+  digitalisation: 'digitalization',
+  specialise: 'specialize',
+  specialised: 'specialized',
+  specialising: 'specializing',
+  emphasise: 'emphasize',
+  emphasised: 'emphasized',
+  minimise: 'minimize',
+  minimised: 'minimized',
+  maximise: 'maximize',
+  maximised: 'maximized',
+  criticise: 'criticize',
+  criticised: 'criticized',
+  summarise: 'summarize',
+  summarised: 'summarized',
+  apologise: 'apologize',
+  apologised: 'apologized',
+  utilise: 'utilize',
+  utilised: 'utilized',
+  visualise: 'visualize',
+  customise: 'customize',
+  stabilise: 'stabilize',
+  jewellery: 'jewelry',
+  cheque: 'check',
+  tyre: 'tire',
+  pyjamas: 'pajamas',
+  cosy: 'cozy',
+  skilful: 'skillful',
+  wilful: 'willful'
+};
+
+export function normalizeUkUsSpelling(word) {
+  const clean = String(word || '').toLowerCase();
+  if (!clean) return '';
+  if (UK_TO_US_SPELLING_MAP[clean]) return UK_TO_US_SPELLING_MAP[clean];
+  return clean.replace(/isation(s?)$/, 'ization$1');
+}
 
 const CONVERSATION_CONTRACTIONS_MAP = {
   "i'm": 'i am', "you're": 'you are', "we're": 'we are', "they're": 'they are',
   "he's": 'he is', "she's": 'she is', "it's": 'it is', "that's": 'that is',
   "there's": 'there is', "here's": 'here is', "what's": 'what is', "who's": 'who is',
+  "how's": 'how is', "where's": 'where is', "when's": 'when is', "why's": 'why is',
   "don't": 'do not', "doesn't": 'does not', "didn't": 'did not',
-  "can't": 'cannot', "couldn't": 'could not', "won't": 'will not',
+  "can't": 'can not', "cannot": 'can not', "couldn't": 'could not', "won't": 'will not',
   "wouldn't": 'would not', "shouldn't": 'should not', "isn't": 'is not',
   "aren't": 'are not', "wasn't": 'was not', "weren't": 'were not',
   "haven't": 'have not', "hasn't": 'has not', "hadn't": 'had not',
   "i've": 'i have', "you've": 'you have', "we've": 'we have', "they've": 'they have',
+  "would've": 'would have', "could've": 'could have', "should've": 'should have',
+  "might've": 'might have', "must've": 'must have',
   "i'll": 'i will', "you'll": 'you will', "we'll": 'we will', "they'll": 'they will',
+  "that'll": 'that will', "there'll": 'there will', "it'll": 'it will',
   "i'd": 'i would', "you'd": 'you would', "we'd": 'we would', "let's": 'let us',
+  "gonna": 'going to', "wanna": 'want to',
   "ok": 'okay', "o.k.": 'okay', "mr": 'mister', "mrs": 'missus', "dr": 'doctor'
 };
 
 /**
- * Expands conversational contractions, numbers, times (11:00 -> eleven o clock),
- * and currencies ($5 -> five dollars) into normalized phonetic word tokens.
+ * Expands conversational contractions, numbers (cardinals, years, ordinals, decimals, %),
+ * times (11:00 -> eleven), currencies ($5 -> five dollars), and normalizes UK/US spellings.
  */
 export function expandConversationalTokens(text) {
   if (!text || typeof text !== 'string') return [];
   let s = text.toLowerCase().replace(/[’‘]/g, "'");
 
-  // Currency symbols before numbers
-  s = s.replace(/\$(\d+)/g, (_, num) => `${NUMBER_WORDS_MAP[num] || num} dollars`);
-  s = s.replace(/£(\d+)/g, (_, num) => `${NUMBER_WORDS_MAP[num] || num} pounds`);
-  // Time expressions like 11:00 or 1:45
-  s = s.replace(/\b(\d{1,2}):00\b/g, (_, h) => `${NUMBER_WORDS_MAP[h] || h}`);
-  s = s.replace(/\b(\d{1,2}):(\d{2})\b/g, (_, h, m) => `${NUMBER_WORDS_MAP[h] || h} ${NUMBER_WORDS_MAP[m] || m}`);
+  // Time expressions like 11:00 or 1:45 (handle before decimal/integer expansion)
+  s = s.replace(/\b(\d{1,2}):00\b/g, (_, h) => `${numberToEnglishWords(h)}`);
+  s = s.replace(/\b(\d{1,2}):(\d{2})\b/g, (_, h, m) => {
+    const mins = Number(m);
+    const mWords = mins === 0 ? '' : mins < 10 ? `oh ${numberToEnglishWords(mins)}` : numberToEnglishWords(mins);
+    return `${numberToEnglishWords(h)} ${mWords}`.trim();
+  });
+
+  // Percentages (e.g. 75%, 7.5%)
+  s = s.replace(/\b(\d+(?:\.\d+)?)\s*%/g, (_, num) => `${decimalOrIntToWords(num)} percent`);
+
+  // Currencies before plain numbers (use cardinal non-year wording)
+  s = s.replace(/\$(\d+(?:\.\d+)?)/g, (_, num) => `${decimalOrIntToWords(num)} dollars`);
+  s = s.replace(/£(\d+(?:\.\d+)?)/g, (_, num) => `${decimalOrIntToWords(num)} pounds`);
+  s = s.replace(/€(\d+(?:\.\d+)?)/g, (_, num) => `${decimalOrIntToWords(num)} euros`);
+
+  // Decimals (e.g. 7.5 -> seven point five) before punctuation cleanup strips periods
+  s = s.replace(/\b(\d+)\.(\d+)\b/g, (_, w, f) => decimalOrIntToWords(`${w}.${f}`));
+
+  // Ordinals (e.g. 1st, 2nd, 21st)
+  s = s.replace(/\b(\d{1,2})(?:st|nd|rd|th)\b/g, (_, num) => ordinalToEnglishWords(num));
 
   const rawTokens = s
     .replace(/[↗↘/\\‿•●○◐ˈˌ"“”,!?;:()[\]-]/g, ' ')
@@ -1629,10 +1826,10 @@ export function expandConversationalTokens(text) {
     const stripped = normalizePhoneticWord(tok);
     if (!stripped) continue;
     for (const part of stripped.split(' ')) {
-      if (NUMBER_WORDS_MAP[part]) {
-        expanded.push(...NUMBER_WORDS_MAP[part].split(' '));
+      if (/^\d{1,4}$/.test(part)) {
+        expanded.push(...numberToEnglishWords(Number(part), { yearStyle: true }).split(' '));
       } else {
-        expanded.push(part);
+        expanded.push(normalizeUkUsSpelling(part));
       }
     }
   }
@@ -1740,9 +1937,133 @@ export function computePhoneticOnsetNucleusCoda(targetWord, spokenWord) {
 }
 
 /**
+ * Monotonic Needleman-Wunsch phonetic sequence aligner.
+ * Prevents repeated words from being stolen across skipped sentences, handles natural
+ * STT compound splits/merges (e.g. "e-books" <-> "ebooks"), and zeroes unmatched noise.
+ */
+export function alignPhoneticTokens(targetTokens = [], spokenTokens = []) {
+  const m = targetTokens.length;
+  const n = spokenTokens.length;
+  const result = Array.from({ length: m }, () => ({
+    score: 0,
+    spokenMatch: '',
+    missingCoda: false
+  }));
+  if (m === 0 || n === 0) return result;
+
+  const DEL_PENALTY = -0.15;
+  const INS_PENALTY = -0.05;
+
+  const dp = Array.from({ length: m + 1 }, () => new Float64Array(n + 1));
+  const move = Array.from({ length: m + 1 }, () => new Uint8Array(n + 1));
+  // 1 = 1-to-1 match, 2 = delete target, 3 = insert spoken, 4 = 2-to-1 merge, 5 = 1-to-2 split
+  const cellEval = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(null));
+
+  for (let i = 1; i <= m; i++) {
+    dp[i][0] = i * DEL_PENALTY;
+    move[i][0] = 2;
+  }
+  for (let j = 1; j <= n; j++) {
+    dp[0][j] = j * INS_PENALTY;
+    move[0][j] = 3;
+  }
+
+  for (let i = 1; i <= m; i++) {
+    for (let j = 1; j <= n; j++) {
+      let bestScore = dp[i - 1][j] + DEL_PENALTY;
+      let bestMove = 2;
+      let bestEval = null;
+
+      const insScore = dp[i][j - 1] + INS_PENALTY;
+      if (insScore > bestScore) {
+        bestScore = insScore;
+        bestMove = 3;
+      }
+
+      const phon = computePhoneticOnsetNucleusCoda(targetTokens[i - 1], spokenTokens[j - 1]);
+      const matchStep = phon.score >= 0.45 ? phon.score : -0.45;
+      const diagScore = dp[i - 1][j - 1] + matchStep;
+      if (diagScore > bestScore) {
+        bestScore = diagScore;
+        bestMove = 1;
+        bestEval = phon;
+      }
+
+      // 2-to-1 compound merge (e.g. "e" + "books" <-> "ebooks")
+      if (i >= 2 && targetTokens[i - 2].length + targetTokens[i - 1].length <= 18) {
+        const mergedTarget = targetTokens[i - 2] + targetTokens[i - 1];
+        const mergePhon = computePhoneticOnsetNucleusCoda(mergedTarget, spokenTokens[j - 1]);
+        if (mergePhon.score >= 0.85) {
+          const mergeScore = dp[i - 2][j - 1] + mergePhon.score * 2 - 0.02;
+          if (mergeScore > bestScore) {
+            bestScore = mergeScore;
+            bestMove = 4;
+            bestEval = mergePhon;
+          }
+        }
+      }
+
+      // 1-to-2 compound split (e.g. "ebooks" <-> "e" + "books")
+      if (j >= 2 && spokenTokens[j - 2].length + spokenTokens[j - 1].length <= 18) {
+        const mergedSpoken = spokenTokens[j - 2] + spokenTokens[j - 1];
+        const splitPhon = computePhoneticOnsetNucleusCoda(targetTokens[i - 1], mergedSpoken);
+        if (splitPhon.score >= 0.85) {
+          const splitScore = dp[i - 1][j - 2] + splitPhon.score;
+          if (splitScore > bestScore) {
+            bestScore = splitScore;
+            bestMove = 5;
+            bestEval = splitPhon;
+          }
+        }
+      }
+
+      dp[i][j] = bestScore;
+      move[i][j] = bestMove;
+      cellEval[i][j] = bestEval;
+    }
+  }
+
+  let i = m;
+  let j = n;
+  while (i > 0 || j > 0) {
+    const mv = move[i][j];
+    const ev = cellEval[i][j];
+    if (mv === 1 && ev) {
+      const validScore = ev.score >= 0.45 ? ev.score : 0;
+      result[i - 1] = {
+        score: validScore,
+        spokenMatch: validScore > 0 ? spokenTokens[j - 1] : '',
+        missingCoda: validScore > 0 ? ev.missingCoda : false
+      };
+      i -= 1;
+      j -= 1;
+    } else if (mv === 4 && ev) {
+      result[i - 1] = { score: ev.score, spokenMatch: spokenTokens[j - 1], missingCoda: ev.missingCoda };
+      result[i - 2] = { score: ev.score, spokenMatch: spokenTokens[j - 1], missingCoda: false };
+      i -= 2;
+      j -= 1;
+    } else if (mv === 5 && ev) {
+      result[i - 1] = {
+        score: ev.score,
+        spokenMatch: `${spokenTokens[j - 2]} ${spokenTokens[j - 1]}`,
+        missingCoda: ev.missingCoda
+      };
+      i -= 1;
+      j -= 2;
+    } else if (mv === 2) {
+      i -= 1;
+    } else {
+      j -= 1;
+    }
+  }
+
+  return result;
+}
+
+/**
  * Evaluates a user's spoken pronunciation attempt against the target drill item.
  * Layer 1 Engine: Combines Lexical Similarity + Phonetic Skeleton (Onset/Nucleus/Coda)
- * + N-Best Acoustic Hypotheses Cross-Check + Web Audio Energy Metrics.
+ * + Monotonic Needleman-Wunsch Alignment + N-Best Hypotheses + Web Audio Energy Metrics.
  */
 export function evaluatePronunciationAttempt({
   targetText = '',
@@ -1774,9 +2095,26 @@ export function evaluatePronunciationAttempt({
     };
   }
 
-  const usedSpokenIndices = new Set();
   const codaIssues = [];
-  let expandedTargetCount = 0;
+  const flatTargets = [];
+
+  const wordMeta = rawTargetWords.map((rawWord) => {
+    const cleanTarget = normalizeUkUsSpelling(normalizePhoneticWord(rawWord));
+    const subTargets = expandConversationalTokens(rawWord);
+    const targetsToMatch = subTargets.length > 0 ? subTargets : (cleanTarget ? [cleanTarget] : []);
+    const start = flatTargets.length;
+    targetsToMatch.forEach(t => flatTargets.push(t));
+    return {
+      rawWord,
+      cleanTarget,
+      targetsToMatch,
+      start,
+      end: flatTargets.length
+    };
+  });
+
+  const expandedTargetCount = flatTargets.length;
+  const alignedTokens = alignPhoneticTokens(flatTargets, spokenWords);
 
   // Flatten N-best alternative words for weak-ending detection
   const altWordSet = new Set();
@@ -1786,12 +2124,7 @@ export function evaluatePronunciationAttempt({
     });
   }
 
-  const wordBreakdown = rawTargetWords.map((rawWord, targetIdx) => {
-    const cleanTarget = normalizePhoneticWord(rawWord);
-    const subTargets = expandConversationalTokens(rawWord);
-    const targetsToMatch = subTargets.length > 0 ? subTargets : (cleanTarget ? [cleanTarget] : []);
-    expandedTargetCount += targetsToMatch.length;
-
+  const wordBreakdown = wordMeta.map(({ rawWord, cleanTarget, targetsToMatch, start, end }) => {
     if (targetsToMatch.length === 0) {
       return {
         word: rawWord,
@@ -1803,35 +2136,10 @@ export function evaluatePronunciationAttempt({
       };
     }
 
-    let totalSubSim = 0;
-    let bestMissingCoda = false;
-    const matchedParts = [];
-
-    targetsToMatch.forEach((subTarget) => {
-      let bestSim = 0;
-      let bestSpokenIdx = -1;
-      let subMissingCoda = false;
-
-      spokenWords.forEach((sw, sIdx) => {
-        if (usedSpokenIndices.has(sIdx)) return;
-        const { score, missingCoda } = computePhoneticOnsetNucleusCoda(subTarget, sw);
-        const distancePenalty = Math.min(0.12, Math.abs(targetIdx - sIdx) * 0.02);
-        const effectiveSim = score - (score === 1 ? 0 : distancePenalty);
-        if (effectiveSim > bestSim) {
-          bestSim = score;
-          bestSpokenIdx = sIdx;
-          subMissingCoda = missingCoda;
-        }
-      });
-
-      if (bestSpokenIdx !== -1 && bestSim >= 0.45) {
-        usedSpokenIndices.add(bestSpokenIdx);
-        matchedParts.push(spokenWords[bestSpokenIdx]);
-      }
-      if (subMissingCoda) bestMissingCoda = true;
-      totalSubSim += bestSim;
-    });
-
+    const tokenMatches = alignedTokens.slice(start, end);
+    const totalSubSim = tokenMatches.reduce((sum, tm) => sum + (tm?.score || 0), 0);
+    let bestMissingCoda = tokenMatches.some(tm => tm?.missingCoda);
+    const matchedParts = tokenMatches.map(tm => tm?.spokenMatch).filter(Boolean);
     let bestSim = totalSubSim / targetsToMatch.length;
 
     // N-Best Acoustic Cross-Check:
@@ -1856,14 +2164,12 @@ export function evaluatePronunciationAttempt({
       status = 'near';
     }
 
-    const matchedWord = matchedParts.join(' ');
-
     return {
       word: rawWord,
       cleanWord: cleanTarget,
       status,
       similarity: Math.round(bestSim * 100),
-      spokenMatch: matchedWord,
+      spokenMatch: matchedParts.join(' '),
       missingCoda: bestMissingCoda || nBestWeakEnding
     };
   });
@@ -1872,24 +2178,25 @@ export function evaluatePronunciationAttempt({
   const avgWordSimilarity =
     wordBreakdown.reduce((sum, w) => sum + w.similarity, 0) / wordBreakdown.length;
 
-  // Blend lexical phonetic match (85%) with acoustic STT confidence (15%)
+  // Non-inflating acoustic confidence blend (never boosts zero/wrong words above phonetic evidence)
   const safeConfidence = Math.max(0.6, Math.min(1.0, Number(confidence) || 0.88));
   let rawScore = spokenWords.length === 0
     ? 0
-    : Math.round(avgWordSimilarity * 0.85 + safeConfidence * 100 * 0.15);
+    : Math.round(avgWordSimilarity * 0.88 + Math.min(avgWordSimilarity, safeConfidence * 100) * 0.12);
 
   // Strict single-word gate: if a single word is mispronounced (< 95% match, e.g. phenomena vs phenomenon),
-  // prevent high STT confidence from inflating it past the 80% passing threshold.
+  // prevent high STT confidence from inflating it past the passing threshold.
   if (spokenWords.length > 0 && rawTargetWords.length === 1 && avgWordSimilarity < 95) {
     rawScore = Math.min(76, Math.round(avgWordSimilarity * 0.9));
   }
 
-  // Penalize excessive filler/extra words beyond target length
+  // Fair length-proportional slack for natural hesitations/self-corrections on long utterances
   const effectiveTargetLen = Math.max(rawTargetWords.length, expandedTargetCount);
-  const allowedSlack = rawTargetWords.length === 1 ? 0 : 1;
+  const allowedSlack = rawTargetWords.length === 1 ? 0 : Math.max(1, Math.floor(effectiveTargetLen * 0.1));
   const extraWordsCount = Math.max(0, spokenWords.length - effectiveTargetLen - allowedSlack);
+  const perExtraPenalty = rawTargetWords.length === 1 ? 8 : effectiveTargetLen >= 15 ? 3 : 6;
   if (extraWordsCount > 0 && rawScore > 0) {
-    rawScore -= Math.min(20, extraWordsCount * 8);
+    rawScore -= Math.min(20, extraWordsCount * perExtraPenalty);
   }
 
   // Acoustic Prosody / Stress Energy check (if Web Audio Analyser metrics available)
