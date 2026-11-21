@@ -47,7 +47,11 @@ import {
   expandConversationalTokens
 } from '../data/pronunciationData';
 import PronunciationCustomDrillModal from './speaking/PronunciationCustomDrillModal';
-import { runLayer2PronunciationCheck } from '../utils/speakingPracticeHelpers';
+import {
+  runLayer2PronunciationCheck,
+  SPEAKING_SPEED_MODES,
+  DEFAULT_SPEAKING_SPEED
+} from '../utils/speakingPracticeHelpers';
 import { SPEAKING_EXAMINER_PROFILES } from '../data/speakingTopics';
 import { useSpeechEngine } from '../hooks/useSpeechEngine';
 import SpeechWaveVisualizer from './speaking/SpeechWaveVisualizer';
@@ -150,15 +154,22 @@ export default function PronunciationStudioModal({
     });
   };
 
-  // 3. Voice Accent & Playback Speed
+  // 3. Voice Accent & Playback Speed (persisted)
   const [selectedExaminerId, setSelectedExaminerId] = useState(() =>
     safeGet('ielts_pronunciation_examiner', 'examiner-arthur')
   );
-  const [playbackSpeed, setPlaybackSpeed] = useState(0.9); // 0.75 | 0.9 | 1.0
+  const [playbackSpeed, setPlaybackSpeed] = useState(() => {
+    const saved = Number(safeGet('ielts_pronunciation_speed', DEFAULT_SPEAKING_SPEED));
+    return SPEAKING_SPEED_MODES.some(m => m.rate === saved) ? saved : DEFAULT_SPEAKING_SPEED;
+  });
 
   useEffect(() => {
     safeSet('ielts_pronunciation_examiner', selectedExaminerId);
   }, [selectedExaminerId]);
+
+  useEffect(() => {
+    safeSet('ielts_pronunciation_speed', playbackSpeed);
+  }, [playbackSpeed]);
 
   const speechEngine = useSpeechEngine({
     examinerId: selectedExaminerId,
@@ -828,7 +839,7 @@ export default function PronunciationStudioModal({
     speechEngine.resetTranscript();
     speechEngine.speak(
       currentDrill.targetText,
-      { examinerId: selectedExaminerId, rate: 0.85, silentChime: true },
+      { examinerId: selectedExaminerId, rate: Math.min(playbackSpeed, 0.8), silentChime: true },
       async () => {
         if (token !== sessionTokenRef.current) return;
         lastAutoEvaluatedRef.current = '';
@@ -1338,8 +1349,30 @@ export default function PronunciationStudioModal({
             </div>
           </div>
 
-          {/* Right: Compact Audio Pill + XP + Actions */}
+          {/* Right: Inline Desktop Speed Modes + Compact Audio Pill + XP + Actions */}
           <div className="flex items-center space-x-1.5 shrink-0">
+            {/* Inline 1-Click Desktop Speed Selector (lg+) */}
+            <div
+              className="hidden lg:inline-flex items-center bg-slate-900 border border-slate-800 rounded-xl p-0.5 shrink-0"
+              title={isEn ? 'Speech Playback Speed' : 'Chọn chế độ tốc độ nói'}
+            >
+              {SPEAKING_SPEED_MODES.map(m => (
+                <button
+                  key={m.rate}
+                  type="button"
+                  onClick={() => setPlaybackSpeed(m.rate)}
+                  title={isEn ? `${m.rate}x — ${m.labelEn}` : `${m.rate}x — ${m.labelVi}`}
+                  className={`px-2 py-1 rounded-lg text-[10px] font-black transition-all cursor-pointer whitespace-nowrap ${
+                    playbackSpeed === m.rate
+                      ? 'bg-purple-600 text-white shadow-sm'
+                      : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  {m.rate}x
+                </button>
+              ))}
+            </div>
+
             {/* Compact Desktop Audio Settings Toggle (lg+) */}
             <button
               type="button"
@@ -1353,8 +1386,6 @@ export default function PronunciationStudioModal({
             >
               <Sliders className="w-3 h-3 text-indigo-400 shrink-0" />
               <span>{selectedExaminerId === 'examiner-oliver' ? '🇺🇸 US' : '🇬🇧 UK'}</span>
-              <span className="text-slate-600">•</span>
-              <span className="text-purple-300">{playbackSpeed}x</span>
             </button>
 
             {/* Compact XP & Streak Pill (sm+) */}
@@ -1459,18 +1490,18 @@ export default function PronunciationStudioModal({
                 ))}
               </div>
               <div className="flex items-center bg-slate-900 border border-slate-800 rounded-xl p-0.5">
-                {[0.75, 0.9, 1.0].map(rate => (
+                {SPEAKING_SPEED_MODES.map(m => (
                   <button
-                    key={rate}
+                    key={m.rate}
                     type="button"
-                    onClick={() => setPlaybackSpeed(rate)}
+                    onClick={() => setPlaybackSpeed(m.rate)}
                     className={`px-2 py-0.5 rounded-lg text-[10px] font-bold transition-all cursor-pointer whitespace-nowrap ${
-                      playbackSpeed === rate
+                      playbackSpeed === m.rate
                         ? 'bg-purple-600 text-white'
                         : 'text-slate-400 hover:text-white'
                     }`}
                   >
-                    {rate}x
+                    {m.rate}x {isEn ? m.labelEn : m.labelVi}
                   </button>
                 ))}
               </div>
@@ -1558,18 +1589,18 @@ export default function PronunciationStudioModal({
             </div>
 
             <div className="flex items-center bg-slate-900 border border-slate-800 rounded-xl p-0.5">
-              {[0.75, 0.9, 1.0].map(rate => (
+              {SPEAKING_SPEED_MODES.map(m => (
                 <button
-                  key={rate}
+                  key={m.rate}
                   type="button"
-                  onClick={() => setPlaybackSpeed(rate)}
+                  onClick={() => setPlaybackSpeed(m.rate)}
                   className={`px-1.5 sm:px-2 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold transition-all cursor-pointer whitespace-nowrap ${
-                    playbackSpeed === rate
+                    playbackSpeed === m.rate
                       ? 'bg-purple-600 text-white'
                       : 'text-slate-400 hover:text-white'
                   }`}
                 >
-                  {rate}x
+                  {m.rate}x
                 </button>
               ))}
             </div>
@@ -1815,11 +1846,11 @@ export default function PronunciationStudioModal({
 
                     <button
                       type="button"
-                      onClick={() => handlePlayModel(0.75)}
+                      onClick={() => handlePlayModel(0.65)}
                       className="py-2.5 px-4 rounded-2xl bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-cyan-500/30 text-sm font-bold flex items-center justify-center space-x-1.5 transition-all active:scale-98 cursor-pointer"
                     >
                       <Headphones className="w-4 h-4 shrink-0" />
-                      <span>{isEn ? '0.75x Slow' : 'Nghe Chậm 0.75x'}</span>
+                      <span>{isEn ? '0.65x Very Slow' : 'Nghe Rất Chậm 0.65x'}</span>
                     </button>
                   </div>
                 </div>
@@ -2270,7 +2301,7 @@ export default function PronunciationStudioModal({
                             <button
                               key={`${wb.word}-${i}`}
                               type="button"
-                              onClick={() => handlePlayModel(0.85, wb.cleanWord || wb.word)}
+                              onClick={() => handlePlayModel(Math.min(playbackSpeed, 0.85), wb.cleanWord || wb.word)}
                               className={`px-3 py-1.5 rounded-xl border text-xs sm:text-sm font-black flex items-center space-x-1.5 transition-all cursor-pointer ${chipStyle}`}
                               title={isEn ? `Listen to "${wb.word}"` : `Nghe từ "${wb.word}"`}
                             >

@@ -127,7 +127,7 @@ function ShadowingSegmentCard({
             <div className="flex items-center space-x-1 shrink-0">
               <button
                 type="button"
-                onClick={() => onPlayModel(segment, 0.95)}
+                onClick={() => onPlayModel(segment, null)}
                 className="px-2 py-1 rounded-lg bg-slate-800 hover:bg-indigo-600 text-slate-200 hover:text-white text-[10px] font-bold flex items-center space-x-1 cursor-pointer"
               >
                 <Volume2 className="w-3 h-3" />
@@ -135,10 +135,11 @@ function ShadowingSegmentCard({
               </button>
               <button
                 type="button"
-                onClick={() => onPlayModel(segment, 0.75)}
+                onClick={() => onPlayModel(segment, 0.65)}
                 className="px-1.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-300 text-[10px] font-bold cursor-pointer"
+                title={isEn ? 'Listen very slowly (0.65x)' : 'Nghe rất chậm 0.65x'}
               >
-                0.75x
+                0.65x
               </button>
             </div>
           </div>
@@ -212,7 +213,7 @@ function ShadowingSegmentCard({
               )}
               <button
                 type="button"
-                onClick={() => onPlayModel(segment, 0.9)}
+                onClick={() => onPlayModel(segment, null)}
                 className="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-bold flex items-center space-x-1 cursor-pointer"
               >
                 <Volume2 className="w-3 h-3" />
@@ -284,12 +285,12 @@ function ShadowingSegmentCard({
 
             <button
               type="button"
-              onClick={() => onPlayModel(segment, 0.85)}
+              onClick={() => onPlayModel(segment, null)}
               className="px-2.5 py-1 rounded-lg bg-indigo-600/25 hover:bg-indigo-600/45 text-indigo-200 border border-indigo-500/40 text-[11px] font-bold flex items-center space-x-1 cursor-pointer"
-              title={isEn ? 'Listen slowly (0.85x)' : 'Nghe mẫu chậm (0.85x)'}
+              title={isEn ? 'Listen to model at selected speed' : 'Nghe mẫu theo tốc độ đã chọn'}
             >
               <Headphones className="w-3 h-3" />
-              <span>{isEn ? 'Model 0.85x' : 'Nghe 0.85x'}</span>
+              <span>{isEn ? 'Hear Model' : 'Nghe mẫu'}</span>
             </button>
 
             <button
@@ -641,7 +642,7 @@ function ShadowingSegmentCard({
                   <button
                     key={`${wb.word}-${i}`}
                     type="button"
-                    onClick={() => onPlayModel({ text: wb.cleanWord || wb.word }, 0.85)}
+                    onClick={() => onPlayModel({ text: wb.cleanWord || wb.word }, null)}
                     className={`px-2 py-1 rounded-lg border text-[11px] font-bold flex items-center space-x-1 cursor-pointer ${chipStyle}`}
                     title={isEn ? `Listen to "${wb.word}"` : `Nghe từ "${wb.word}"`}
                   >

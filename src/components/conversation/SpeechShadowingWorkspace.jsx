@@ -890,7 +890,7 @@ export default function SpeechShadowingWorkspace({
 
     speechEngine.speak(
       activeSeg.text,
-      { examinerId: selectedExaminerId, rate: 0.85, silentChime: true },
+      { examinerId: selectedExaminerId, rate: Math.min(playbackSpeed, 0.8), silentChime: true },
       () => {
         if (token !== sessionTokenRef.current) return;
         speakingSoundEffects.playReadyToSpeakChime();
@@ -962,8 +962,8 @@ export default function SpeechShadowingWorkspace({
 
   const handlePlaySegModel = useCallback((s, rate) => {
     speechEngine.stopListening();
-    speechEngine.speak(s.text, { examinerId: selectedExaminerId, rate, silentChime: true });
-  }, [selectedExaminerId, speechEngine.stopListening, speechEngine.speak]);
+    speechEngine.speak(s.text, { examinerId: selectedExaminerId, rate: rate || playbackSpeed, silentChime: true });
+  }, [playbackSpeed, selectedExaminerId, speechEngine.stopListening, speechEngine.speak]);
 
   const handleToggleRevealCurrentSeg = useCallback(() => {
     setRevealCurrentSeg(prev => !prev);
@@ -1095,14 +1095,14 @@ export default function SpeechShadowingWorkspace({
           audio.onerror = () => scheduleNext(idx + 1);
           audio.play().catch(() => {
             if (fullReplayCancelRef.current) return;
-            speechEngine.speak(seg.text, { examinerId: selectedExaminerId, rate: 1.0, silentChime: true }, () => {
+            speechEngine.speak(seg.text, { examinerId: selectedExaminerId, rate: playbackSpeed, silentChime: true }, () => {
               scheduleNext(idx + 1);
             });
           });
           return;
         }
       }
-      speechEngine.speak(seg.text, { examinerId: selectedExaminerId, rate: 1.0, silentChime: true }, () => {
+      speechEngine.speak(seg.text, { examinerId: selectedExaminerId, rate: playbackSpeed, silentChime: true }, () => {
         scheduleNext(idx + 1);
       });
     };

@@ -60,7 +60,12 @@ import ConversationSummaryCard from './conversation/ConversationSummaryCard';
 import SpeechShadowingWorkspace from './conversation/SpeechShadowingWorkspace';
 import ConversationCustomCreatorModal from './conversation/ConversationCustomCreatorModal';
 import SpeakingSoundcheckModal from './speaking/SpeakingSoundcheckModal';
-import { runLayer2PronunciationCheck, NOOP } from '../utils/speakingPracticeHelpers';
+import {
+  runLayer2PronunciationCheck,
+  NOOP,
+  SPEAKING_SPEED_MODES,
+  DEFAULT_SPEAKING_SPEED
+} from '../utils/speakingPracticeHelpers';
 
 const CUSTOM_CONV_STORAGE_KEY = 'ielts_conversation_custom_v1';
 const CONV_STATS_STORAGE_KEY = 'ielts_conversation_stats_v1';
@@ -159,7 +164,13 @@ export default function ConversationStudioModal({
   const [selectedExaminerId, setSelectedExaminerId] = useState(() =>
     safeGet('ielts_conversation_examiner', 'examiner-arthur')
   );
-  const [playbackSpeed, setPlaybackSpeed] = useState(0.95);
+  const [playbackSpeed, setPlaybackSpeed] = useState(() => {
+    const saved = Number(safeGet('ielts_conversation_speed', DEFAULT_SPEAKING_SPEED));
+    return SPEAKING_SPEED_MODES.some(m => m.rate === saved) ? saved : DEFAULT_SPEAKING_SPEED;
+  });
+  useEffect(() => {
+    safeSet('ielts_conversation_speed', playbackSpeed);
+  }, [playbackSpeed]);
   const [passThreshold, setPassThreshold] = useState(() =>
     Number(safeGet('ielts_conversation_threshold', CONVERSATION_DEFAULT_THRESHOLD)) || CONVERSATION_DEFAULT_THRESHOLD
   );
@@ -1025,7 +1036,7 @@ export default function ConversationStudioModal({
     speechEngine.resetTranscript();
     speechEngine.speak(
       activeTurn.text,
-      { examinerId: selectedExaminerId, rate: 0.85, silentChime: true },
+      { examinerId: selectedExaminerId, rate: Math.min(playbackSpeed, 0.8), silentChime: true },
       () => {
         if (token !== dialogueSessionTokenRef.current) return;
         speakingSoundEffects.playReadyToSpeakChime();
@@ -1100,8 +1111,8 @@ export default function ConversationStudioModal({
 
   const handlePlayUserModel = useCallback((t, rate) => {
     speechEngine.stopListening();
-    speechEngine.speak(t.text, { examinerId: selectedExaminerId, rate, silentChime: true });
-  }, [selectedExaminerId, speechEngine.stopListening, speechEngine.speak]);
+    speechEngine.speak(t.text, { examinerId: selectedExaminerId, rate: rate || playbackSpeed, silentChime: true });
+  }, [playbackSpeed, selectedExaminerId, speechEngine.stopListening, speechEngine.speak]);
 
   const handleToggleRevealCurrentTurn = useCallback(() => {
     setRevealCurrentTurn(prev => !prev);
@@ -1236,7 +1247,7 @@ export default function ConversationStudioModal({
           audio.onerror = () => scheduleNext(idx + 1);
           audio.play().catch(() => {
             if (fullReplayCancelRef.current) return;
-            speechEngine.speak(t.text, { examinerId: selectedExaminerId, rate: 1.0, silentChime: true }, () => {
+            speechEngine.speak(t.text, { examinerId: selectedExaminerId, rate: playbackSpeed, silentChime: true }, () => {
               scheduleNext(idx + 1);
             });
           });
@@ -1244,7 +1255,7 @@ export default function ConversationStudioModal({
         }
       }
 
-      playPartnerTurnAudio(t, 1.0, () => {
+      playPartnerTurnAudio(t, playbackSpeed, () => {
         scheduleNext(idx + 1);
       });
     };
@@ -1568,8 +1579,30 @@ export default function ConversationStudioModal({
             </div>
           </div>
 
-          {/* Right Actions + Compact XP + Compact Desktop Audio Pill */}
+          {/* Right Actions + Inline Desktop Speed Selector + Compact XP */}
           <div className="flex items-center space-x-1.5 shrink-0">
+            {/* Inline 1-Click Desktop Speed Selector (lg+) */}
+            <div
+              className="hidden lg:inline-flex items-center bg-slate-900 border border-slate-800 rounded-xl p-0.5 shrink-0"
+              title={isEn ? 'Speech Playback Speed' : 'Chọn chế độ tốc độ nói'}
+            >
+              {SPEAKING_SPEED_MODES.map(m => (
+                <button
+                  key={m.rate}
+                  type="button"
+                  onClick={() => setPlaybackSpeed(m.rate)}
+                  title={isEn ? `${m.rate}x — ${m.labelEn}` : `${m.rate}x — ${m.labelVi}`}
+                  className={`px-2 py-1 rounded-lg text-[10px] font-black transition-all cursor-pointer whitespace-nowrap ${
+                    playbackSpeed === m.rate
+                      ? 'bg-purple-600 text-white shadow-sm'
+                      : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  {m.rate}x
+                </button>
+              ))}
+            </div>
+
             {/* Compact Desktop Audio/Threshold Settings Toggle (lg+) */}
             <button
               type="button"
@@ -1585,8 +1618,6 @@ export default function ConversationStudioModal({
               <span className="text-amber-300 font-black">{passThreshold}%</span>
               <span className="text-slate-600">•</span>
               <span>{selectedExaminerId === 'examiner-oliver' ? '🇺🇸 US' : '🇬🇧 UK'}</span>
-              <span className="text-slate-600">•</span>
-              <span className="text-purple-300">{playbackSpeed}x</span>
             </button>
 
             {/* Compact XP & Streak Pill (sm+) */}
@@ -1723,16 +1754,16 @@ export default function ConversationStudioModal({
               </div>
 
               <div className="flex items-center bg-slate-900 border border-slate-800 rounded-xl p-0.5">
-                {[0.8, 0.95, 1.0].map(rate => (
+                {SPEAKING_SPEED_MODES.map(m => (
                   <button
-                    key={rate}
+                    key={m.rate}
                     type="button"
-                    onClick={() => setPlaybackSpeed(rate)}
-                    className={`px-2 py-0.5 rounded-lg text-[10px] font-bold cursor-pointer ${
-                      playbackSpeed === rate ? 'bg-purple-600 text-white' : 'text-slate-400 hover:text-white'
+                    onClick={() => setPlaybackSpeed(m.rate)}
+                    className={`px-2 py-0.5 rounded-lg text-[10px] font-bold cursor-pointer whitespace-nowrap ${
+                      playbackSpeed === m.rate ? 'bg-purple-600 text-white' : 'text-slate-400 hover:text-white'
                     }`}
                   >
-                    {rate}x
+                    {m.rate}x {isEn ? m.labelEn : m.labelVi}
                   </button>
                 ))}
               </div>
@@ -1858,16 +1889,16 @@ export default function ConversationStudioModal({
 
               {/* Playback Speed */}
               <div className="hidden md:flex items-center bg-slate-900 border border-slate-800 rounded-xl p-0.5 shrink-0">
-                {[0.8, 0.95, 1.0].map(rate => (
+                {SPEAKING_SPEED_MODES.map(m => (
                   <button
-                    key={rate}
+                    key={m.rate}
                     type="button"
-                    onClick={() => setPlaybackSpeed(rate)}
-                    className={`px-1.5 py-1 rounded-lg text-[10px] font-bold cursor-pointer ${
-                      playbackSpeed === rate ? 'bg-purple-600 text-white' : 'text-slate-400 hover:text-white'
+                    onClick={() => setPlaybackSpeed(m.rate)}
+                    className={`px-1.5 py-1 rounded-lg text-[10px] font-bold cursor-pointer whitespace-nowrap ${
+                      playbackSpeed === m.rate ? 'bg-purple-600 text-white' : 'text-slate-400 hover:text-white'
                     }`}
                   >
-                    {rate}x
+                    {m.rate}x
                   </button>
                 ))}
               </div>
@@ -1923,16 +1954,16 @@ export default function ConversationStudioModal({
 
               <div className="flex items-center justify-between gap-1.5 overflow-x-auto no-scrollbar">
                 <div className="flex items-center bg-slate-900 border border-slate-800 rounded-xl p-0.5 shrink-0">
-                  {[0.8, 0.95, 1.0].map(rate => (
+                  {SPEAKING_SPEED_MODES.map(m => (
                     <button
-                      key={rate}
+                      key={m.rate}
                       type="button"
-                      onClick={() => setPlaybackSpeed(rate)}
-                      className={`px-2 py-1 rounded-lg text-[10px] font-bold cursor-pointer ${
-                        playbackSpeed === rate ? 'bg-purple-600 text-white' : 'text-slate-400 hover:text-white'
+                      onClick={() => setPlaybackSpeed(m.rate)}
+                      className={`px-2 py-1 rounded-lg text-[10px] font-bold cursor-pointer whitespace-nowrap ${
+                        playbackSpeed === m.rate ? 'bg-purple-600 text-white' : 'text-slate-400 hover:text-white'
                       }`}
                     >
-                      {rate}x
+                      {m.rate}x
                     </button>
                   ))}
                 </div>

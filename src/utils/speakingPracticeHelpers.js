@@ -91,3 +91,11 @@ export async function runLayer2PronunciationCheck({
 }
 
 export const NOOP = () => {};
+
+export const SPEAKING_SPEED_MODES = [
+  { rate: 0.65, labelEn: 'Very Slow', labelVi: 'Rất chậm' },
+  { rate: 0.75, labelEn: 'Slow', labelVi: 'Chậm' },
+  { rate: 0.85, labelEn: 'Standard', labelVi: 'Vừa phải' },
+  { rate: 1.0, labelEn: 'Native', labelVi: 'Bản xứ' }
+];
+export const DEFAULT_SPEAKING_SPEED = 0.85;
