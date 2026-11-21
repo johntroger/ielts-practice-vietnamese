@@ -27,7 +27,8 @@ import {
   Lock,
   SkipForward,
   PanelLeftClose,
-  PanelLeftOpen
+  PanelLeftOpen,
+  Shuffle
 } from 'lucide-react';
 import {
   CONVERSATION_DEFAULT_THRESHOLD,
@@ -171,7 +172,17 @@ export default function ConversationStudioModal({
 
   const [searchQuery, setSearchQuery] = useState('');
   const [bandFilter, setBandFilter] = useState('all');
-  const [hideCompleted, setHideCompleted] = useState(true);
+  const [sourceFilter, setSourceFilter] = useState('all');
+  const [hideCompleted, setHideCompleted] = useState(() =>
+    Boolean(safeGet('ielts_conversation_hide_completed', true))
+  );
+  const toggleHideCompleted = () => {
+    setHideCompleted(prev => {
+      const next = !prev;
+      safeSet('ielts_conversation_hide_completed', next);
+      return next;
+    });
+  };
   const [selectedScenarioId, setSelectedScenarioId] = useState(() => {
     if (initialOptions?.scenario) return initialOptions.scenario;
     const savedStats = safeGet(CONV_STATS_STORAGE_KEY, { bestScores: {} });
@@ -204,8 +215,10 @@ export default function ConversationStudioModal({
   const r2AudioRef = useRef(null);
   const r2SegmentTimerRef = useRef(null);
   const userAudioRef = useRef(null);
+  const compareTimerRef = useRef(null);
   const [isPlayingR2Segment, setIsPlayingR2Segment] = useState(false);
   const [playingUserClipTurnId, setPlayingUserClipTurnId] = useState(null);
+  const [comparingTurnId, setComparingTurnId] = useState(null);
 
   // Combine built-in + dynamic + custom scenarios (100% open access)
   const allScenarios = useMemo(() => {
@@ -213,10 +226,26 @@ export default function ConversationStudioModal({
     return [...customList, ...CONVERSATION_SCENARIOS, ...dynamicScenarios];
   }, [customScenarios, dynamicScenarios]);
 
+  const availableSources = useMemo(() => {
+    const set = new Set();
+    allScenarios.forEach((s) => {
+      if (s.isCustom) set.add('Custom');
+      else if (s.sourceTag) set.add(s.sourceTag);
+      else set.add('Core');
+    });
+    return ['all', ...Array.from(set)];
+  }, [allScenarios]);
+
   const filteredScenarios = useMemo(() => {
     let list = allScenarios;
     if (activeTrack !== 'all') {
       list = list.filter(s => s.track === activeTrack);
+    }
+    if (sourceFilter !== 'all') {
+      list = list.filter(s => {
+        const tag = s.isCustom ? 'Custom' : (s.sourceTag || 'Core');
+        return tag === sourceFilter;
+      });
     }
     if (bandFilter === 'foundation') {
       list = list.filter(s => parseFloat(s.bandLevel) <= 6.5);
@@ -238,7 +267,19 @@ export default function ConversationStudioModal({
       );
     }
     return list;
-  }, [allScenarios, activeTrack, bandFilter, hideCompleted, convStats.bestScores, selectedScenarioId, searchQuery]);
+  }, [allScenarios, activeTrack, sourceFilter, bandFilter, hideCompleted, convStats.bestScores, selectedScenarioId, searchQuery]);
+
+  const handlePickRandomScenario = useCallback(() => {
+    if (filteredScenarios.length === 0) return;
+    const pool = filteredScenarios.length > 1
+      ? filteredScenarios.filter(s => s.id !== selectedScenarioId)
+      : filteredScenarios;
+    const pick = pool[Math.floor(Math.random() * pool.length)];
+    if (pick) {
+      setSelectedScenarioId(pick.id);
+      setIsMobileListOpen(false);
+    }
+  }, [filteredScenarios, selectedScenarioId]);
 
   const currentScenario = useMemo(() => {
     return (
@@ -347,6 +388,11 @@ export default function ConversationStudioModal({
       clearTimeout(r2SegmentTimerRef.current);
       r2SegmentTimerRef.current = null;
     }
+    if (compareTimerRef.current) {
+      clearTimeout(compareTimerRef.current);
+      compareTimerRef.current = null;
+    }
+    setComparingTurnId(null);
     if (r2AudioRef.current) {
       try {
         r2AudioRef.current.pause();
@@ -1057,6 +1103,46 @@ export default function ConversationStudioModal({
         .catch(() => setPlayingUserClipTurnId(null));
     }
   };
+
+  const handleCompareTurnAudio = useCallback((turn) => {
+    if (!turn) return;
+    const clipKey = `conv_${currentScenario.id}_${turn.id}`;
+    const clip = speechEngine.audioClips[clipKey];
+    if (!clip?.url) return;
+
+    if (comparingTurnId === turn.id) {
+      stopAllAudio();
+      return;
+    }
+
+    stopAllAudio();
+    const token = dialogueSessionTokenRef.current;
+    setComparingTurnId(turn.id);
+    speechEngine.speak(
+      turn.text,
+      { examinerId: selectedExaminerId, rate: playbackSpeed, silentChime: true },
+      () => {
+        if (token !== dialogueSessionTokenRef.current) return;
+        compareTimerRef.current = setTimeout(() => {
+          compareTimerRef.current = null;
+          if (token !== dialogueSessionTokenRef.current) return;
+          const audio = new Audio(clip.url);
+          userAudioRef.current = audio;
+          audio.onended = () => {
+            setPlayingUserClipTurnId(null);
+            setComparingTurnId(null);
+          };
+          audio.onerror = () => {
+            setPlayingUserClipTurnId(null);
+            setComparingTurnId(null);
+          };
+          audio.play()
+            .then(() => setPlayingUserClipTurnId(turn.id))
+            .catch(() => setComparingTurnId(null));
+        }, 280);
+      }
+    );
+  }, [comparingTurnId, currentScenario?.id, playbackSpeed, selectedExaminerId, speechEngine, stopAllAudio]);
 
   // Layer 2 Gemini Audio Deep Check
   const handleDeepAiAudioCheck = async () => {
@@ -1848,16 +1934,57 @@ Return ONLY plain dialogue lines starting with "A:" and "B:", 1-2 sentences per 
                   </button>
                 ))}
               </div>
-              <div className="relative">
-                <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={e => setSearchQuery(e.target.value)}
-                  placeholder={isEn ? 'Search scenarios or topics...' : 'Tìm kịch bản hoặc chủ đề...'}
-                  className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500"
-                />
+              <div className="flex items-center gap-1.5">
+                <div className="relative flex-1">
+                  <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={e => setSearchQuery(e.target.value)}
+                    placeholder={isEn ? 'Search scenarios or topics...' : 'Tìm kịch bản hoặc chủ đề...'}
+                    className="w-full pl-8 pr-7 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500"
+                  />
+                  {searchQuery && (
+                    <button
+                      type="button"
+                      onClick={() => setSearchQuery('')}
+                      aria-label={isEn ? 'Clear search' : 'Xóa từ khóa'}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white cursor-pointer"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
+                <button
+                  type="button"
+                  onClick={handlePickRandomScenario}
+                  disabled={filteredScenarios.length === 0}
+                  title={isEn ? 'Pick a random scenario' : 'Chọn ngẫu nhiên 1 kịch bản'}
+                  aria-label={isEn ? 'Pick a random scenario' : 'Chọn ngẫu nhiên 1 kịch bản'}
+                  className="p-1.5 rounded-xl bg-slate-900 hover:bg-cyan-600/20 text-cyan-300 border border-slate-800 hover:border-cyan-500/40 disabled:opacity-40 cursor-pointer shrink-0 transition-colors"
+                >
+                  <Shuffle className="w-3.5 h-3.5" />
+                </button>
               </div>
+
+              {availableSources.length > 2 && (
+                <div className="flex items-center space-x-1 overflow-x-auto no-scrollbar">
+                  {availableSources.map(src => (
+                    <button
+                      key={src}
+                      type="button"
+                      onClick={() => setSourceFilter(src)}
+                      className={`px-2 py-0.5 rounded-lg text-[10px] font-bold whitespace-nowrap cursor-pointer border transition-colors ${
+                        sourceFilter === src
+                          ? 'bg-cyan-600/25 text-cyan-200 border-cyan-500/40'
+                          : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-slate-200'
+                      }`}
+                    >
+                      {src === 'all' ? (isEn ? 'All Sources' : 'Mọi nguồn') : src}
+                    </button>
+                  ))}
+                </div>
+              )}
 
               <div className="flex items-center justify-between gap-1">
                 <div className="flex items-center space-x-1 overflow-x-auto no-scrollbar">
@@ -1881,7 +2008,7 @@ Return ONLY plain dialogue lines starting with "A:" and "B:", 1-2 sentences per 
                 </div>
                 <button
                   type="button"
-                  onClick={() => setHideCompleted(prev => !prev)}
+                  onClick={toggleHideCompleted}
                   className={`px-2 py-1 rounded-lg text-[10px] font-bold whitespace-nowrap cursor-pointer border ${
                     hideCompleted
                       ? 'bg-emerald-950/80 text-emerald-300 border-emerald-500/40'
@@ -1894,7 +2021,28 @@ Return ONLY plain dialogue lines starting with "A:" and "B:", 1-2 sentences per 
             </div>
 
             <div className="flex-1 overflow-y-auto p-2 space-y-1.5 overscroll-contain">
-              {filteredScenarios.map(item => {
+              {filteredScenarios.length === 0 ? (
+                <div className="p-5 text-center text-xs text-slate-400 space-y-2.5">
+                  <p>
+                    {isEn
+                      ? 'No scenarios match your current filter.'
+                      : 'Không có kịch bản nào khớp bộ lọc hiện tại.'}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSearchQuery('');
+                      setBandFilter('all');
+                      setSourceFilter('all');
+                      setActiveTrack('all');
+                      if (hideCompleted) toggleHideCompleted();
+                    }}
+                    className="px-3 py-1.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold cursor-pointer"
+                  >
+                    {isEn ? 'Reset Filters & Show All' : 'Đặt lại bộ lọc & Hiện tất cả'}
+                  </button>
+                </div>
+              ) : filteredScenarios.map(item => {
                 const isSelected = currentScenario?.id === item.id;
                 const best = convStats.bestScores?.[item.id];
                 return (
@@ -2107,16 +2255,18 @@ Return ONLY plain dialogue lines starting with "A:" and "B:", 1-2 sentences per 
                       liveSpokenText={isActive ? liveSpokenText : ''}
                       isWaitingForRetrySpeech={isActive && isWaitingForRetrySpeech}
                       speechError={isActive ? speechEngine.speechError : null}
-                      analyserNode={speechEngine.analyserNode}
-                      micLevel={speechEngine.micLevel || 0}
+                      analyserNode={isActive ? speechEngine.analyserNode : null}
+                      micLevel={isActive ? (speechEngine.micLevel || 0) : 0}
                       hasAnalyser={Boolean(speechEngine.analyserNode)}
                       evaluationResult={isActive ? evaluationResult : turnResults[turn.id]}
                       attemptCount={turnAttempts[turn.id] || 0}
                       passThreshold={passThreshold}
                       currentAudioClip={clip}
                       isPlayingUserClip={playingUserClipTurnId === turn.id}
+                      isComparingAudio={comparingTurnId === turn.id}
                       onToggleRecording={handleToggleRecording}
                       onReplayUserClip={handleReplayUserClip}
+                      onCompareAudio={handleCompareTurnAudio}
                       onListenAndRetry={handleListenAndRetry}
                       onSkipTurn={handleSkipTurn}
                       onAdvanceAfterPass={advanceAfterUserPass}
@@ -2202,7 +2352,16 @@ Return ONLY plain dialogue lines starting with "A:" and "B:", 1-2 sentences per 
                           })
                       : null
                   }
-                  onOpenInPronunciation={onOpenPronunciation}
+                  onOpenInPronunciation={
+                    onOpenPronunciation
+                      ? (wordsList) =>
+                          onOpenPronunciation(
+                            Array.isArray(wordsList) && wordsList.length > 0
+                              ? { tab: 'words', focusWords: wordsList }
+                              : { tab: 'words' }
+                          )
+                      : null
+                  }
                   isEn={isEn}
                 />
                 </div>
@@ -2350,16 +2509,55 @@ Return ONLY plain dialogue lines starting with "A:" and "B:", 1-2 sentences per 
                     </button>
                   ))}
                 </div>
-                <div className="relative">
-                  <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={e => setSearchQuery(e.target.value)}
-                    placeholder={isEn ? 'Search scenarios or topics...' : 'Tìm kịch bản hoặc chủ đề...'}
-                    className="w-full pl-8 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500"
-                  />
+                <div className="flex items-center gap-1.5">
+                  <div className="relative flex-1">
+                    <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onChange={e => setSearchQuery(e.target.value)}
+                      placeholder={isEn ? 'Search scenarios or topics...' : 'Tìm kịch bản hoặc chủ đề...'}
+                      className="w-full pl-8 pr-8 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500"
+                    />
+                    {searchQuery && (
+                      <button
+                        type="button"
+                        onClick={() => setSearchQuery('')}
+                        aria-label={isEn ? 'Clear search' : 'Xóa từ khóa'}
+                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white cursor-pointer"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handlePickRandomScenario}
+                    disabled={filteredScenarios.length === 0}
+                    className="px-2.5 py-2 rounded-xl bg-slate-950 text-cyan-300 border border-cyan-500/30 text-[11px] font-bold flex items-center space-x-1 shrink-0 disabled:opacity-40 cursor-pointer"
+                  >
+                    <Shuffle className="w-3.5 h-3.5" />
+                    <span>{isEn ? 'Random' : 'Ngẫu nhiên'}</span>
+                  </button>
                 </div>
+                {availableSources.length > 2 && (
+                  <div className="flex items-center space-x-1 overflow-x-auto no-scrollbar">
+                    {availableSources.map(src => (
+                      <button
+                        key={src}
+                        type="button"
+                        onClick={() => setSourceFilter(src)}
+                        className={`px-2.5 py-1 rounded-lg text-[10px] font-bold whitespace-nowrap cursor-pointer border ${
+                          sourceFilter === src
+                            ? 'bg-cyan-600/25 text-cyan-200 border-cyan-500/40'
+                            : 'bg-slate-950 text-slate-400 border-slate-800'
+                        }`}
+                      >
+                        {src === 'all' ? (isEn ? 'All Sources' : 'Mọi nguồn') : src}
+                      </button>
+                    ))}
+                  </div>
+                )}
                 <div className="flex items-center justify-between gap-1">
                   <div className="flex items-center space-x-1 overflow-x-auto no-scrollbar">
                     {[
@@ -2382,7 +2580,7 @@ Return ONLY plain dialogue lines starting with "A:" and "B:", 1-2 sentences per 
                   </div>
                   <button
                     type="button"
-                    onClick={() => setHideCompleted(prev => !prev)}
+                    onClick={toggleHideCompleted}
                     className={`px-2.5 py-1.5 rounded-lg text-[11px] font-bold whitespace-nowrap cursor-pointer border ${
                       hideCompleted
                         ? 'bg-emerald-950/80 text-emerald-300 border-emerald-500/40'
@@ -2395,7 +2593,28 @@ Return ONLY plain dialogue lines starting with "A:" and "B:", 1-2 sentences per 
               </div>
 
               <div className="flex-1 overflow-y-auto p-3 space-y-2 overscroll-contain">
-                {filteredScenarios.map(item => (
+                {filteredScenarios.length === 0 ? (
+                  <div className="p-6 text-center text-xs text-slate-400 space-y-2.5">
+                    <p>
+                      {isEn
+                        ? 'No scenarios match your current filter.'
+                        : 'Không có kịch bản nào khớp bộ lọc hiện tại.'}
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSearchQuery('');
+                        setBandFilter('all');
+                        setSourceFilter('all');
+                        setActiveTrack('all');
+                        if (hideCompleted) toggleHideCompleted();
+                      }}
+                      className="px-3.5 py-2 rounded-xl bg-cyan-600 text-white font-bold cursor-pointer"
+                    >
+                      {isEn ? 'Reset Filters & Show All' : 'Đặt lại bộ lọc & Hiện tất cả'}
+                    </button>
+                  </div>
+                ) : filteredScenarios.map(item => (
                   <div
                     key={item.id}
                     onClick={() => handleSelectScenario(item)}

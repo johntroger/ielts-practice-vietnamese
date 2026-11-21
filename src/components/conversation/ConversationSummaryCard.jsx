@@ -202,11 +202,19 @@ export default function ConversationSummaryCard({
           {onOpenInPronunciation && (
             <button
               type="button"
-              onClick={onOpenInPronunciation}
-              className="px-2.5 py-1 rounded-xl bg-indigo-600/25 hover:bg-indigo-600/45 text-indigo-300 border border-indigo-500/40 text-[11px] font-bold flex items-center space-x-1 cursor-pointer"
+              onClick={() => onOpenInPronunciation(summary.struggledWords || [])}
+              className="px-2.5 py-1 rounded-xl bg-indigo-600/25 hover:bg-indigo-600/45 text-indigo-300 border border-indigo-500/40 text-[11px] font-bold flex items-center space-x-1 cursor-pointer transition-colors"
             >
-              <Mic className="w-3 h-3" />
-              <span>{isEn ? 'Open /pronunciation' : 'Mở /pronunciation'}</span>
+              <Mic className="w-3 h-3 shrink-0" />
+              <span>
+                {summary.struggledWords.length > 0
+                  ? isEn
+                    ? `Practice ${Math.min(summary.struggledWords.length, 8)} Words in /pronunciation`
+                    : `Luyện ${Math.min(summary.struggledWords.length, 8)} từ ở /pronunciation`
+                  : isEn
+                  ? 'Open /pronunciation'
+                  : 'Mở /pronunciation'}
+              </span>
             </button>
           )}
         </div>
@@ -255,6 +263,17 @@ export default function ConversationSummaryCard({
                 </div>
 
                 <div className="flex items-center space-x-1.5">
+                  {onOpenInPronunciation && (
+                    <button
+                      type="button"
+                      onClick={() => onOpenInPronunciation([w])}
+                      className="px-2 py-1 rounded-lg bg-indigo-500/15 hover:bg-indigo-500/35 text-indigo-300 border border-indigo-500/30 text-[10px] font-bold flex items-center space-x-1 cursor-pointer transition-colors"
+                      title={isEn ? `Practice "${w.word}" in Pronunciation Studio` : `Luyện phát âm từ "${w.word}" ngay`}
+                    >
+                      <Mic className="w-3 h-3" />
+                      <span>{isEn ? 'Practice' : 'Luyện'}</span>
+                    </button>
+                  )}
                   {onSaveWordToNotebook && (
                     <button
                       type="button"

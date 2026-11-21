@@ -106,7 +106,16 @@ export default function SpeechShadowingWorkspace({
   const [searchQuery, setSearchQuery] = useState('');
   const [bandFilter, setBandFilter] = useState('all');
   const [sourceFilter, setSourceFilter] = useState('all');
-  const [hideCompleted, setHideCompleted] = useState(true);
+  const [hideCompleted, setHideCompleted] = useState(() =>
+    Boolean(safeGet('ielts_shadowing_hide_completed', true))
+  );
+  const toggleHideCompleted = () => {
+    setHideCompleted(prev => {
+      const next = !prev;
+      safeSet('ielts_shadowing_hide_completed', next);
+      return next;
+    });
+  };
   const [visibleTaskLimit, setVisibleTaskLimit] = useState(40);
   const [selectedTaskId, setSelectedTaskId] = useState(() => {
     if (initialTaskId) return initialTaskId;
@@ -271,6 +280,7 @@ export default function SpeechShadowingWorkspace({
   const [deepAiError, setDeepAiError] = useState('');
   const [totalSpeakingSec, setTotalSpeakingSec] = useState(0);
   const [playingUserClipSegId, setPlayingUserClipSegId] = useState(null);
+  const [comparingSegId, setComparingSegId] = useState(null);
 
   // Full Speech Replay State
   const [isFullReplaying, setIsFullReplaying] = useState(false);
@@ -302,6 +312,7 @@ export default function SpeechShadowingWorkspace({
   const promptAdvanceTimerRef = useRef(null);
   const fullReplayTimerRef = useRef(null);
   const retryResetTimerRef = useRef(null);
+  const compareTimerRef = useRef(null);
   const completedAwardedRef = useRef(false);
   const sessionTokenRef = useRef(0);
   const lastAutoReadKeyRef = useRef('');
@@ -347,6 +358,11 @@ export default function SpeechShadowingWorkspace({
       clearTimeout(retryResetTimerRef.current);
       retryResetTimerRef.current = null;
     }
+    if (compareTimerRef.current) {
+      clearTimeout(compareTimerRef.current);
+      compareTimerRef.current = null;
+    }
+    setComparingSegId(null);
     if (userAudioRef.current) {
       try {
         userAudioRef.current.pause();
@@ -953,6 +969,46 @@ export default function SpeechShadowingWorkspace({
     }
   };
 
+  const handleCompareSegAudio = useCallback((seg) => {
+    if (!seg) return;
+    const clipKey = `shad_${currentTask.id}_${seg.id}`;
+    const clip = speechEngine.audioClips[clipKey];
+    if (!clip?.url) return;
+
+    if (comparingSegId === seg.id) {
+      invalidateAndStopAudio();
+      return;
+    }
+
+    invalidateAndStopAudio();
+    const token = sessionTokenRef.current;
+    setComparingSegId(seg.id);
+    speechEngine.speak(
+      seg.text,
+      { examinerId: selectedExaminerId, rate: playbackSpeed, silentChime: true },
+      () => {
+        if (token !== sessionTokenRef.current) return;
+        compareTimerRef.current = setTimeout(() => {
+          compareTimerRef.current = null;
+          if (token !== sessionTokenRef.current) return;
+          const audio = new Audio(clip.url);
+          userAudioRef.current = audio;
+          audio.onended = () => {
+            setPlayingUserClipSegId(null);
+            setComparingSegId(null);
+          };
+          audio.onerror = () => {
+            setPlayingUserClipSegId(null);
+            setComparingSegId(null);
+          };
+          audio.play()
+            .then(() => setPlayingUserClipSegId(seg.id))
+            .catch(() => setComparingSegId(null));
+        }, 280);
+      }
+    );
+  }, [comparingSegId, currentTask?.id, invalidateAndStopAudio, playbackSpeed, selectedExaminerId, speechEngine]);
+
   // Layer 2 Gemini Native Audio Deep Check
   const handleDeepAiAudioCheck = async () => {
     if (!activeSeg || !currentAudioClip?.blob || !apiKey || isDeepAiGrading) return;
@@ -1359,7 +1415,7 @@ Separate paragraphs with a blank line. If ${customPart} is part1 or part3, prefi
               </div>
               <button
                 type="button"
-                onClick={() => setHideCompleted(prev => !prev)}
+                onClick={toggleHideCompleted}
                 className={`px-2 py-1 rounded-lg text-[10px] font-bold whitespace-nowrap cursor-pointer border ${
                   hideCompleted
                     ? 'bg-emerald-950/80 text-emerald-300 border-emerald-500/40'
@@ -1379,6 +1435,28 @@ Separate paragraphs with a blank line. If ${customPart} is part1 or part3, prefi
               <div className="px-3 py-2 rounded-xl bg-slate-900/90 border border-slate-800 text-[11px] text-cyan-300 flex items-center space-x-2">
                 <Loader2 className="w-3.5 h-3.5 animate-spin shrink-0" />
                 <span>{isEn ? 'Loading Speaking Bank...' : 'Đang tải ngân hàng đề Speaking...'}</span>
+              </div>
+            )}
+            {!isLoadingBank && visibleTasks.length === 0 && (
+              <div className="p-5 text-center text-xs text-slate-400 space-y-2.5">
+                <p>
+                  {isEn
+                    ? 'No Speaking samples match your current filter.'
+                    : 'Không có bài mẫu Speaking nào khớp bộ lọc hiện tại.'}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearchQuery('');
+                    setBandFilter('all');
+                    setSourceFilter('all');
+                    setActivePart('all');
+                    if (hideCompleted) toggleHideCompleted();
+                  }}
+                  className="px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold cursor-pointer"
+                >
+                  {isEn ? 'Reset Filters & Show All' : 'Đặt lại bộ lọc & Hiện tất cả'}
+                </button>
               </div>
             )}
             {visibleTasks.map(item => {
@@ -1639,16 +1717,18 @@ Separate paragraphs with a blank line. If ${customPart} is part1 or part3, prefi
                     liveSpokenText={isActive ? liveSpokenText : ''}
                     isWaitingForRetrySpeech={isActive && isWaitingForRetrySpeech}
                     speechError={isActive ? speechEngine.speechError : null}
-                    analyserNode={speechEngine.analyserNode}
-                    micLevel={speechEngine.micLevel || 0}
+                    analyserNode={isActive ? speechEngine.analyserNode : null}
+                    micLevel={isActive ? (speechEngine.micLevel || 0) : 0}
                     hasAnalyser={Boolean(speechEngine.analyserNode)}
                     evaluationResult={isActive ? evaluationResult : segmentResults[seg.id]}
                     attemptCount={segmentAttempts[seg.id] || 0}
                     passThreshold={passThreshold}
                     currentAudioClip={clip}
                     isPlayingUserClip={playingUserClipSegId === seg.id}
+                    isComparingAudio={comparingSegId === seg.id}
                     onToggleRecording={handleToggleRecording}
                     onReplayUserClip={handleReplayUserClip}
+                    onCompareAudio={handleCompareSegAudio}
                     onListenAndRetry={handleListenAndRetry}
                     onSkipSegment={handleSkipSegment}
                     onAdvanceAfterPass={advanceAfterPass}
@@ -1740,7 +1820,16 @@ Separate paragraphs with a blank line. If ${customPart} is part1 or part3, prefi
                         })
                     : null
                 }
-                onOpenInPronunciation={onOpenPronunciation}
+                onOpenInPronunciation={
+                  onOpenPronunciation
+                    ? (wordsList) =>
+                        onOpenPronunciation(
+                          Array.isArray(wordsList) && wordsList.length > 0
+                            ? { tab: 'words', focusWords: wordsList }
+                            : { tab: 'words' }
+                        )
+                    : null
+                }
                 isEn={isEn}
               />
               </div>
@@ -1968,7 +2057,7 @@ Separate paragraphs with a blank line. If ${customPart} is part1 or part3, prefi
                 </div>
                 <button
                   type="button"
-                  onClick={() => setHideCompleted(prev => !prev)}
+                  onClick={toggleHideCompleted}
                   className={`px-2.5 py-1.5 rounded-lg text-[11px] font-bold whitespace-nowrap cursor-pointer border ${
                     hideCompleted
                       ? 'bg-emerald-950/80 text-emerald-300 border-emerald-500/40'
@@ -1988,6 +2077,28 @@ Separate paragraphs with a blank line. If ${customPart} is part1 or part3, prefi
                 <div className="px-3 py-2.5 rounded-xl bg-slate-950/90 border border-slate-800 text-xs text-cyan-300 flex items-center space-x-2">
                   <Loader2 className="w-4 h-4 animate-spin shrink-0" />
                   <span>{isEn ? 'Loading Speaking Bank...' : 'Đang tải ngân hàng đề Speaking...'}</span>
+                </div>
+              )}
+              {!isLoadingBank && visibleTasks.length === 0 && (
+                <div className="p-6 text-center text-xs text-slate-400 space-y-2.5">
+                  <p>
+                    {isEn
+                      ? 'No Speaking samples match your current filter.'
+                      : 'Không có bài mẫu Speaking nào khớp bộ lọc hiện tại.'}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSearchQuery('');
+                      setBandFilter('all');
+                      setSourceFilter('all');
+                      setActivePart('all');
+                      if (hideCompleted) toggleHideCompleted();
+                    }}
+                    className="px-3.5 py-2 rounded-xl bg-purple-600 text-white font-bold cursor-pointer"
+                  >
+                    {isEn ? 'Reset Filters & Show All' : 'Đặt lại bộ lọc & Hiện tất cả'}
+                  </button>
                 </div>
               )}
               {visibleTasks.map(item => {

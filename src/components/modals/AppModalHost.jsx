@@ -289,9 +289,9 @@ export default function AppModalHost({
               if (onSaveUserVocab) onSaveUserVocab(v);
             }}
             onSaveMistake={(m) => setMistakes(prev => [m, ...prev])}
-            onOpenPronunciation={() => {
+            onOpenPronunciation={(opts) => {
               closeModal('conversation');
-              openModal('pronunciation');
+              openModal('pronunciation', opts && typeof opts === 'object' ? opts : true);
             }}
           />
         </WorkspaceErrorBoundary>

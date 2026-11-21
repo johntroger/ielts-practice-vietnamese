@@ -15,7 +15,8 @@ import {
   SkipForward,
   AlertCircle,
   Zap,
-  GraduationCap
+  GraduationCap,
+  ArrowLeftRight
 } from 'lucide-react';
 import SpeechWaveVisualizer from '../speaking/SpeechWaveVisualizer';
 import { expandConversationalTokens } from '../../data/pronunciationData';
@@ -39,7 +40,7 @@ function maskToKeywords(text = '') {
     .join(' ');
 }
 
-export default function ShadowingSegmentCard({
+function ShadowingSegmentCard({
   segment,
   segmentIndex,
   totalSegments,
@@ -66,8 +67,10 @@ export default function ShadowingSegmentCard({
   passThreshold,
   currentAudioClip,
   isPlayingUserClip,
+  isComparingAudio = false,
   onToggleRecording,
   onReplayUserClip,
+  onCompareAudio,
   onListenAndRetry,
   onSkipSegment,
   onAdvanceAfterPass,
@@ -208,6 +211,21 @@ export default function ShadowingSegmentCard({
                 >
                   {isPlayingUserClip ? <Pause className="w-3 h-3" /> : <Play className="w-3 h-3" />}
                   <span>{isEn ? 'Your Voice' : 'Giọng bạn'}</span>
+                </button>
+              )}
+              {currentAudioClip?.url && onCompareAudio && (
+                <button
+                  type="button"
+                  onClick={() => onCompareAudio(segment)}
+                  className={`px-2 py-1 rounded-lg text-[10px] font-bold flex items-center space-x-1 cursor-pointer transition-colors ${
+                    isComparingAudio
+                      ? 'bg-cyan-600 text-white'
+                      : 'bg-slate-800 hover:bg-slate-700 text-cyan-300'
+                  }`}
+                  title={isEn ? 'Play model then your voice back-to-back' : 'Nghe đối chiếu giọng mẫu nối tiếp giọng bạn'}
+                >
+                  <ArrowLeftRight className="w-3 h-3" />
+                  <span>{isComparingAudio ? (isEn ? 'Comparing...' : 'Đang đối chiếu...') : (isEn ? 'Compare' : 'So sánh')}</span>
                 </button>
               )}
               <button
@@ -500,14 +518,31 @@ export default function ShadowingSegmentCard({
           </button>
 
           {currentAudioClip?.url && !isListening && (
-            <button
-              type="button"
-              onClick={() => onReplayUserClip(segment.id)}
-              className="py-3 px-4 rounded-2xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 text-xs font-bold flex items-center space-x-1.5 cursor-pointer"
-            >
-              {isPlayingUserClip ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
-              <span>{isEn ? 'Replay' : 'Nghe lại'}</span>
-            </button>
+            <>
+              <button
+                type="button"
+                onClick={() => onReplayUserClip(segment.id)}
+                className="py-3 px-4 rounded-2xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 text-xs font-bold flex items-center space-x-1.5 cursor-pointer"
+              >
+                {isPlayingUserClip ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
+                <span>{isEn ? 'Replay' : 'Nghe lại'}</span>
+              </button>
+              {onCompareAudio && (
+                <button
+                  type="button"
+                  onClick={() => onCompareAudio(segment)}
+                  className={`py-3 px-4 rounded-2xl border text-xs font-bold flex items-center space-x-1.5 cursor-pointer transition-colors ${
+                    isComparingAudio
+                      ? 'bg-cyan-600 text-white border-cyan-400'
+                      : 'bg-cyan-950/50 hover:bg-cyan-900/60 text-cyan-300 border-cyan-500/40'
+                  }`}
+                  title={isEn ? 'Play native model then your recording back-to-back' : 'Nghe giọng mẫu nối tiếp giọng bạn để đối chiếu'}
+                >
+                  <ArrowLeftRight className="w-3.5 h-3.5" />
+                  <span>{isComparingAudio ? (isEn ? 'Comparing...' : 'Đang đối chiếu...') : (isEn ? 'Compare' : 'So sánh')}</span>
+                </button>
+              )}
+            </>
           )}
         </div>
 
@@ -686,3 +721,5 @@ export default function ShadowingSegmentCard({
     </div>
   );
 }
+
+export default React.memo(ShadowingSegmentCard);

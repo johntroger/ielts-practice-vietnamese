@@ -32,7 +32,9 @@ import {
   Lock,
   MessageSquare,
   PanelLeftClose,
-  PanelLeftOpen
+  PanelLeftOpen,
+  Shuffle,
+  ArrowLeftRight
 } from 'lucide-react';
 import {
   PRONUNCIATION_TRACKS,
@@ -41,8 +43,10 @@ import {
   PRONUNCIATION_SENTENCE_DRILLS,
   evaluatePronunciationAttempt,
   buildCustomPronunciationDrill,
-  mapVocabListToPronunciationDrills
+  mapVocabListToPronunciationDrills,
+  expandConversationalTokens
 } from '../data/pronunciationData';
+import { callGeminiApi } from '../services/ai/coreGeminiClient';
 import { SPEAKING_EXAMINER_PROFILES } from '../data/speakingTopics';
 import { useSpeechEngine } from '../hooks/useSpeechEngine';
 import SpeechWaveVisualizer from './speaking/SpeechWaveVisualizer';
@@ -219,6 +223,10 @@ export default function PronunciationStudioModal({
   const [customType, setCustomType] = useState('auto');
   const [customMeaning, setCustomMeaning] = useState('');
   const [customBand, setCustomBand] = useState('7.0');
+  const [aiDrillTopic, setAiDrillTopic] = useState('');
+  const [isGeneratingAiDrill, setIsGeneratingAiDrill] = useState(false);
+  const [importedFocusBanner, setImportedFocusBanner] = useState(null); // { count, firstWord }
+  const handledFocusRef = useRef(null);
 
   // 8. Practice & Evaluation State for Current Drill
   const [evaluationResult, setEvaluationResult] = useState(null);
@@ -237,11 +245,16 @@ export default function PronunciationStudioModal({
   const [isDeepAiGrading, setIsDeepAiGrading] = useState(false);
   const [deepAiError, setDeepAiError] = useState('');
   const userAudioRef = useRef(null);
+  const compareTimerRef = useRef(null);
+  const sessionTokenRef = useRef(0);
   const hasAwardedXpRef = useRef(false);
   const lastAutoEvaluatedRef = useRef('');
   const liveSpokenTextRef = useRef('');
   const attemptCountRef = useRef(0);
   const handleRunEvaluationRef = useRef(null);
+  const handleToggleRecordingRef = useRef(null);
+  const handlePlayModelRef = useRef(null);
+  const handleAdvanceToNextDrillRef = useRef(null);
 
   const toggleAutoMode = () => {
     setIsAutoMode(prev => {
@@ -346,8 +359,102 @@ export default function PronunciationStudioModal({
     }
   }, [hidePassed, justPassedDrillId, currentDrill?.id, activeTrackDrills.length]);
 
+  const handlePickRandomDrill = useCallback(() => {
+    if (activeTrackDrills.length <= 1) return;
+    let nextIdx = selectedIdx;
+    for (let tries = 0; tries < 6 && nextIdx === selectedIdx; tries++) {
+      nextIdx = Math.floor(Math.random() * activeTrackDrills.length);
+    }
+    setJustPassedDrillId(null);
+    setSelectedIdx(nextIdx);
+    setIsMobileListOpen(false);
+  }, [activeTrackDrills.length, selectedIdx]);
+
+  // Receive struggled words sent directly from /conversation Summary Card
+  useEffect(() => {
+    const focusWords = initialOptions?.focusWords;
+    if (!isOpen || !Array.isArray(focusWords) || focusWords.length === 0) return;
+    const signature = focusWords.map(w => w?.cleanWord || w?.word || '').join('|');
+    if (!signature || handledFocusRef.current === signature) return;
+    handledFocusRef.current = signature;
+
+    setActiveTab('words');
+    setSearchQuery('');
+    setBandFilter('all');
+
+    const builtInWords = new Set(
+      PRONUNCIATION_WORD_DRILLS.map(d => d.targetText?.toLowerCase().trim())
+    );
+    const existingCustomList = Array.isArray(customDrills) ? customDrills : [];
+    const existingCustomTexts = new Set(
+      existingCustomList.map(d => d.targetText?.toLowerCase().trim())
+    );
+
+    const newDrills = [];
+    const targetCleanWords = [];
+    focusWords.slice(0, 8).forEach((item, idx) => {
+      const rawWord = String(item?.word || item?.cleanWord || '').trim().replace(/^[^a-zA-Z]+|[^a-zA-Z]+$/g, '');
+      if (!rawWord) return;
+      const lower = rawWord.toLowerCase();
+      targetCleanWords.push(lower);
+      if (!builtInWords.has(lower) && !existingCustomTexts.has(lower)) {
+        existingCustomTexts.add(lower);
+        const note = item?.missingCoda
+          ? isEn
+            ? `From Conversation Studio (${item.similarity ?? 0}% — watch ending consonant)`
+            : `Từ Hội Thoại (${item.similarity ?? 0}% — chú ý bật rõ âm đuôi)`
+          : isEn
+          ? `From Conversation Studio (scored ${item?.similarity ?? 0}%)`
+          : `Từ Hội Thoại (đạt ${item?.similarity ?? 0}% — cần luyện thêm)`;
+        const drill = buildCustomPronunciationDrill({
+          text: rawWord,
+          type: 'words',
+          bandLevel: '7.0',
+          topic: isEn ? 'From Conversation' : 'Từ Hội Thoại',
+          meaning: note
+        });
+        drill.id = `pron-conv-${Date.now()}-${idx}`;
+        newDrills.push(drill);
+      }
+    });
+
+    if (newDrills.length > 0) {
+      const nextCustom = [...newDrills, ...existingCustomList];
+      setCustomDrills(nextCustom);
+      safeSet(CUSTOM_DRILLS_STORAGE_KEY, nextCustom);
+    }
+
+    // Ensure these target words are not hidden if previously passed
+    if (targetCleanWords.length > 0) {
+      const targetSet = new Set(targetCleanWords);
+      setPassedDrillIds(prev => {
+        const list = Array.isArray(prev) ? prev : [];
+        const allBuiltIn = PRONUNCIATION_WORD_DRILLS.filter(d => targetSet.has(d.targetText?.toLowerCase().trim())).map(d => d.id);
+        const allCustom = existingCustomList.filter(d => targetSet.has(d.targetText?.toLowerCase().trim())).map(d => d.id);
+        const removeSet = new Set([...allBuiltIn, ...allCustom]);
+        if (removeSet.size === 0) return list;
+        const nextList = list.filter(id => !removeSet.has(id));
+        if (nextList.length !== list.length) {
+          safeSet(passedStorageKey, nextList);
+        }
+        return nextList;
+      });
+    }
+
+    setSelectedIdx(0);
+    setImportedFocusBanner({
+      count: targetCleanWords.length,
+      firstWord: targetCleanWords[0] || ''
+    });
+  }, [isOpen, initialOptions?.focusWords]);
+
   // Reset evaluation when switching drill
   useEffect(() => {
+    sessionTokenRef.current += 1;
+    if (compareTimerRef.current) {
+      clearTimeout(compareTimerRef.current);
+      compareTimerRef.current = null;
+    }
     if (speechEngine.isListening) {
       speechEngine.stopListening();
     }
@@ -366,6 +473,7 @@ export default function PronunciationStudioModal({
     setManualSpokenInput('');
     setAttemptCount(0);
     setIsWaitingForRetrySpeech(false);
+    setShowTips(false);
     setIsDeepAiGrading(false);
     setDeepAiError('');
     attemptCountRef.current = 0;
@@ -378,6 +486,11 @@ export default function PronunciationStudioModal({
   // Clean up audio on modal close
   useEffect(() => {
     if (!isOpen) {
+      sessionTokenRef.current += 1;
+      if (compareTimerRef.current) {
+        clearTimeout(compareTimerRef.current);
+        compareTimerRef.current = null;
+      }
       if (speechEngine.isListening) speechEngine.stopListening();
       if (speechEngine.isSpeaking) speechEngine.stopSpeaking();
       if (userAudioRef.current) {
@@ -390,20 +503,42 @@ export default function PronunciationStudioModal({
     }
   }, [isOpen]);
 
-  // Keyboard shortcut Alt+Z for fullscreen
+  // Keyboard shortcuts: Alt+Z fullscreen, Esc close, Space Mic, L/R Listen, ArrowLeft/Right Navigate
   useEffect(() => {
     if (!isOpen) return;
     const handleKeyDown = (e) => {
       if (e.altKey && (e.key === 'z' || e.key === 'Z')) {
         e.preventDefault();
         toggleExpanded();
-      } else if (e.key === 'Escape' && !isCreatorOpen) {
+        return;
+      }
+      if (e.key === 'Escape' && !isCreatorOpen) {
         onClose?.();
+        return;
+      }
+      if (isCreatorOpen || isMobileListOpen) return;
+      const tag = e.target?.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || e.target?.isContentEditable) {
+        return;
+      }
+      if (e.code === 'Space' && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        e.preventDefault();
+        handleToggleRecordingRef.current?.();
+      } else if ((e.key === 'l' || e.key === 'L' || e.key === 'r' || e.key === 'R') && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        e.preventDefault();
+        handlePlayModelRef.current?.();
+      } else if (e.key === 'ArrowRight' && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        e.preventDefault();
+        handleAdvanceToNextDrillRef.current?.();
+      } else if (e.key === 'ArrowLeft' && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        e.preventDefault();
+        setJustPassedDrillId(null);
+        setSelectedIdx(prev => (prev > 0 ? prev - 1 : Math.max(0, activeTrackDrills.length - 1)));
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, isCreatorOpen, onClose]);
+  }, [isOpen, isCreatorOpen, isMobileListOpen, onClose, activeTrackDrills.length]);
 
   // Award XP and update stats upon completing a pronunciation evaluation
   const awardPronunciationXp = useCallback(
@@ -536,7 +671,8 @@ export default function PronunciationStudioModal({
           awardPronunciationXp(result, currentDrill);
         }
       } else {
-        // Needs Retry (< 80%): Play gentle retry cue, keep mic active & reset buffer if in Auto Mode
+        // Needs Retry (< 80%): Auto-reveal Mouth Tip & Trap, play gentle retry cue, keep mic active & reset buffer if in Auto Mode
+        setShowTips(true);
         speakingSoundEffects.playRetryChime();
         triggerHaptic('wrong');
         if (isAutoMode && speechEngine.isListening) {
@@ -684,6 +820,12 @@ export default function PronunciationStudioModal({
   // Play native TTS model
   const handlePlayModel = (customRate = null, textOverride = null) => {
     if (!currentDrill && !textOverride) return;
+    sessionTokenRef.current += 1;
+    if (compareTimerRef.current) {
+      clearTimeout(compareTimerRef.current);
+      compareTimerRef.current = null;
+    }
+    setIsComparingAudio(false);
     if (speechEngine.isListening) {
       speechEngine.stopListening();
     }
@@ -699,6 +841,12 @@ export default function PronunciationStudioModal({
   // Play native model at 0.85x and automatically open microphone immediately after for seamless retry
   const handleListenAndRetry = () => {
     if (!currentDrill) return;
+    const token = ++sessionTokenRef.current;
+    if (compareTimerRef.current) {
+      clearTimeout(compareTimerRef.current);
+      compareTimerRef.current = null;
+    }
+    setIsComparingAudio(false);
     if (speechEngine.isListening) {
       speechEngine.stopListening();
     }
@@ -708,6 +856,7 @@ export default function PronunciationStudioModal({
       currentDrill.targetText,
       { examinerId: selectedExaminerId, rate: 0.85, silentChime: true },
       async () => {
+        if (token !== sessionTokenRef.current) return;
         lastAutoEvaluatedRef.current = '';
         liveSpokenTextRef.current = '';
         if (speechEngine.deleteAudioClip) {
@@ -715,9 +864,13 @@ export default function PronunciationStudioModal({
         }
         try {
           await speechEngine.startListening(clipKey);
-          setIsWaitingForRetrySpeech(true);
+          if (token === sessionTokenRef.current) {
+            setIsWaitingForRetrySpeech(true);
+          }
         } catch (err) {
-          setShowManualFallback(true);
+          if (token === sessionTokenRef.current) {
+            setShowManualFallback(true);
+          }
         }
       }
     );
@@ -726,14 +879,22 @@ export default function PronunciationStudioModal({
   // Start / Stop Microphone Recording
   const handleToggleRecording = async () => {
     if (!currentDrill) return;
+    const token = ++sessionTokenRef.current;
+    if (compareTimerRef.current) {
+      clearTimeout(compareTimerRef.current);
+      compareTimerRef.current = null;
+    }
+    setIsComparingAudio(false);
 
     if (speechEngine.isListening) {
       const capturedBeforeStop = liveSpokenTextRef.current;
       speechEngine.stopListening();
       setIsWaitingForRetrySpeech(false);
-      // Wait 250ms for final transcript buffer flush, then evaluate
+      // Wait 260ms for final transcript buffer flush, then evaluate
       setTimeout(() => {
+        if (token !== sessionTokenRef.current) return;
         const captured =
+          speechEngine.getLatestTranscript?.() ||
           liveSpokenTextRef.current ||
           capturedBeforeStop ||
           speechEngine.transcriptsByClip?.[clipKey] ||
@@ -800,16 +961,86 @@ export default function PronunciationStudioModal({
   // Compare Side-by-Side: Plays Native Model first, then immediately plays User's Recording
   const handleCompareSideBySide = () => {
     if (!currentDrill || !currentAudioClip?.url) return;
+    if (isComparingAudio) {
+      sessionTokenRef.current += 1;
+      if (compareTimerRef.current) {
+        clearTimeout(compareTimerRef.current);
+        compareTimerRef.current = null;
+      }
+      speechEngine.stopSpeaking();
+      if (userAudioRef.current) {
+        try {
+          userAudioRef.current.pause();
+          userAudioRef.current.currentTime = 0;
+        } catch (e) {}
+      }
+      setIsPlayingUserClip(false);
+      setIsComparingAudio(false);
+      return;
+    }
+
+    const token = ++sessionTokenRef.current;
+    if (compareTimerRef.current) {
+      clearTimeout(compareTimerRef.current);
+      compareTimerRef.current = null;
+    }
+    if (speechEngine.isListening) speechEngine.stopListening();
     setIsComparingAudio(true);
     speechEngine.speak(
       currentDrill.targetText,
-      { examinerId: selectedExaminerId, rate: playbackSpeed },
+      { examinerId: selectedExaminerId, rate: playbackSpeed, silentChime: true },
       () => {
-        setTimeout(() => {
+        if (token !== sessionTokenRef.current) return;
+        compareTimerRef.current = setTimeout(() => {
+          compareTimerRef.current = null;
+          if (token !== sessionTokenRef.current) return;
           handleReplayUserAudio();
-        }, 300);
+        }, 280);
       }
     );
+  };
+
+  // Sync refs for Desktop Keyboard Shortcuts
+  useEffect(() => {
+    handleToggleRecordingRef.current = handleToggleRecording;
+    handlePlayModelRef.current = () => handlePlayModel(playbackSpeed);
+    handleAdvanceToNextDrillRef.current = handleAdvanceToNextDrill;
+  });
+
+  // Optional Gemini AI Custom Drill Generator
+  const handleGenerateAiDrill = async () => {
+    if (!apiKey || !aiDrillTopic.trim() || isGeneratingAiDrill) return;
+    setIsGeneratingAiDrill(true);
+    try {
+      const targetKind =
+        customType === 'words'
+          ? '1 high-value IELTS academic single word'
+          : customType === 'phrases'
+          ? '1 natural IELTS academic collocation/phrase (3-5 words)'
+          : customType === 'sentences'
+          ? '1 authentic IELTS Speaking sentence (12-18 words)'
+          : '1 high-value IELTS Speaking collocation or sentence';
+      const prompt = `Generate ${targetKind} for IELTS Band ${customBand} pronunciation practice on the topic: "${aiDrillTopic.trim()}".
+Return STRICTLY valid JSON: {"text": "...", "meaning": "${isEn ? 'concise English meaning & pronunciation tip' : 'nghĩa tiếng Việt ngắn gọn kèm lưu ý phát âm'}"}`;
+      const res = await callGeminiApi({
+        model,
+        apiKey,
+        body: { contents: [{ parts: [{ text: prompt }] }] }
+      });
+      const raw = res?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+      const jsonMatch = raw.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        const parsed = JSON.parse(jsonMatch[0]);
+        if (parsed.text) setCustomText(String(parsed.text).trim());
+        if (parsed.meaning) setCustomMeaning(String(parsed.meaning).trim());
+      } else if (raw.trim()) {
+        setCustomText(raw.trim().replace(/^["']|["']$/g, ''));
+      }
+    } catch (err) {
+      alert(err.message || (isEn ? 'Failed to generate drill with AI.' : 'Không thể tạo bài tập bằng AI.'));
+    } finally {
+      setIsGeneratingAiDrill(false);
+    }
   };
 
   // Create custom pronunciation exercise
@@ -1235,22 +1466,47 @@ export default function PronunciationStudioModal({
           <aside className="hidden lg:flex w-72 xl:w-80 bg-slate-950/60 border-r border-slate-800 flex-col shrink-0">
             {/* Search & Band Filter Bar */}
             <div className="p-3 border-b border-slate-800/80 space-y-2">
-              <div className="relative">
-                <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={e => {
-                    setSearchQuery(e.target.value);
-                    setSelectedIdx(0);
-                  }}
-                  placeholder={
-                    isEn
-                      ? 'Search words, phrases, or topics...'
-                      : 'Tìm từ, cụm từ, câu hoặc chủ đề...'
-                  }
-                  className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
-                />
+              <div className="flex items-center gap-1.5">
+                <div className="relative flex-1">
+                  <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={e => {
+                      setSearchQuery(e.target.value);
+                      setSelectedIdx(0);
+                    }}
+                    placeholder={
+                      isEn
+                        ? 'Search words, phrases, or topics...'
+                        : 'Tìm từ, cụm từ, câu hoặc chủ đề...'
+                    }
+                    className="w-full pl-8 pr-7 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                  />
+                  {searchQuery && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSearchQuery('');
+                        setSelectedIdx(0);
+                      }}
+                      aria-label={isEn ? 'Clear search' : 'Xóa từ khóa'}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white cursor-pointer"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
+                <button
+                  type="button"
+                  onClick={handlePickRandomDrill}
+                  disabled={activeTrackDrills.length <= 1}
+                  title={isEn ? 'Pick a random drill' : 'Chọn ngẫu nhiên 1 bài'}
+                  aria-label={isEn ? 'Pick a random drill' : 'Chọn ngẫu nhiên 1 bài'}
+                  className="p-1.5 rounded-xl bg-slate-900 hover:bg-indigo-600/20 text-indigo-300 border border-slate-800 hover:border-indigo-500/40 disabled:opacity-40 cursor-pointer shrink-0 transition-colors"
+                >
+                  <Shuffle className="w-3.5 h-3.5" />
+                </button>
               </div>
 
               <div className="flex items-center justify-between gap-1">
@@ -1454,6 +1710,23 @@ export default function PronunciationStudioModal({
 
           {/* RIGHT MAIN STAGE: Phonetic Target, Live Mic Recorder & Word-by-Word Diagnostics */}
           <main className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3.5 overscroll-contain">
+            {importedFocusBanner && importedFocusBanner.count > 0 && (
+              <div className="px-3.5 py-2 rounded-2xl bg-cyan-950/50 border border-cyan-500/40 flex items-center justify-between gap-2 text-xs text-cyan-200 animate-in fade-in duration-150">
+                <span className="font-bold">
+                  {isEn
+                    ? `🎯 Loaded ${importedFocusBanner.count} word${importedFocusBanner.count > 1 ? 's' : ''} to polish from Conversation Studio.`
+                    : `🎯 Đã nạp ${importedFocusBanner.count} từ cần luyện thêm từ phòng Luyện Hội Thoại.`}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setImportedFocusBanner(null)}
+                  className="p-1 rounded-lg hover:bg-cyan-500/20 text-cyan-300 cursor-pointer shrink-0"
+                  aria-label={isEn ? 'Dismiss' : 'Đóng'}
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            )}
             {currentDrill ? (
               <>
                 {/* ========================================================= */}
@@ -1537,9 +1810,32 @@ export default function PronunciationStudioModal({
 
                   {/* Main Target Text & Phonetic Breakdown */}
                   <div className="space-y-2 py-1">
-                    <div className="text-2xl sm:text-3xl font-black text-white tracking-tight leading-snug">
-                      {currentDrill.targetText}
-                    </div>
+                    {speechEngine.isListening && liveSpokenText && currentDrill.type !== 'words' ? (() => {
+                      const spokenSet = new Set(expandConversationalTokens(liveSpokenText));
+                      return (
+                        <div className="text-2xl sm:text-3xl font-black tracking-tight leading-snug flex flex-wrap gap-x-2 gap-y-1">
+                          {currentDrill.targetText.split(/\s+/).map((w, idx) => {
+                            const expandedTokens = expandConversationalTokens(w);
+                            const matched =
+                              expandedTokens.length > 0 &&
+                              (expandedTokens.every(tok => spokenSet.has(tok)) ||
+                                (expandedTokens.length >= 2 && spokenSet.has(expandedTokens.join(''))));
+                            return (
+                              <span
+                                key={`${w}-${idx}`}
+                                className={matched ? 'text-emerald-300 underline decoration-emerald-500/60' : 'text-white'}
+                              >
+                                {w}
+                              </span>
+                            );
+                          })}
+                        </div>
+                      );
+                    })() : (
+                      <div className="text-2xl sm:text-3xl font-black text-white tracking-tight leading-snug">
+                        {currentDrill.targetText}
+                      </div>
+                    )}
 
                     {/* Track-specific visual pronunciation guide */}
                     {currentDrill.type === 'words' && currentDrill.syllables && (
@@ -1685,10 +1981,32 @@ export default function PronunciationStudioModal({
                       </div>
                     ) : speechEngine.isListening && isWaitingForRetrySpeech ? (
                       <div className="absolute inset-0 bg-amber-950/40 flex items-center justify-center px-4 text-center">
-                        <p className="text-xs font-extrabold text-amber-300 animate-pulse">
-                          {isEn
-                            ? '🎙️ Mic is still open — pronounce it again clearly now!'
-                            : '🎙️ Micro vẫn đang mở — bạn hãy đọc lại rõ ràng ngay bây giờ!'}
+                        <p className="text-xs font-extrabold text-amber-300 animate-pulse flex items-center gap-2">
+                          <span>
+                            {isEn
+                              ? '🎙️ Mic is still open — pronounce it again clearly now!'
+                              : '🎙️ Micro vẫn đang mở — bạn hãy đọc lại rõ ràng ngay bây giờ!'}
+                          </span>
+                          {Boolean(speechEngine.analyserNode) && (
+                            <span className="px-1.5 py-0.5 rounded bg-amber-500/20 border border-amber-400/40 text-[10px] font-mono">
+                              {speechEngine.micLevel || 0}%
+                            </span>
+                          )}
+                        </p>
+                      </div>
+                    ) : speechEngine.isListening ? (
+                      <div className="absolute inset-0 bg-emerald-950/35 flex items-center justify-center px-4 text-center">
+                        <p className="text-xs font-extrabold text-emerald-300 animate-pulse flex items-center gap-2">
+                          <span>
+                            {Boolean(speechEngine.analyserNode)
+                              ? isEn ? '🎙️ Listening...' : '🎙️ Đang nghe...'
+                              : isEn ? '🎙️ Mic active — speak now!' : '🎙️ Micro đang bật — hãy nói ngay!'}
+                          </span>
+                          {Boolean(speechEngine.analyserNode) && (
+                            <span className="px-1.5 py-0.5 rounded bg-emerald-500/20 border border-emerald-400/40 text-[10px] font-mono">
+                              Mic {speechEngine.micLevel || 0}%
+                            </span>
+                          )}
                         </p>
                       </div>
                     ) : null}
@@ -1747,19 +2065,46 @@ export default function PronunciationStudioModal({
                     </button>
 
                     {currentAudioClip?.url && !speechEngine.isListening && (
-                      <button
-                        type="button"
-                        onClick={handleReplayUserAudio}
-                        className={`py-3 px-4 rounded-2xl text-xs font-bold flex items-center space-x-1.5 border transition-all cursor-pointer ${
-                          isPlayingUserClip
-                            ? 'bg-amber-600 text-white border-amber-500'
-                            : 'bg-slate-900 hover:bg-slate-800 text-slate-200 border-slate-700'
-                        }`}
-                      >
-                        {isPlayingUserClip ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
-                        <span>{isEn ? 'Replay Voice' : 'Nghe Lại'}</span>
-                      </button>
+                      <>
+                        <button
+                          type="button"
+                          onClick={handleReplayUserAudio}
+                          className={`py-3 px-4 rounded-2xl text-xs font-bold flex items-center space-x-1.5 border transition-all cursor-pointer ${
+                            isPlayingUserClip && !isComparingAudio
+                              ? 'bg-amber-600 text-white border-amber-500'
+                              : 'bg-slate-900 hover:bg-slate-800 text-slate-200 border-slate-700'
+                          }`}
+                        >
+                          {isPlayingUserClip && !isComparingAudio ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
+                          <span>{isEn ? 'Replay Voice' : 'Nghe Lại'}</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={handleCompareSideBySide}
+                          className={`py-3 px-4 rounded-2xl text-xs font-bold flex items-center space-x-1.5 border transition-all cursor-pointer ${
+                            isComparingAudio
+                              ? 'bg-cyan-600 text-white border-cyan-400 shadow-md'
+                              : 'bg-cyan-950/50 hover:bg-cyan-900/60 text-cyan-300 border-cyan-500/40'
+                          }`}
+                          title={isEn ? 'Play native model followed immediately by your recording' : 'Nghe đối chiếu giọng mẫu nối tiếp giọng bạn'}
+                        >
+                          <ArrowLeftRight className="w-3.5 h-3.5 shrink-0" />
+                          <span>
+                            {isComparingAudio
+                              ? isEn ? 'Comparing...' : 'Đang đối chiếu...'
+                              : isEn ? 'Compare Model ↔ You' : 'So Sánh Mẫu ↔ Bạn'}
+                          </span>
+                        </button>
+                      </>
                     )}
+                  </div>
+
+                  {/* Subtle Desktop Keyboard Shortcuts Hint */}
+                  <div className="hidden lg:flex items-center justify-end text-[10px] text-slate-500 space-x-3">
+                    <span><kbd className="px-1.5 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-400 font-mono">Space</kbd> {isEn ? 'Mic' : 'Bật/Tắt Mic'}</span>
+                    <span><kbd className="px-1.5 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-400 font-mono">L</kbd> {isEn ? 'Listen' : 'Nghe mẫu'}</span>
+                    <span><kbd className="px-1.5 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-400 font-mono">←</kbd> <kbd className="px-1.5 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-400 font-mono">→</kbd> {isEn ? 'Navigate' : 'Chuyển bài'}</span>
                   </div>
 
                   {/* Manual / Fallback Self-Evaluation Box (For browsers without Web Speech STT or noisy environments) */}
@@ -2228,22 +2573,46 @@ export default function PronunciationStudioModal({
 
               {/* Search & Band Filter inside Mobile Sheet */}
               <div className="p-3 border-b border-slate-800/80 space-y-2 shrink-0">
-                <div className="relative">
-                  <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={e => {
-                      setSearchQuery(e.target.value);
-                      setSelectedIdx(0);
-                    }}
-                    placeholder={
-                      isEn
-                        ? 'Search words, phrases, or topics...'
-                        : 'Tìm từ, cụm từ, câu hoặc chủ đề...'
-                    }
-                    className="w-full pl-8 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
-                  />
+                <div className="flex items-center gap-1.5">
+                  <div className="relative flex-1">
+                    <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onChange={e => {
+                        setSearchQuery(e.target.value);
+                        setSelectedIdx(0);
+                      }}
+                      placeholder={
+                        isEn
+                          ? 'Search words, phrases, or topics...'
+                          : 'Tìm từ, cụm từ, câu hoặc chủ đề...'
+                      }
+                      className="w-full pl-8 pr-8 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                    />
+                    {searchQuery && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSearchQuery('');
+                          setSelectedIdx(0);
+                        }}
+                        aria-label={isEn ? 'Clear search' : 'Xóa từ khóa'}
+                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white cursor-pointer"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handlePickRandomDrill}
+                    disabled={activeTrackDrills.length <= 1}
+                    className="px-2.5 py-2 rounded-xl bg-slate-950 text-indigo-300 border border-indigo-500/30 text-[11px] font-bold flex items-center space-x-1 shrink-0 disabled:opacity-40 cursor-pointer"
+                  >
+                    <Shuffle className="w-3.5 h-3.5" />
+                    <span>{isEn ? 'Random' : 'Ngẫu nhiên'}</span>
+                  </button>
                 </div>
 
                 <div className="flex items-center justify-between gap-1">
@@ -2377,6 +2746,42 @@ export default function PronunciationStudioModal({
               </div>
 
               <form onSubmit={handleCreateCustomDrill} className="space-y-3.5">
+                {apiKey && (
+                  <div className="p-3 rounded-2xl bg-indigo-950/40 border border-indigo-500/30 space-y-2">
+                    <div className="text-xs font-bold text-indigo-300 flex items-center space-x-1">
+                      <Sparkles className="w-3.5 h-3.5" />
+                      <span>
+                        {isEn
+                          ? 'Optional: Suggest a Pronunciation Drill with Gemini AI'
+                          : 'Tùy chọn: Gợi ý nhanh bài luyện phát âm bằng Gemini AI'}
+                      </span>
+                    </div>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={aiDrillTopic}
+                        onChange={e => setAiDrillTopic(e.target.value)}
+                        placeholder={
+                          isEn
+                            ? 'e.g., Climate change, AI ethics, or silent letters...'
+                            : 'VD: Biến đổi khí hậu, Trí tuệ nhân tạo, hoặc âm câm...'
+                        }
+                        className="flex-1 px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleGenerateAiDrill}
+                        disabled={isGeneratingAiDrill || !aiDrillTopic.trim()}
+                        className="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold cursor-pointer disabled:opacity-50 shrink-0"
+                      >
+                        {isGeneratingAiDrill
+                          ? isEn ? 'Generating...' : 'Đang tạo...'
+                          : isEn ? 'AI Suggest' : 'AI Gợi Ý'}
+                      </button>
+                    </div>
+                  </div>
+                )}
+
                 <div>
                   <label className="block text-xs font-bold text-slate-300 mb-1">
                     {isEn
