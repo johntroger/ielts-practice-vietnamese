@@ -38,6 +38,8 @@ import {
 } from 'lucide-react';
 import {
   PRONUNCIATION_TRACKS,
+  PRONUNCIATION_IPA_DRILLS,
+  IPA_SOUND_GROUPS,
   PRONUNCIATION_WORD_DRILLS,
   PRONUNCIATION_PHRASE_DRILLS,
   PRONUNCIATION_SENTENCE_DRILLS,
@@ -92,9 +94,9 @@ export default function PronunciationStudioModal({
 }) {
   const { isEn } = useTranslation();
 
-  const validTabs = ['words', 'phrases', 'sentences'];
+  const validTabs = ['ipa', 'words', 'phrases', 'sentences'];
 
-  // 1. Active Track Tab ('words' | 'phrases' | 'sentences')
+  // 1. Active Track Tab ('ipa' | 'words' | 'phrases' | 'sentences')
   const [activeTab, setActiveTab] = useState(() => {
     if (initialOptions?.tab && validTabs.includes(initialOptions.tab)) {
       return initialOptions.tab;
@@ -104,11 +106,13 @@ export default function PronunciationStudioModal({
       const tabParam = search.get('tab');
       if (tabParam && validTabs.includes(tabParam)) return tabParam;
       const pathname = window.location.pathname.toLowerCase();
+      if (pathname.endsWith('/ipa')) return 'ipa';
       if (pathname.endsWith('/phrases')) return 'phrases';
       if (pathname.endsWith('/sentences')) return 'sentences';
       if (pathname.endsWith('/words')) return 'words';
     }
-    return safeGet('ielts_pronunciation_active_tab', 'words');
+    const savedTab = safeGet('ielts_pronunciation_active_tab', 'words');
+    return validTabs.includes(savedTab) ? savedTab : 'words';
   });
 
   useEffect(() => {
@@ -207,6 +211,8 @@ export default function PronunciationStudioModal({
   // 6. Filters, Passed Auto-Hide & Drill List
   const [searchQuery, setSearchQuery] = useState('');
   const [bandFilter, setBandFilter] = useState('all'); // 'all' | 'foundation' | 'band7' | 'band8'
+  const [ipaGroupFilter, setIpaGroupFilter] = useState('all'); // 'all' | 'monophthongs' | 'diphthongs' | 'consonants'
+  const [showIpaChart, setShowIpaChart] = useState(true);
   const [hidePassed, setHidePassed] = useState(() =>
     Boolean(safeGet('ielts_pronunciation_hide_passed', true))
   );
@@ -274,7 +280,9 @@ export default function PronunciationStudioModal({
   // Combine built-in drills (Guest vs Registered) + User's Vocab Notebook + Custom drills
   const allUnfilteredForTab = useMemo(() => {
     const rawBase =
-      activeTab === 'words'
+      activeTab === 'ipa'
+        ? PRONUNCIATION_IPA_DRILLS
+        : activeTab === 'words'
         ? PRONUNCIATION_WORD_DRILLS
         : activeTab === 'phrases'
         ? PRONUNCIATION_PHRASE_DRILLS
@@ -286,9 +294,10 @@ export default function PronunciationStudioModal({
       : rawBase.filter(d => !d.requiresAuth);
 
     const existingTexts = new Set(rawBase.map(d => d.targetText?.toLowerCase().trim()));
-    const vocabDrillsForTab = currentUser
-      ? mapVocabListToPronunciationDrills(vocabList, existingTexts).filter(d => d.type === activeTab)
-      : [];
+    const vocabDrillsForTab =
+      currentUser && activeTab !== 'ipa'
+        ? mapVocabListToPronunciationDrills(vocabList, existingTexts).filter(d => d.type === activeTab)
+        : [];
 
     const customForTab = (Array.isArray(customDrills) ? customDrills : []).filter(
       d => d.type === activeTab
@@ -300,7 +309,9 @@ export default function PronunciationStudioModal({
   const lockedCountForGuest = useMemo(() => {
     if (currentUser) return 0;
     const rawBase =
-      activeTab === 'words'
+      activeTab === 'ipa'
+        ? PRONUNCIATION_IPA_DRILLS
+        : activeTab === 'words'
         ? PRONUNCIATION_WORD_DRILLS
         : activeTab === 'phrases'
         ? PRONUNCIATION_PHRASE_DRILLS
@@ -316,7 +327,11 @@ export default function PronunciationStudioModal({
   const activeTrackDrills = useMemo(() => {
     let combined = allUnfilteredForTab;
 
-    if (bandFilter === 'foundation') {
+    if (activeTab === 'ipa') {
+      if (ipaGroupFilter !== 'all') {
+        combined = combined.filter(d => d.ipaGroup === ipaGroupFilter);
+      }
+    } else if (bandFilter === 'foundation') {
       combined = combined.filter(d => parseFloat(d.bandLevel) <= 6.5);
     } else if (bandFilter === 'band7') {
       combined = combined.filter(d => parseFloat(d.bandLevel) === 7.0 || parseFloat(d.bandLevel) === 7.5);
@@ -337,6 +352,8 @@ export default function PronunciationStudioModal({
       const q = searchQuery.toLowerCase().trim();
       combined = combined.filter(
         d =>
+          d.ipaSymbol?.toLowerCase().includes(q) ||
+          d.sampleWord?.toLowerCase().includes(q) ||
           d.targetText?.toLowerCase().includes(q) ||
           d.topicEn?.toLowerCase().includes(q) ||
           d.topicVi?.toLowerCase().includes(q) ||
@@ -348,7 +365,7 @@ export default function PronunciationStudioModal({
     }
 
     return combined;
-  }, [allUnfilteredForTab, bandFilter, hidePassed, passedDrillIds, justPassedDrillId, searchQuery]);
+  }, [allUnfilteredForTab, activeTab, ipaGroupFilter, bandFilter, hidePassed, passedDrillIds, justPassedDrillId, searchQuery]);
 
   const currentDrill = activeTrackDrills[selectedIdx] || activeTrackDrills[0] || null;
   const clipKey = currentDrill ? `pron_clip_${currentDrill.id}` : 'pron_clip_default';
@@ -1096,28 +1113,46 @@ export default function PronunciationStudioModal({
 
         <div className="flex items-center justify-between gap-1">
           <div className="flex items-center space-x-1 overflow-x-auto no-scrollbar">
-            {[
-              { id: 'all', label: isEn ? 'All' : 'Tất cả' },
-              { id: 'foundation', label: 'Band 5.5-6.5' },
-              { id: 'band7', label: 'Band 7.0-7.5' },
-              { id: 'band8', label: 'Band 8.0+' }
-            ].map(b => (
-              <button
-                key={b.id}
-                type="button"
-                onClick={() => {
-                  setBandFilter(b.id);
-                  setSelectedIdx(0);
-                }}
-                className={`${isMobileSheet ? 'px-2.5 py-1.5 text-[11px]' : 'px-2 py-1 text-[10px]'} rounded-lg font-bold whitespace-nowrap cursor-pointer ${
-                  bandFilter === b.id
-                    ? 'bg-indigo-600 text-white'
-                    : `${isMobileSheet ? 'bg-slate-950' : 'bg-slate-900'} text-slate-400 hover:text-slate-200 border border-slate-800`
-                }`}
-              >
-                {b.label}
-              </button>
-            ))}
+            {activeTab === 'ipa'
+              ? IPA_SOUND_GROUPS.map(g => (
+                  <button
+                    key={g.id}
+                    type="button"
+                    onClick={() => {
+                      setIpaGroupFilter(g.id);
+                      setSelectedIdx(0);
+                    }}
+                    className={`${isMobileSheet ? 'px-2.5 py-1.5 text-[11px]' : 'px-2 py-1 text-[10px]'} rounded-lg font-bold whitespace-nowrap cursor-pointer ${
+                      ipaGroupFilter === g.id
+                        ? 'bg-emerald-600 text-white'
+                        : `${isMobileSheet ? 'bg-slate-950' : 'bg-slate-900'} text-slate-400 hover:text-slate-200 border border-slate-800`
+                    }`}
+                  >
+                    {isEn ? g.labelEn : g.labelVi}
+                  </button>
+                ))
+              : [
+                  { id: 'all', label: isEn ? 'All' : 'Tất cả' },
+                  { id: 'foundation', label: 'Band 5.5-6.5' },
+                  { id: 'band7', label: 'Band 7.0-7.5' },
+                  { id: 'band8', label: 'Band 8.0+' }
+                ].map(b => (
+                  <button
+                    key={b.id}
+                    type="button"
+                    onClick={() => {
+                      setBandFilter(b.id);
+                      setSelectedIdx(0);
+                    }}
+                    className={`${isMobileSheet ? 'px-2.5 py-1.5 text-[11px]' : 'px-2 py-1 text-[10px]'} rounded-lg font-bold whitespace-nowrap cursor-pointer ${
+                      bandFilter === b.id
+                        ? 'bg-indigo-600 text-white'
+                        : `${isMobileSheet ? 'bg-slate-950' : 'bg-slate-900'} text-slate-400 hover:text-slate-200 border border-slate-800`
+                    }`}
+                  >
+                    {b.label}
+                  </button>
+                ))}
           </div>
 
           <button
@@ -1203,9 +1238,15 @@ export default function PronunciationStudioModal({
                 >
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center space-x-1.5 mb-0.5">
-                      <span className="text-[10px] font-black px-1.5 py-0.2 rounded bg-slate-800 text-indigo-300">
-                        Band {item.bandLevel}
-                      </span>
+                      {item.ipaSymbol ? (
+                        <span className="text-[11px] font-mono font-black px-2 py-0.5 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                          {item.ipaSymbol}
+                        </span>
+                      ) : (
+                        <span className="text-[10px] font-black px-1.5 py-0.2 rounded bg-slate-800 text-indigo-300">
+                          Band {item.bandLevel}
+                        </span>
+                      )}
                       <span className="text-[10px] text-slate-400 truncate">
                         {isEn ? item.topicEn : item.topicVi}
                       </span>
@@ -1678,6 +1719,93 @@ export default function PronunciationStudioModal({
                 </button>
               </div>
             )}
+            {activeTab === 'ipa' && (
+              <div className="p-3 sm:p-4 rounded-3xl bg-slate-950/90 border border-emerald-500/30 space-y-2.5">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div className="flex items-center space-x-2">
+                    <span className="px-2 py-0.5 rounded-lg bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs font-black font-mono">
+                      IPA 44
+                    </span>
+                    <span className="text-xs sm:text-sm font-black text-white">
+                      {isEn ? 'Interactive Cambridge 44-Sound IPA Chart' : 'Bảng 44 Âm Quốc Tế IPA (Chạm để nghe & luyện)'}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <div className="hidden sm:flex items-center space-x-1">
+                      {IPA_SOUND_GROUPS.map(g => (
+                        <button
+                          key={g.id}
+                          type="button"
+                          onClick={() => {
+                            setIpaGroupFilter(g.id);
+                            setSelectedIdx(0);
+                          }}
+                          className={`px-2 py-1 rounded-lg text-[10px] font-bold cursor-pointer transition-all ${
+                            ipaGroupFilter === g.id
+                              ? 'bg-emerald-600 text-white shadow-xs'
+                              : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
+                          }`}
+                        >
+                          {isEn ? g.labelEn : g.labelVi}
+                        </button>
+                      ))}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setShowIpaChart(prev => !prev)}
+                      className="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 text-[10px] font-bold cursor-pointer"
+                    >
+                      {showIpaChart ? (isEn ? 'Collapse Chart' : 'Thu gọn bảng') : (isEn ? 'Expand Chart' : 'Mở bảng IPA')}
+                    </button>
+                  </div>
+                </div>
+
+                {showIpaChart && (
+                  <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-11 gap-1.5 pt-1">
+                    {activeTrackDrills.map((ipaItem, idx) => {
+                      const isActiveTile = currentDrill?.id === ipaItem.id;
+                      const tileBest = pronStats.bestScores?.[ipaItem.id];
+                      const isPassedTile =
+                        (tileBest && tileBest.accuracy >= PRONUNCIATION_PASS_THRESHOLD) ||
+                        (Array.isArray(passedDrillIds) && passedDrillIds.includes(ipaItem.id));
+
+                      return (
+                        <button
+                          key={ipaItem.id}
+                          type="button"
+                          onClick={() => {
+                            setJustPassedDrillId(null);
+                            setSelectedIdx(idx);
+                            handlePlayModel(playbackSpeed, ipaItem.targetText);
+                          }}
+                          className={`p-1.5 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center justify-center relative ${
+                            isActiveTile
+                              ? 'bg-emerald-950/90 border-emerald-400 ring-2 ring-emerald-500/40 shadow-md'
+                              : isPassedTile
+                              ? 'bg-emerald-950/30 border-emerald-500/40 hover:bg-emerald-950/60'
+                              : 'bg-slate-900/90 hover:bg-slate-800 border-slate-800'
+                          }`}
+                          title={`${ipaItem.ipaSymbol} (${ipaItem.targetText})`}
+                        >
+                          <span className={`text-xs sm:text-sm font-mono font-black ${isActiveTile ? 'text-emerald-300' : 'text-white'}`}>
+                            {ipaItem.ipaSymbol}
+                          </span>
+                          <span className="text-[9px] text-slate-400 truncate max-w-full">
+                            {ipaItem.sampleWord}
+                          </span>
+                          {tileBest && (
+                            <span className={`text-[8px] font-black mt-0.5 ${tileBest.accuracy >= 80 ? 'text-emerald-400' : 'text-amber-400'}`}>
+                              {tileBest.accuracy}%
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
+
             {currentDrill ? (
               <>
                 {/* ========================================================= */}
@@ -1695,9 +1823,15 @@ export default function PronunciationStudioModal({
                       >
                         {isDesktopSidebarOpen ? <PanelLeftClose className="w-3.5 h-3.5" /> : <PanelLeftOpen className="w-3.5 h-3.5" />}
                       </button>
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-500/15 text-amber-300 border border-amber-500/30">
-                        Band {currentDrill.bandLevel}
-                      </span>
+                      {currentDrill.type === 'ipa' && currentDrill.ipaSymbol ? (
+                        <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                          {currentDrill.ipaSymbol} • {isEn ? currentDrill.categoryEn : currentDrill.categoryVi}
+                        </span>
+                      ) : (
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-500/15 text-amber-300 border border-amber-500/30">
+                          Band {currentDrill.bandLevel}
+                        </span>
+                      )}
                       <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 flex items-center space-x-1">
                         <Zap className="w-2.5 h-2.5 fill-current" />
                         <span>+{currentDrill.xpReward} XP</span>
@@ -1789,6 +1923,63 @@ export default function PronunciationStudioModal({
                     )}
 
                     {/* Track-specific visual pronunciation guide */}
+                    {currentDrill.type === 'ipa' && (
+                      <div className="space-y-2.5 pt-1">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="px-3.5 py-1.5 rounded-2xl bg-emerald-500/20 border border-emerald-400/50 text-emerald-300 font-mono text-xl sm:text-2xl font-black shadow-sm">
+                            {currentDrill.ipaSymbol}
+                          </span>
+                          <div className="flex flex-wrap items-center gap-1.5">
+                            {currentDrill.targetText
+                              .split(',')
+                              .map(w => w.trim())
+                              .filter(Boolean)
+                              .map(word => (
+                                <button
+                                  key={word}
+                                  type="button"
+                                  onClick={() => handlePlayModel(playbackSpeed, word)}
+                                  className="px-2.5 py-1 rounded-xl bg-slate-900 hover:bg-indigo-950/80 border border-slate-700 hover:border-indigo-400/60 text-xs font-extrabold text-white flex items-center space-x-1 cursor-pointer transition-all"
+                                  title={isEn ? `Listen to "${word}"` : `Nghe từ "${word}"`}
+                                >
+                                  <Volume2 className="w-3 h-3 text-indigo-400" />
+                                  <span>{word}</span>
+                                </button>
+                              ))}
+                          </div>
+                          {currentDrill.minimalPair && (
+                            <button
+                              type="button"
+                              onClick={() => handlePlayModel(0.8, currentDrill.minimalPair.speakText)}
+                              className="px-2.5 py-1 rounded-xl bg-amber-950/70 hover:bg-amber-900/80 border border-amber-500/40 text-amber-200 text-xs font-bold flex items-center space-x-1.5 cursor-pointer transition-all"
+                              title={isEn ? 'Compare minimal pair contrast' : 'Nghe phân biệt cặp âm dễ nhầm'}
+                            >
+                              <Volume2 className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                              <span>
+                                {isEn ? 'Minimal Pair: ' : 'Cặp đối lập: '}
+                                <strong className="font-mono">{currentDrill.minimalPair.pairText}</strong>
+                              </span>
+                            </button>
+                          )}
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                          <div className="p-2.5 rounded-xl bg-slate-900/90 border border-emerald-500/25 text-slate-200">
+                            <span className="font-black text-emerald-300 mr-1">
+                              {isEn ? '👄 Mouth & Tongue:' : '👄 Khẩu hình miệng & lưỡi:'}
+                            </span>
+                            {isEn ? currentDrill.mouthTipEn : currentDrill.mouthTipVi}
+                          </div>
+                          <div className="p-2.5 rounded-xl bg-slate-900/90 border border-rose-500/25 text-slate-200">
+                            <span className="font-black text-rose-300 mr-1">
+                              {isEn ? '⚠️ Common Trap:' : '⚠️ Lỗi dễ mắc:'}
+                            </span>
+                            {isEn ? currentDrill.trapEn : currentDrill.trapVi}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
                     {currentDrill.type === 'words' && currentDrill.syllables && (
                       <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm">
                         <span className="px-2.5 py-1 rounded-xl bg-indigo-950/90 border border-indigo-500/40 text-indigo-200 font-mono font-bold">
