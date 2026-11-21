@@ -168,10 +168,13 @@ export default function ConversationStudioModal({
 
   const [searchQuery, setSearchQuery] = useState('');
   const [bandFilter, setBandFilter] = useState('all');
-  const [hideCompleted, setHideCompleted] = useState(false);
-  const [selectedScenarioId, setSelectedScenarioId] = useState(() =>
-    initialOptions?.scenario || CONVERSATION_SCENARIOS[0].id
-  );
+  const [hideCompleted, setHideCompleted] = useState(true);
+  const [selectedScenarioId, setSelectedScenarioId] = useState(() => {
+    if (initialOptions?.scenario) return initialOptions.scenario;
+    const savedStats = safeGet(CONV_STATS_STORAGE_KEY, { bestScores: {} });
+    const firstUnfinished = CONVERSATION_SCENARIOS.find(s => !savedStats?.bestScores?.[s.id]);
+    return (firstUnfinished || CONVERSATION_SCENARIOS[0]).id;
+  });
   const [isMobileListOpen, setIsMobileListOpen] = useState(false);
   const [isMobileSettingsOpen, setIsMobileSettingsOpen] = useState(false);
   const [isSoundcheckOpen, setIsSoundcheckOpen] = useState(false);
@@ -239,6 +242,28 @@ export default function ConversationStudioModal({
       CONVERSATION_SCENARIOS[0]
     );
   }, [allScenarios, selectedScenarioId, filteredScenarios]);
+
+  const handleNextScenario = useCallback(() => {
+    const curId = currentScenario?.id;
+    const isUnfinished = (s) => !convStats.bestScores?.[s.id];
+    const curIdx = filteredScenarios.findIndex(s => s.id === curId);
+
+    let next = filteredScenarios.slice(curIdx + 1).find(s => s.id !== curId && isUnfinished(s));
+    if (!next) {
+      next = filteredScenarios.find(s => s.id !== curId && isUnfinished(s));
+    }
+    if (!next) {
+      next = allScenarios.find(s => s.id !== curId && isUnfinished(s));
+    }
+    if (!next && filteredScenarios.length > 1) {
+      next = filteredScenarios[(curIdx + 1 + filteredScenarios.length) % filteredScenarios.length];
+    }
+
+    if (next) {
+      setSelectedScenarioId(next.id);
+      setIsMobileListOpen(false);
+    }
+  }, [currentScenario?.id, filteredScenarios, allScenarios, convStats.bestScores]);
 
   // 5. Turn-Taking Conversation State Machine
   const [userRole, setUserRole] = useState(() => currentScenario?.defaultUserRole || 'B');
@@ -2016,6 +2041,7 @@ Return ONLY plain dialogue lines starting with "A:" and "B:", 1-2 sentences per 
                   replayTurnIdx={replayTurnIdx}
                   onToggleFullReplay={handleToggleFullReplay}
                   onRestart={() => resetDialogueState(userRole)}
+                  onNextTask={handleNextScenario}
                   onSwapRolesAndRestart={() => resetDialogueState(userRole === 'B' ? 'A' : 'B')}
                   onPlayWord={(word) =>
                     speechEngine.speak(word, { examinerId: selectedExaminerId, rate: 0.85, silentChime: true })

@@ -17,7 +17,8 @@ import {
   Lock,
   Sliders,
   Shuffle,
-  Loader2
+  Loader2,
+  SkipForward
 } from 'lucide-react';
 import {
   SHADOWING_DEFAULT_THRESHOLD,
@@ -103,11 +104,14 @@ export default function SpeechShadowingWorkspace({
   const [searchQuery, setSearchQuery] = useState('');
   const [bandFilter, setBandFilter] = useState('all');
   const [sourceFilter, setSourceFilter] = useState('all');
-  const [hideCompleted, setHideCompleted] = useState(false);
+  const [hideCompleted, setHideCompleted] = useState(true);
   const [visibleTaskLimit, setVisibleTaskLimit] = useState(40);
-  const [selectedTaskId, setSelectedTaskId] = useState(() =>
-    initialTaskId || SHADOWING_STARTER_TASKS[0].id
-  );
+  const [selectedTaskId, setSelectedTaskId] = useState(() => {
+    if (initialTaskId) return initialTaskId;
+    const savedStats = safeGet(SHADOW_STATS_STORAGE_KEY, { bestScores: {} });
+    const firstUnfinished = SHADOWING_STARTER_TASKS.find(t => !savedStats?.bestScores?.[t.id]);
+    return (firstUnfinished || SHADOWING_STARTER_TASKS[0]).id;
+  });
   const [isMobileListOpen, setIsMobileListOpen] = useState(false);
   const [isMobileDisplayOpen, setIsMobileDisplayOpen] = useState(false);
 
@@ -213,6 +217,32 @@ export default function SpeechShadowingWorkspace({
       setIsMobileListOpen(false);
     }
   }, [filteredTasks, selectedTaskId]);
+
+  const handleNextTask = useCallback(() => {
+    const curId = currentTask?.id;
+    const isUnfinished = (t) => !shadowStats.bestScores?.[t.id];
+    const curIdx = filteredTasks.findIndex(t => t.id === curId);
+
+    // 1. Next unfinished task after current in filteredTasks
+    let next = filteredTasks.slice(curIdx + 1).find(t => t.id !== curId && isUnfinished(t));
+    // 2. Wrap around to first unfinished task in filteredTasks
+    if (!next) {
+      next = filteredTasks.find(t => t.id !== curId && isUnfinished(t));
+    }
+    // 3. Fallback: any unfinished task across allTasks
+    if (!next) {
+      next = allTasks.find(t => t.id !== curId && isUnfinished(t));
+    }
+    // 4. Final fallback: next task in filteredTasks even if all completed
+    if (!next && filteredTasks.length > 1) {
+      next = filteredTasks[(curIdx + 1 + filteredTasks.length) % filteredTasks.length];
+    }
+
+    if (next) {
+      setSelectedTaskId(next.id);
+      setIsMobileListOpen(false);
+    }
+  }, [currentTask?.id, filteredTasks, allTasks, shadowStats.bestScores]);
 
   const currentTask = useMemo(() => {
     return (
@@ -1201,6 +1231,16 @@ Separate paragraphs with a blank line. If ${customPart} is part1 or part3, prefi
 
           <button
             type="button"
+            onClick={handleNextTask}
+            className="p-1.5 rounded-xl bg-emerald-600/20 text-emerald-300 border border-emerald-500/35 shrink-0 cursor-pointer"
+            title={isEn ? 'Next task' : 'Bài kế tiếp'}
+            aria-label={isEn ? 'Next task' : 'Bài kế tiếp'}
+          >
+            <SkipForward className="w-3.5 h-3.5" />
+          </button>
+
+          <button
+            type="button"
             onClick={() => resetShadowingState(true)}
             className="p-1.5 rounded-xl bg-slate-800 text-slate-300 border border-slate-700 shrink-0 cursor-pointer"
             title={isEn ? 'Restart task' : 'Làm lại từ đầu'}
@@ -1480,6 +1520,16 @@ Separate paragraphs with a blank line. If ${customPart} is part1 or part3, prefi
 
               <button
                 type="button"
+                onClick={handleNextTask}
+                className="px-2.5 py-1 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/35 text-[11px] font-bold flex items-center space-x-1 cursor-pointer transition-colors"
+                title={isEn ? 'Next task' : 'Chuyển sang bài kế tiếp'}
+              >
+                <span>{isEn ? 'Next' : 'Bài tiếp'}</span>
+                <SkipForward className="w-3 h-3" />
+              </button>
+
+              <button
+                type="button"
                 onClick={() => resetShadowingState(true)}
                 className="p-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white border border-slate-800 cursor-pointer"
                 title={isEn ? 'Restart task' : 'Làm lại từ đầu'}
@@ -1633,6 +1683,7 @@ Separate paragraphs with a blank line. If ${customPart} is part1 or part3, prefi
                 replayTurnIdx={replaySegIdx}
                 onToggleFullReplay={handleToggleFullReplay}
                 onRestart={() => resetShadowingState(true)}
+                onNextTask={handleNextTask}
                 onPlayWord={(word) =>
                   speechEngine.speak(word, { examinerId: selectedExaminerId, rate: 0.85, silentChime: true })
                 }

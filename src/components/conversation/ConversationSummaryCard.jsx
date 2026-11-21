@@ -11,7 +11,8 @@ import {
   Volume2,
   Check,
   Zap,
-  Sparkles
+  Sparkles,
+  ArrowRight
 } from 'lucide-react';
 import SpeakingFillerTracker from '../speaking/SpeakingFillerTracker';
 
@@ -25,6 +26,7 @@ export default function ConversationSummaryCard({
   replayTurnIdx,
   onToggleFullReplay,
   onRestart,
+  onNextTask = null,
   onSwapRolesAndRestart,
   onPlayWord,
   onSaveWordToNotebook,
@@ -118,6 +120,17 @@ export default function ConversationSummaryCard({
             <RotateCcw className="w-3.5 h-3.5" />
             <span>{isEn ? 'Practice Again' : 'Làm Lại'}</span>
           </button>
+
+          {onNextTask && (
+            <button
+              type="button"
+              onClick={onNextTask}
+              className="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-black flex items-center space-x-1.5 shadow-lg active:scale-95 transition-all cursor-pointer"
+            >
+              <span>{isEn ? 'Next Task' : 'Bài Kế Tiếp'}</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          )}
         </div>
       </div>
 
