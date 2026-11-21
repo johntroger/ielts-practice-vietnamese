@@ -75,11 +75,11 @@ export default function ConversationSummaryCard({
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 w-full sm:w-auto">
           <button
             type="button"
             onClick={onToggleFullReplay}
-            className={`px-3.5 py-2 rounded-xl text-xs font-black flex items-center space-x-1.5 shadow-md transition-all cursor-pointer ${
+            className={`col-span-2 sm:col-span-1 px-3.5 py-2.5 sm:py-2 rounded-xl text-xs font-black flex items-center justify-center space-x-1.5 shadow-md transition-all cursor-pointer ${
               isFullReplaying
                 ? 'bg-rose-600 hover:bg-rose-500 text-white'
                 : 'bg-indigo-600 hover:bg-indigo-500 text-white'
@@ -105,19 +105,19 @@ export default function ConversationSummaryCard({
             <button
               type="button"
               onClick={onSwapRolesAndRestart}
-              className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-indigo-300 border border-indigo-500/30 text-xs font-bold flex items-center space-x-1.5 cursor-pointer"
+              className="px-3 py-2.5 sm:py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-indigo-300 border border-indigo-500/30 text-xs font-bold flex items-center justify-center space-x-1.5 cursor-pointer"
             >
-              <ArrowLeftRight className="w-3.5 h-3.5" />
-              <span>{isEn ? 'Swap Roles & Retry' : 'Đổi Vai & Luyện Lại'}</span>
+              <ArrowLeftRight className="w-3.5 h-3.5 shrink-0" />
+              <span className="truncate">{isEn ? 'Swap & Retry' : 'Đổi Vai'}</span>
             </button>
           )}
 
           <button
             type="button"
             onClick={onRestart}
-            className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-bold flex items-center space-x-1.5 cursor-pointer"
+            className="px-3 py-2.5 sm:py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-bold flex items-center justify-center space-x-1.5 cursor-pointer"
           >
-            <RotateCcw className="w-3.5 h-3.5" />
+            <RotateCcw className="w-3.5 h-3.5 shrink-0" />
             <span>{isEn ? 'Practice Again' : 'Làm Lại'}</span>
           </button>
 
@@ -125,10 +125,12 @@ export default function ConversationSummaryCard({
             <button
               type="button"
               onClick={onNextTask}
-              className="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-black flex items-center space-x-1.5 shadow-lg active:scale-95 transition-all cursor-pointer"
+              className={`${
+                !isShadowing && onSwapRolesAndRestart ? 'col-span-2 sm:col-span-1' : ''
+              } px-4 py-2.5 sm:py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-black flex items-center justify-center space-x-1.5 shadow-lg active:scale-95 transition-all cursor-pointer`}
             >
               <span>{isEn ? 'Next Task' : 'Bài Kế Tiếp'}</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <ArrowRight className="w-3.5 h-3.5 shrink-0" />
             </button>
           )}
         </div>

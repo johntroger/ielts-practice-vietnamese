@@ -1242,7 +1242,7 @@ Separate paragraphs with a blank line. If ${customPart} is part1 or part3, prefi
           <button
             type="button"
             onClick={() => resetShadowingState(true)}
-            className="p-1.5 rounded-xl bg-slate-800 text-slate-300 border border-slate-700 shrink-0 cursor-pointer"
+            className="hidden sm:inline-flex p-1.5 rounded-xl bg-slate-800 text-slate-300 border border-slate-700 shrink-0 cursor-pointer"
             title={isEn ? 'Restart task' : 'Làm lại từ đầu'}
             aria-label={isEn ? 'Restart task' : 'Làm lại từ đầu'}
           >
@@ -1286,6 +1286,17 @@ Separate paragraphs with a blank line. If ${customPart} is part1 or part3, prefi
             >
               <Eye className="w-3 h-3" />
               <span>{isEn ? 'Keywords' : 'Ẩn chữ'}</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                resetShadowingState(true);
+                setIsMobileDisplayOpen(false);
+              }}
+              className="sm:hidden px-2.5 py-1 rounded-xl text-[10px] font-bold border bg-slate-950 text-slate-300 border-slate-800 cursor-pointer flex items-center space-x-1 whitespace-nowrap"
+            >
+              <RotateCcw className="w-3 h-3" />
+              <span>{isEn ? 'Restart' : 'Làm lại'}</span>
             </button>
           </div>
         )}
@@ -1811,6 +1822,28 @@ Separate paragraphs with a blank line. If ${customPart} is part1 or part3, prefi
               <Play className="w-4 h-4" />
             </button>
           )}
+        </div>
+      )}
+
+      {/* MOBILE STICKY BOTTOM COMPLETION BAR (< lg) */}
+      {isCompleted && (
+        <div className="lg:hidden shrink-0 bg-slate-950/95 backdrop-blur-md border-t border-emerald-500/30 px-3 py-2.5 pb-[max(0.625rem,env(safe-area-inset-bottom))] flex items-center gap-2 z-30">
+          <button
+            type="button"
+            onClick={() => resetShadowingState(true)}
+            className="min-h-[48px] px-4 rounded-2xl bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-200 border border-slate-700 text-xs font-bold flex items-center space-x-1.5 shrink-0 cursor-pointer transition-all"
+          >
+            <RotateCcw className="w-4 h-4 shrink-0" />
+            <span>{isEn ? 'Retry' : 'Làm lại'}</span>
+          </button>
+          <button
+            type="button"
+            onClick={handleNextTask}
+            className="flex-1 min-h-[48px] px-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 active:scale-95 text-white text-sm font-black flex items-center justify-center space-x-2 shadow-lg cursor-pointer transition-all"
+          >
+            <span>{isEn ? 'Next Task' : 'Bài Kế Tiếp'}</span>
+            <SkipForward className="w-4 h-4 shrink-0" />
+          </button>
         </div>
       )}
 

@@ -24,7 +24,8 @@ import {
   Radio,
   RotateCcw,
   Eye,
-  Lock
+  Lock,
+  SkipForward
 } from 'lucide-react';
 import {
   CONVERSATION_DEFAULT_THRESHOLD,
@@ -1728,8 +1729,18 @@ Return ONLY plain dialogue lines starting with "A:" and "B:", 1-2 sentences per 
 
           <button
             type="button"
+            onClick={handleNextScenario}
+            className="p-1.5 rounded-xl bg-emerald-600/20 text-emerald-300 border border-emerald-500/35 shrink-0 cursor-pointer"
+            title={isEn ? 'Next scenario' : 'Hội thoại kế tiếp'}
+            aria-label={isEn ? 'Next scenario' : 'Hội thoại kế tiếp'}
+          >
+            <SkipForward className="w-3.5 h-3.5" />
+          </button>
+
+          <button
+            type="button"
             onClick={() => resetDialogueState(userRole)}
-            className="p-1.5 rounded-xl bg-slate-800 text-slate-300 border border-slate-700 shrink-0 cursor-pointer"
+            className="hidden sm:inline-flex p-1.5 rounded-xl bg-slate-800 text-slate-300 border border-slate-700 shrink-0 cursor-pointer"
             title={isEn ? 'Restart dialogue' : 'Chơi lại từ đầu'}
             aria-label={isEn ? 'Restart dialogue' : 'Chơi lại từ đầu'}
           >
@@ -2097,7 +2108,7 @@ Return ONLY plain dialogue lines starting with "A:" and "B:", 1-2 sentences per 
               onClick={() => {
                 speechEngine.stopListening();
                 if (isActiveUserTurn) {
-                  speechEngine.speak(activeTurn.text, { examinerId: selectedExaminerId, rate: 0.85, silentChime: true });
+                  speechEngine.speak(activeTurn.text, { examinerId: selectedExaminerId, rate: playbackSpeed, silentChime: true });
                 } else {
                   playPartnerTurnAudio(activeTurn, playbackSpeed);
                 }
@@ -2161,6 +2172,28 @@ Return ONLY plain dialogue lines starting with "A:" and "B:", 1-2 sentences per 
                 <Play className="w-4 h-4" />
               </button>
             )}
+          </div>
+        )}
+
+        {/* MOBILE STICKY BOTTOM COMPLETION BAR (< lg) */}
+        {isCompleted && (
+          <div className="lg:hidden shrink-0 bg-slate-950/95 backdrop-blur-md border-t border-emerald-500/30 px-3 py-2.5 pb-[max(0.625rem,env(safe-area-inset-bottom))] flex items-center gap-2 z-30">
+            <button
+              type="button"
+              onClick={() => resetDialogueState(userRole)}
+              className="min-h-[48px] px-4 rounded-2xl bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-200 border border-slate-700 text-xs font-bold flex items-center space-x-1.5 shrink-0 cursor-pointer transition-all"
+            >
+              <RotateCcw className="w-4 h-4 shrink-0" />
+              <span>{isEn ? 'Retry' : 'Làm lại'}</span>
+            </button>
+            <button
+              type="button"
+              onClick={handleNextScenario}
+              className="flex-1 min-h-[48px] px-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 active:scale-95 text-white text-sm font-black flex items-center justify-center space-x-2 shadow-lg cursor-pointer transition-all"
+            >
+              <span>{isEn ? 'Next Conversation' : 'Hội Thoại Kế Tiếp'}</span>
+              <SkipForward className="w-4 h-4 shrink-0" />
+            </button>
           </div>
         )}
 
