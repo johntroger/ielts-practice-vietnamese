@@ -44,6 +44,7 @@ import {
   PRONUNCIATION_PHRASE_DRILLS,
   PRONUNCIATION_SENTENCE_DRILLS,
   evaluatePronunciationAttempt,
+  evaluateIsolatedIpaSoundAttempt,
   buildCustomPronunciationDrill,
   mapVocabListToPronunciationDrills,
   expandConversationalTokens
@@ -213,6 +214,7 @@ export default function PronunciationStudioModal({
   const [bandFilter, setBandFilter] = useState('all'); // 'all' | 'foundation' | 'band7' | 'band8'
   const [ipaGroupFilter, setIpaGroupFilter] = useState('all'); // 'all' | 'monophthongs' | 'diphthongs' | 'consonants'
   const [showIpaChart, setShowIpaChart] = useState(true);
+  const [ipaPracticeMode, setIpaPracticeMode] = useState('sound'); // 'sound' (Chính âm IPA) | 'words' (Từ ví dụ)
   const [hidePassed, setHidePassed] = useState(() =>
     Boolean(safeGet('ielts_pronunciation_hide_passed', true))
   );
@@ -650,15 +652,25 @@ export default function PronunciationStudioModal({
       const alternatives = speechEngine.speechAlternativesRef?.current || [];
       const acousticMetrics = speechEngine.getAcousticMetrics ? speechEngine.getAcousticMetrics() : null;
 
-      const result = evaluatePronunciationAttempt({
-        targetText: currentDrill.targetText,
-        spokenText: cleanSpoken,
-        confidence,
-        itemType: currentDrill.type,
-        streak: pronStats.streak || 0,
-        alternatives,
-        acousticMetrics
-      });
+      const result =
+        currentDrill.type === 'ipa' && ipaPracticeMode === 'sound'
+          ? evaluateIsolatedIpaSoundAttempt({
+              drill: currentDrill,
+              spokenText: cleanSpoken,
+              confidence,
+              streak: pronStats.streak || 0,
+              alternatives,
+              acousticMetrics
+            })
+          : evaluatePronunciationAttempt({
+              targetText: currentDrill.targetText,
+              spokenText: cleanSpoken,
+              confidence,
+              itemType: currentDrill.type,
+              streak: pronStats.streak || 0,
+              alternatives,
+              acousticMetrics
+            });
 
       setDeepAiError('');
 
@@ -718,7 +730,8 @@ export default function PronunciationStudioModal({
       speechEngine.resetTranscript,
       pronStats.streak,
       awardPronunciationXp,
-      isAutoMode
+      isAutoMode,
+      ipaPracticeMode
     ]
   );
 
@@ -776,10 +789,13 @@ export default function PronunciationStudioModal({
       return;
     }
 
-    const targetWordCount = currentDrill.targetText
-      .trim()
-      .split(/\s+/)
-      .filter(Boolean).length;
+    const targetWordCount =
+      currentDrill.type === 'ipa' && ipaPracticeMode === 'sound'
+        ? 1
+        : currentDrill.targetText
+            .trim()
+            .split(/\s+/)
+            .filter(Boolean).length;
     const spokenWordCount = liveSpokenText.split(/\s+/).filter(Boolean).length;
     const isFinalized = Boolean(speechEngine.transcript && !speechEngine.interimTranscript);
 
@@ -831,7 +847,11 @@ export default function PronunciationStudioModal({
     if (speechEngine.isListening) {
       speechEngine.stopListening();
     }
-    const textToSpeak = textOverride || currentDrill.targetText;
+    const defaultModelText =
+      currentDrill?.type === 'ipa' && ipaPracticeMode === 'sound'
+        ? currentDrill.pureSoundCue || currentDrill.sampleWord || currentDrill.targetText
+        : currentDrill?.targetText;
+    const textToSpeak = textOverride || defaultModelText;
     const rateToUse = customRate || playbackSpeed;
     speechEngine.speak(textToSpeak, {
       examinerId: selectedExaminerId,
@@ -854,8 +874,12 @@ export default function PronunciationStudioModal({
     }
     setIsWaitingForRetrySpeech(false);
     speechEngine.resetTranscript();
+    const retryModelText =
+      currentDrill.type === 'ipa' && ipaPracticeMode === 'sound'
+        ? currentDrill.pureSoundCue || currentDrill.sampleWord || currentDrill.targetText
+        : currentDrill.targetText;
     speechEngine.speak(
-      currentDrill.targetText,
+      retryModelText,
       { examinerId: selectedExaminerId, rate: Math.min(playbackSpeed, 0.8), silentChime: true },
       async () => {
         if (token !== sessionTokenRef.current) return;
@@ -1776,7 +1800,12 @@ export default function PronunciationStudioModal({
                           onClick={() => {
                             setJustPassedDrillId(null);
                             setSelectedIdx(idx);
-                            handlePlayModel(playbackSpeed, ipaItem.targetText);
+                            handlePlayModel(
+                              playbackSpeed,
+                              ipaPracticeMode === 'sound'
+                                ? ipaItem.pureSoundCue || ipaItem.sampleWord
+                                : ipaItem.targetText
+                            );
                           }}
                           className={`p-1.5 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center justify-center relative ${
                             isActiveTile
@@ -1894,8 +1923,95 @@ export default function PronunciationStudioModal({
                   </div>
 
                   {/* Main Target Text & Phonetic Breakdown */}
-                  <div className="space-y-2 py-1">
-                    {speechEngine.isListening && liveSpokenText && currentDrill.type !== 'words' ? (() => {
+                  <div className="space-y-2.5 py-1">
+                    {currentDrill.type === 'ipa' && (
+                      <div className="flex flex-wrap items-center gap-1.5 pb-1">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIpaPracticeMode('sound');
+                            setEvaluationResult(null);
+                          }}
+                          className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center space-x-1.5 ${
+                            ipaPracticeMode === 'sound'
+                              ? 'bg-emerald-600 text-white shadow-md shadow-emerald-950/50'
+                              : 'bg-slate-900 hover:bg-slate-800 text-slate-400 border border-slate-800'
+                          }`}
+                        >
+                          <span>🎯</span>
+                          <span>
+                            {isEn
+                              ? `1. Practice Pure Sound ${currentDrill.ipaSymbol}`
+                              : `1. Luyện Chính Âm ${currentDrill.ipaSymbol}`}
+                          </span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIpaPracticeMode('words');
+                            setEvaluationResult(null);
+                          }}
+                          className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center space-x-1.5 ${
+                            ipaPracticeMode === 'words'
+                              ? 'bg-indigo-600 text-white shadow-md shadow-indigo-950/50'
+                              : 'bg-slate-900 hover:bg-slate-800 text-slate-400 border border-slate-800'
+                          }`}
+                        >
+                          <span>📖</span>
+                          <span>
+                            {isEn
+                              ? `2. Practice Example Words (${currentDrill.targetText})`
+                              : `2. Luyện Từ Ví Dụ (${currentDrill.targetText})`}
+                          </span>
+                        </button>
+                      </div>
+                    )}
+
+                    {currentDrill.type === 'ipa' && ipaPracticeMode === 'sound' ? (
+                      <div className="p-3.5 rounded-2xl bg-emerald-950/30 border border-emerald-500/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div className="flex items-center gap-3.5">
+                          <div className="px-4 py-2.5 rounded-2xl bg-emerald-500/20 border-2 border-emerald-400/60 text-emerald-300 font-mono text-3xl sm:text-4xl font-black shadow-lg shrink-0">
+                            {currentDrill.ipaSymbol}
+                          </div>
+                          <div className="space-y-1">
+                            <div className="text-sm sm:text-base font-black text-white">
+                              {isEn ? currentDrill.pureSoundGuideEn : currentDrill.pureSoundGuideVi}
+                            </div>
+                            <p className="text-xs text-emerald-200/90 font-semibold">
+                              {isEn
+                                ? `🎙️ Tap Mic and pronounce the pure sound ${currentDrill.ipaSymbol} directly (or link it into "${currentDrill.sampleWord}")`
+                                : `🎙️ Bấm Mic và phát âm trực tiếp chính âm ${currentDrill.ipaSymbol} (hoặc bật âm nối vào từ mẫu "${currentDrill.sampleWord}")`}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex flex-wrap items-center gap-1.5 shrink-0">
+                          <button
+                            type="button"
+                            onClick={() => handlePlayModel(0.85, currentDrill.pureSoundCue)}
+                            className="px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black flex items-center space-x-1.5 shadow-md cursor-pointer transition-all"
+                          >
+                            <Volume2 className="w-3.5 h-3.5 shrink-0" />
+                            <span>
+                              {isEn
+                                ? `Listen Pure ${currentDrill.ipaSymbol}`
+                                : `Nghe Chính Âm ${currentDrill.ipaSymbol}`}
+                            </span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              handlePlayModel(0.85, `${currentDrill.pureSoundCue}, ${currentDrill.sampleWord}`)
+                            }
+                            className="px-3 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-emerald-500/40 text-emerald-300 text-xs font-bold flex items-center space-x-1.5 cursor-pointer transition-all"
+                          >
+                            <Volume2 className="w-3.5 h-3.5 shrink-0" />
+                            <span>
+                              {currentDrill.ipaSymbol} ➔ {currentDrill.sampleWord}
+                            </span>
+                          </button>
+                        </div>
+                      </div>
+                    ) : speechEngine.isListening && liveSpokenText && currentDrill.type !== 'words' ? (() => {
                       const spokenSet = new Set(expandConversationalTokens(liveSpokenText));
                       return (
                         <div className="text-2xl sm:text-3xl font-black tracking-tight leading-snug flex flex-wrap gap-x-2 gap-y-1">
@@ -1926,8 +2042,8 @@ export default function PronunciationStudioModal({
                     {currentDrill.type === 'ipa' && (
                       <div className="space-y-2.5 pt-1">
                         <div className="flex flex-wrap items-center gap-2">
-                          <span className="px-3.5 py-1.5 rounded-2xl bg-emerald-500/20 border border-emerald-400/50 text-emerald-300 font-mono text-xl sm:text-2xl font-black shadow-sm">
-                            {currentDrill.ipaSymbol}
+                          <span className="text-[11px] font-bold text-slate-400">
+                            {isEn ? 'Example words with this sound:' : 'Từ ví dụ chứa âm này (chạm để nghe lẻ):'}
                           </span>
                           <div className="flex flex-wrap items-center gap-1.5">
                             {currentDrill.targetText
@@ -2263,8 +2379,12 @@ export default function PronunciationStudioModal({
                         <button
                           type="button"
                           onClick={() => {
-                            setManualSpokenInput(currentDrill.targetText);
-                            handleRunEvaluation(currentDrill.targetText);
+                            const verifyTarget =
+                              currentDrill.type === 'ipa' && ipaPracticeMode === 'sound'
+                                ? currentDrill.pureSoundCue || currentDrill.sampleWord
+                                : currentDrill.targetText;
+                            setManualSpokenInput(verifyTarget);
+                            handleRunEvaluation(verifyTarget);
                           }}
                           className="px-2.5 py-1 rounded-lg bg-emerald-600/30 hover:bg-emerald-600/50 text-emerald-300 border border-emerald-500/30 text-[11px] font-bold cursor-pointer"
                         >

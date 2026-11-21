@@ -3103,35 +3103,200 @@ const RAW_IPA_CHART_SPECS = [
   }
 ];
 
-export const PRONUNCIATION_IPA_DRILLS = RAW_IPA_CHART_SPECS.map((item, idx) => ({
-  id: item.id,
-  type: 'ipa',
-  ipaSymbol: item.symbol,
-  ipaGroup: item.group,
-  sampleWord: item.sample,
-  targetText: item.targetText,
-  ipaUk: item.ipaUk,
-  ipaUs: item.ipaUs,
-  syllables: item.targetText.split(',').map(w => w.trim()).join(' • '),
-  stressPattern: item.symbol,
-  bandLevel: idx < 20 ? '6.5' : '7.0',
-  categoryEn: item.voicedEn,
-  categoryVi: item.voicedVi,
-  topicEn: item.group === 'monophthongs' ? 'Monophthong Vowels' : item.group === 'diphthongs' ? 'Diphthong Vowels' : 'Consonants',
-  topicVi: item.group === 'monophthongs' ? 'Nguyên âm đơn' : item.group === 'diphthongs' ? 'Nguyên âm đôi' : 'Phụ âm',
-  meaningEn: `IPA ${item.symbol} (${item.voicedEn}) — Practice anchor words: ${item.targetText}`,
-  meaningVi: `Âm IPA ${item.symbol} (${item.voicedVi}) — Từ khóa luyện âm: ${item.targetText}`,
-  minimalPair: {
-    pairText: item.pairText,
-    speakText: item.pairSpeak
-  },
-  trapEn: item.trapEn,
-  trapVi: item.trapVi,
-  mouthTipEn: item.mouthEn,
-  mouthTipVi: item.mouthVi,
-  exampleEn: item.exampleEn,
-  exampleVi: item.exampleEn,
-  xpReward: 15,
-  requiresAuth: false
-}));
+const IPA_PURE_SOUND_META = {
+  '/iː/': { cue: 'eee', guideVi: 'Âm thuần: "iii..." (căng môi, ngân dài)', guideEn: 'Pure sound: "eee..." (smile & hold long)', tokens: ['e', 'ee', 'eee', 'ea', 'he', 'see', 'she', 'me', 'be', 'pea', 'tea', 'key', 'sheep', 'achieve', 'peak'] },
+  '/ɪ/': { cue: 'ih', guideVi: 'Âm thuần: "i" (thả lỏng môi, bật ngắn dứt khoát)', guideEn: 'Pure sound: "ih" (short & relaxed)', tokens: ['i', 'ih', 'it', 'in', 'is', 'if', 'his', 'hit', 'sit', 'bit', 'ship', 'system', 'build'] },
+  '/ʊ/': { cue: 'uh', guideVi: 'Âm thuần: "u" ngắn (hơi tròn môi nhẹ, bật ngắn)', guideEn: 'Pure sound: short "uh/oo" (lightly rounded)', tokens: ['u', 'uu', 'uh', 'oo', 'book', 'good', 'put', 'look', 'took', 'foot', 'full'] },
+  '/uː/': { cue: 'ooo', guideVi: 'Âm thuần: "uuu..." (chu tròn môi nhỏ, ngân dài)', guideEn: 'Pure sound: "ooo..." (tight rounded lips, hold long)', tokens: ['oo', 'ooo', 'u', 'you', 'too', 'two', 'do', 'who', 'zoo', 'food', 'school', 'boost', 'fool'] },
+  '/e/': { cue: 'eh', guideVi: 'Âm thuần: "e" ngắn (mở miệng vừa, đọc ngắn gọn)', guideEn: 'Pure sound: short "eh"', tokens: ['e', 'eh', 'ed', 'egg', 'end', 'bed', 'trend', 'effect', 'red', 'set', 'get', 'let'] },
+  '/ə/': { cue: 'uh', guideVi: 'Âm thuần: "ơ" nhẹ (thả lỏng toàn bộ cơ miệng, lướt cực ngắn)', guideEn: 'Pure sound: weak relaxed "uh" (schwa)', tokens: ['uh', 'a', 'er', 'uhm', 'the', 'teacher', 'support', 'about'] },
+  '/ɜː/': { cue: 'err', guideVi: 'Âm thuần: "ơơơ..." (ngân dài sâu trong họng, cong lưỡi nhẹ)', guideEn: 'Pure sound: long "err / urr"', tokens: ['er', 'err', 'ur', 'ir', 'her', 'sir', 'fur', 'bird', 'research', 'urban', 'work', 'word'] },
+  '/ɔː/': { cue: 'aw', guideVi: 'Âm thuần: "ooo..." (hạ hàm, tròn môi hình bầu dục, ngân dài)', guideEn: 'Pure sound: long "aw / or"', tokens: ['aw', 'or', 'oh', 'all', 'saw', 'raw', 'law', 'thought', 'resource', 'caught'] },
+  '/æ/': { cue: 'aah', guideVi: 'Âm thuần: "a-e" (e bẹt — mở rộng hàm xuống + căng khóe môi ngang)', guideEn: 'Pure sound: wide open front "a" (as in cat)', tokens: ['a', 'ah', 'aa', 'at', 'add', 'act', 'cat', 'factor', 'rapid', 'bad', 'had', 'map'] },
+  '/ʌ/': { cue: 'uh', guideVi: 'Âm thuần: "ă/ơ" ngắn (mở miệng tự nhiên, bật âm ngắn từ giữa miệng)', guideEn: 'Pure sound: short punchy "uh" (as in cup)', tokens: ['uh', 'up', 'us', 'um', 'cup', 'study', 'culture', 'cut', 'but', 'sun', 'run'] },
+  '/ɑː/': { cue: 'aah', guideVi: 'Âm thuần: "aaa..." (mở rộng vòm họng, ngân dài âm a trầm)', guideEn: 'Pure sound: deep open "aah..."', tokens: ['ah', 'aah', 'aa', 'are', 'art', 'arm', 'far', 'car', 'market', 'advance', 'heart'] },
+  '/ɒ/': { cue: 'oh', guideVi: 'Âm thuần: "o" ngắn (mở rộng hàm, hơi tròn môi, dứt khoát)', guideEn: 'Pure sound: short open "o" (as in hot)', tokens: ['o', 'oh', 'ah', 'on', 'of', 'odd', 'hot', 'policy', 'modern', 'lot', 'not', 'got'] },
+  '/ɪə/': { cue: 'ear', guideVi: 'Âm thuần: "i-ơ" (trượt mượt từ /ɪ/ sang /ə/ trong 1 hơi)', guideEn: 'Pure sound: "ear / eer" glide', tokens: ['ear', 'eer', 'here', 'hear', 'near', 'fear', 'clear', 'theory', 'career'] },
+  '/eɪ/': { cue: 'ay', guideVi: 'Âm thuần: "ê-i" (trượt từ /e/ khép dần hàm lên /ɪ/)', guideEn: 'Pure sound: "ay" glide', tokens: ['a', 'ay', 'ey', 'hey', 'day', 'may', 'say', 'way', 'wait', 'climate', 'sustain'] },
+  '/ʊə/': { cue: 'oor', guideVi: 'Âm thuần: "u-ơ" (trượt từ môi tròn /ʊ/ về /ə/ thả lỏng)', guideEn: 'Pure sound: "oor" glide', tokens: ['oor', 'our', 'tour', 'poor', 'pure', 'secure', 'sure'] },
+  '/ɔɪ/': { cue: 'oy', guideVi: 'Âm thuần: "o-i" (trượt từ môi tròn /ɔː/ sang căng khóe môi /ɪ/)', guideEn: 'Pure sound: "oy" glide', tokens: ['oy', 'oi', 'boy', 'toy', 'joy', 'coin', 'choice', 'employ'] },
+  '/əʊ/': { cue: 'oh', guideVi: 'Âm thuần: "ơ-u" (mở miệng ở /ə/ rồi thu tròn môi về /ʊ/)', guideEn: 'Pure sound: "oh / ow" rounded glide', tokens: ['o', 'oh', 'ow', 'no', 'so', 'go', 'low', 'show', 'global', 'growth'] },
+  '/eə/': { cue: 'air', guideVi: 'Âm thuần: "e-ơ" (trượt từ /e/ mở vừa sang /ə/ ở trung tâm)', guideEn: 'Pure sound: "air" glide', tokens: ['air', 'are', 'err', 'hair', 'fair', 'pair', 'care', 'aware', 'compare'] },
+  '/aɪ/': { cue: 'eye', guideVi: 'Âm thuần: "a-i" (mở rộng hàm ở /a/ rồi lướt cao lên /ɪ/)', guideEn: 'Pure sound: "eye / ai" glide', tokens: ['i', 'eye', 'ai', 'ay', 'hi', 'my', 'by', 'try', 'time', 'vital', 'decline'] },
+  '/aʊ/': { cue: 'ow', guideVi: 'Âm thuần: "a-u" (mở rộng hàm ở /a/ rồi thu tròn môi về /ʊ/)', guideEn: 'Pure sound: "ow / aʊ" glide', tokens: ['ow', 'ou', 'out', 'how', 'cow', 'now', 'allow', 'profound'] },
+  '/p/': { cue: 'puh', guideVi: 'Âm thuần: "pʰ..." (mím 2 môi nén hơi rồi bật mạnh gió, không rung họng)', guideEn: 'Pure sound: voiceless puff "puh"', tokens: ['p', 'pa', 'puh', 'pe', 'pi', 'po', 'pea', 'pay', 'pen', 'policy', 'impact', 'up'] },
+  '/b/': { cue: 'buh', guideVi: 'Âm thuần: "bờ..." (mím 2 môi và bật âm có rung dây thanh quản)', guideEn: 'Pure sound: voiced "buh"', tokens: ['b', 'ba', 'buh', 'be', 'bi', 'bo', 'bee', 'bay', 'bad', 'benefit', 'global'] },
+  '/t/': { cue: 'tuh', guideVi: 'Âm thuần: "tʰ..." (đầu lưỡi chạm gờ lợi răng trên, bật hơi sắc, không rung họng)', guideEn: 'Pure sound: voiceless "tuh"', tokens: ['t', 'ta', 'tuh', 'te', 'ti', 'to', 'tea', 'two', 'trend', 'climate'] },
+  '/d/': { cue: 'duh', guideVi: 'Âm thuần: "đờ..." (đầu lưỡi chạm gờ lợi răng trên, bật âm có rung họng)', guideEn: 'Pure sound: voiced "duh"', tokens: ['d', 'da', 'duh', 'de', 'di', 'do', 'day', 'did', 'demand', 'method'] },
+  '/tʃ/': { cue: 'chuh', guideVi: 'Âm thuần: "chʰ..." (chu nhẹ môi, bật xát gió mạnh, không rung họng)', guideEn: 'Pure sound: voiceless "chuh"', tokens: ['ch', 'cha', 'chuh', 'chi', 'cho', 'chew', 'chain', 'challenge', 'research', 'each'] },
+  '/dʒ/': { cue: 'juh', guideVi: 'Âm thuần: "dzờ / gi..." (chu nhẹ môi như /tʃ/ nhưng rung mạnh cổ họng)', guideEn: 'Pure sound: voiced "juh"', tokens: ['j', 'ja', 'juh', 'je', 'ji', 'jo', 'jay', 'joy', 'jam', 'major', 'knowledge', 'job'] },
+  '/k/': { cue: 'kuh', guideVi: 'Âm thuần: "kʰ..." (nâng cuống lưỡi chặn hơi rồi bật gió mạnh, không rung họng)', guideEn: 'Pure sound: voiceless "kuh"', tokens: ['k', 'c', 'ka', 'kuh', 'ke', 'ki', 'ko', 'key', 'car', 'cat', 'culture', 'economic'] },
+  '/ɡ/': { cue: 'guh', guideVi: 'Âm thuần: "gờ..." (nâng cuống lưỡi giống /k/ nhưng bật âm có rung họng)', guideEn: 'Pure sound: voiced "guh"', tokens: ['g', 'ga', 'guh', 'ge', 'gi', 'go', 'good', 'get', 'govern', 'progress'] },
+  '/f/': { cue: 'fuh', guideVi: 'Âm thuần: "fff / phờ nhẹ..." (răng cửa trên chạm nhẹ môi dưới, thổi hơi đều)', guideEn: 'Pure sound: voiceless "fff / fuh"', tokens: ['f', 'ff', 'fff', 'fuh', 'fa', 'fe', 'fi', 'fo', 'for', 'far', 'fall', 'factor', 'significant'] },
+  '/v/': { cue: 'vuh', guideVi: 'Âm thuần: "vvv / vờ..." (răng cửa trên chạm môi dưới, thổi hơi + rung môi dưới)', guideEn: 'Pure sound: voiced buzzing "vvv / vuh"', tokens: ['v', 'vv', 'vvv', 'vuh', 'va', 've', 'vi', 'vo', 'view', 'van', 'vital', 'preserve'] },
+  '/θ/': { cue: 'thuh', guideVi: 'Âm thuần: "th..." (đặt đầu lưỡi giữa 2 hàm răng cửa, thổi hơi êm, không rung họng)', guideEn: 'Pure sound: unvoiced dental "th"', tokens: ['th', 'tha', 'thuh', 'thi', 'thin', 'thing', 'bath', 'math', 'think', 'theory', 'growth'] },
+  '/ð/': { cue: 'the', guideVi: 'Âm thuần: "đ/th..." (đầu lưỡi giữa 2 hàm răng cửa, thổi hơi + rung cổ họng)', guideEn: 'Pure sound: voiced dental "th" (as in this)', tokens: ['th', 'the', 'tha', 'thi', 'tho', 'they', 'that', 'them', 'then', 'this', 'therefore', 'breathe'] },
+  '/s/': { cue: 'suh', guideVi: 'Âm thuần: "sss..." (khép nhẹ răng, xì luồng gió mảnh sắc qua chân răng)', guideEn: 'Pure sound: voiceless hiss "sss / suh"', tokens: ['s', 'ss', 'sss', 'suh', 'sa', 'se', 'si', 'so', 'see', 'say', 'sea', 'system', 'process'] },
+  '/z/': { cue: 'zuh', guideVi: 'Âm thuần: "zzz..." (khẩu hình như /s/ nhưng rung dây thanh quản như tiếng ong)', guideEn: 'Pure sound: voiced buzz "zzz / zuh"', tokens: ['z', 'zz', 'zzz', 'zuh', 'za', 'ze', 'zi', 'zo', 'zoo', 'zero', 'zone', 'result', 'analyze'] },
+  '/ʃ/': { cue: 'shuh', guideVi: 'Âm thuần: "shhh..." (chu tròn môi, nâng lưỡi, thổi luồng gió dày như ra hiệu im lặng)', guideEn: 'Pure sound: rounded voiceless "shhh / shuh"', tokens: ['sh', 'shh', 'shhh', 'shuh', 'sha', 'she', 'shi', 'sho', 'shy', 'show', 'shoe', 'issue', 'crucial'] },
+  '/ʒ/': { cue: 'zhuh', guideVi: 'Âm thuần: "gi/zh..." (chu tròn môi như /ʃ/ nhưng rung mạnh dây thanh quản)', guideEn: 'Pure sound: rounded voiced "zhuh"', tokens: ['zh', 'zha', 'zhuh', 'zhe', 'measure', 'vision', 'decision', 'usual', 'asia'] },
+  '/m/': { cue: 'muh', guideVi: 'Âm thuần: "mmm..." (mím kín hai môi, cho âm hữu thanh ngân qua mũi)', guideEn: 'Pure sound: bilabial hum "mmm / muh"', tokens: ['m', 'mm', 'mmm', 'muh', 'ma', 'me', 'mi', 'mo', 'my', 'may', 'man', 'modern', 'system'] },
+  '/n/': { cue: 'nuh', guideVi: 'Âm thuần: "nnn..." (đầu lưỡi áp gờ lợi răng trên, miệng hơi mở, ngân qua mũi)', guideEn: 'Pure sound: alveolar hum "nnn / nuh"', tokens: ['n', 'nn', 'nnn', 'nuh', 'na', 'ne', 'ni', 'no', 'new', 'now', 'nature', 'urban'] },
+  '/ŋ/': { cue: 'ing', guideVi: 'Âm thuần: "ng..." (nâng cuống lưỡi chạm ngạc mềm, ngân qua mũi, môi vẫn mở)', guideEn: 'Pure sound: velar nasal "ng"', tokens: ['ng', 'ing', 'ang', 'ung', 'ring', 'song', 'king', 'sing', 'ranking', 'learning'] },
+  '/h/': { cue: 'huh', guideVi: 'Âm thuần: "h..." (hà nhẹ luồng hơi ấm từ họng ra, không khạc mạnh)', guideEn: 'Pure sound: gentle breath "huh"', tokens: ['h', 'ha', 'huh', 'he', 'hi', 'ho', 'who', 'how', 'hat', 'habit', 'enhance'] },
+  '/l/': { cue: 'luh', guideVi: 'Âm thuần: "lll / ồ..." (đầu lưỡi chạm chắc vào gờ lợi ngay sau răng cửa trên)', guideEn: 'Pure sound: lateral "lll / luh"', tokens: ['l', 'll', 'lll', 'luh', 'la', 'le', 'li', 'lo', 'low', 'law', 'all', 'local', 'global', 'skill'] },
+  '/r/': { cue: 'ruh', guideVi: 'Âm thuần: "rrr..." (hơi chu môi, cong đầu lưỡi lên vòm miệng nhưng KHÔNG chạm lợi)', guideEn: 'Pure sound: curled-tongue "rrr / ruh"', tokens: ['r', 'rr', 'rrr', 'ruh', 'ra', 're', 'ri', 'ro', 'raw', 'ray', 'red', 'rapid', 'require', 'rural'] },
+  '/w/': { cue: 'wuh', guideVi: 'Âm thuần: "wờ..." (chu tròn khít môi như /uː/ rồi mở bung nhanh sang nguyên âm sau)', guideEn: 'Pure sound: rounded glide "wuh"', tokens: ['w', 'wa', 'wuh', 'we', 'wi', 'wo', 'way', 'why', 'win', 'world', 'aware', 'quality'] },
+  '/j/': { cue: 'yuh', guideVi: 'Âm thuần: "yờ..." (nâng mặt lưỡi gần vòm miệng như /iː/ rồi lướt êm xuống)', guideEn: 'Pure sound: palatal glide "yuh"', tokens: ['y', 'ya', 'yuh', 'ye', 'yi', 'yo', 'you', 'yes', 'yet', 'youth', 'future', 'value'] }
+};
+
+export const PRONUNCIATION_IPA_DRILLS = RAW_IPA_CHART_SPECS.map((item, idx) => {
+  const pureMeta = IPA_PURE_SOUND_META[item.symbol] || {
+    cue: item.sample,
+    guideVi: `Âm thuần ${item.symbol}`,
+    guideEn: `Pure sound ${item.symbol}`,
+    tokens: [item.sample]
+  };
+  return {
+    id: item.id,
+    type: 'ipa',
+    ipaSymbol: item.symbol,
+    ipaGroup: item.group,
+    sampleWord: item.sample,
+    pureSoundCue: pureMeta.cue,
+    pureSoundGuideVi: pureMeta.guideVi,
+    pureSoundGuideEn: pureMeta.guideEn,
+    acceptedPureTokens: pureMeta.tokens,
+    targetText: item.targetText,
+    ipaUk: item.ipaUk,
+    ipaUs: item.ipaUs,
+    syllables: item.targetText.split(',').map(w => w.trim()).join(' • '),
+    stressPattern: item.symbol,
+    bandLevel: idx < 20 ? '6.5' : '7.0',
+    categoryEn: item.voicedEn,
+    categoryVi: item.voicedVi,
+    topicEn: item.group === 'monophthongs' ? 'Monophthong Vowels' : item.group === 'diphthongs' ? 'Diphthong Vowels' : 'Consonants',
+    topicVi: item.group === 'monophthongs' ? 'Nguyên âm đơn' : item.group === 'diphthongs' ? 'Nguyên âm đôi' : 'Phụ âm',
+    meaningEn: `IPA ${item.symbol} (${item.voicedEn}) — ${pureMeta.guideEn}`,
+    meaningVi: `Âm IPA ${item.symbol} (${item.voicedVi}) — ${pureMeta.guideVi}`,
+    minimalPair: {
+      pairText: item.pairText,
+      speakText: item.pairSpeak
+    },
+    trapEn: item.trapEn,
+    trapVi: item.trapVi,
+    mouthTipEn: item.mouthEn,
+    mouthTipVi: item.mouthVi,
+    exampleEn: item.exampleEn,
+    exampleVi: item.exampleEn,
+    xpReward: 15,
+    requiresAuth: false
+  };
+});
+
+/**
+ * Evaluates a learner's pronunciation of an isolated IPA phoneme (`ipaPracticeMode === 'sound'`).
+ * Checks spoken tokens & N-best alternatives against the phoneme's pure sound cues,
+ * carrier syllables, and anchor words so learners can pronounce the isolated sound itself.
+ */
+export function evaluateIsolatedIpaSoundAttempt({
+  drill,
+  spokenText = '',
+  confidence = 0.88,
+  streak = 0,
+  alternatives = [],
+  acousticMetrics = null
+}) {
+  if (!drill) {
+    return evaluatePronunciationAttempt({ targetText: '', spokenText, confidence, itemType: 'ipa', streak });
+  }
+
+  const allHypotheses = [spokenText, ...(Array.isArray(alternatives) ? alternatives : [])]
+    .map(s => String(s || '').trim())
+    .filter(Boolean);
+  const candidateTokens = new Set();
+  allHypotheses.forEach(h => {
+    expandConversationalTokens(h).forEach(t => candidateTokens.add(t.toLowerCase()));
+  });
+
+  const acceptedSet = new Set(
+    [
+      ...(Array.isArray(drill.acceptedPureTokens) ? drill.acceptedPureTokens : []),
+      drill.pureSoundCue,
+      drill.sampleWord,
+      ...String(drill.targetText || '').split(',').map(w => w.trim())
+    ]
+      .filter(Boolean)
+      .map(w => w.toLowerCase().replace(/[^a-z]/g, ''))
+  );
+
+  // Check if any recognized token or phonetic equivalent matches this IPA sound's accepted set
+  let bestScore = 0;
+  let matchedToken = '';
+
+  for (const tok of candidateTokens) {
+    if (acceptedSet.has(tok)) {
+      bestScore = 1.0;
+      matchedToken = tok;
+      break;
+    }
+    for (const acc of acceptedSet) {
+      if (!acc) continue;
+      const { score } = scoreWordPairAlignment(acc, tok);
+      if (score > bestScore) {
+        bestScore = score;
+        matchedToken = tok;
+      }
+    }
+  }
+
+  // Acoustic energy fallback/boost if user produced a clear sustained sound on desktop mic
+  if (bestScore < 0.78 && acousticMetrics && acousticMetrics.activeCount >= 2 && acousticMetrics.peakLevel >= 18) {
+    if (candidateTokens.size > 0 && bestScore >= 0.55) {
+      bestScore = Math.max(bestScore, 0.84);
+    }
+  }
+
+  const confFactor = Math.max(0.75, Math.min(1.0, Number(confidence) || 0.88));
+  const rawAcc = bestScore > 0 ? Math.round((bestScore * 0.88 + confFactor * 0.12) * 100) : 0;
+  const overallAccuracy = Math.max(0, Math.min(100, rawAcc));
+  const isCorrect = overallAccuracy >= 80;
+
+  let estimatedBand = '5.5';
+  if (overallAccuracy >= 94) estimatedBand = '8.5';
+  else if (overallAccuracy >= 88) estimatedBand = '8.0';
+  else if (overallAccuracy >= 82) estimatedBand = '7.5';
+  else if (overallAccuracy >= 75) estimatedBand = '7.0';
+  else if (overallAccuracy >= 65) estimatedBand = '6.5';
+  else if (overallAccuracy >= 50) estimatedBand = '6.0';
+
+  const streakBonusXp = isCorrect ? Math.min(15, streak * 3) : 0;
+  const xpEarned = isCorrect ? (overallAccuracy >= 92 ? 20 : 15) + streakBonusXp : 5;
+
+  return {
+    overallAccuracy,
+    estimatedBand,
+    wordBreakdown: [
+      {
+        word: `${drill.ipaSymbol} (${drill.sampleWord})`,
+        cleanWord: drill.sampleWord,
+        status: isCorrect ? 'correct' : overallAccuracy >= 60 ? 'approximate' : 'missed',
+        similarity: overallAccuracy,
+        spokenMatch: matchedToken || spokenText || '—',
+        missingCoda: false
+      }
+    ],
+    xpEarned,
+    streakBonusXp,
+    codaIssues: [],
+    engineTier: 'layer1_phonetic',
+    coachFeedbackEn: isCorrect
+      ? `Great job! Your articulation of the IPA phoneme ${drill.ipaSymbol} is clear and accurate.`
+      : `Focus on the mouth & tongue position for ${drill.ipaSymbol}: ${drill.mouthTipEn} Try saying the pure sound "${drill.pureSoundCue}" or "${drill.sampleWord}".`,
+    coachFeedbackVi: isCorrect
+      ? `Tuyệt vời! Bạn đã phát âm chính âm IPA ${drill.ipaSymbol} rất rõ và chuẩn khẩu hình.`
+      : `Hãy chú ý khẩu hình của âm ${drill.ipaSymbol}: ${drill.mouthTipVi} Bạn có thể phát âm âm thuần "${drill.pureSoundCue}" hoặc gắn vào từ mẫu "${drill.sampleWord}".`
+  };
+}
+
 
