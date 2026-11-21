@@ -15,7 +15,9 @@ import {
   BookOpen,
   Layers,
   Lock,
-  Sliders
+  Sliders,
+  Shuffle,
+  Loader2
 } from 'lucide-react';
 import {
   SHADOWING_DEFAULT_THRESHOLD,
@@ -23,6 +25,7 @@ import {
   SHADOWING_CHUNK_MODES,
   SHADOWING_STARTER_TASKS,
   resolveShadowingSegments,
+  getShadowingTaskSegmentCount,
   evaluateShadowingSegment,
   buildCustomShadowingTask,
   summarizeShadowingSession,
@@ -64,6 +67,7 @@ export default function SpeechShadowingWorkspace({
     return ['auto', 'sentence', 'paragraph'].includes(saved) ? saved : 'auto';
   });
   const [dynamicTasks, setDynamicTasks] = useState([]);
+  const [isLoadingBank, setIsLoadingBank] = useState(false);
   const [customTasks, setCustomTasks] = useState(() =>
     safeGet(CUSTOM_SHADOW_STORAGE_KEY, [])
   );
@@ -80,11 +84,16 @@ export default function SpeechShadowingWorkspace({
   useEffect(() => {
     if (!isOpen) return;
     let mounted = true;
-    loadSpeakingBankShadowingTasks().then((loaded) => {
-      if (mounted && Array.isArray(loaded)) {
-        setDynamicTasks(loaded);
-      }
-    });
+    if (dynamicTasks.length === 0) setIsLoadingBank(true);
+    loadSpeakingBankShadowingTasks()
+      .then((loaded) => {
+        if (mounted && Array.isArray(loaded)) {
+          setDynamicTasks(loaded);
+        }
+      })
+      .finally(() => {
+        if (mounted) setIsLoadingBank(false);
+      });
     return () => {
       mounted = false;
     };
@@ -93,7 +102,9 @@ export default function SpeechShadowingWorkspace({
   // 2. Filter & Selection State
   const [searchQuery, setSearchQuery] = useState('');
   const [bandFilter, setBandFilter] = useState('all');
+  const [sourceFilter, setSourceFilter] = useState('all');
   const [hideCompleted, setHideCompleted] = useState(false);
+  const [visibleTaskLimit, setVisibleTaskLimit] = useState(40);
   const [selectedTaskId, setSelectedTaskId] = useState(() =>
     initialTaskId || SHADOWING_STARTER_TASKS[0].id
   );
@@ -112,12 +123,30 @@ export default function SpeechShadowingWorkspace({
     return [...customList, ...SHADOWING_STARTER_TASKS, ...dynamicTasks];
   }, [customTasks, dynamicTasks]);
 
+  const partCounts = useMemo(() => {
+    const counts = { all: allTasks.length, part1: 0, part2: 0, part3: 0 };
+    allTasks.forEach((t) => {
+      if (t.part === 'part1') counts.part1 += 1;
+      else if (t.part === 'part2') counts.part2 += 1;
+      else if (t.part === 'part3') counts.part3 += 1;
+    });
+    return counts;
+  }, [allTasks]);
+
+  const availableSources = useMemo(() => {
+    const set = new Set();
+    allTasks.forEach((t) => {
+      if (t.isCustom) set.add('Custom');
+      else if (t.sourceTag) set.add(t.sourceTag);
+      else set.add('Starter');
+    });
+    return ['all', ...Array.from(set)];
+  }, [allTasks]);
+
   const segmentCountByTaskId = useMemo(() => {
     const counts = {};
     allTasks.forEach((task) => {
-      counts[task.id] = resolveShadowingSegments(task, chunkMode).filter(
-        s => s.unitType !== 'prompt_only'
-      ).length;
+      counts[task.id] = getShadowingTaskSegmentCount(task, chunkMode);
     });
     return counts;
   }, [allTasks, chunkMode]);
@@ -126,6 +155,12 @@ export default function SpeechShadowingWorkspace({
     let list = allTasks;
     if (activePart !== 'all') {
       list = list.filter(t => t.part === activePart);
+    }
+    if (sourceFilter !== 'all') {
+      list = list.filter(t => {
+        const tag = t.isCustom ? 'Custom' : (t.sourceTag || 'Starter');
+        return tag === sourceFilter;
+      });
     }
     if (bandFilter === 'foundation') {
       list = list.filter(t => parseFloat(t.bandLevel) <= 6.5);
@@ -148,7 +183,36 @@ export default function SpeechShadowingWorkspace({
       );
     }
     return list;
-  }, [allTasks, activePart, bandFilter, hideCompleted, shadowStats.bestScores, selectedTaskId, searchQuery]);
+  }, [allTasks, activePart, sourceFilter, bandFilter, hideCompleted, shadowStats.bestScores, selectedTaskId, searchQuery]);
+
+  // Reset pagination window whenever filter criteria change
+  useEffect(() => {
+    setVisibleTaskLimit(40);
+  }, [activePart, sourceFilter, bandFilter, hideCompleted, searchQuery]);
+
+  const visibleTasks = useMemo(() => {
+    return filteredTasks.slice(0, visibleTaskLimit);
+  }, [filteredTasks, visibleTaskLimit]);
+
+  const handleListScroll = useCallback((e) => {
+    const el = e.currentTarget;
+    if (!el) return;
+    if (el.scrollTop + el.clientHeight >= el.scrollHeight - 160) {
+      setVisibleTaskLimit((prev) => (prev < filteredTasks.length ? prev + 40 : prev));
+    }
+  }, [filteredTasks.length]);
+
+  const handlePickRandomTask = useCallback(() => {
+    if (filteredTasks.length === 0) return;
+    const pool = filteredTasks.length > 1
+      ? filteredTasks.filter(t => t.id !== selectedTaskId)
+      : filteredTasks;
+    const pick = pool[Math.floor(Math.random() * pool.length)];
+    if (pick) {
+      setSelectedTaskId(pick.id);
+      setIsMobileListOpen(false);
+    }
+  }, [filteredTasks, selectedTaskId]);
 
   const currentTask = useMemo(() => {
     return (
@@ -206,6 +270,7 @@ export default function SpeechShadowingWorkspace({
   const micAutoStartTimerRef = useRef(null);
   const promptAdvanceTimerRef = useRef(null);
   const fullReplayTimerRef = useRef(null);
+  const retryResetTimerRef = useRef(null);
   const completedAwardedRef = useRef(false);
   const sessionTokenRef = useRef(0);
   const lastAutoReadKeyRef = useRef('');
@@ -246,6 +311,10 @@ export default function SpeechShadowingWorkspace({
     if (fullReplayTimerRef.current) {
       clearTimeout(fullReplayTimerRef.current);
       fullReplayTimerRef.current = null;
+    }
+    if (retryResetTimerRef.current) {
+      clearTimeout(retryResetTimerRef.current);
+      retryResetTimerRef.current = null;
     }
     if (userAudioRef.current) {
       try {
@@ -580,7 +649,13 @@ export default function SpeechShadowingWorkspace({
           setIsWaitingForRetrySpeech(true);
           lastAutoEvaluatedRef.current = '';
           liveSpokenTextRef.current = '';
-          speechEngine.resetTranscript({ restartRecognition: true });
+          const retryToken = sessionTokenRef.current;
+          if (retryResetTimerRef.current) clearTimeout(retryResetTimerRef.current);
+          retryResetTimerRef.current = setTimeout(() => {
+            retryResetTimerRef.current = null;
+            if (retryToken !== sessionTokenRef.current) return;
+            speechEngine.resetTranscript({ restartRecognition: true });
+          }, 550);
         }
       }
     },
@@ -1053,7 +1128,7 @@ Separate paragraphs with a blank line. If ${customPart} is part1 or part3, prefi
                   : 'bg-slate-900 hover:bg-slate-800 text-slate-400 border border-slate-800'
               }`}
             >
-              {isEn ? p.labelEn : p.labelVi}
+              {isEn ? p.labelEn : p.labelVi} ({partCounts[p.id] ?? 0})
             </button>
           ))}
         </div>
@@ -1181,16 +1256,57 @@ Separate paragraphs with a blank line. If ${customPart} is part1 or part3, prefi
         {/* DESKTOP LEFT SIDEBAR */}
         <aside className="hidden lg:flex w-80 xl:w-96 bg-slate-950/60 border-r border-slate-800 flex-col shrink-0">
           <div className="p-3 border-b border-slate-800/80 space-y-2">
-            <div className="relative">
-              <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-                placeholder={isEn ? 'Search Speaking samples...' : 'Tìm bài mẫu Speaking...'}
-                className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500"
-              />
+            <div className="flex items-center gap-1.5">
+              <div className="relative flex-1">
+                <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  placeholder={isEn ? 'Search Speaking samples...' : 'Tìm bài mẫu Speaking...'}
+                  className="w-full pl-8 pr-7 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500"
+                />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery('')}
+                    aria-label={isEn ? 'Clear search' : 'Xóa từ khóa'}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white cursor-pointer"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={handlePickRandomTask}
+                disabled={filteredTasks.length === 0}
+                title={isEn ? 'Pick a random task' : 'Chọn ngẫu nhiên 1 bài'}
+                aria-label={isEn ? 'Pick a random task' : 'Chọn ngẫu nhiên 1 bài'}
+                className="p-1.5 rounded-xl bg-slate-900 hover:bg-purple-600/20 text-purple-300 border border-slate-800 hover:border-purple-500/40 disabled:opacity-40 cursor-pointer shrink-0 transition-colors"
+              >
+                <Shuffle className="w-3.5 h-3.5" />
+              </button>
             </div>
+
+            {availableSources.length > 2 && (
+              <div className="flex items-center space-x-1 overflow-x-auto no-scrollbar">
+                {availableSources.map(src => (
+                  <button
+                    key={src}
+                    type="button"
+                    onClick={() => setSourceFilter(src)}
+                    className={`px-2 py-0.5 rounded-lg text-[10px] font-bold whitespace-nowrap cursor-pointer border transition-colors ${
+                      sourceFilter === src
+                        ? 'bg-cyan-600/25 text-cyan-200 border-cyan-500/40'
+                        : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-slate-200'
+                    }`}
+                  >
+                    {src === 'all' ? (isEn ? 'All Sources' : 'Mọi nguồn') : src}
+                  </button>
+                ))}
+              </div>
+            )}
 
             <div className="flex items-center justify-between gap-1">
               <div className="flex items-center space-x-1 overflow-x-auto no-scrollbar">
@@ -1226,8 +1342,17 @@ Separate paragraphs with a blank line. If ${customPart} is part1 or part3, prefi
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-2 space-y-1.5 overscroll-contain">
-            {filteredTasks.map(item => {
+          <div
+            onScroll={handleListScroll}
+            className="flex-1 overflow-y-auto p-2 space-y-1.5 overscroll-contain"
+          >
+            {isLoadingBank && (
+              <div className="px-3 py-2 rounded-xl bg-slate-900/90 border border-slate-800 text-[11px] text-cyan-300 flex items-center space-x-2">
+                <Loader2 className="w-3.5 h-3.5 animate-spin shrink-0" />
+                <span>{isEn ? 'Loading Speaking Bank...' : 'Đang tải ngân hàng đề Speaking...'}</span>
+              </div>
+            )}
+            {visibleTasks.map(item => {
               const isSelected = currentTask?.id === item.id;
               const best = shadowStats.bestScores?.[item.id];
               const segCount = segmentCountByTaskId[item.id] ?? 0;
@@ -1289,6 +1414,17 @@ Separate paragraphs with a blank line. If ${customPart} is part1 or part3, prefi
                 </div>
               );
             })}
+            {visibleTasks.length < filteredTasks.length && (
+              <button
+                type="button"
+                onClick={() => setVisibleTaskLimit(prev => prev + 40)}
+                className="w-full py-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs font-bold text-purple-300 cursor-pointer transition-colors"
+              >
+                {isEn
+                  ? `Show more (${filteredTasks.length - visibleTasks.length} remaining)`
+                  : `Xem thêm (${filteredTasks.length - visibleTasks.length} bài còn lại)`}
+              </button>
+            )}
           </div>
         </aside>
 
@@ -1550,7 +1686,7 @@ Separate paragraphs with a blank line. If ${customPart} is part1 or part3, prefi
             type="button"
             onClick={() => {
               speechEngine.stopListening();
-              speechEngine.speak(activeSeg.text, { examinerId: selectedExaminerId, rate: 0.85, silentChime: true });
+              speechEngine.speak(activeSeg.text, { examinerId: selectedExaminerId, rate: playbackSpeed, silentChime: true });
             }}
             className="min-h-[48px] px-3.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white text-xs font-bold flex items-center space-x-1.5 shrink-0 cursor-pointer transition-all"
           >
@@ -1663,20 +1799,60 @@ Separate paragraphs with a blank line. If ${customPart} is part1 or part3, prefi
                         : 'bg-slate-950 text-slate-400 border border-slate-800'
                     }`}
                   >
-                    {isEn ? p.labelEn : p.labelVi}
+                    {isEn ? p.labelEn : p.labelVi} ({partCounts[p.id] ?? 0})
                   </button>
                 ))}
               </div>
-              <div className="relative">
-                <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={e => setSearchQuery(e.target.value)}
-                  placeholder={isEn ? 'Search Speaking samples...' : 'Tìm bài mẫu Speaking...'}
-                  className="w-full pl-8 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500"
-                />
+              <div className="flex items-center gap-1.5">
+                <div className="relative flex-1">
+                  <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={e => setSearchQuery(e.target.value)}
+                    placeholder={isEn ? 'Search Speaking samples...' : 'Tìm bài mẫu Speaking...'}
+                    className="w-full pl-8 pr-8 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500"
+                  />
+                  {searchQuery && (
+                    <button
+                      type="button"
+                      onClick={() => setSearchQuery('')}
+                      aria-label={isEn ? 'Clear search' : 'Xóa từ khóa'}
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white cursor-pointer"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
+                <button
+                  type="button"
+                  onClick={handlePickRandomTask}
+                  disabled={filteredTasks.length === 0}
+                  title={isEn ? 'Pick a random task' : 'Chọn ngẫu nhiên 1 bài'}
+                  className="px-2.5 py-2 rounded-xl bg-slate-950 text-purple-300 border border-purple-500/30 text-[11px] font-bold flex items-center space-x-1 shrink-0 disabled:opacity-40 cursor-pointer"
+                >
+                  <Shuffle className="w-3.5 h-3.5" />
+                  <span>{isEn ? 'Random' : 'Ngẫu nhiên'}</span>
+                </button>
               </div>
+              {availableSources.length > 2 && (
+                <div className="flex items-center space-x-1 overflow-x-auto no-scrollbar">
+                  {availableSources.map(src => (
+                    <button
+                      key={src}
+                      type="button"
+                      onClick={() => setSourceFilter(src)}
+                      className={`px-2.5 py-1 rounded-lg text-[10px] font-bold whitespace-nowrap cursor-pointer border ${
+                        sourceFilter === src
+                          ? 'bg-cyan-600/25 text-cyan-200 border-cyan-500/40'
+                          : 'bg-slate-950 text-slate-400 border-slate-800'
+                      }`}
+                    >
+                      {src === 'all' ? (isEn ? 'All Sources' : 'Mọi nguồn') : src}
+                    </button>
+                  ))}
+                </div>
+              )}
               <div className="flex items-center justify-between gap-1">
                 <div className="flex items-center space-x-1 overflow-x-auto no-scrollbar">
                   {[
@@ -1711,8 +1887,17 @@ Separate paragraphs with a blank line. If ${customPart} is part1 or part3, prefi
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-3 space-y-2 overscroll-contain">
-              {filteredTasks.map(item => {
+            <div
+              onScroll={handleListScroll}
+              className="flex-1 overflow-y-auto p-3 space-y-2 overscroll-contain"
+            >
+              {isLoadingBank && (
+                <div className="px-3 py-2.5 rounded-xl bg-slate-950/90 border border-slate-800 text-xs text-cyan-300 flex items-center space-x-2">
+                  <Loader2 className="w-4 h-4 animate-spin shrink-0" />
+                  <span>{isEn ? 'Loading Speaking Bank...' : 'Đang tải ngân hàng đề Speaking...'}</span>
+                </div>
+              )}
+              {visibleTasks.map(item => {
                 const segCount = segmentCountByTaskId[item.id] ?? 0;
                 return (
                   <div
@@ -1730,6 +1915,11 @@ Separate paragraphs with a blank line. If ${customPart} is part1 or part3, prefi
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center space-x-1.5 text-[10px] font-black text-purple-300">
                         <span>{item.part?.toUpperCase()} • Band {item.bandLevel} • {segCount} {isEn ? 'parts' : 'đoạn'}</span>
+                        {item.sourceTag && (
+                          <span className="px-1.5 py-0.2 rounded bg-cyan-500/15 text-cyan-300 text-[9px]">
+                            {item.sourceTag}
+                          </span>
+                        )}
                       </div>
                       <div className="text-xs font-extrabold text-white truncate">
                         {isEn ? item.titleEn : item.titleVi}
@@ -1747,6 +1937,17 @@ Separate paragraphs with a blank line. If ${customPart} is part1 or part3, prefi
                   </div>
                 );
               })}
+              {visibleTasks.length < filteredTasks.length && (
+                <button
+                  type="button"
+                  onClick={() => setVisibleTaskLimit(prev => prev + 40)}
+                  className="w-full py-2.5 rounded-2xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-xs font-bold text-purple-300 cursor-pointer"
+                >
+                  {isEn
+                    ? `Show more (${filteredTasks.length - visibleTasks.length} remaining)`
+                    : `Xem thêm (${filteredTasks.length - visibleTasks.length} bài còn lại)`}
+                </button>
+              )}
             </div>
           </div>
         </div>

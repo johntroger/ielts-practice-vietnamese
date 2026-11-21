@@ -637,7 +637,7 @@ export function resolveShadowingSegments(task, chunkMode = 'auto') {
     }
     const bucketWords = bucket.reduce((sum, b) => sum + b.text.split(/\s+/).filter(Boolean).length, 0);
     const segWords = String(seg.text || '').split(/\s+/).filter(Boolean).length;
-    if (bucket.length > 0 && bucketWords + segWords > 58) {
+    if (bucket.length > 0 && bucketWords + segWords > 45) {
       flushBucket();
     }
     bucket.push(seg);
@@ -645,6 +645,17 @@ export function resolveShadowingSegments(task, chunkMode = 'auto') {
   flushBucket();
 
   return merged;
+}
+
+/**
+ * Fast O(1) segment count lookup for task list badges without hydrating lazy bank tasks.
+ */
+export function getShadowingTaskSegmentCount(task, chunkMode = 'auto') {
+  if (!task) return 0;
+  if (task.segmentCountByMode && typeof task.segmentCountByMode[chunkMode] === 'number') {
+    return task.segmentCountByMode[chunkMode];
+  }
+  return resolveShadowingSegments(task, chunkMode).filter(s => s.unitType !== 'prompt_only').length;
 }
 
 /**
@@ -685,11 +696,47 @@ export function evaluateShadowingSegment({
 }
 
 /**
- * Splits overly long pasted paragraphs (> 60 words) into 2-sentence chunks for reliable STT grading.
+ * Splits a single overly long sentence (> 44 words) at a natural clause boundary (; or ,)
+ * so mobile Web Speech API doesn't cut off mid-utterance.
+ */
+function splitOverlongSentence(sentence = '', maxWords = 44) {
+  const words = sentence.split(/\s+/).filter(Boolean);
+  if (words.length <= maxWords) return [sentence];
+
+  // Try splitting near the midpoint on a semicolon or comma
+  const midChar = Math.floor(sentence.length / 2);
+  let bestPos = -1;
+  let bestDist = Infinity;
+  const regex = /[;,]\s+/g;
+  let m;
+  while ((m = regex.exec(sentence)) !== null) {
+    const pos = m.index + 1;
+    const leftWords = sentence.slice(0, pos).trim().split(/\s+/).length;
+    const rightWords = sentence.slice(pos).trim().split(/\s+/).length;
+    if (leftWords >= 10 && rightWords >= 10) {
+      const dist = Math.abs(pos - midChar);
+      if (dist < bestDist) {
+        bestDist = dist;
+        bestPos = pos;
+      }
+    }
+  }
+  if (bestPos > 0) {
+    const left = sentence.slice(0, bestPos).trim();
+    const right = sentence.slice(bestPos).trim();
+    return [left, right].filter(Boolean);
+  }
+  return [sentence];
+}
+
+/**
+ * Splits overly long pasted paragraphs into ~35-42 word chunks (max 2 sentences) for reliable mobile STT grading.
  */
 function splitLongTextIntoReadableBlocks(text = '') {
-  const sentences = splitIntoSentencesSafe(text);
-  if (sentences.length <= 2) return [sentences.join(' ')].filter(Boolean);
+  const rawSentences = splitIntoSentencesSafe(text);
+  const sentences = rawSentences.flatMap(s => splitOverlongSentence(s, 44));
+  if (sentences.length === 0) return [];
+  if (sentences.length === 1) return sentences;
 
   const blocks = [];
   let buffer = [];
@@ -697,7 +744,7 @@ function splitLongTextIntoReadableBlocks(text = '') {
 
   for (const s of sentences) {
     const wc = s.split(/\s+/).filter(Boolean).length;
-    if (buffer.length > 0 && (buffer.length >= 2 || bufferWords + wc > 50)) {
+    if (buffer.length > 0 && (buffer.length >= 2 || bufferWords + wc > 40)) {
       blocks.push(buffer.join(' '));
       buffer = [s];
       bufferWords = wc;
@@ -1063,170 +1110,225 @@ export async function loadSpeakingBankShadowingTasks() {
     console.warn('[ShadowingData] Failed to adapt Speaking Bank topics:', err);
   }
 
-  // 4. Lazy-load Target 9 IELTS Speaking Bank (Part 1, Part 2, Part 3)
+  // 4. Lazy-load Target 9 IELTS Speaking Bank (Part 1, Part 2, Part 3) with on-demand segment hydration
   try {
     const darshan = await import('./shadowingDarshanBank.js');
 
-    (darshan.DARSHAN_PART1_SETS || []).forEach((set, idx) => {
-      const segments = [];
-      (set.items || []).forEach((qa, qIdx) => {
-        if (!qa?.q || !qa?.a) return;
-        segments.push({
-          id: `${set.id}-q${qIdx + 1}`,
-          unitType: 'prompt_only',
-          phaseLabelEn: `Examiner Question ${qIdx + 1}`,
-          phaseLabelVi: `Câu hỏi Giám khảo ${qIdx + 1}`,
-          text: qa.q,
-          intonationText: buildAutoIntonation(qa.q),
-          meaningEn: 'Speaking Part 1 general round question',
-          meaningVi: 'Câu hỏi Speaking Part 1',
-          mouthTipEn: 'Listen to the question stress before shadowing the model answer.',
-          mouthTipVi: 'Nghe trọng âm câu hỏi trước khi nhại câu trả lời mẫu.'
-        });
-        const blocks = splitLongTextIntoReadableBlocks(qa.a);
-        blocks.forEach((blk, bIdx) => {
-          const sentCount = blk.split(/[.!?]+/).filter(s => s.trim().length > 0).length;
+    const attachLazySegments = (taskMeta, buildFn) => {
+      Object.defineProperty(taskMeta, 'segments', {
+        enumerable: true,
+        configurable: true,
+        get() {
+          const built = buildFn();
+          Object.defineProperty(taskMeta, 'segments', {
+            value: built,
+            enumerable: true,
+            writable: true,
+            configurable: true
+          });
+          return built;
+        }
+      });
+      return taskMeta;
+    };
+
+    const estimateQaCounts = (items = []) => {
+      let autoCount = 0;
+      let sentCount = 0;
+      for (const qa of items) {
+        if (!qa?.q || !qa?.a) continue;
+        const words = qa.a.trim().split(/\s+/).length;
+        const approxSents = Math.max(1, (qa.a.match(/[.!?]+/g) || []).length);
+        autoCount += Math.max(1, Math.ceil(words / 40));
+        sentCount += approxSents;
+      }
+      return { auto: autoCount, sentence: sentCount, paragraph: Math.max(1, items.length) };
+    };
+
+    (darshan.DARSHAN_PART1_SETS || []).forEach((set) => {
+      const validItems = (set.items || []).filter(qa => qa?.q && qa?.a);
+      if (validItems.length === 0) return;
+
+      const buildSegments = () => {
+        const segments = [];
+        validItems.forEach((qa, qIdx) => {
           segments.push({
-            id: `${set.id}-a${qIdx + 1}-${bIdx + 1}`,
-            unitType: sentCount >= 2 ? 'paragraph' : 'sentence',
-            phaseLabelEn: blocks.length > 1 ? `Model Answer ${qIdx + 1} (${bIdx + 1}/${blocks.length})` : `Model Answer ${qIdx + 1}`,
-            phaseLabelVi: blocks.length > 1 ? `Trả lời mẫu ${qIdx + 1} (${bIdx + 1}/${blocks.length})` : `Trả lời mẫu ${qIdx + 1}`,
-            text: blk,
-            intonationText: buildAutoIntonation(blk),
-            meaningEn: 'Speaking Part 1 sample response',
-            meaningVi: 'Câu trả lời mẫu Speaking Part 1',
-            mouthTipEn: 'Keep a natural conversational pace and clear word endings.',
-            mouthTipVi: 'Giữ nhịp tự nhiên và bật rõ âm cuối.'
+            id: `${set.id}-q${qIdx + 1}`,
+            unitType: 'prompt_only',
+            phaseLabelEn: `Examiner Question ${qIdx + 1}`,
+            phaseLabelVi: `Câu hỏi Giám khảo ${qIdx + 1}`,
+            text: qa.q,
+            intonationText: buildAutoIntonation(qa.q),
+            meaningEn: 'Speaking Part 1 general round question',
+            meaningVi: 'Câu hỏi Speaking Part 1',
+            mouthTipEn: 'Listen to the question stress before shadowing the model answer.',
+            mouthTipVi: 'Nghe trọng âm câu hỏi trước khi nhại câu trả lời mẫu.'
+          });
+          const blocks = splitLongTextIntoReadableBlocks(qa.a);
+          blocks.forEach((blk, bIdx) => {
+            const sentCount = blk.split(/[.!?]+/).filter(s => s.trim().length > 0).length;
+            segments.push({
+              id: `${set.id}-a${qIdx + 1}-${bIdx + 1}`,
+              unitType: sentCount >= 2 ? 'paragraph' : 'sentence',
+              phaseLabelEn: blocks.length > 1 ? `Model Answer ${qIdx + 1} (${bIdx + 1}/${blocks.length})` : `Model Answer ${qIdx + 1}`,
+              phaseLabelVi: blocks.length > 1 ? `Trả lời mẫu ${qIdx + 1} (${bIdx + 1}/${blocks.length})` : `Trả lời mẫu ${qIdx + 1}`,
+              text: blk,
+              intonationText: buildAutoIntonation(blk),
+              meaningEn: 'Speaking Part 1 sample response',
+              meaningVi: 'Câu trả lời mẫu Speaking Part 1',
+              mouthTipEn: 'Keep a natural conversational pace and clear word endings.',
+              mouthTipVi: 'Giữ nhịp tự nhiên và bật rõ âm cuối.'
+            });
           });
         });
-      });
+        return segments;
+      };
 
-      if (segments.length >= 2) {
-        tasks.push(normalizeShadowingTask({
-          id: `shad-${set.id}`,
-          part: 'part1',
-          bandLevel: '7.5',
-          topicEn: 'General Round',
-          topicVi: 'General Round',
-          titleEn: `Part 1: ${set.title}`,
-          titleVi: `Part 1: ${set.title}`,
-          promptEn: set.items?.[0]?.q || set.title,
-          promptVi: set.items?.[0]?.q || set.title,
-          sourceTag: 'Target 9 Bank',
-          xpReward: 100,
-          segments
-        }, idx));
-      }
+      const topicLabel = set.topic || set.title || 'General Round';
+      tasks.push(attachLazySegments({
+        id: `shad-${set.id}`,
+        part: 'part1',
+        bandLevel: '7.5',
+        topicEn: topicLabel,
+        topicVi: topicLabel,
+        titleEn: `Part 1: ${set.title}`,
+        titleVi: `Part 1: ${set.title}`,
+        promptEn: validItems[0].q || set.title,
+        promptVi: validItems[0].q || set.title,
+        cueBulletsEn: [],
+        cueBulletsVi: [],
+        sourceTag: 'Target 9 Bank',
+        xpReward: 100,
+        requiresAuth: false,
+        segmentCountByMode: estimateQaCounts(validItems)
+      }, buildSegments));
     });
 
-    (darshan.DARSHAN_PART2_CARDS || []).forEach((card, idx) => {
+    const p2PhaseNames = [
+      { en: 'Opening Hook', vi: 'Mở đầu & Giới thiệu' },
+      { en: 'Background & Context', vi: 'Bối cảnh & Hoàn cảnh' },
+      { en: 'Core Details', vi: 'Chi tiết chính' },
+      { en: 'Highlights & Experience', vi: 'Điểm nhấn & Trải nghiệm' },
+      { en: 'Reflection & Closing', vi: 'Đúc kết & Cảm nhận' }
+    ];
+
+    (darshan.DARSHAN_PART2_CARDS || []).forEach((card) => {
       if (!card?.sampleAnswer) return;
       const rawParas = String(card.sampleAnswer)
         .split(/\n\s*\n/)
         .map(p => p.trim())
         .filter(Boolean);
+      if (rawParas.length === 0) return;
 
-      const phaseNames = [
-        { en: 'Opening Hook', vi: 'Mở đầu & Giới thiệu' },
-        { en: 'Background & Context', vi: 'Bối cảnh & Hoàn cảnh' },
-        { en: 'Core Details', vi: 'Chi tiết chính' },
-        { en: 'Highlights & Experience', vi: 'Điểm nhấn & Trải nghiệm' },
-        { en: 'Reflection & Closing', vi: 'Đúc kết & Cảm nhận' }
-      ];
+      const totalWords = card.sampleAnswer.trim().split(/\s+/).length;
+      const approxSents = Math.max(1, (card.sampleAnswer.match(/[.!?]+/g) || []).length);
+      const approxAuto = Math.max(rawParas.length, Math.ceil(totalWords / 38));
 
-      const segments = [];
-      let segIdx = 0;
-      rawParas.forEach((paraText, pIdx) => {
-        const blocks = splitLongTextIntoReadableBlocks(paraText);
-        blocks.forEach((blk, bIdx) => {
-          segIdx += 1;
-          const sentCount = blk.split(/[.!?]+/).filter(s => s.trim().length > 0).length;
-          const phaseMeta = phaseNames[Math.min(pIdx, phaseNames.length - 1)];
-          segments.push({
-            id: `${card.id}-seg${segIdx}`,
-            unitType: sentCount >= 2 ? 'paragraph' : 'sentence',
-            phaseLabelEn: blocks.length > 1 ? `${phaseMeta.en} (${bIdx + 1}/${blocks.length})` : phaseMeta.en,
-            phaseLabelVi: blocks.length > 1 ? `${phaseMeta.vi} (${bIdx + 1}/${blocks.length})` : phaseMeta.vi,
-            text: blk,
-            intonationText: buildAutoIntonation(blk),
-            meaningEn: 'Speaking Part 2 Cue Card model segment',
-            meaningVi: 'Đoạn bài mẫu Speaking Part 2',
-            mouthTipEn: 'Match natural Part 2 storytelling rhythm and pause at commas.',
-            mouthTipVi: 'Giữ nhịp kể chuyện Part 2 tự nhiên và ngắt nhẹ ở dấu phẩy.'
+      const buildSegments = () => {
+        const segments = [];
+        let segIdx = 0;
+        rawParas.forEach((paraText, pIdx) => {
+          const blocks = splitLongTextIntoReadableBlocks(paraText);
+          blocks.forEach((blk, bIdx) => {
+            segIdx += 1;
+            const sentCount = blk.split(/[.!?]+/).filter(s => s.trim().length > 0).length;
+            const phaseMeta = p2PhaseNames[Math.min(pIdx, p2PhaseNames.length - 1)];
+            segments.push({
+              id: `${card.id}-seg${segIdx}`,
+              unitType: sentCount >= 2 ? 'paragraph' : 'sentence',
+              phaseLabelEn: blocks.length > 1 ? `${phaseMeta.en} (${bIdx + 1}/${blocks.length})` : phaseMeta.en,
+              phaseLabelVi: blocks.length > 1 ? `${phaseMeta.vi} (${bIdx + 1}/${blocks.length})` : phaseMeta.vi,
+              text: blk,
+              intonationText: buildAutoIntonation(blk),
+              meaningEn: 'Speaking Part 2 Cue Card model segment',
+              meaningVi: 'Đoạn bài mẫu Speaking Part 2',
+              mouthTipEn: 'Match natural Part 2 storytelling rhythm and pause at commas.',
+              mouthTipVi: 'Giữ nhịp kể chuyện Part 2 tự nhiên và ngắt nhẹ ở dấu phẩy.'
+            });
           });
         });
-      });
+        return segments;
+      };
 
-      if (segments.length >= 1) {
-        tasks.push(normalizeShadowingTask({
-          id: `shad-${card.id}`,
-          part: 'part2',
-          bandLevel: '8.0',
-          topicEn: 'Cue Card Topic',
-          topicVi: 'Cue Card Topic',
-          titleEn: `Cue Card: ${card.title}`,
-          titleVi: `Cue Card: ${card.title}`,
-          promptEn: card.title,
-          promptVi: card.title,
-          cueBulletsEn: card.bullets || [],
-          cueBulletsVi: card.bullets || [],
-          sourceTag: 'Target 9 Bank',
-          xpReward: 125,
-          segments
-        }, idx));
-      }
+      tasks.push(attachLazySegments({
+        id: `shad-${card.id}`,
+        part: 'part2',
+        bandLevel: '8.0',
+        topicEn: 'Cue Card Topic',
+        topicVi: 'Cue Card Topic',
+        titleEn: `Cue Card: ${card.title}`,
+        titleVi: `Cue Card: ${card.title}`,
+        promptEn: card.title,
+        promptVi: card.title,
+        cueBulletsEn: card.bullets || [],
+        cueBulletsVi: card.bullets || [],
+        sourceTag: 'Target 9 Bank',
+        xpReward: 125,
+        requiresAuth: false,
+        segmentCountByMode: {
+          auto: approxAuto,
+          sentence: approxSents,
+          paragraph: Math.max(1, Math.ceil(totalWords / 44))
+        }
+      }, buildSegments));
     });
 
-    (darshan.DARSHAN_PART3_SETS || []).forEach((set, idx) => {
-      const segments = [];
-      (set.items || []).forEach((qa, qIdx) => {
-        if (!qa?.q || !qa?.a) return;
-        segments.push({
-          id: `${set.id}-q${qIdx + 1}`,
-          unitType: 'prompt_only',
-          phaseLabelEn: `Examiner Prompt ${qIdx + 1}`,
-          phaseLabelVi: `Câu hỏi Part 3 #${qIdx + 1}`,
-          text: qa.q,
-          intonationText: buildAutoIntonation(qa.q),
-          meaningEn: 'Part 3 follow-up question',
-          meaningVi: 'Câu hỏi thảo luận Part 3',
-          mouthTipEn: 'Listen for analytical emphasis.',
-          mouthTipVi: 'Nghe nhấn trọng âm lập luận.'
-        });
-        const blocks = splitLongTextIntoReadableBlocks(qa.a);
-        blocks.forEach((blk, bIdx) => {
-          const sentCount = blk.split(/[.!?]+/).filter(s => s.trim().length > 0).length;
+    (darshan.DARSHAN_PART3_SETS || []).forEach((set) => {
+      const validItems = (set.items || []).filter(qa => qa?.q && qa?.a);
+      if (validItems.length === 0) return;
+
+      const buildSegments = () => {
+        const segments = [];
+        validItems.forEach((qa, qIdx) => {
           segments.push({
-            id: `${set.id}-a${qIdx + 1}-${bIdx + 1}`,
-            unitType: sentCount >= 2 ? 'paragraph' : 'sentence',
-            phaseLabelEn: blocks.length > 1 ? `Analytical Answer ${qIdx + 1} (${bIdx + 1}/${blocks.length})` : `Analytical Answer ${qIdx + 1}`,
-            phaseLabelVi: blocks.length > 1 ? `Luận điểm mẫu ${qIdx + 1} (${bIdx + 1}/${blocks.length})` : `Luận điểm mẫu ${qIdx + 1}`,
-            text: blk,
-            intonationText: buildAutoIntonation(blk),
-            meaningEn: 'Part 3 follow-up sample response',
-            meaningVi: 'Câu trả lời mẫu Part 3',
-            mouthTipEn: 'Pause cleanly after discourse markers and keep steady rhythm.',
-            mouthTipVi: 'Ngắt nhẹ sau từ nối và giữ nhịp đều.'
+            id: `${set.id}-q${qIdx + 1}`,
+            unitType: 'prompt_only',
+            phaseLabelEn: `Examiner Prompt ${qIdx + 1}`,
+            phaseLabelVi: `Câu hỏi Part 3 #${qIdx + 1}`,
+            text: qa.q,
+            intonationText: buildAutoIntonation(qa.q),
+            meaningEn: 'Part 3 follow-up question',
+            meaningVi: 'Câu hỏi thảo luận Part 3',
+            mouthTipEn: 'Listen for analytical emphasis.',
+            mouthTipVi: 'Nghe nhấn trọng âm lập luận.'
+          });
+          const blocks = splitLongTextIntoReadableBlocks(qa.a);
+          blocks.forEach((blk, bIdx) => {
+            const sentCount = blk.split(/[.!?]+/).filter(s => s.trim().length > 0).length;
+            segments.push({
+              id: `${set.id}-a${qIdx + 1}-${bIdx + 1}`,
+              unitType: sentCount >= 2 ? 'paragraph' : 'sentence',
+              phaseLabelEn: blocks.length > 1 ? `Analytical Answer ${qIdx + 1} (${bIdx + 1}/${blocks.length})` : `Analytical Answer ${qIdx + 1}`,
+              phaseLabelVi: blocks.length > 1 ? `Luận điểm mẫu ${qIdx + 1} (${bIdx + 1}/${blocks.length})` : `Luận điểm mẫu ${qIdx + 1}`,
+              text: blk,
+              intonationText: buildAutoIntonation(blk),
+              meaningEn: 'Part 3 follow-up sample response',
+              meaningVi: 'Câu trả lời mẫu Part 3',
+              mouthTipEn: 'Pause cleanly after discourse markers and keep steady rhythm.',
+              mouthTipVi: 'Ngắt nhẹ sau từ nối và giữ nhịp đều.'
+            });
           });
         });
-      });
+        return segments;
+      };
 
-      if (segments.length >= 2) {
-        tasks.push(normalizeShadowingTask({
-          id: `shad-${set.id}`,
-          part: 'part3',
-          bandLevel: '8.0',
-          topicEn: set.topic || 'Part 3 Discussion',
-          topicVi: set.topic || 'Part 3 Discussion',
-          titleEn: `Part 3: ${set.topic}`,
-          titleVi: `Part 3: ${set.topic}`,
-          promptEn: `Follow-up discussion on ${set.topic}.`,
-          promptVi: `Thảo luận chuyên sâu Part 3 chủ đề ${set.topic}.`,
-          sourceTag: 'Target 9 Bank',
-          xpReward: 125,
-          segments
-        }, idx));
-      }
+      tasks.push(attachLazySegments({
+        id: `shad-${set.id}`,
+        part: 'part3',
+        bandLevel: '8.0',
+        topicEn: set.topic || 'Part 3 Discussion',
+        topicVi: set.topic || 'Part 3 Discussion',
+        titleEn: `Part 3: ${set.topic}`,
+        titleVi: `Part 3: ${set.topic}`,
+        promptEn: `Follow-up discussion on ${set.topic}.`,
+        promptVi: `Thảo luận chuyên sâu Part 3 chủ đề ${set.topic}.`,
+        cueBulletsEn: [],
+        cueBulletsVi: [],
+        sourceTag: 'Target 9 Bank',
+        xpReward: 125,
+        requiresAuth: false,
+        segmentCountByMode: estimateQaCounts(validItems)
+      }, buildSegments));
     });
   } catch (err) {
     console.warn('[ShadowingData] Failed to load Target 9 Speaking Bank:', err);
