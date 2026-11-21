@@ -28,6 +28,9 @@
     }
   ],
   "rewrites": [
-    { "source": "/(.*)", "destination": "/" }
+    {
+      "source": "/((?!assets/|audio/|banners/|mascot/|robots\\.txt|sitemap\\.xml).*)",
+      "destination": "/"
+    }
   ]
 }

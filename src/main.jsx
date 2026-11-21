@@ -4,6 +4,22 @@ import { Analytics } from '@vercel/analytics/react';
 import App from './App.jsx';
 import './index.css';
 
+// Auto-recover when a new Vercel deployment invalidates cached lazy-loaded JS chunks
+if (typeof window !== 'undefined') {
+  window.addEventListener('vite:preloadError', (event) => {
+    event.preventDefault();
+    try {
+      const lastReload = Number(sessionStorage.getItem('ielts_chunk_reload_ts') || '0');
+      if (Date.now() - lastReload > 10000) {
+        sessionStorage.setItem('ielts_chunk_reload_ts', String(Date.now()));
+        window.location.reload();
+      }
+    } catch (e) {
+      window.location.reload();
+    }
+  });
+}
+
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
