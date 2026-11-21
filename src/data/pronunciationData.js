@@ -32,6 +32,16 @@ export const PRONUNCIATION_TRACKS = [
     badgeColor: 'from-cyan-500 to-blue-600'
   },
   {
+    id: 'stress',
+    labelEn: 'Stress Shift',
+    labelVi: 'Chuyển Trọng Âm',
+    shortDescEn: 'Word family stress shifts (economy → economic)',
+    shortDescVi: 'Chuyển dịch trọng âm gia đình từ (economy → economic)',
+    baseXp: 20,
+    perfectXp: 25,
+    badgeColor: 'from-amber-500 to-orange-600'
+  },
+  {
     id: 'phrases',
     labelEn: 'Phrases & Linking',
     labelVi: 'Cụm Từ & Nối Âm',
@@ -3298,5 +3308,517 @@ export function evaluateIsolatedIpaSoundAttempt({
       : `Hãy chú ý khẩu hình của âm ${drill.ipaSymbol}: ${drill.mouthTipVi} Bạn có thể phát âm âm thuần "${drill.pureSoundCue}" hoặc gắn vào từ mẫu "${drill.sampleWord}".`
   };
 }
+
+/**
+ * 12 IELTS Band 7.0+ Word Family Stress Shift Drills
+ * Trains learners to shift primary stress cleanly when word endings change (-ic, -ical, -ity, -tion, -graphy).
+ */
+export const PRONUNCIATION_STRESS_SHIFT_DRILLS = [
+  {
+    id: 'pron-ss-01',
+    type: 'stress',
+    targetText: 'economy, economic',
+    ipaUk: '/ɪˈkɒn.ə.mi/ ➔ /ˌiː.kəˈnɒm.ɪk/',
+    ipaUs: '/iˈkɑː.nə.mi/ ➔ /ˌek.əˈnɑː.mɪk/',
+    syllables: 'e•CON•o•my ➔ ec•o•NOM•ic',
+    stressPattern: '○ ● ○ ○  ➔  ◐ ○ ● ○',
+    bandLevel: '7.0',
+    categoryEn: 'Stress Shift (-y → -ic)',
+    categoryVi: 'Chuyển trọng âm (-y → -ic)',
+    topicEn: 'Economics',
+    topicVi: 'Kinh tế học',
+    meaningEn: 'Noun (2nd syllable) shifts to Adjective (3rd syllable before -ic)',
+    meaningVi: 'Danh từ nhấn âm 2 (e-CON) ➔ Tính từ đuôi -ic nhấn ngay trước -ic (ec-o-NOM-ic)',
+    trapEn: 'Keeping stress on CON when saying "economic" (*e-CON-o-mic).',
+    trapVi: 'Giữ nguyên trọng âm ở CON khi đọc "economic" (*e-CON-o-mic) thay vì đẩy sang NOM.',
+    mouthTipEn: 'Suffix "-ic" ALWAYS pulls primary stress onto the syllable right before it.',
+    mouthTipVi: 'Quy tắc vàng: Đuôi "-ic" luôn kéo trọng âm chính về âm tiết đứng ngay trước nó.',
+    exampleEn: 'A strong economy requires sound economic policies.',
+    exampleVi: 'Một nền kinh tế vững mạnh đòi hỏi các chính sách kinh tế đúng đắn.',
+    xpReward: 20,
+    requiresAuth: false
+  },
+  {
+    id: 'pron-ss-02',
+    type: 'stress',
+    targetText: 'photograph, photography, photographic',
+    ipaUk: '/ˈfəʊ.tə.ɡrɑːf/ ➔ /fəˈtɒɡ.rə.fi/ ➔ /ˌfəʊ.təˈɡræf.ɪk/',
+    ipaUs: '/ˈfoʊ.t̬ə.ɡræf/ ➔ /fəˈtɑː.ɡrə.fi/ ➔ /ˌfoʊ.t̬əˈɡræf.ɪk/',
+    syllables: 'PHO•to•graph ➔ pho•TOG•ra•phy ➔ pho•to•GRAPH•ic',
+    stressPattern: '● ○ ○  ➔  ○ ● ○ ○  ➔  ◐ ○ ● ○',
+    bandLevel: '7.5',
+    categoryEn: '3-Step Stress Shift',
+    categoryVi: 'Chuyển trọng âm 3 bước',
+    topicEn: 'Arts & Media',
+    topicVi: 'Nghệ thuật & Truyền thông',
+    meaningEn: 'Classic 1st → 2nd → 3rd syllable stress shift across noun and adjective forms',
+    meaningVi: 'Cặp kinh điển chuyển trọng âm từ âm 1 ➔ âm 2 ➔ âm 3 tùy theo hậu tố.',
+    trapEn: 'Pronouncing all three words with stress on "PHO-".',
+    trapVi: 'Đọc cả 3 từ đều nhấn vào âm đầu "PHO-" và đọc rõ nguyên âm "o" ở âm yếu.',
+    mouthTipEn: 'Reduce unstressed "pho-" in photography to a quick schwa /fə/.',
+    mouthTipVi: 'Trong "photography", lướt nhanh âm đầu thành schwa /fə/ và nhấn mạnh vào -TOG-.',
+    exampleEn: 'Photography captures photographic memories in every photograph.',
+    exampleVi: 'Nhiếp ảnh lưu giữ những ký ức ảnh trong từng bức hình.',
+    xpReward: 20,
+    requiresAuth: false
+  },
+  {
+    id: 'pron-ss-03',
+    type: 'stress',
+    targetText: 'analyze, analysis, analytical',
+    ipaUk: '/ˈæn.əl.aɪz/ ➔ /əˈnæl.ə.sɪs/ ➔ /ˌæn.əˈlɪt.ɪ.kəl/',
+    ipaUs: '/ˈæn.əl.aɪz/ ➔ /əˈnæl.ə.sɪs/ ➔ /ˌæn.əˈlɪt̬.ɪ.kəl/',
+    syllables: 'AN•a•lyze ➔ a•NAL•y•sis ➔ an•a•LYT•i•cal',
+    stressPattern: '● ○ ○  ➔  ○ ● ○ ○  ➔  ◐ ○ ● ○ ○',
+    bandLevel: '7.5',
+    categoryEn: 'Verb → Noun → Adj Shift',
+    categoryVi: 'Động từ → Danh từ → Tính từ',
+    topicEn: 'Academic Research',
+    topicVi: 'Nghiên cứu học thuật',
+    meaningEn: 'Stress jumps right one syllable at each step: AN- → -NAL- → -LYT-',
+    meaningVi: 'Trọng âm dịch sang phải 1 âm tiết qua từng bước: AN- ➔ -NAL- ➔ -LYT-.',
+    trapEn: 'Stressing the first syllable of "analysis" (*AN-a-ly-sis).',
+    trapVi: 'Nhấn nhầm âm đầu của "analysis" (*AN-a-ly-sis) thay vì âm 2 (a-NAL-y-sis).',
+    mouthTipEn: 'Start "analysis" with a soft schwa /ə/ and punch -NAL- cleanly.',
+    mouthTipVi: 'Mở đầu "analysis" nhẹ bằng /ə/ rồi nhấn rõ âm -NAL-.',
+    exampleEn: 'We analyze data to produce an analytical analysis.',
+    exampleVi: 'Chúng tôi phân tích dữ liệu để tạo ra bản phân tích chuyên sâu.',
+    xpReward: 20,
+    requiresAuth: false
+  },
+  {
+    id: 'pron-ss-04',
+    type: 'stress',
+    targetText: 'politics, political, politician',
+    ipaUk: '/ˈpɒl.ə.tɪks/ ➔ /pəˈlɪt.ɪ.kəl/ ➔ /ˌpɒl.ɪˈtɪʃ.ən/',
+    ipaUs: '/ˈpɑː.lə.tɪks/ ➔ /pəˈlɪt̬.ɪ.kəl/ ➔ /ˌpɑː.ləˈtɪʃ.ən/',
+    syllables: 'POL•i•tics ➔ po•LIT•i•cal ➔ pol•i•TI•cian',
+    stressPattern: '● ○ ○  ➔  ○ ● ○ ○  ➔  ◐ ○ ● ○',
+    bandLevel: '7.5',
+    categoryEn: 'Society & Governance',
+    categoryVi: 'Xã hội & Chính trị',
+    topicEn: 'Government',
+    topicVi: 'Chính phủ',
+    meaningEn: 'Primary stress shifts across 1st (politics), 2nd (political), and 3rd (politician)',
+    meaningVi: 'Nhấn âm 1 (POL-i-tics) ➔ âm 2 (po-LIT-i-cal) ➔ âm 3 trước -cian (pol-i-TI-cian).',
+    trapEn: 'Stressing POL- in "political" (*POL-i-ti-cal).',
+    trapVi: 'Nhấn nhầm vào "POL-" khi đọc "political" hoặc "politician".',
+    mouthTipEn: 'Endings "-ical" and "-ician" always pull stress onto the preceding syllable.',
+    mouthTipVi: 'Đuôi "-ical" và "-ician" luôn kéo trọng âm về âm tiết ngay trước nó.',
+    exampleEn: 'Every politician faces political pressure in modern politics.',
+    exampleVi: 'Mọi chính trị gia đều đối mặt với áp lực chính trị trong nền chính trị hiện đại.',
+    xpReward: 20,
+    requiresAuth: false
+  },
+  {
+    id: 'pron-ss-05',
+    type: 'stress',
+    targetText: 'educate, education',
+    ipaUk: '/ˈedʒ.u.keɪt/ ➔ /ˌedʒ.uˈkeɪ.ʃən/',
+    ipaUs: '/ˈedʒ.ə.keɪt/ ➔ /ˌedʒ.əˈkeɪ.ʃən/',
+    syllables: 'ED•u•cate ➔ ed•u•CA•tion',
+    stressPattern: '● ○ ○  ➔  ◐ ○ ● ○',
+    bandLevel: '6.5',
+    categoryEn: 'Suffix -tion Rule',
+    categoryVi: 'Quy tắc đuôi -tion',
+    topicEn: 'Education',
+    topicVi: 'Giáo dục',
+    meaningEn: 'Verb stresses 1st syllable (ED-); -tion noun stresses syllable right before -tion (-CA-)',
+    meaningVi: 'Động từ nhấn âm 1 (ED-u-cate) ➔ Danh từ đuôi -tion luôn nhấn ngay trước -tion (ed-u-CA-tion).',
+    trapEn: 'Flattening all syllables equally in "education".',
+    trapVi: 'Đọc đều đều không rõ trọng âm ở -CA- trong "education".',
+    mouthTipEn: 'Keep the /dʒ/ sound ("j") in both words and lengthen the /eɪ/ in -CA-tion.',
+    mouthTipVi: 'Giữ âm /dʒ/ ở giữa từ và ngân rõ nguyên âm đôi /eɪ/ ở -CA-.',
+    exampleEn: 'Schools educate children through quality education.',
+    exampleVi: 'Nhà trường giáo dục trẻ em thông qua nền giáo dục chất lượng.',
+    xpReward: 20,
+    requiresAuth: false
+  },
+  {
+    id: 'pron-ss-06',
+    type: 'stress',
+    targetText: 'electric, electricity',
+    ipaUk: '/ɪˈlek.trɪk/ ➔ /ɪˌlekˈtrɪs.ə.ti/',
+    ipaUs: '/ɪˈlek.trɪk/ ➔ /ɪˌlekˈtrɪs.ə.t̬i/',
+    syllables: 'e•LEC•tric ➔ e•lec•TRIC•i•ty',
+    stressPattern: '○ ● ○  ➔  ○ ◐ ● ○ ○',
+    bandLevel: '7.0',
+    categoryEn: 'Suffix -ity Rule',
+    categoryVi: 'Quy tắc đuôi -ity',
+    topicEn: 'Energy & Tech',
+    topicVi: 'Năng lượng & Công nghệ',
+    meaningEn: '-ic stresses -LEC-, while -ity shifts stress onto -TRIC- and softens "c" to /s/',
+    meaningVi: 'Tính từ nhấn -LEC- ➔ Danh từ đuôi -ity kéo trọng âm sang -TRIC- và đổi chữ "c" thành /s/.',
+    trapEn: 'Saying *elec-TRIK-ity with a hard /k/ instead of /s/ in -TRIC-.',
+    trapVi: 'Đọc nhầm âm /k/ thay vì /s/ ở âm tiết -TRIC- của "electricity".',
+    mouthTipEn: 'Hiss a clean /s/ on -TRIC-i-ty.',
+    mouthTipVi: 'Bật rõ âm gió /s/ ở âm -TRIS-i-ty.',
+    exampleEn: 'Electric vehicles rely on clean electricity.',
+    exampleVi: 'Xe điện phụ thuộc vào nguồn điện sạch.',
+    xpReward: 20,
+    requiresAuth: false
+  },
+  {
+    id: 'pron-ss-07',
+    type: 'stress',
+    targetText: 'nation, national, nationality',
+    ipaUk: '/ˈneɪ.ʃən/ ➔ /ˈnæʃ.ən.əl/ ➔ /ˌnæʃ.əˈnæl.ə.ti/',
+    ipaUs: '/ˈneɪ.ʃən/ ➔ /ˈnæʃ.ən.əl/ ➔ /ˌnæʃ.əˈnæl.ə.t̬i/',
+    syllables: 'NA•tion ➔ NA•tion•al ➔ na•tion•AL•i•ty',
+    stressPattern: '● ○  ➔  ● ○ ○  ➔  ◐ ○ ● ○ ○',
+    bandLevel: '7.0',
+    categoryEn: 'Vowel + Stress Shift',
+    categoryVi: 'Đổi nguyên âm & trọng âm',
+    topicEn: 'Culture & Identity',
+    topicVi: 'Văn hóa & Bản sắc',
+    meaningEn: 'Vowel shifts from /eɪ/ (nation) to /æ/ (national) and stress moves to -AL- in nationality',
+    meaningVi: 'Chữ "a" đổi từ /eɪ/ (nation) sang /æ/ (national) và trọng âm chuyển sang -AL- trong nationality.',
+    trapEn: 'Saying *NAY-shun-al with /eɪ/ instead of /æ/ in "national".',
+    trapVi: 'Đọc nhầm "national" thành *NAY-shơ-nồl (/eɪ/) thay vì /ˈnæʃ.ən.əl/ (/æ/).',
+    mouthTipEn: 'Open your jaw wide for /æ/ in "national" and "nationality".',
+    mouthTipVi: 'Mở rộng hàm cho âm /æ/ ở "national" và nhấn mạnh vào -AL- trong "nationality".',
+    exampleEn: 'National festivals celebrate every nationality in the nation.',
+    exampleVi: 'Các lễ hội quốc gia tôn vinh mọi quốc tịch trong đất nước.',
+    xpReward: 20,
+    requiresAuth: false
+  },
+  {
+    id: 'pron-ss-08',
+    type: 'stress',
+    targetText: 'academy, academic',
+    ipaUk: '/əˈkæd.ə.mi/ ➔ /ˌæk.əˈdem.ɪk/',
+    ipaUs: '/əˈkæd.ə.mi/ ➔ /ˌæk.əˈdem.ɪk/',
+    syllables: 'a•CAD•e•my ➔ ac•a•DEM•ic',
+    stressPattern: '○ ● ○ ○  ➔  ◐ ○ ● ○',
+    bandLevel: '7.0',
+    categoryEn: 'IELTS Core Shift',
+    categoryVi: 'Cặp từ IELTS cốt lõi',
+    topicEn: 'Education',
+    topicVi: 'Giáo dục',
+    meaningEn: 'a-CAD-e-my (2nd) shifts to ac-a-DEM-ic (3rd)',
+    meaningVi: 'a-CAD-e-my (nhấn âm 2) ➔ ac-a-DEM-ic (nhấn âm 3).',
+    trapEn: 'Stressing *a-CAD-e-mic on the 2nd syllable.',
+    trapVi: 'Đọc nhầm "academic" nhấn vào âm 2 (*a-CAD-e-mic).',
+    mouthTipEn: 'Punch -DEM- sharply before -ic.',
+    mouthTipVi: 'Nhấn dứt khoát vào -DEM- ngay trước đuôi -ic.',
+    exampleEn: 'The academy publishes rigorous academic research.',
+    exampleVi: 'Học viện xuất bản các nghiên cứu học thuật nghiêm ngặt.',
+    xpReward: 20,
+    requiresAuth: false
+  },
+  {
+    id: 'pron-ss-09',
+    type: 'stress',
+    targetText: 'industry, industrial',
+    ipaUk: '/ˈɪn.də.stri/ ➔ /ɪnˈdʌs.tri.əl/',
+    ipaUs: '/ˈɪn.də.stri/ ➔ /ɪnˈdʌs.tri.əl/',
+    syllables: 'IN•dus•try ➔ in•DUS•tri•al',
+    stressPattern: '● ○ ○  ➔  ○ ● ○ ○',
+    bandLevel: '7.0',
+    categoryEn: 'Stress Shift (1st → 2nd)',
+    categoryVi: 'Chuyển trọng âm (1 → 2)',
+    topicEn: 'Economy & Work',
+    topicVi: 'Kinh tế & Việc làm',
+    meaningEn: 'Noun stresses 1st syllable (IN-); Adjective shifts to 2nd syllable (-DUS-)',
+    meaningVi: 'Danh từ nhấn âm 1 (IN-dus-try) ➔ Tính từ chuyển sang âm 2 (in-DUS-tri-al).',
+    trapEn: 'Stressing *IN-dus-trial on the 1st syllable.',
+    trapVi: 'Nhấn nhầm âm đầu khi đọc "industrial" (*IN-dus-trial).',
+    mouthTipEn: 'Drop the first syllable light and punch -DUS- in "industrial".',
+    mouthTipVi: 'Lướt nhẹ "in-" và nhấn mạnh vào "-DUS-" khi đọc "industrial".',
+    exampleEn: 'Industrial growth transformed the local manufacturing industry.',
+    exampleVi: 'Tăng trưởng công nghiệp đã chuyển đổi ngành sản xuất địa phương.',
+    xpReward: 20,
+    requiresAuth: true
+  },
+  {
+    id: 'pron-ss-10',
+    type: 'stress',
+    targetText: 'geography, geographical',
+    ipaUk: '/dʒiˈɒɡ.rə.fi/ ➔ /ˌdʒiː.əˈɡræf.ɪ.kəl/',
+    ipaUs: '/dʒiˈɑː.ɡrə.fi/ ➔ /ˌdʒiː.əˈɡræf.ɪ.kəl/',
+    syllables: 'ge•OG•ra•phy ➔ ge•o•GRAPH•i•cal',
+    stressPattern: '○ ● ○ ○  ➔  ◐ ○ ● ○ ○',
+    bandLevel: '7.5',
+    categoryEn: 'Stress Shift (-y → -ical)',
+    categoryVi: 'Chuyển trọng âm (-y → -ical)',
+    topicEn: 'Environment',
+    topicVi: 'Môi trường',
+    meaningEn: 'ge-OG-ra-phy (2nd) shifts to ge-o-GRAPH-i-cal (3rd)',
+    meaningVi: 'ge-OG-ra-phy (nhấn âm 2) ➔ ge-o-GRAPH-i-cal (nhấn âm 3).',
+    trapEn: 'Misplacing stress in 5-syllable "geographical".',
+    trapVi: 'Lúng túng trọng âm ở từ dài 5 âm tiết "geographical".',
+    mouthTipEn: 'Lock onto -GRAPH- right before "-ical".',
+    mouthTipVi: 'Nhớ quy tắc đuôi "-ical": luôn nhấn mạnh vào -GRAPH-.',
+    exampleEn: 'Geography explains geographical diversity across regions.',
+    exampleVi: 'Địa lý học giải thích sự đa dạng địa lý giữa các khu vực.',
+    xpReward: 20,
+    requiresAuth: true
+  },
+  {
+    id: 'pron-ss-11',
+    type: 'stress',
+    targetText: 'strategy, strategic',
+    ipaUk: '/ˈstræt.ə.dʒi/ ➔ /strəˈtiː.dʒɪk/',
+    ipaUs: '/ˈstræt̬.ə.dʒi/ ➔ /strəˈtiː.dʒɪk/',
+    syllables: 'STRAT•e•gy ➔ stra•TE•gic',
+    stressPattern: '● ○ ○  ➔  ○ ● ○',
+    bandLevel: '7.5',
+    categoryEn: 'Business & Policy Shift',
+    categoryVi: 'Kinh doanh & Chiến lược',
+    topicEn: 'Business',
+    topicVi: 'Kinh doanh',
+    meaningEn: 'STRAT-e-gy (1st, /æ/) shifts to stra-TE-gic (2nd, /iː/)',
+    meaningVi: 'STRAT-e-gy (âm 1, /æ/) ➔ stra-TE-gic (âm 2, /iː/).',
+    trapEn: 'Saying *STRAT-e-gic instead of stra-TE-gic.',
+    trapVi: 'Nhấn nhầm âm đầu cho "strategic" (*STRAT-e-gic).',
+    mouthTipEn: 'Compress "stra-" to /strə/ and hold long /iː/ in -TE-gic.',
+    mouthTipVi: 'Lướt nhanh "stra-" thành /strə/ và ngân dài âm /iː/ ở -TE-gic.',
+    exampleEn: 'Every long-term strategy needs strategic planning.',
+    exampleVi: 'Mọi chiến lược dài hạn đều cần hoạch định mang tính chiến lược.',
+    xpReward: 20,
+    requiresAuth: true
+  },
+  {
+    id: 'pron-ss-12',
+    type: 'stress',
+    targetText: 'technology, technological',
+    ipaUk: '/tekˈnɒl.ə.dʒi/ ➔ /ˌtek.nəˈlɒdʒ.ɪ.kəl/',
+    ipaUs: '/tekˈnɑː.lə.dʒi/ ➔ /ˌtek.nəˈlɑː.dʒɪ.kəl/',
+    syllables: 'tech•NOL•o•gy ➔ tech•no•LOG•i•cal',
+    stressPattern: '○ ● ○ ○  ➔  ◐ ○ ● ○ ○',
+    bandLevel: '7.5',
+    categoryEn: 'High-Frequency IELTS Shift',
+    categoryVi: 'Cặp từ IELTS tần suất cao',
+    topicEn: 'Technology',
+    topicVi: 'Công nghệ',
+    meaningEn: 'tech-NOL-o-gy (2nd) shifts to tech-no-LOG-i-cal (3rd)',
+    meaningVi: 'tech-NOL-o-gy (nhấn âm 2) ➔ tech-no-LOG-i-cal (nhấn âm 3).',
+    trapEn: 'Keeping stress on -NOL- inside "technological".',
+    trapVi: 'Giữ nguyên trọng âm ở -NOL- khi đọc "technological".',
+    mouthTipEn: 'Put a light secondary beat on "tech-" and primary punch on "-LOG-".',
+    mouthTipVi: 'Nhấn phụ nhẹ ở "tech-" và dồn trọng âm chính vào "-LOG-".',
+    exampleEn: 'Modern technology drives rapid technological innovation.',
+    exampleVi: 'Công nghệ hiện đại thúc đẩy đổi mới công nghệ nhanh chóng.',
+    xpReward: 20,
+    requiresAuth: true
+  }
+];
+
+/**
+ * Evaluates a Minimal Pair Duel attempt where the learner must pronounce BOTH contrasting words
+ * in a pair (e.g., "sheep, ship" or "think, sink") distinctly without collapsing them into one word.
+ */
+export function evaluateMinimalPairDuelAttempt({
+  drill,
+  spokenText = '',
+  confidence = 0.88,
+  streak = 0,
+  alternatives = []
+}) {
+  const pairWords = String(drill?.minimalPair?.speakText || drill?.targetText || '')
+    .split(',')
+    .map(w => w.trim())
+    .filter(Boolean)
+    .slice(0, 2);
+
+  if (pairWords.length < 2) {
+    return evaluatePronunciationAttempt({
+      targetText: drill?.targetText || '',
+      spokenText,
+      confidence,
+      itemType: 'ipa',
+      streak,
+      alternatives
+    });
+  }
+
+  const spokenTokens = expandConversationalTokens(spokenText);
+  const altTokens = [];
+  if (Array.isArray(alternatives)) {
+    alternatives.forEach(alt => {
+      expandConversationalTokens(alt).forEach(t => altTokens.push(t));
+    });
+  }
+
+  const aligned = alignPhoneticTokens(
+    pairWords.map(w => normalizeUkUsSpelling(normalizePhoneticWord(w))),
+    spokenTokens
+  );
+
+  const pairResults = pairWords.map((word, idx) => {
+    const clean = normalizeUkUsSpelling(normalizePhoneticWord(word));
+    const match = aligned[idx];
+    let sim = match ? match.score : 0;
+    let spokenMatch = match?.spokenMatch || '';
+
+    // Secondary check in alternatives only if primary didn't collapse both into the same token
+    if (sim < 0.8 && altTokens.includes(clean)) {
+      const otherClean = normalizeUkUsSpelling(normalizePhoneticWord(pairWords[1 - idx]));
+      if (clean !== otherClean) {
+        sim = 0.86;
+        spokenMatch = clean;
+      }
+    }
+
+    const pct = Math.round(sim * 100);
+    return {
+      word,
+      cleanWord: clean,
+      matched: pct >= 80,
+      similarity: pct,
+      spokenMatch: spokenMatch || '—'
+    };
+  });
+
+  // Penalize if speaker only said 1 word instead of 2 distinct contrasting words
+  const distinctMatchedCount = new Set(
+    pairResults.filter(r => r.matched).map(r => r.spokenMatch.toLowerCase())
+  ).size;
+
+  const avgSim = pairResults.reduce((s, r) => s + r.similarity, 0) / pairResults.length;
+  const bothDistinct = pairResults.every(r => r.matched) && distinctMatchedCount >= 2;
+  const confFactor = Math.max(0.75, Math.min(1.0, Number(confidence) || 0.88));
+  const rawAcc = bothDistinct
+    ? Math.round(avgSim * 0.9 + confFactor * 10)
+    : Math.min(76, Math.round(avgSim * 0.85));
+
+  const overallAccuracy = Math.max(0, Math.min(100, rawAcc));
+  const isCorrect = overallAccuracy >= 80;
+
+  let estimatedBand = '5.5';
+  if (overallAccuracy >= 94) estimatedBand = '8.5';
+  else if (overallAccuracy >= 88) estimatedBand = '8.0';
+  else if (overallAccuracy >= 82) estimatedBand = '7.5';
+  else if (overallAccuracy >= 72) estimatedBand = '7.0';
+  else if (overallAccuracy >= 60) estimatedBand = '6.5';
+
+  const streakBonusXp = isCorrect ? Math.min(15, streak * 3) : 0;
+  const xpEarned = isCorrect ? 25 + streakBonusXp : 5;
+
+  return {
+    overallAccuracy,
+    estimatedBand,
+    pairResults,
+    wordBreakdown: pairResults.map(r => ({
+      word: r.word,
+      cleanWord: r.cleanWord,
+      status: r.matched ? 'correct' : r.similarity >= 55 ? 'approximate' : 'missed',
+      similarity: r.similarity,
+      spokenMatch: r.spokenMatch,
+      missingCoda: false
+    })),
+    xpEarned,
+    streakBonusXp,
+    codaIssues: [],
+    engineTier: 'layer1_phonetic',
+    coachFeedbackEn: isCorrect
+      ? `Excellent contrast! You clearly separated "${pairWords[0]}" and "${pairWords[1]}" without merging the sounds.`
+      : `Keep practicing the contrast between "${pairWords[0]}" and "${pairWords[1]}". Say both words clearly with a tiny pause in between.`,
+    coachFeedbackVi: isCorrect
+      ? `Phân biệt xuất sắc! Bạn đã đọc tách bạch rõ ràng cả "${pairWords[0]}" và "${pairWords[1]}" không bị lẫn âm.`
+      : `Cặp âm "${pairWords[0]}" ↔ "${pairWords[1]}" vẫn còn hơi lẫn. Hãy đọc lần lượt từng từ thật dứt khoát và tách hơi nhẹ ở giữa.`
+  };
+}
+
+/**
+ * Splits a drill's IPA transcription into color-coded syllable/phoneme segments
+ * (Green = clear, Amber = approximate/watch stress, Red = missed or dropped coda).
+ */
+export function buildPhonemeFeedbackSegments({ drill, evaluationResult, accent = 'uk' }) {
+  if (!drill || !evaluationResult) return [];
+  const rawIpa = accent === 'us' ? (drill.ipaUs || drill.ipaUk) : (drill.ipaUk || drill.ipaUs);
+  if (!rawIpa) return [];
+
+  const breakdown = Array.isArray(evaluationResult.wordBreakdown) ? evaluationResult.wordBreakdown : [];
+  // Only show detailed IPA segment breakdown for single words, stress shifts, or short phrases
+  const ipaGroups = String(rawIpa)
+    .split(/[•➔]+/)
+    .map(g => g.trim())
+    .filter(Boolean);
+
+  const segments = [];
+  ipaGroups.forEach((group, gIdx) => {
+    const wordResult = breakdown[gIdx] || breakdown[0];
+    const sim = typeof wordResult?.similarity === 'number' ? wordResult.similarity : evaluationResult.overallAccuracy;
+    const hasMissingCoda = Boolean(wordResult?.missingCoda);
+
+    const inner = group.replace(/^\/|\/$/g, '');
+    const parts = inner.split('.').filter(Boolean);
+
+    parts.forEach((part, pIdx) => {
+      const isLastPart = pIdx === parts.length - 1;
+      const isStressed = part.includes('ˈ');
+      let status = 'correct';
+      if (sim < 60) {
+        status = 'missed';
+      } else if (hasMissingCoda && isLastPart) {
+        status = 'missed';
+      } else if (sim < 82) {
+        status = isStressed || isLastPart ? 'approximate' : 'correct';
+      }
+
+      segments.push({
+        id: `${gIdx}-${pIdx}`,
+        ipa: part,
+        isStressed,
+        isCodaWarning: hasMissingCoda && isLastPart,
+        status
+      });
+    });
+
+    if (gIdx < ipaGroups.length - 1) {
+      segments.push({ id: `sep-${gIdx}`, isSeparator: true, ipa: '•' });
+    }
+  });
+
+  return segments;
+}
+
+const FUNCTION_WORDS_SET = new Set([
+  'a', 'an', 'the', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'from', 'as', 'into',
+  'and', 'or', 'but', 'so', 'yet', 'nor', 'if', 'that', 'which', 'who', 'whom', 'whose',
+  'is', 'are', 'was', 'were', 'be', 'been', 'being', 'am', 'has', 'have', 'had', 'do', 'does', 'did',
+  'can', 'could', 'will', 'would', 'shall', 'should', 'may', 'might', 'must',
+  'it', 'its', 'they', 'them', 'their', 'we', 'our', 'us', 'you', 'your', 'he', 'she', 'his', 'her',
+  'this', 'these', 'those', 'there', 'than'
+]);
+
+/**
+ * Builds visual pitch & rhythm nodes for Full Sentences so learners can see
+ * stressed content words (● high) vs unstressed weak-form function words (• low) + terminal arrow.
+ */
+export function buildSentenceRhythmNodes(targetText = '', intonationText = '') {
+  const words = String(targetText || '').trim().split(/\s+/).filter(Boolean);
+  if (words.length === 0) return { nodes: [], endArrow: '↘' };
+
+  const uppercaseHints = new Set(
+    String(intonationText || '')
+      .split(/\s+/)
+      .map(t => t.replace(/[^A-Za-z]/g, ''))
+      .filter(t => t.length >= 2 && t === t.toUpperCase())
+      .map(t => t.toLowerCase())
+  );
+
+  const isQuestion = String(targetText).trim().endsWith('?');
+  const endArrow = String(intonationText || '').includes('↗') || isQuestion ? '↗' : '↘';
+
+  const nodes = words.map((rawWord, idx) => {
+    const clean = rawWord.toLowerCase().replace(/[^a-z']/g, '');
+    const isLast = idx === words.length - 1;
+    const isStressed =
+      uppercaseHints.has(clean) ||
+      isLast ||
+      (clean.length > 0 && !FUNCTION_WORDS_SET.has(clean));
+
+    return {
+      word: rawWord,
+      isStressed,
+      isNuclear: isLast || uppercaseHints.has(clean)
+    };
+  });
+
+  return { nodes, endArrow };
+}
+
 
 

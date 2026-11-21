@@ -41,15 +41,20 @@ import {
   PRONUNCIATION_IPA_DRILLS,
   IPA_SOUND_GROUPS,
   PRONUNCIATION_WORD_DRILLS,
+  PRONUNCIATION_STRESS_SHIFT_DRILLS,
   PRONUNCIATION_PHRASE_DRILLS,
   PRONUNCIATION_SENTENCE_DRILLS,
   evaluatePronunciationAttempt,
   evaluateIsolatedIpaSoundAttempt,
+  evaluateMinimalPairDuelAttempt,
+  buildPhonemeFeedbackSegments,
+  buildSentenceRhythmNodes,
   buildCustomPronunciationDrill,
   mapVocabListToPronunciationDrills,
   expandConversationalTokens
 } from '../data/pronunciationData';
 import PronunciationCustomDrillModal from './speaking/PronunciationCustomDrillModal';
+import IpaArticulationDiagram from './speaking/IpaArticulationDiagram';
 import {
   runLayer2PronunciationCheck,
   SPEAKING_SPEED_MODES,
@@ -95,9 +100,9 @@ export default function PronunciationStudioModal({
 }) {
   const { isEn } = useTranslation();
 
-  const validTabs = ['ipa', 'words', 'phrases', 'sentences'];
+  const validTabs = ['ipa', 'words', 'stress', 'phrases', 'sentences'];
 
-  // 1. Active Track Tab ('ipa' | 'words' | 'phrases' | 'sentences')
+  // 1. Active Track Tab ('ipa' | 'words' | 'stress' | 'phrases' | 'sentences')
   const [activeTab, setActiveTab] = useState(() => {
     if (initialOptions?.tab && validTabs.includes(initialOptions.tab)) {
       return initialOptions.tab;
@@ -108,6 +113,7 @@ export default function PronunciationStudioModal({
       if (tabParam && validTabs.includes(tabParam)) return tabParam;
       const pathname = window.location.pathname.toLowerCase();
       if (pathname.endsWith('/ipa')) return 'ipa';
+      if (pathname.endsWith('/stress')) return 'stress';
       if (pathname.endsWith('/phrases')) return 'phrases';
       if (pathname.endsWith('/sentences')) return 'sentences';
       if (pathname.endsWith('/words')) return 'words';
@@ -286,6 +292,8 @@ export default function PronunciationStudioModal({
         ? PRONUNCIATION_IPA_DRILLS
         : activeTab === 'words'
         ? PRONUNCIATION_WORD_DRILLS
+        : activeTab === 'stress'
+        ? PRONUNCIATION_STRESS_SHIFT_DRILLS
         : activeTab === 'phrases'
         ? PRONUNCIATION_PHRASE_DRILLS
         : PRONUNCIATION_SENTENCE_DRILLS;
@@ -297,7 +305,7 @@ export default function PronunciationStudioModal({
 
     const existingTexts = new Set(rawBase.map(d => d.targetText?.toLowerCase().trim()));
     const vocabDrillsForTab =
-      currentUser && activeTab !== 'ipa'
+      currentUser && activeTab !== 'ipa' && activeTab !== 'stress'
         ? mapVocabListToPronunciationDrills(vocabList, existingTexts).filter(d => d.type === activeTab)
         : [];
 
@@ -315,6 +323,8 @@ export default function PronunciationStudioModal({
         ? PRONUNCIATION_IPA_DRILLS
         : activeTab === 'words'
         ? PRONUNCIATION_WORD_DRILLS
+        : activeTab === 'stress'
+        ? PRONUNCIATION_STRESS_SHIFT_DRILLS
         : activeTab === 'phrases'
         ? PRONUNCIATION_PHRASE_DRILLS
         : PRONUNCIATION_SENTENCE_DRILLS;
@@ -662,6 +672,14 @@ export default function PronunciationStudioModal({
               alternatives,
               acousticMetrics
             })
+          : currentDrill.type === 'ipa' && ipaPracticeMode === 'duel'
+          ? evaluateMinimalPairDuelAttempt({
+              drill: currentDrill,
+              spokenText: cleanSpoken,
+              confidence,
+              streak: pronStats.streak || 0,
+              alternatives
+            })
           : evaluatePronunciationAttempt({
               targetText: currentDrill.targetText,
               spokenText: cleanSpoken,
@@ -792,6 +810,8 @@ export default function PronunciationStudioModal({
     const targetWordCount =
       currentDrill.type === 'ipa' && ipaPracticeMode === 'sound'
         ? 1
+        : currentDrill.type === 'ipa' && ipaPracticeMode === 'duel'
+        ? 2
         : currentDrill.targetText
             .trim()
             .split(/\s+/)
@@ -850,6 +870,8 @@ export default function PronunciationStudioModal({
     const defaultModelText =
       currentDrill?.type === 'ipa' && ipaPracticeMode === 'sound'
         ? currentDrill.pureSoundCue || currentDrill.sampleWord || currentDrill.targetText
+        : currentDrill?.type === 'ipa' && ipaPracticeMode === 'duel'
+        ? currentDrill.minimalPair?.speakText || currentDrill.targetText
         : currentDrill?.targetText;
     const textToSpeak = textOverride || defaultModelText;
     const rateToUse = customRate || playbackSpeed;
@@ -877,6 +899,8 @@ export default function PronunciationStudioModal({
     const retryModelText =
       currentDrill.type === 'ipa' && ipaPracticeMode === 'sound'
         ? currentDrill.pureSoundCue || currentDrill.sampleWord || currentDrill.targetText
+        : currentDrill.type === 'ipa' && ipaPracticeMode === 'duel'
+        ? currentDrill.minimalPair?.speakText || currentDrill.targetText
         : currentDrill.targetText;
     speechEngine.speak(
       retryModelText,
@@ -1960,14 +1984,89 @@ export default function PronunciationStudioModal({
                           <span>📖</span>
                           <span>
                             {isEn
-                              ? `2. Practice Example Words (${currentDrill.targetText})`
-                              : `2. Luyện Từ Ví Dụ (${currentDrill.targetText})`}
+                              ? `2. Example Words`
+                              : `2. Từ Ví Dụ`}
                           </span>
                         </button>
+                        {currentDrill.minimalPair && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setIpaPracticeMode('duel');
+                              setEvaluationResult(null);
+                            }}
+                            className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center space-x-1.5 ${
+                              ipaPracticeMode === 'duel'
+                                ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-950/50'
+                                : 'bg-slate-900 hover:bg-slate-800 text-amber-300 border border-amber-500/30'
+                            }`}
+                          >
+                            <span>⚔️</span>
+                            <span>
+                              {isEn
+                                ? `3. Minimal Pair Duel (${currentDrill.minimalPair.speakText.replace(',', ' ↔')})`
+                                : `3. Thử Thách Cặp Âm (${currentDrill.minimalPair.speakText.replace(',', ' ↔')})`}
+                            </span>
+                          </button>
+                        )}
                       </div>
                     )}
 
-                    {currentDrill.type === 'ipa' && ipaPracticeMode === 'sound' ? (
+                    {currentDrill.type === 'ipa' && ipaPracticeMode === 'duel' && currentDrill.minimalPair ? (
+                      <div className="p-3.5 rounded-2xl bg-amber-950/25 border border-amber-500/40 space-y-2.5">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <div className="text-xs sm:text-sm font-black text-amber-200">
+                            {isEn
+                              ? '⚔️ Minimal Pair Duel — Pronounce BOTH contrasting words clearly in one go:'
+                              : '⚔️ Thử Thách Cặp Âm — Đọc liền mạch CẢ 2 TỪ đối lập thật tách bạch:'}
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handlePlayModel(0.8, currentDrill.minimalPair.speakText)}
+                            className="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black flex items-center space-x-1.5 cursor-pointer"
+                          >
+                            <Volume2 className="w-3.5 h-3.5" />
+                            <span>{isEn ? 'Listen Contrast' : 'Nghe Đối Chiếu'}</span>
+                          </button>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2.5">
+                          {currentDrill.minimalPair.speakText
+                            .split(',')
+                            .map(w => w.trim())
+                            .filter(Boolean)
+                            .slice(0, 2)
+                            .map((pairWord, pIdx) => {
+                              const pairRes = evaluationResult?.pairResults?.[pIdx];
+                              return (
+                                <button
+                                  key={pairWord}
+                                  type="button"
+                                  onClick={() => handlePlayModel(playbackSpeed, pairWord)}
+                                  className={`p-3 rounded-2xl border text-center transition-all cursor-pointer ${
+                                    pairRes
+                                      ? pairRes.matched
+                                        ? 'bg-emerald-950/60 border-emerald-500/60'
+                                        : 'bg-rose-950/50 border-rose-500/50'
+                                      : 'bg-slate-900/90 hover:bg-slate-800 border-slate-700'
+                                  }`}
+                                >
+                                  <div className="text-lg sm:text-2xl font-black text-white">{pairWord}</div>
+                                  <div className="text-[11px] font-bold text-slate-400 mt-0.5 flex items-center justify-center gap-1">
+                                    <Volume2 className="w-3 h-3 text-amber-400" />
+                                    {pairRes ? (
+                                      <span className={pairRes.matched ? 'text-emerald-300' : 'text-rose-300'}>
+                                        {pairRes.matched ? `✓ ${pairRes.similarity}%` : `✗ "${pairRes.spokenMatch}"`}
+                                      </span>
+                                    ) : (
+                                      <span>{pIdx === 0 ? (isEn ? 'Word A (Tap to hear)' : 'Từ A (Chạm nghe)') : (isEn ? 'Word B (Tap to hear)' : 'Từ B (Chạm nghe)')}</span>
+                                    )}
+                                  </div>
+                                </button>
+                              );
+                            })}
+                        </div>
+                      </div>
+                    ) : currentDrill.type === 'ipa' && ipaPracticeMode === 'sound' ? (
                       <div className="p-3.5 rounded-2xl bg-emerald-950/30 border border-emerald-500/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <div className="flex items-center gap-3.5">
                           <div className="px-4 py-2.5 rounded-2xl bg-emerald-500/20 border-2 border-emerald-400/60 text-emerald-300 font-mono text-3xl sm:text-4xl font-black shadow-lg shrink-0">
@@ -2093,18 +2192,48 @@ export default function PronunciationStudioModal({
                             {isEn ? currentDrill.trapEn : currentDrill.trapVi}
                           </div>
                         </div>
+
+                        <IpaArticulationDiagram
+                          ipaSymbol={currentDrill.ipaSymbol}
+                          ipaGroup={currentDrill.ipaGroup}
+                          isEn={isEn}
+                        />
                       </div>
                     )}
 
-                    {currentDrill.type === 'words' && currentDrill.syllables && (
-                      <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm">
-                        <span className="px-2.5 py-1 rounded-xl bg-indigo-950/90 border border-indigo-500/40 text-indigo-200 font-mono font-bold">
-                          {currentDrill.syllables}
-                        </span>
-                        {currentDrill.stressPattern && (
-                          <span className="px-2 py-1 rounded-xl bg-slate-900 border border-slate-800 text-amber-400 font-black tracking-widest">
-                            {currentDrill.stressPattern}
+                    {(currentDrill.type === 'words' || currentDrill.type === 'stress') && currentDrill.syllables && (
+                      <div className="space-y-2">
+                        <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm">
+                          <span className="px-2.5 py-1 rounded-xl bg-indigo-950/90 border border-indigo-500/40 text-indigo-200 font-mono font-bold">
+                            {currentDrill.syllables}
                           </span>
+                          {currentDrill.stressPattern && (
+                            <span className="px-2 py-1 rounded-xl bg-slate-900 border border-slate-800 text-amber-400 font-black tracking-widest">
+                              {currentDrill.stressPattern}
+                            </span>
+                          )}
+                        </div>
+                        {currentDrill.type === 'stress' && (
+                          <div className="flex flex-wrap items-center gap-1.5">
+                            <span className="text-[11px] font-bold text-slate-400">
+                              {isEn ? 'Tap each word to hear shift:' : 'Chạm từng từ để nghe chuyển trọng âm:'}
+                            </span>
+                            {currentDrill.targetText
+                              .split(',')
+                              .map(w => w.trim())
+                              .filter(Boolean)
+                              .map(word => (
+                                <button
+                                  key={word}
+                                  type="button"
+                                  onClick={() => handlePlayModel(0.85, word)}
+                                  className="px-2.5 py-1 rounded-xl bg-amber-950/50 hover:bg-amber-900/70 border border-amber-500/40 text-xs font-extrabold text-amber-200 flex items-center space-x-1 cursor-pointer transition-all"
+                                >
+                                  <Volume2 className="w-3 h-3 text-amber-400" />
+                                  <span>{word}</span>
+                                </button>
+                              ))}
+                          </div>
                         )}
                       </div>
                     )}
@@ -2115,11 +2244,61 @@ export default function PronunciationStudioModal({
                       </div>
                     )}
 
-                    {currentDrill.type === 'sentences' && currentDrill.intonationText && (
-                      <div className="px-3 py-2 rounded-xl bg-indigo-950/50 border border-indigo-500/30 text-sm font-bold text-amber-200 leading-relaxed">
-                        {currentDrill.intonationText}
-                      </div>
-                    )}
+                    {currentDrill.type === 'sentences' && (() => {
+                      const rhythm = buildSentenceRhythmNodes(currentDrill.targetText, currentDrill.intonationText);
+                      return (
+                        <div className="space-y-2">
+                          {currentDrill.intonationText && (
+                            <div className="px-3 py-2 rounded-xl bg-indigo-950/50 border border-indigo-500/30 text-sm font-bold text-amber-200 leading-relaxed">
+                              {currentDrill.intonationText}
+                            </div>
+                          )}
+                          {rhythm.nodes.length > 0 && (
+                            <div className="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1">
+                              <div className="text-[10px] font-black text-slate-400 flex items-center justify-between">
+                                <span>
+                                  {isEn
+                                    ? '🎵 Pitch & Rhythm Contour (● = Stress High, • = Weak Fast)'
+                                    : '🎵 Sơ đồ Nhịp điệu & Ngữ điệu (● = Nhấn cao, • = Lướt nhẹ)'}
+                                </span>
+                                <span className="text-amber-300 font-mono">{rhythm.endArrow}</span>
+                              </div>
+                              <div className="flex flex-wrap items-end gap-x-2 gap-y-1.5 pt-1">
+                                {rhythm.nodes.map((node, nIdx) => (
+                                  <div key={`${node.word}-${nIdx}`} className="flex flex-col items-center">
+                                    <span
+                                      className={`leading-none mb-0.5 ${
+                                        node.isNuclear
+                                          ? 'text-amber-400 text-sm font-black'
+                                          : node.isStressed
+                                          ? 'text-indigo-300 text-xs font-bold'
+                                          : 'text-slate-600 text-[10px]'
+                                      }`}
+                                    >
+                                      {node.isStressed ? '●' : '•'}
+                                    </span>
+                                    <span
+                                      className={`text-[11px] leading-tight ${
+                                        node.isNuclear
+                                          ? 'font-black text-amber-200'
+                                          : node.isStressed
+                                          ? 'font-bold text-slate-200'
+                                          : 'text-slate-500'
+                                      }`}
+                                    >
+                                      {node.word}
+                                    </span>
+                                  </div>
+                                ))}
+                                <span className="text-sm font-black text-amber-400 self-end pb-0.5">
+                                  {rhythm.endArrow}
+                                </span>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })()}
 
                     {/* Single Matching IPA (based on UK/US selection) + Meaning */}
                     <div className="flex flex-wrap items-center gap-2 pt-0.5 text-xs">
@@ -2382,6 +2561,8 @@ export default function PronunciationStudioModal({
                             const verifyTarget =
                               currentDrill.type === 'ipa' && ipaPracticeMode === 'sound'
                                 ? currentDrill.pureSoundCue || currentDrill.sampleWord
+                                : currentDrill.type === 'ipa' && ipaPracticeMode === 'duel'
+                                ? currentDrill.minimalPair?.speakText || currentDrill.targetText
                                 : currentDrill.targetText;
                             setManualSpokenInput(verifyTarget);
                             handleRunEvaluation(verifyTarget);
@@ -2542,6 +2723,52 @@ export default function PronunciationStudioModal({
                           )}
                         </div>
                       </div>
+
+                      {/* Color-Coded IPA Syllable & Phoneme Breakdown */}
+                      {currentDrill.type !== 'sentences' && (() => {
+                        const accentKey = selectedExaminerId === 'examiner-oliver' ? 'us' : 'uk';
+                        const ipaSegments = buildPhonemeFeedbackSegments({
+                          drill: currentDrill,
+                          evaluationResult,
+                          accent: accentKey
+                        });
+                        if (ipaSegments.length === 0) return null;
+                        return (
+                          <div className="p-2.5 rounded-xl bg-slate-950/80 border border-slate-800 flex flex-wrap items-center gap-1.5 text-xs">
+                            <span className="text-[10px] font-black text-slate-400 mr-1">
+                              {isEn ? 'IPA Phoneme Map:' : 'Chi tiết âm tiết IPA:'}
+                            </span>
+                            {ipaSegments.map(seg =>
+                              seg.isSeparator ? (
+                                <span key={seg.id} className="text-slate-600 font-bold px-0.5">
+                                  •
+                                </span>
+                              ) : (
+                                <span
+                                  key={seg.id}
+                                  className={`px-2 py-0.5 rounded-lg font-mono font-bold border ${
+                                    seg.status === 'correct'
+                                      ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/35'
+                                      : seg.status === 'approximate'
+                                      ? 'bg-amber-500/15 text-amber-300 border-amber-500/40'
+                                      : 'bg-rose-500/15 text-rose-300 border-rose-500/40'
+                                  }`}
+                                  title={
+                                    seg.isCodaWarning
+                                      ? isEn
+                                        ? 'Missing/weak final consonant sound'
+                                        : 'Âm cuối bị nuốt hoặc bật chưa rõ'
+                                      : undefined
+                                  }
+                                >
+                                  /{seg.ipa}/
+                                  {seg.isCodaWarning && <span className="ml-1 text-[9px] font-sans">⚠️</span>}
+                                </span>
+                              )
+                            )}
+                          </div>
+                        );
+                      })()}
 
                       {deepAiError && (
                         <div className="text-[11px] text-rose-400 font-semibold">
