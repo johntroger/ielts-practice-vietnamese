@@ -35,7 +35,6 @@ import {
   CONVERSATION_THRESHOLD_OPTIONS,
   CONVERSATION_TRACKS,
   CONVERSATION_SCENARIOS,
-  buildCustomConversation,
   evaluateConversationTurn,
   summarizeConversationSession
 } from '../data/conversationData';
@@ -56,11 +55,12 @@ import { addGold } from '../services/gamification/atlasWalletService';
 import { getUnifiedStreakCount } from '../services/gamification/leagueEngine';
 import { speakingSoundEffects } from '../utils/speakingSoundEffects';
 import { triggerHaptic } from '../utils/hapticHelper';
-import { callGeminiApi } from '../services/ai/coreGeminiClient';
 import ConversationTurnCard from './conversation/ConversationTurnCard';
 import ConversationSummaryCard from './conversation/ConversationSummaryCard';
 import SpeechShadowingWorkspace from './conversation/SpeechShadowingWorkspace';
+import ConversationCustomCreatorModal from './conversation/ConversationCustomCreatorModal';
 import SpeakingSoundcheckModal from './speaking/SpeakingSoundcheckModal';
+import { runLayer2PronunciationCheck, NOOP } from '../utils/speakingPracticeHelpers';
 
 const CUSTOM_CONV_STORAGE_KEY = 'ielts_conversation_custom_v1';
 const CONV_STATS_STORAGE_KEY = 'ielts_conversation_stats_v1';
@@ -330,18 +330,8 @@ export default function ConversationStudioModal({
   const [replayTurnIdx, setReplayTurnIdx] = useState(0);
   const fullReplayCancelRef = useRef(false);
 
-  // Custom Creator Drawer State
+  // Custom Creator Modal State
   const [isCreatorOpen, setIsCreatorOpen] = useState(false);
-  const [customTitle, setCustomTitle] = useState('');
-  const [customTrack, setCustomTrack] = useState('daily');
-  const [customBand, setCustomBand] = useState('7.0');
-  const [customRoleA, setCustomRoleA] = useState('Partner');
-  const [customRoleB, setCustomRoleB] = useState('You');
-  const [customScript, setCustomScript] = useState(
-    'A: Hi! Have you finished reviewing the quarterly presentation?\nB: Almost! I am just polishing the final financial summary.'
-  );
-  const [aiTopicPrompt, setAiTopicPrompt] = useState('');
-  const [isGeneratingAiScript, setIsGeneratingAiScript] = useState(false);
 
   // Refs for async timers & auto-evaluation
   const turnsContainerRef = useRef(null);
@@ -1074,7 +1064,7 @@ export default function ConversationStudioModal({
     advanceAfterUserPass();
   };
 
-  const handleReplayUserClip = (turnId) => {
+  const handleReplayUserClip = useCallback((turnId) => {
     const clipKey = `conv_${currentScenario.id}_${turnId}`;
     const clip = speechEngine.audioClips[clipKey];
     if (!clip?.url) return;
@@ -1102,7 +1092,28 @@ export default function ConversationStudioModal({
         .then(() => setPlayingUserClipTurnId(turnId))
         .catch(() => setPlayingUserClipTurnId(null));
     }
-  };
+  }, [currentScenario?.id, playingUserClipTurnId, speechEngine.audioClips, speechEngine.stopListening, speechEngine.stopSpeaking]);
+
+  const handlePlayPartnerLine = useCallback((t, rate) => {
+    playPartnerTurnAudio(t, rate);
+  }, [playPartnerTurnAudio]);
+
+  const handlePlayUserModel = useCallback((t, rate) => {
+    speechEngine.stopListening();
+    speechEngine.speak(t.text, { examinerId: selectedExaminerId, rate, silentChime: true });
+  }, [selectedExaminerId, speechEngine.stopListening, speechEngine.speak]);
+
+  const handleToggleRevealCurrentTurn = useCallback(() => {
+    setRevealCurrentTurn(prev => !prev);
+  }, []);
+
+  const handleToggleManualFallback = useCallback(() => {
+    setShowManualFallback(prev => !prev);
+  }, []);
+
+  const handleRunManualEvaluation = useCallback((txt) => {
+    handleRunEvaluationRef.current?.(txt);
+  }, []);
 
   const handleCompareTurnAudio = useCallback((turn) => {
     if (!turn) return;
@@ -1144,54 +1155,33 @@ export default function ConversationStudioModal({
     );
   }, [comparingTurnId, currentScenario?.id, playbackSpeed, selectedExaminerId, speechEngine, stopAllAudio]);
 
-  // Layer 2 Gemini Audio Deep Check
+  // Layer 2 Gemini Audio Deep Check (via shared helper)
   const handleDeepAiAudioCheck = async () => {
     if (!activeTurn || !currentAudioClip?.blob || !apiKey || isDeepAiGrading) return;
     setIsDeepAiGrading(true);
     setDeepAiError('');
     try {
-      const { evaluatePronunciationWithGeminiAudio } = await import('../services/ai/speakingAiService');
-      const aiRes = await evaluatePronunciationWithGeminiAudio({
+      const updatedEval = await runLayer2PronunciationCheck({
         audioBlob: currentAudioClip.blob,
         targetText: activeTurn.text,
         itemType: 'sentences',
         apiKey,
         model,
-        language: isEn ? 'en' : 'vi'
+        isEn,
+        passThreshold,
+        prevEval: evaluationResult,
+        xpHigh: 35,
+        xpNormal: 25
       });
-
-      const isPassed = aiRes.overallAccuracy >= passThreshold;
-      const mappedWords =
-        aiRes.wordBreakdown && aiRes.wordBreakdown.length > 0
-          ? aiRes.wordBreakdown.map(w => ({
-              word: w.word,
-              cleanWord: w.word,
-              status: w.status || (w.similarity >= 84 ? 'correct' : w.similarity >= 52 ? 'near' : 'missed'),
-              similarity: Number(w.similarity) || 80
-            }))
-          : evaluationResult?.wordBreakdown || [];
-      const earnedXp = isPassed ? (aiRes.overallAccuracy >= 92 ? 35 : 25) : evaluationResult?.xpEarned || 0;
-      const updatedEval = {
-        ...(evaluationResult || {}),
-        overallAccuracy: aiRes.overallAccuracy,
-        estimatedBand: aiRes.estimatedBand,
-        spokenTranscript: aiRes.heardTranscript || evaluationResult?.spokenTranscript || activeTurn.text,
-        wordBreakdown: mappedWords,
-        coachFeedbackEn: aiRes.coachFeedback,
-        coachFeedbackVi: aiRes.coachFeedback,
-        xpEarned: earnedXp,
-        isPassed,
-        engineTier: 'layer2_gemini_audio'
-      };
       setEvaluationResult(updatedEval);
-      if (isPassed) {
+      if (updatedEval.isPassed) {
         const alreadyPassed = Boolean(turnResults[activeTurn.id]?.isPassed);
         speechEngine.stopListening();
         speakingSoundEffects.playCompletionChime();
         triggerHaptic('combo');
         setTurnResults(prev => ({ ...prev, [activeTurn.id]: updatedEval }));
-        if (!alreadyPassed && earnedXp > 0) {
-          awardXp(earnedXp, `Conversation AI Deep Check: ${currentScenario.titleEn}`);
+        if (!alreadyPassed && updatedEval.xpEarned > 0) {
+          awardXp(updatedEval.xpEarned, `Conversation AI Deep Check: ${currentScenario.titleEn}`);
         }
       }
     } catch (err) {
@@ -1262,46 +1252,9 @@ export default function ConversationStudioModal({
     playStep(0);
   };
 
-  // Custom Scenario Creation (Manual + Optional Gemini AI Script Generator)
-  const handleGenerateAiScript = async () => {
-    if (!apiKey || !aiTopicPrompt.trim() || isGeneratingAiScript) return;
-    setIsGeneratingAiScript(true);
-    try {
-      const prompt = `Create a natural 6-turn English dialogue (alternating A: and B:) for IELTS Band ${customBand} practice on the topic: "${aiTopicPrompt.trim()}".
-Return ONLY plain dialogue lines starting with "A:" and "B:", 1-2 sentences per turn, no extra commentary.`;
-      const res = await callGeminiApi({
-        model,
-        apiKey,
-        body: { contents: [{ parts: [{ text: prompt }] }] }
-      });
-      const text = res?.candidates?.[0]?.content?.parts?.[0]?.text || '';
-      if (text.trim()) {
-        setCustomScript(text.trim());
-        if (!customTitle.trim()) {
-          setCustomTitle(aiTopicPrompt.trim());
-        }
-      }
-    } catch (err) {
-      alert(err.message || (isEn ? 'Failed to generate dialogue.' : 'Không thể tạo hội thoại bằng AI.'));
-    } finally {
-      setIsGeneratingAiScript(false);
-    }
-  };
-
-  const handleCreateCustomScenario = (e) => {
-    e?.preventDefault();
-    const created = buildCustomConversation({
-      title: customTitle,
-      track: customTrack,
-      bandLevel: customBand,
-      roleAName: customRoleA,
-      roleBName: customRoleB,
-      rawScript: customScript
-    });
-    if (!created.turns || created.turns.length < 2) {
-      alert(isEn ? 'Please enter at least 2 dialogue lines (A: ... / B: ...).' : 'Vui lòng nhập ít nhất 2 dòng thoại (A: ... / B: ...).');
-      return;
-    }
+  // Save custom scenario returned by ConversationCustomCreatorModal
+  const handleCreatedCustomScenario = (created) => {
+    if (!created) return;
     const nextList = [created, ...(Array.isArray(customScenarios) ? customScenarios : [])];
     setCustomScenarios(nextList);
     safeSet(CUSTOM_CONV_STORAGE_KEY, nextList);
@@ -1361,6 +1314,206 @@ Return ONLY plain dialogue lines starting with "A:" and "B:", 1-2 sentences per 
     .filter(t => t.speaker === userRole && turnResults[t.id] && !turnResults[t.id].skipped)
     .map(t => turnResults[t.id].spokenTranscript || t.text)
     .join(' ');
+
+  // Shared Scenario Filter & List renderer for Desktop Sidebar & Mobile Bottom Sheet (DRY)
+  const renderScenarioListContent = (isMobileSheet = false) => (
+    <>
+      <div className={`${isMobileSheet ? 'p-3' : 'p-2.5'} border-b border-slate-800/80 space-y-2 shrink-0`}>
+        <div className={isMobileSheet ? 'flex items-center space-x-1.5 overflow-x-auto no-scrollbar pb-0.5' : 'flex flex-wrap gap-1'}>
+          {CONVERSATION_TRACKS.map(track => (
+            <button
+              key={track.id}
+              type="button"
+              onClick={() => setActiveTrack(track.id)}
+              className={`${isMobileSheet ? 'px-2.5 py-1.5 rounded-xl text-[11px] shrink-0' : 'px-2 py-1 rounded-lg text-[10px]'} font-black transition-all cursor-pointer whitespace-nowrap ${
+                activeTrack === track.id
+                  ? `bg-gradient-to-r ${track.badgeColor} text-white shadow-sm`
+                  : `${isMobileSheet ? 'bg-slate-950' : 'bg-slate-900 hover:bg-slate-800'} text-slate-400 border border-slate-800`
+              }`}
+            >
+              {isEn ? track.labelEn : track.labelVi}
+            </button>
+          ))}
+        </div>
+
+        <div className="flex items-center gap-1.5">
+          <div className="relative flex-1">
+            <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              placeholder={isEn ? 'Search scenarios or topics...' : 'Tìm kịch bản hoặc chủ đề...'}
+              className={`w-full pl-8 pr-7 ${isMobileSheet ? 'py-2 bg-slate-950' : 'py-1.5 bg-slate-900'} rounded-xl border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500`}
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery('')}
+                aria-label={isEn ? 'Clear search' : 'Xóa từ khóa'}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white cursor-pointer"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+          <button
+            type="button"
+            onClick={handlePickRandomScenario}
+            disabled={filteredScenarios.length === 0}
+            title={isEn ? 'Pick a random scenario' : 'Chọn ngẫu nhiên 1 kịch bản'}
+            aria-label={isEn ? 'Pick a random scenario' : 'Chọn ngẫu nhiên 1 kịch bản'}
+            className={`${
+              isMobileSheet
+                ? 'px-2.5 py-2 bg-slate-950 border-cyan-500/30 text-[11px] font-bold flex items-center space-x-1'
+                : 'p-1.5 bg-slate-900 hover:bg-cyan-600/20 border-slate-800 hover:border-cyan-500/40'
+            } rounded-xl text-cyan-300 border disabled:opacity-40 cursor-pointer shrink-0 transition-colors`}
+          >
+            <Shuffle className="w-3.5 h-3.5" />
+            {isMobileSheet && <span>{isEn ? 'Random' : 'Ngẫu nhiên'}</span>}
+          </button>
+        </div>
+
+        {availableSources.length > 2 && (
+          <div className="flex items-center space-x-1 overflow-x-auto no-scrollbar">
+            {availableSources.map(src => (
+              <button
+                key={src}
+                type="button"
+                onClick={() => setSourceFilter(src)}
+                className={`${isMobileSheet ? 'px-2.5 py-1' : 'px-2 py-0.5'} rounded-lg text-[10px] font-bold whitespace-nowrap cursor-pointer border transition-colors ${
+                  sourceFilter === src
+                    ? 'bg-cyan-600/25 text-cyan-200 border-cyan-500/40'
+                    : `${isMobileSheet ? 'bg-slate-950' : 'bg-slate-900'} text-slate-400 border-slate-800 hover:text-slate-200`
+                }`}
+              >
+                {src === 'all' ? (isEn ? 'All Sources' : 'Mọi nguồn') : src}
+              </button>
+            ))}
+          </div>
+        )}
+
+        <div className="flex items-center justify-between gap-1">
+          <div className="flex items-center space-x-1 overflow-x-auto no-scrollbar">
+            {[
+              { id: 'all', label: isEn ? 'All' : 'Tất cả' },
+              { id: 'foundation', label: '5.5-6.5' },
+              { id: 'band7', label: '7.0-7.5' },
+              { id: 'band8', label: '8.0+' }
+            ].map(b => (
+              <button
+                key={b.id}
+                type="button"
+                onClick={() => setBandFilter(b.id)}
+                className={`${isMobileSheet ? 'px-2.5 py-1.5 text-[11px]' : 'px-2 py-1 text-[10px]'} rounded-lg font-bold whitespace-nowrap cursor-pointer ${
+                  bandFilter === b.id
+                    ? 'bg-cyan-600 text-white'
+                    : `${isMobileSheet ? 'bg-slate-950' : 'bg-slate-900'} text-slate-400 border border-slate-800`
+                }`}
+              >
+                {b.label}
+              </button>
+            ))}
+          </div>
+          <button
+            type="button"
+            onClick={toggleHideCompleted}
+            className={`${isMobileSheet ? 'px-2.5 py-1.5 text-[11px]' : 'px-2 py-1 text-[10px]'} rounded-lg font-bold whitespace-nowrap cursor-pointer border ${
+              hideCompleted
+                ? 'bg-emerald-950/80 text-emerald-300 border-emerald-500/40'
+                : `${isMobileSheet ? 'bg-slate-950' : 'bg-slate-900'} text-slate-400 border-slate-800`
+            }`}
+          >
+            {isEn ? 'Hide Done' : 'Ẩn đã xong'}
+          </button>
+        </div>
+      </div>
+
+      <div className={`flex-1 overflow-y-auto ${isMobileSheet ? 'p-3 space-y-2' : 'p-2 space-y-1.5'} overscroll-contain`}>
+        {filteredScenarios.length === 0 ? (
+          <div className="p-5 text-center text-xs text-slate-400 space-y-2.5">
+            <p>
+              {isEn
+                ? 'No scenarios match your current filter.'
+                : 'Không có kịch bản nào khớp bộ lọc hiện tại.'}
+            </p>
+            <button
+              type="button"
+              onClick={() => {
+                setSearchQuery('');
+                setBandFilter('all');
+                setSourceFilter('all');
+                setActiveTrack('all');
+                if (hideCompleted) toggleHideCompleted();
+              }}
+              className="px-3 py-1.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold cursor-pointer"
+            >
+              {isEn ? 'Reset Filters & Show All' : 'Đặt lại bộ lọc & Hiện tất cả'}
+            </button>
+          </div>
+        ) : filteredScenarios.map(item => {
+          const isSelected = currentScenario?.id === item.id;
+          const best = convStats.bestScores?.[item.id];
+          return (
+            <div
+              key={item.id}
+              onClick={() => handleSelectScenario(item)}
+              className={`${isMobileSheet ? 'p-3 min-h-[54px] active:scale-98' : 'p-2.5'} rounded-2xl border text-left transition-all cursor-pointer flex items-start justify-between gap-2 ${
+                isSelected
+                  ? 'bg-cyan-950/65 border-cyan-500/60 shadow-md'
+                  : `${isMobileSheet ? 'bg-slate-950/70' : 'bg-slate-900/70 hover:bg-slate-900'} border-slate-800/80`
+              }`}
+            >
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center space-x-1.5 mb-0.5">
+                  <span className="text-[10px] font-black px-1.5 py-0.2 rounded bg-slate-800 text-cyan-300">
+                    Band {item.bandLevel}
+                  </span>
+                  <span className="text-[10px] text-slate-400">
+                    {item.turns?.length || 0} {isEn ? 'turns' : 'lượt'}
+                  </span>
+                  {item.sourceTag && (
+                    <span className="text-[9px] font-black px-1.5 py-0.2 rounded bg-indigo-500/20 text-indigo-300">
+                      {item.sourceTag}
+                    </span>
+                  )}
+                </div>
+                <div className="text-xs font-extrabold text-white truncate">
+                  {isEn ? item.titleEn : item.titleVi}
+                </div>
+                {!isMobileSheet && (
+                  <div className="text-[10px] text-slate-400 truncate mt-0.5">
+                    {isEn ? item.contextEn : item.contextVi}
+                  </div>
+                )}
+              </div>
+
+              <div className="flex flex-col items-end space-y-1 shrink-0">
+                {best ? (
+                  <span className="px-1.5 py-0.5 rounded-lg text-[10px] font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                    {best.accuracy}%
+                  </span>
+                ) : (
+                  <span className="px-1.5 py-0.5 rounded-lg text-[10px] font-bold bg-slate-800 text-amber-400">
+                    +{item.xpReward} XP
+                  </span>
+                )}
+                {item.isCustom && (
+                  <button
+                    type="button"
+                    onClick={e => handleDeleteCustomScenario(item.id, e)}
+                    className="p-1 rounded hover:bg-rose-500/20 text-slate-500 hover:text-rose-400"
+                  >
+                    <Trash2 className="w-3 h-3" />
+                  </button>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </>
+  );
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-0 sm:p-1.5 md:p-2 overflow-hidden animate-in fade-in duration-150">
@@ -1917,190 +2070,7 @@ Return ONLY plain dialogue lines starting with "A:" and "B:", 1-2 sentences per 
           {/* DESKTOP SIDEBAR (Collapsible for full-width dialogue focus) */}
           {isDesktopSidebarOpen && (
           <aside className="hidden lg:flex w-72 xl:w-80 bg-slate-950/60 border-r border-slate-800 flex-col shrink-0">
-            <div className="p-2.5 border-b border-slate-800/80 space-y-2">
-              <div className="flex flex-wrap gap-1">
-                {CONVERSATION_TRACKS.map(track => (
-                  <button
-                    key={track.id}
-                    type="button"
-                    onClick={() => setActiveTrack(track.id)}
-                    className={`px-2 py-1 rounded-lg text-[10px] font-black transition-all cursor-pointer whitespace-nowrap ${
-                      activeTrack === track.id
-                        ? `bg-gradient-to-r ${track.badgeColor} text-white shadow-sm`
-                        : 'bg-slate-900 hover:bg-slate-800 text-slate-400 border border-slate-800'
-                    }`}
-                  >
-                    {isEn ? track.labelEn : track.labelVi}
-                  </button>
-                ))}
-              </div>
-              <div className="flex items-center gap-1.5">
-                <div className="relative flex-1">
-                  <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={e => setSearchQuery(e.target.value)}
-                    placeholder={isEn ? 'Search scenarios or topics...' : 'Tìm kịch bản hoặc chủ đề...'}
-                    className="w-full pl-8 pr-7 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500"
-                  />
-                  {searchQuery && (
-                    <button
-                      type="button"
-                      onClick={() => setSearchQuery('')}
-                      aria-label={isEn ? 'Clear search' : 'Xóa từ khóa'}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white cursor-pointer"
-                    >
-                      <X className="w-3.5 h-3.5" />
-                    </button>
-                  )}
-                </div>
-                <button
-                  type="button"
-                  onClick={handlePickRandomScenario}
-                  disabled={filteredScenarios.length === 0}
-                  title={isEn ? 'Pick a random scenario' : 'Chọn ngẫu nhiên 1 kịch bản'}
-                  aria-label={isEn ? 'Pick a random scenario' : 'Chọn ngẫu nhiên 1 kịch bản'}
-                  className="p-1.5 rounded-xl bg-slate-900 hover:bg-cyan-600/20 text-cyan-300 border border-slate-800 hover:border-cyan-500/40 disabled:opacity-40 cursor-pointer shrink-0 transition-colors"
-                >
-                  <Shuffle className="w-3.5 h-3.5" />
-                </button>
-              </div>
-
-              {availableSources.length > 2 && (
-                <div className="flex items-center space-x-1 overflow-x-auto no-scrollbar">
-                  {availableSources.map(src => (
-                    <button
-                      key={src}
-                      type="button"
-                      onClick={() => setSourceFilter(src)}
-                      className={`px-2 py-0.5 rounded-lg text-[10px] font-bold whitespace-nowrap cursor-pointer border transition-colors ${
-                        sourceFilter === src
-                          ? 'bg-cyan-600/25 text-cyan-200 border-cyan-500/40'
-                          : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-slate-200'
-                      }`}
-                    >
-                      {src === 'all' ? (isEn ? 'All Sources' : 'Mọi nguồn') : src}
-                    </button>
-                  ))}
-                </div>
-              )}
-
-              <div className="flex items-center justify-between gap-1">
-                <div className="flex items-center space-x-1 overflow-x-auto no-scrollbar">
-                  {[
-                    { id: 'all', label: isEn ? 'All' : 'Tất cả' },
-                    { id: 'foundation', label: '5.5-6.5' },
-                    { id: 'band7', label: '7.0-7.5' },
-                    { id: 'band8', label: '8.0+' }
-                  ].map(b => (
-                    <button
-                      key={b.id}
-                      type="button"
-                      onClick={() => setBandFilter(b.id)}
-                      className={`px-2 py-1 rounded-lg text-[10px] font-bold whitespace-nowrap cursor-pointer ${
-                        bandFilter === b.id ? 'bg-cyan-600 text-white' : 'bg-slate-900 text-slate-400 border border-slate-800'
-                      }`}
-                    >
-                      {b.label}
-                    </button>
-                  ))}
-                </div>
-                <button
-                  type="button"
-                  onClick={toggleHideCompleted}
-                  className={`px-2 py-1 rounded-lg text-[10px] font-bold whitespace-nowrap cursor-pointer border ${
-                    hideCompleted
-                      ? 'bg-emerald-950/80 text-emerald-300 border-emerald-500/40'
-                      : 'bg-slate-900 text-slate-400 border-slate-800'
-                  }`}
-                >
-                  {isEn ? 'Hide Done' : 'Ẩn đã xong'}
-                </button>
-              </div>
-            </div>
-
-            <div className="flex-1 overflow-y-auto p-2 space-y-1.5 overscroll-contain">
-              {filteredScenarios.length === 0 ? (
-                <div className="p-5 text-center text-xs text-slate-400 space-y-2.5">
-                  <p>
-                    {isEn
-                      ? 'No scenarios match your current filter.'
-                      : 'Không có kịch bản nào khớp bộ lọc hiện tại.'}
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSearchQuery('');
-                      setBandFilter('all');
-                      setSourceFilter('all');
-                      setActiveTrack('all');
-                      if (hideCompleted) toggleHideCompleted();
-                    }}
-                    className="px-3 py-1.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold cursor-pointer"
-                  >
-                    {isEn ? 'Reset Filters & Show All' : 'Đặt lại bộ lọc & Hiện tất cả'}
-                  </button>
-                </div>
-              ) : filteredScenarios.map(item => {
-                const isSelected = currentScenario?.id === item.id;
-                const best = convStats.bestScores?.[item.id];
-                return (
-                  <div
-                    key={item.id}
-                    onClick={() => handleSelectScenario(item)}
-                    className={`p-2.5 rounded-2xl border text-left transition-all cursor-pointer flex items-start justify-between gap-2 ${
-                      isSelected
-                        ? 'bg-cyan-950/60 border-cyan-500/60 shadow-md'
-                        : 'bg-slate-900/70 hover:bg-slate-900 border-slate-800/80'
-                    }`}
-                  >
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center space-x-1.5 mb-0.5">
-                        <span className="text-[10px] font-black px-1.5 py-0.2 rounded bg-slate-800 text-cyan-300">
-                          Band {item.bandLevel}
-                        </span>
-                        <span className="text-[10px] text-slate-400">
-                          {item.turns?.length || 0} {isEn ? 'turns' : 'lượt'}
-                        </span>
-                        {item.sourceTag && (
-                          <span className="text-[9px] font-black px-1.5 py-0.2 rounded bg-indigo-500/20 text-indigo-300">
-                            {item.sourceTag}
-                          </span>
-                        )}
-                      </div>
-                      <div className="text-xs font-extrabold text-white truncate">
-                        {isEn ? item.titleEn : item.titleVi}
-                      </div>
-                      <div className="text-[10px] text-slate-400 truncate mt-0.5">
-                        {isEn ? item.contextEn : item.contextVi}
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col items-end space-y-1 shrink-0">
-                      {best ? (
-                        <span className="px-1.5 py-0.5 rounded-lg text-[10px] font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                          {best.accuracy}%
-                        </span>
-                      ) : (
-                        <span className="px-1.5 py-0.5 rounded-lg text-[10px] font-bold bg-slate-800 text-amber-400">
-                          +{item.xpReward} XP
-                        </span>
-                      )}
-                      {item.isCustom && (
-                        <button
-                          type="button"
-                          onClick={e => handleDeleteCustomScenario(item.id, e)}
-                          className="p-1 rounded hover:bg-rose-500/20 text-slate-500 hover:text-rose-400"
-                        >
-                          <Trash2 className="w-3 h-3" />
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+            {renderScenarioListContent(false)}
           </aside>
           )}
 
@@ -2243,13 +2213,10 @@ Return ONLY plain dialogue lines starting with "A:" and "B:", 1-2 sentences per 
                       hasStudioAudio={Boolean(currentScenario.audioUrl && typeof turn.audioStartSec === 'number')}
                       showIntonation={showIntonation}
                       keywordsOnly={keywordsOnly}
-                      revealThisTurn={revealCurrentTurn}
-                      onToggleRevealThisTurn={() => setRevealCurrentTurn(prev => !prev)}
-                      onPlayPartnerLine={(t, rate) => playPartnerTurnAudio(t, rate)}
-                      onPlayUserModel={(t, rate) => {
-                        speechEngine.stopListening();
-                        speechEngine.speak(t.text, { examinerId: selectedExaminerId, rate, silentChime: true });
-                      }}
+                      revealThisTurn={isActive ? revealCurrentTurn : false}
+                      onToggleRevealThisTurn={isActive ? handleToggleRevealCurrentTurn : NOOP}
+                      onPlayPartnerLine={handlePlayPartnerLine}
+                      onPlayUserModel={handlePlayUserModel}
                       isListening={isActive && speechEngine.isListening}
                       isAutoMode={isAutoMode}
                       liveSpokenText={isActive ? liveSpokenText : ''}
@@ -2264,21 +2231,21 @@ Return ONLY plain dialogue lines starting with "A:" and "B:", 1-2 sentences per 
                       currentAudioClip={clip}
                       isPlayingUserClip={playingUserClipTurnId === turn.id}
                       isComparingAudio={comparingTurnId === turn.id}
-                      onToggleRecording={handleToggleRecording}
+                      onToggleRecording={isActive ? handleToggleRecording : NOOP}
                       onReplayUserClip={handleReplayUserClip}
                       onCompareAudio={handleCompareTurnAudio}
-                      onListenAndRetry={handleListenAndRetry}
-                      onSkipTurn={handleSkipTurn}
-                      onAdvanceAfterPass={advanceAfterUserPass}
+                      onListenAndRetry={isActive ? handleListenAndRetry : NOOP}
+                      onSkipTurn={isActive ? handleSkipTurn : NOOP}
+                      onAdvanceAfterPass={isActive ? advanceAfterUserPass : NOOP}
                       showManualFallback={isActive && showManualFallback}
-                      onToggleManualFallback={() => setShowManualFallback(prev => !prev)}
-                      manualSpokenInput={manualSpokenInput}
-                      onChangeManualSpokenInput={setManualSpokenInput}
-                      onRunManualEvaluation={(txt) => handleRunEvaluation(txt)}
+                      onToggleManualFallback={isActive ? handleToggleManualFallback : NOOP}
+                      manualSpokenInput={isActive ? manualSpokenInput : ''}
+                      onChangeManualSpokenInput={isActive ? setManualSpokenInput : NOOP}
+                      onRunManualEvaluation={isActive ? handleRunManualEvaluation : NOOP}
                       apiKey={apiKey}
-                      isDeepAiGrading={isDeepAiGrading}
-                      deepAiError={deepAiError}
-                      onDeepAiAudioCheck={handleDeepAiAudioCheck}
+                      isDeepAiGrading={isActive ? isDeepAiGrading : false}
+                      deepAiError={isActive ? deepAiError : ''}
+                      onDeepAiAudioCheck={isActive ? handleDeepAiAudioCheck : NOOP}
                       isEn={isEn}
                     />
                   </div>
@@ -2491,162 +2458,7 @@ Return ONLY plain dialogue lines starting with "A:" and "B:", 1-2 sentences per 
                 </button>
               </div>
 
-              {/* Track, Search & Band Filter inside Mobile Sheet */}
-              <div className="p-3 border-b border-slate-800/80 space-y-2 shrink-0">
-                <div className="flex items-center space-x-1.5 overflow-x-auto no-scrollbar pb-0.5">
-                  {CONVERSATION_TRACKS.map(track => (
-                    <button
-                      key={track.id}
-                      type="button"
-                      onClick={() => setActiveTrack(track.id)}
-                      className={`px-2.5 py-1.5 rounded-xl text-[11px] font-black transition-all cursor-pointer whitespace-nowrap shrink-0 ${
-                        activeTrack === track.id
-                          ? `bg-gradient-to-r ${track.badgeColor} text-white shadow-sm`
-                          : 'bg-slate-950 text-slate-400 border border-slate-800'
-                      }`}
-                    >
-                      {isEn ? track.labelEn : track.labelVi}
-                    </button>
-                  ))}
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <div className="relative flex-1">
-                    <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
-                    <input
-                      type="text"
-                      value={searchQuery}
-                      onChange={e => setSearchQuery(e.target.value)}
-                      placeholder={isEn ? 'Search scenarios or topics...' : 'Tìm kịch bản hoặc chủ đề...'}
-                      className="w-full pl-8 pr-8 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500"
-                    />
-                    {searchQuery && (
-                      <button
-                        type="button"
-                        onClick={() => setSearchQuery('')}
-                        aria-label={isEn ? 'Clear search' : 'Xóa từ khóa'}
-                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white cursor-pointer"
-                      >
-                        <X className="w-3.5 h-3.5" />
-                      </button>
-                    )}
-                  </div>
-                  <button
-                    type="button"
-                    onClick={handlePickRandomScenario}
-                    disabled={filteredScenarios.length === 0}
-                    className="px-2.5 py-2 rounded-xl bg-slate-950 text-cyan-300 border border-cyan-500/30 text-[11px] font-bold flex items-center space-x-1 shrink-0 disabled:opacity-40 cursor-pointer"
-                  >
-                    <Shuffle className="w-3.5 h-3.5" />
-                    <span>{isEn ? 'Random' : 'Ngẫu nhiên'}</span>
-                  </button>
-                </div>
-                {availableSources.length > 2 && (
-                  <div className="flex items-center space-x-1 overflow-x-auto no-scrollbar">
-                    {availableSources.map(src => (
-                      <button
-                        key={src}
-                        type="button"
-                        onClick={() => setSourceFilter(src)}
-                        className={`px-2.5 py-1 rounded-lg text-[10px] font-bold whitespace-nowrap cursor-pointer border ${
-                          sourceFilter === src
-                            ? 'bg-cyan-600/25 text-cyan-200 border-cyan-500/40'
-                            : 'bg-slate-950 text-slate-400 border-slate-800'
-                        }`}
-                      >
-                        {src === 'all' ? (isEn ? 'All Sources' : 'Mọi nguồn') : src}
-                      </button>
-                    ))}
-                  </div>
-                )}
-                <div className="flex items-center justify-between gap-1">
-                  <div className="flex items-center space-x-1 overflow-x-auto no-scrollbar">
-                    {[
-                      { id: 'all', label: isEn ? 'All' : 'Tất cả' },
-                      { id: 'foundation', label: '5.5-6.5' },
-                      { id: 'band7', label: '7.0-7.5' },
-                      { id: 'band8', label: '8.0+' }
-                    ].map(b => (
-                      <button
-                        key={b.id}
-                        type="button"
-                        onClick={() => setBandFilter(b.id)}
-                        className={`px-2.5 py-1.5 rounded-lg text-[11px] font-bold whitespace-nowrap cursor-pointer ${
-                          bandFilter === b.id ? 'bg-cyan-600 text-white' : 'bg-slate-950 text-slate-400 border border-slate-800'
-                        }`}
-                      >
-                        {b.label}
-                      </button>
-                    ))}
-                  </div>
-                  <button
-                    type="button"
-                    onClick={toggleHideCompleted}
-                    className={`px-2.5 py-1.5 rounded-lg text-[11px] font-bold whitespace-nowrap cursor-pointer border ${
-                      hideCompleted
-                        ? 'bg-emerald-950/80 text-emerald-300 border-emerald-500/40'
-                        : 'bg-slate-950 text-slate-400 border-slate-800'
-                    }`}
-                  >
-                    {isEn ? 'Hide Done' : 'Ẩn đã xong'}
-                  </button>
-                </div>
-              </div>
-
-              <div className="flex-1 overflow-y-auto p-3 space-y-2 overscroll-contain">
-                {filteredScenarios.length === 0 ? (
-                  <div className="p-6 text-center text-xs text-slate-400 space-y-2.5">
-                    <p>
-                      {isEn
-                        ? 'No scenarios match your current filter.'
-                        : 'Không có kịch bản nào khớp bộ lọc hiện tại.'}
-                    </p>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setSearchQuery('');
-                        setBandFilter('all');
-                        setSourceFilter('all');
-                        setActiveTrack('all');
-                        if (hideCompleted) toggleHideCompleted();
-                      }}
-                      className="px-3.5 py-2 rounded-xl bg-cyan-600 text-white font-bold cursor-pointer"
-                    >
-                      {isEn ? 'Reset Filters & Show All' : 'Đặt lại bộ lọc & Hiện tất cả'}
-                    </button>
-                  </div>
-                ) : filteredScenarios.map(item => (
-                  <div
-                    key={item.id}
-                    onClick={() => handleSelectScenario(item)}
-                    className={`p-3 rounded-2xl border flex items-center justify-between gap-2 min-h-[54px] active:scale-98 transition-all cursor-pointer ${
-                      currentScenario?.id === item.id
-                        ? 'bg-cyan-950/70 border-cyan-500/60'
-                        : 'bg-slate-950/70 border-slate-800'
-                    }`}
-                  >
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center space-x-1.5 text-[10px] font-black text-cyan-300">
-                        <span>Band {item.bandLevel} • {item.turns?.length || 0} {isEn ? 'turns' : 'lượt'}</span>
-                        {item.sourceTag && (
-                          <span className="px-1.5 py-0.2 rounded bg-indigo-500/20 text-indigo-300">{item.sourceTag}</span>
-                        )}
-                      </div>
-                      <div className="text-xs font-extrabold text-white truncate">
-                        {isEn ? item.titleEn : item.titleVi}
-                      </div>
-                    </div>
-                    {convStats.bestScores?.[item.id] ? (
-                      <span className="px-2 py-0.5 rounded-lg text-[10px] font-black bg-emerald-500/20 text-emerald-300">
-                        {convStats.bestScores[item.id].accuracy}%
-                      </span>
-                    ) : (
-                      <span className="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-slate-800 text-amber-400">
-                        +{item.xpReward} XP
-                      </span>
-                    )}
-                  </div>
-                ))}
-              </div>
+              {renderScenarioListContent(true)}
             </div>
           </div>
         )}
@@ -2654,128 +2466,14 @@ Return ONLY plain dialogue lines starting with "A:" and "B:", 1-2 sentences per 
         )}
 
         {/* CUSTOM CONVERSATION CREATOR MODAL */}
-        {isCreatorOpen && (
-          <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
-            <form
-              onSubmit={handleCreateCustomScenario}
-              className="bg-slate-900 border-t sm:border border-slate-700 rounded-t-3xl sm:rounded-3xl w-full max-w-xl max-h-[92dvh] overflow-y-auto p-5 sm:p-6 pb-[max(1.25rem,env(safe-area-inset-bottom))] space-y-4 text-slate-100 shadow-2xl"
-            >
-              <div className="flex items-center justify-between">
-                <h3 className="text-base font-black text-white">
-                  {isEn ? 'Create Custom Conversation' : 'Tạo Kịch Bản Hội Thoại Mới'}
-                </h3>
-                <button
-                  type="button"
-                  onClick={() => setIsCreatorOpen(false)}
-                  className="p-1.5 rounded-xl bg-slate-800 text-slate-400 hover:text-white cursor-pointer"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-
-              {apiKey && (
-                <div className="p-3 rounded-2xl bg-indigo-950/40 border border-indigo-500/30 space-y-2">
-                  <div className="text-xs font-bold text-indigo-300 flex items-center space-x-1">
-                    <Sparkles className="w-3.5 h-3.5" />
-                    <span>{isEn ? 'Optional: Generate Script with Gemini AI' : 'Tùy chọn: Tạo nhanh kịch bản bằng Gemini AI'}</span>
-                  </div>
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      value={aiTopicPrompt}
-                      onChange={e => setAiTopicPrompt(e.target.value)}
-                      placeholder={isEn ? 'e.g. Returning a defective laptop at a store' : 'VD: Đổi trả laptop bị lỗi tại cửa hàng'}
-                      className="flex-1 px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white"
-                    />
-                    <button
-                      type="button"
-                      onClick={handleGenerateAiScript}
-                      disabled={isGeneratingAiScript}
-                      className="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold cursor-pointer disabled:opacity-50"
-                    >
-                      {isGeneratingAiScript ? (isEn ? 'Generating...' : 'Đang tạo...') : (isEn ? 'AI Write' : 'AI Viết')}
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                <input
-                  type="text"
-                  value={customTitle}
-                  onChange={e => setCustomTitle(e.target.value)}
-                  placeholder={isEn ? 'Scenario title...' : 'Tiêu đề hội thoại...'}
-                  className="sm:col-span-2 px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white"
-                  required
-                />
-                <select
-                  value={customTrack}
-                  onChange={e => setCustomTrack(e.target.value)}
-                  className="px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white"
-                >
-                  <option value="daily">{isEn ? 'Daily & Travel' : 'Đời Sống'}</option>
-                  <option value="ielts">IELTS Speaking</option>
-                  <option value="academic">{isEn ? 'Workplace & Academic' : 'Học Thuật'}</option>
-                </select>
-              </div>
-
-              <div className="grid grid-cols-3 gap-2.5">
-                <input
-                  type="text"
-                  value={customRoleA}
-                  onChange={e => setCustomRoleA(e.target.value)}
-                  placeholder="Role A"
-                  className="px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white"
-                />
-                <input
-                  type="text"
-                  value={customRoleB}
-                  onChange={e => setCustomRoleB(e.target.value)}
-                  placeholder="Role B"
-                  className="px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white"
-                />
-                <select
-                  value={customBand}
-                  onChange={e => setCustomBand(e.target.value)}
-                  className="px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white"
-                >
-                  <option value="6.0">Band 6.0</option>
-                  <option value="7.0">Band 7.0</option>
-                  <option value="8.0">Band 8.0</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-[11px] font-bold text-slate-400 mb-1">
-                  {isEn ? 'Dialogue Lines (prefix with A: and B:)' : 'Nội dung thoại (mỗi dòng bắt đầu bằng A: hoặc B:)'}
-                </label>
-                <textarea
-                  rows={6}
-                  value={customScript}
-                  onChange={e => setCustomScript(e.target.value)}
-                  className="w-full p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white font-mono"
-                  required
-                />
-              </div>
-
-              <div className="flex justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => setIsCreatorOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs font-bold cursor-pointer"
-                >
-                  {isEn ? 'Cancel' : 'Hủy'}
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 rounded-xl bg-gradient-to-r from-cyan-600 to-indigo-600 text-white text-xs font-black cursor-pointer"
-                >
-                  {isEn ? 'Save & Practice' : 'Lưu & Thực Hành'}
-                </button>
-              </div>
-            </form>
-          </div>
-        )}
+        <ConversationCustomCreatorModal
+          isOpen={isCreatorOpen}
+          onClose={() => setIsCreatorOpen(false)}
+          apiKey={apiKey}
+          model={model}
+          onCreatedScenario={handleCreatedCustomScenario}
+          isEn={isEn}
+        />
 
         {/* SOUNDCHECK MODAL */}
         {isSoundcheckOpen && (

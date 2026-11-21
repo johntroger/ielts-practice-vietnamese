@@ -46,7 +46,8 @@ import {
   mapVocabListToPronunciationDrills,
   expandConversationalTokens
 } from '../data/pronunciationData';
-import { callGeminiApi } from '../services/ai/coreGeminiClient';
+import PronunciationCustomDrillModal from './speaking/PronunciationCustomDrillModal';
+import { runLayer2PronunciationCheck } from '../utils/speakingPracticeHelpers';
 import { SPEAKING_EXAMINER_PROFILES } from '../data/speakingTopics';
 import { useSpeechEngine } from '../hooks/useSpeechEngine';
 import SpeechWaveVisualizer from './speaking/SpeechWaveVisualizer';
@@ -217,14 +218,8 @@ export default function PronunciationStudioModal({
     });
   };
 
-  // 7. Create Custom Drill Modal / Drawer State
+  // 7. Create Custom Drill Modal & Imported Focus State
   const [isCreatorOpen, setIsCreatorOpen] = useState(false);
-  const [customText, setCustomText] = useState('');
-  const [customType, setCustomType] = useState('auto');
-  const [customMeaning, setCustomMeaning] = useState('');
-  const [customBand, setCustomBand] = useState('7.0');
-  const [aiDrillTopic, setAiDrillTopic] = useState('');
-  const [isGeneratingAiDrill, setIsGeneratingAiDrill] = useState(false);
   const [importedFocusBanner, setImportedFocusBanner] = useState(null); // { count, firstWord }
   const handledFocusRef = useRef(null);
 
@@ -708,40 +703,18 @@ export default function PronunciationStudioModal({
     setIsDeepAiGrading(true);
     setDeepAiError('');
     try {
-      const { evaluatePronunciationWithGeminiAudio } = await import('../services/ai/speakingAiService');
-      const aiRes = await evaluatePronunciationWithGeminiAudio({
+      const updated = await runLayer2PronunciationCheck({
         audioBlob: currentAudioClip.blob,
         targetText: currentDrill.targetText,
         ipa: selectedExaminerId === 'examiner-oliver' ? currentDrill.ipaUs : currentDrill.ipaUk,
         itemType: currentDrill.type,
         apiKey,
         model,
-        language: isEn ? 'en' : 'vi'
+        isEn,
+        passThreshold: PRONUNCIATION_PASS_THRESHOLD,
+        prevEval: evaluationResult
       });
-
-      const isPassed = aiRes.overallAccuracy >= PRONUNCIATION_PASS_THRESHOLD;
-      setEvaluationResult(prev => ({
-        ...(prev || {}),
-        overallAccuracy: aiRes.overallAccuracy,
-        estimatedBand: aiRes.estimatedBand,
-        spokenTranscript: aiRes.heardTranscript || prev?.spokenTranscript || currentDrill.targetText,
-        wordBreakdown:
-          aiRes.wordBreakdown && aiRes.wordBreakdown.length > 0
-            ? aiRes.wordBreakdown.map(w => ({
-                word: w.word,
-                cleanWord: w.word,
-                status: w.status || (w.similarity >= 84 ? 'correct' : w.similarity >= 52 ? 'near' : 'missed'),
-                similarity: Number(w.similarity) || 80,
-                phonemeNote: w.phonemeNote || ''
-              }))
-            : prev?.wordBreakdown || [],
-        stressFeedback: aiRes.stressFeedback,
-        endingFeedback: aiRes.endingFeedback,
-        coachFeedbackEn: aiRes.coachFeedback,
-        coachFeedbackVi: aiRes.coachFeedback,
-        isPassed,
-        engineTier: 'layer2_gemini_audio'
-      }));
+      setEvaluationResult(updated);
     } catch (err) {
       setDeepAiError(err.message || (isEn ? 'AI Audio evaluation failed.' : 'Không thể chấm sâu bằng AI Audio.'));
     } finally {
@@ -1007,76 +980,9 @@ export default function PronunciationStudioModal({
     handleAdvanceToNextDrillRef.current = handleAdvanceToNextDrill;
   });
 
-  // Optional Gemini AI Custom Drill Generator
-  const handleGenerateAiDrill = async () => {
-    if (!apiKey || !aiDrillTopic.trim() || isGeneratingAiDrill) return;
-    setIsGeneratingAiDrill(true);
-    try {
-      const targetKind =
-        customType === 'words'
-          ? '1 high-value IELTS academic single word'
-          : customType === 'phrases'
-          ? '1 natural IELTS academic collocation/phrase (3-5 words)'
-          : customType === 'sentences'
-          ? '1 authentic IELTS Speaking sentence (12-18 words)'
-          : '1 high-value IELTS Speaking collocation or sentence';
-      const prompt = `Generate ${targetKind} for IELTS Band ${customBand} pronunciation practice on the topic: "${aiDrillTopic.trim()}".
-Return STRICTLY valid JSON: {"text": "...", "meaning": "${isEn ? 'concise English meaning & pronunciation tip' : 'nghĩa tiếng Việt ngắn gọn kèm lưu ý phát âm'}"}`;
-      const res = await callGeminiApi({
-        model,
-        apiKey,
-        body: { contents: [{ parts: [{ text: prompt }] }] }
-      });
-      const raw = res?.candidates?.[0]?.content?.parts?.[0]?.text || '';
-      const jsonMatch = raw.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        const parsed = JSON.parse(jsonMatch[0]);
-        if (parsed.text) setCustomText(String(parsed.text).trim());
-        if (parsed.meaning) setCustomMeaning(String(parsed.meaning).trim());
-      } else if (raw.trim()) {
-        setCustomText(raw.trim().replace(/^["']|["']$/g, ''));
-      }
-    } catch (err) {
-      alert(err.message || (isEn ? 'Failed to generate drill with AI.' : 'Không thể tạo bài tập bằng AI.'));
-    } finally {
-      setIsGeneratingAiDrill(false);
-    }
-  };
-
-  // Create custom pronunciation exercise
-  const handleCreateCustomDrill = (e) => {
-    e?.preventDefault();
-    if (!customText.trim()) return;
-
-    const newDrill = buildCustomPronunciationDrill({
-      text: customText.trim(),
-      type: customType,
-      bandLevel: customBand,
-      topic: isEn ? 'Custom Drill' : 'Bài tập tự tạo',
-      meaning: customMeaning.trim()
-    });
-
-    const nextList = [newDrill, ...(Array.isArray(customDrills) ? customDrills : [])];
-    setCustomDrills(nextList);
-    safeSet(CUSTOM_DRILLS_STORAGE_KEY, nextList);
-
-    setCustomText('');
-    setCustomMeaning('');
-    setIsCreatorOpen(false);
-    handleSelectTab(newDrill.type);
-    setSelectedIdx(0);
-  };
-
-  // Quick import from user's Personal Vocabulary Notebook
-  const handleImportFromVocabVault = (vocabItem) => {
-    if (!vocabItem?.word) return;
-    const newDrill = buildCustomPronunciationDrill({
-      text: vocabItem.word,
-      type: 'auto',
-      bandLevel: vocabItem.band || '7.0',
-      topic: vocabItem.topic || (isEn ? 'Vocab Vault' : 'Sổ tay từ vựng'),
-      meaning: vocabItem.meaning || ''
-    });
+  // Save custom drill returned by PronunciationCustomDrillModal
+  const handleCreatedCustomDrill = (newDrill) => {
+    if (!newDrill) return;
     const nextList = [newDrill, ...(Array.isArray(customDrills) ? customDrills : [])];
     setCustomDrills(nextList);
     safeSet(CUSTOM_DRILLS_STORAGE_KEY, nextList);
@@ -1123,6 +1029,259 @@ Return STRICTLY valid JSON: {"text": "...", "meaning": "${isEn ? 'concise Englis
 
   const isMastered = currentDrill && Array.isArray(masteredIds) && masteredIds.includes(currentDrill.id);
   const currentBest = currentDrill ? pronStats.bestScores?.[currentDrill.id] : null;
+
+  // Shared Filter & Drill List renderer for both Desktop Sidebar and Mobile Bottom Sheet (DRY)
+  const renderDrillListContent = (isMobileSheet = false) => (
+    <>
+      <div className="p-3 border-b border-slate-800/80 space-y-2 shrink-0">
+        <div className="flex items-center gap-1.5">
+          <div className="relative flex-1">
+            <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={e => {
+                setSearchQuery(e.target.value);
+                setSelectedIdx(0);
+              }}
+              placeholder={
+                isEn
+                  ? 'Search words, phrases, or topics...'
+                  : 'Tìm từ, cụm từ, câu hoặc chủ đề...'
+              }
+              className={`w-full pl-8 pr-7 ${isMobileSheet ? 'py-2 bg-slate-950' : 'py-1.5 bg-slate-900'} rounded-xl border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500`}
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchQuery('');
+                  setSelectedIdx(0);
+                }}
+                aria-label={isEn ? 'Clear search' : 'Xóa từ khóa'}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white cursor-pointer"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+          <button
+            type="button"
+            onClick={handlePickRandomDrill}
+            disabled={activeTrackDrills.length <= 1}
+            title={isEn ? 'Pick a random drill' : 'Chọn ngẫu nhiên 1 bài'}
+            aria-label={isEn ? 'Pick a random drill' : 'Chọn ngẫu nhiên 1 bài'}
+            className={`${
+              isMobileSheet
+                ? 'px-2.5 py-2 bg-slate-950 border-indigo-500/30 text-[11px] font-bold flex items-center space-x-1'
+                : 'p-1.5 bg-slate-900 hover:bg-indigo-600/20 border-slate-800 hover:border-indigo-500/40'
+            } rounded-xl text-indigo-300 border disabled:opacity-40 cursor-pointer shrink-0 transition-colors`}
+          >
+            <Shuffle className="w-3.5 h-3.5" />
+            {isMobileSheet && <span>{isEn ? 'Random' : 'Ngẫu nhiên'}</span>}
+          </button>
+        </div>
+
+        <div className="flex items-center justify-between gap-1">
+          <div className="flex items-center space-x-1 overflow-x-auto no-scrollbar">
+            {[
+              { id: 'all', label: isEn ? 'All' : 'Tất cả' },
+              { id: 'foundation', label: 'Band 5.5-6.5' },
+              { id: 'band7', label: 'Band 7.0-7.5' },
+              { id: 'band8', label: 'Band 8.0+' }
+            ].map(b => (
+              <button
+                key={b.id}
+                type="button"
+                onClick={() => {
+                  setBandFilter(b.id);
+                  setSelectedIdx(0);
+                }}
+                className={`${isMobileSheet ? 'px-2.5 py-1.5 text-[11px]' : 'px-2 py-1 text-[10px]'} rounded-lg font-bold whitespace-nowrap cursor-pointer ${
+                  bandFilter === b.id
+                    ? 'bg-indigo-600 text-white'
+                    : `${isMobileSheet ? 'bg-slate-950' : 'bg-slate-900'} text-slate-400 hover:text-slate-200 border border-slate-800`
+                }`}
+              >
+                {b.label}
+              </button>
+            ))}
+          </div>
+
+          <button
+            type="button"
+            onClick={toggleHidePassed}
+            className={`${isMobileSheet ? 'px-2.5 py-1.5 text-[11px]' : 'px-2 py-1 text-[10px]'} rounded-lg font-bold whitespace-nowrap cursor-pointer border ${
+              hidePassed
+                ? 'bg-emerald-950/80 text-emerald-300 border-emerald-500/40'
+                : `${isMobileSheet ? 'bg-slate-950' : 'bg-slate-900'} text-slate-400 border-slate-800`
+            }`}
+            title={isEn ? 'Auto-hide items you already pronounced accurately (≥80%)' : 'Tự động ẩn bài đã phát âm chuẩn (≥80%)'}
+          >
+            {isEn
+              ? `Hide Passed (${passedCountInTab})`
+              : `Ẩn đã đạt (${passedCountInTab})`}
+          </button>
+        </div>
+      </div>
+
+      <div className={`flex-1 overflow-y-auto ${isMobileSheet ? 'p-3 space-y-2' : 'p-2 space-y-1.5'} overscroll-contain`}>
+        {activeTrackDrills.length === 0 ? (
+          <div className="p-6 text-center text-xs text-slate-400 space-y-2.5">
+            <p>
+              {passedCountInTab > 0 && hidePassed
+                ? isEn
+                  ? `🎉 You've mastered all ${passedCountInTab} drills! Add new words (with collocation & example sentence) to your Vocab Notebook to keep practicing.`
+                  : `🎉 Bạn đã phát âm chuẩn toàn bộ ${passedCountInTab} bài! Hãy chủ động thêm từ mới (kèm cụm từ đi kèm & câu ví dụ) vào Sổ Tay để luyện tiếp.`
+                : isEn
+                ? 'No pronunciation drills match your filter.'
+                : 'Không có bài tập phát âm nào khớp bộ lọc.'}
+            </p>
+            <div className="flex flex-col gap-1.5 items-center">
+              {currentUser && onOpenVocabNotebook && passedCountInTab > 0 && hidePassed && (
+                <button
+                  type="button"
+                  onClick={() => onOpenVocabNotebook()}
+                  className="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black cursor-pointer"
+                >
+                  {isEn ? '+ Add Word to Notebook' : '+ Thêm từ vào Sổ Tay'}
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchQuery('');
+                  setBandFilter('all');
+                  if (hidePassed && passedCountInTab > 0) {
+                    toggleHidePassed();
+                  }
+                }}
+                className="px-3 py-1.5 rounded-xl bg-indigo-600 text-white font-bold cursor-pointer"
+              >
+                {passedCountInTab > 0 && hidePassed
+                  ? isEn
+                    ? `Show Passed Drills (${passedCountInTab})`
+                    : `Hiện lại bài đã đạt (${passedCountInTab})`
+                  : isEn
+                  ? 'Reset Filters'
+                  : 'Đặt lại bộ lọc'}
+              </button>
+            </div>
+          </div>
+        ) : (
+          <>
+            {activeTrackDrills.map((item, idx) => {
+              const isSelected = currentDrill?.id === item.id;
+              const best = pronStats.bestScores?.[item.id];
+              const itemMastered = Array.isArray(masteredIds) && masteredIds.includes(item.id);
+
+              return (
+                <div
+                  key={item.id}
+                  onClick={() => {
+                    setJustPassedDrillId(null);
+                    setSelectedIdx(idx);
+                    if (isMobileSheet) setIsMobileListOpen(false);
+                  }}
+                  className={`group w-full ${isMobileSheet ? 'p-3 min-h-[54px] active:scale-98' : 'p-2.5'} rounded-2xl border text-left transition-all cursor-pointer flex items-start justify-between gap-2 ${
+                    isSelected
+                      ? 'bg-indigo-950/75 border-indigo-500/60 shadow-md'
+                      : `${isMobileSheet ? 'bg-slate-950/70' : 'bg-slate-900/70 hover:bg-slate-900'} border-slate-800/80`
+                  }`}
+                >
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center space-x-1.5 mb-0.5">
+                      <span className="text-[10px] font-black px-1.5 py-0.2 rounded bg-slate-800 text-indigo-300">
+                        Band {item.bandLevel}
+                      </span>
+                      <span className="text-[10px] text-slate-400 truncate">
+                        {isEn ? item.topicEn : item.topicVi}
+                      </span>
+                      {item.isFromVocabVault && (
+                        <span className="text-[9px] font-black px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300">
+                          {isEn ? '📒 Vault' : '📒 Sổ Tay'}
+                        </span>
+                      )}
+                      {item.isCustom && (
+                        <span className="text-[9px] font-black px-1.5 py-0.2 rounded bg-purple-500/20 text-purple-300">
+                          {isEn ? 'Custom' : 'Tự tạo'}
+                        </span>
+                      )}
+                    </div>
+                    <div className="text-xs font-extrabold text-white truncate">
+                      {item.targetText}
+                    </div>
+                    {!isMobileSheet && (
+                      <div className="text-[10px] text-slate-400 truncate mt-0.5">
+                        {isEn ? item.meaningEn : item.meaningVi}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex flex-col items-end space-y-1 shrink-0">
+                    {best ? (
+                      <span
+                        className={`px-1.5 py-0.5 rounded-lg text-[10px] font-black ${
+                          best.accuracy >= 85
+                            ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                            : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                        }`}
+                      >
+                        {best.accuracy}%
+                      </span>
+                    ) : (
+                      <span className="px-1.5 py-0.5 rounded-lg text-[10px] font-bold bg-slate-800 text-amber-400">
+                        +{item.xpReward} XP
+                      </span>
+                    )}
+
+                    <div className="flex items-center space-x-1">
+                      {itemMastered && (
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                      )}
+                      {item.isCustom && (
+                        <button
+                          type="button"
+                          onClick={e => handleDeleteCustomDrill(item.id, e)}
+                          className="p-1 rounded hover:bg-rose-500/20 text-slate-500 hover:text-rose-400 transition-colors"
+                          title={isEn ? 'Delete custom drill' : 'Xóa bài tập tự tạo'}
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+
+            {/* Guest Unlock Prompt Card */}
+            {!currentUser && lockedCountForGuest > 0 && (
+              <button
+                type="button"
+                onClick={() => onOpenAuth?.()}
+                className="w-full p-3 rounded-2xl bg-gradient-to-r from-indigo-950/70 to-purple-950/70 border border-indigo-500/30 hover:border-indigo-400/60 text-left space-y-1 transition-all cursor-pointer"
+              >
+                <div className="flex items-center space-x-1.5 text-xs font-black text-indigo-300">
+                  <Lock className="w-3.5 h-3.5" />
+                  <span>
+                    {isEn
+                      ? `Unlock +${lockedCountForGuest} Pro Drills & Vocab Sync`
+                      : `Mở khóa thêm +${lockedCountForGuest} bài & Sổ Tay Từ Vựng`}
+                  </span>
+                </div>
+                <p className="text-[10px] text-slate-400">
+                  {isEn
+                    ? 'Sign in free to unlock Band 7.0-8.5+ drills and practice words from your personal notebook.'
+                    : 'Đăng nhập miễn phí để mở kho nâng cao và luyện phát âm chính các từ trong Sổ Tay của bạn.'}
+                </p>
+              </button>
+            )}
+          </>
+        )}
+      </div>
+    </>
+  );
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-0 sm:p-1.5 md:p-2 overflow-hidden animate-in fade-in duration-150">
@@ -1464,247 +1623,7 @@ Return STRICTLY valid JSON: {"text": "...", "meaning": "${isEn ? 'concise Englis
           {/* DESKTOP LEFT SIDEBAR (Collapsible for full-width pronunciation focus) */}
           {isDesktopSidebarOpen && (
           <aside className="hidden lg:flex w-72 xl:w-80 bg-slate-950/60 border-r border-slate-800 flex-col shrink-0">
-            {/* Search & Band Filter Bar */}
-            <div className="p-3 border-b border-slate-800/80 space-y-2">
-              <div className="flex items-center gap-1.5">
-                <div className="relative flex-1">
-                  <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={e => {
-                      setSearchQuery(e.target.value);
-                      setSelectedIdx(0);
-                    }}
-                    placeholder={
-                      isEn
-                        ? 'Search words, phrases, or topics...'
-                        : 'Tìm từ, cụm từ, câu hoặc chủ đề...'
-                    }
-                    className="w-full pl-8 pr-7 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
-                  />
-                  {searchQuery && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setSearchQuery('');
-                        setSelectedIdx(0);
-                      }}
-                      aria-label={isEn ? 'Clear search' : 'Xóa từ khóa'}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white cursor-pointer"
-                    >
-                      <X className="w-3.5 h-3.5" />
-                    </button>
-                  )}
-                </div>
-                <button
-                  type="button"
-                  onClick={handlePickRandomDrill}
-                  disabled={activeTrackDrills.length <= 1}
-                  title={isEn ? 'Pick a random drill' : 'Chọn ngẫu nhiên 1 bài'}
-                  aria-label={isEn ? 'Pick a random drill' : 'Chọn ngẫu nhiên 1 bài'}
-                  className="p-1.5 rounded-xl bg-slate-900 hover:bg-indigo-600/20 text-indigo-300 border border-slate-800 hover:border-indigo-500/40 disabled:opacity-40 cursor-pointer shrink-0 transition-colors"
-                >
-                  <Shuffle className="w-3.5 h-3.5" />
-                </button>
-              </div>
-
-              <div className="flex items-center justify-between gap-1">
-                <div className="flex items-center space-x-1 overflow-x-auto no-scrollbar">
-                  {[
-                    { id: 'all', label: isEn ? 'All' : 'Tất cả' },
-                    { id: 'foundation', label: 'Band 5.5-6.5' },
-                    { id: 'band7', label: 'Band 7.0-7.5' },
-                    { id: 'band8', label: 'Band 8.0+' }
-                  ].map(b => (
-                    <button
-                      key={b.id}
-                      type="button"
-                      onClick={() => {
-                        setBandFilter(b.id);
-                        setSelectedIdx(0);
-                      }}
-                      className={`px-2 py-1 rounded-lg text-[10px] font-bold whitespace-nowrap cursor-pointer ${
-                        bandFilter === b.id
-                          ? 'bg-indigo-600 text-white'
-                          : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
-                      }`}
-                    >
-                      {b.label}
-                    </button>
-                  ))}
-                </div>
-
-                <button
-                  type="button"
-                  onClick={toggleHidePassed}
-                  className={`px-2 py-1 rounded-lg text-[10px] font-bold whitespace-nowrap cursor-pointer border ${
-                    hidePassed
-                      ? 'bg-emerald-950/80 text-emerald-300 border-emerald-500/40'
-                      : 'bg-slate-900 text-slate-400 border-slate-800'
-                  }`}
-                  title={isEn ? 'Auto-hide items you already pronounced accurately (≥80%)' : 'Tự động ẩn bài đã phát âm chuẩn (≥80%)'}
-                >
-                  {isEn
-                    ? `Hide Passed (${passedCountInTab})`
-                    : `Ẩn đã đạt (${passedCountInTab})`}
-                </button>
-              </div>
-            </div>
-
-            {/* Drill Items Scroll List */}
-            <div className="flex-1 overflow-y-auto p-2 space-y-1.5 overscroll-contain">
-              {activeTrackDrills.length === 0 ? (
-                <div className="p-6 text-center text-xs text-slate-400 space-y-2.5">
-                  <p>
-                    {passedCountInTab > 0 && hidePassed
-                      ? isEn
-                        ? `🎉 You've mastered all ${passedCountInTab} drills! Add new words (with collocation & example sentence) to your Vocab Notebook to keep practicing.`
-                        : `🎉 Bạn đã phát âm chuẩn toàn bộ ${passedCountInTab} bài! Hãy chủ động thêm từ mới (kèm cụm từ đi kèm & câu ví dụ) vào Sổ Tay để luyện tiếp.`
-                      : isEn
-                      ? 'No pronunciation drills match your filter.'
-                      : 'Không có bài tập phát âm nào khớp bộ lọc.'}
-                  </p>
-                  <div className="flex flex-col gap-1.5 items-center">
-                    {currentUser && onOpenVocabNotebook && passedCountInTab > 0 && hidePassed && (
-                      <button
-                        type="button"
-                        onClick={() => onOpenVocabNotebook()}
-                        className="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black cursor-pointer"
-                      >
-                        {isEn ? '+ Add Word to Notebook' : '+ Thêm từ vào Sổ Tay'}
-                      </button>
-                    )}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setSearchQuery('');
-                        setBandFilter('all');
-                        if (hidePassed && passedCountInTab > 0) {
-                          toggleHidePassed();
-                        }
-                      }}
-                      className="px-3 py-1.5 rounded-xl bg-indigo-600 text-white font-bold cursor-pointer"
-                    >
-                      {passedCountInTab > 0 && hidePassed
-                        ? isEn
-                          ? `Show Passed Drills (${passedCountInTab})`
-                          : `Hiện lại bài đã đạt (${passedCountInTab})`
-                        : isEn
-                        ? 'Reset Filters'
-                        : 'Đặt lại bộ lọc'}
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <>
-                  {activeTrackDrills.map((item, idx) => {
-                    const isSelected = currentDrill?.id === item.id;
-                    const best = pronStats.bestScores?.[item.id];
-                    const itemMastered = Array.isArray(masteredIds) && masteredIds.includes(item.id);
-
-                    return (
-                      <div
-                        key={item.id}
-                        onClick={() => {
-                          setJustPassedDrillId(null);
-                          setSelectedIdx(idx);
-                        }}
-                        className={`group w-full p-2.5 rounded-2xl border text-left transition-all cursor-pointer flex items-start justify-between gap-2 ${
-                          isSelected
-                            ? 'bg-indigo-950/70 border-indigo-500/60 shadow-md'
-                            : 'bg-slate-900/70 hover:bg-slate-900 border-slate-800/80'
-                        }`}
-                      >
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-center space-x-1.5 mb-0.5">
-                            <span className="text-[10px] font-black px-1.5 py-0.2 rounded bg-slate-800 text-indigo-300">
-                              Band {item.bandLevel}
-                            </span>
-                            <span className="text-[10px] text-slate-400 truncate">
-                              {isEn ? item.topicEn : item.topicVi}
-                            </span>
-                            {item.isFromVocabVault && (
-                              <span className="text-[9px] font-black px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300">
-                                {isEn ? '📒 Vault' : '📒 Sổ Tay'}
-                              </span>
-                            )}
-                            {item.isCustom && (
-                              <span className="text-[9px] font-black px-1.5 py-0.2 rounded bg-purple-500/20 text-purple-300">
-                                {isEn ? 'Custom' : 'Tự tạo'}
-                              </span>
-                            )}
-                          </div>
-                          <div className="text-xs font-extrabold text-white truncate">
-                            {item.targetText}
-                          </div>
-                          <div className="text-[10px] text-slate-400 truncate mt-0.5">
-                            {isEn ? item.meaningEn : item.meaningVi}
-                          </div>
-                        </div>
-
-                        <div className="flex flex-col items-end space-y-1 shrink-0">
-                          {best ? (
-                            <span
-                              className={`px-1.5 py-0.5 rounded-lg text-[10px] font-black ${
-                                best.accuracy >= 85
-                                  ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                                  : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
-                              }`}
-                            >
-                              {best.accuracy}%
-                            </span>
-                          ) : (
-                            <span className="px-1.5 py-0.5 rounded-lg text-[10px] font-bold bg-slate-800 text-amber-400">
-                              +{item.xpReward} XP
-                            </span>
-                          )}
-
-                          <div className="flex items-center space-x-1">
-                            {itemMastered && (
-                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                            )}
-                            {item.isCustom && (
-                              <button
-                                type="button"
-                                onClick={e => handleDeleteCustomDrill(item.id, e)}
-                                className="p-1 rounded hover:bg-rose-500/20 text-slate-500 hover:text-rose-400 transition-colors"
-                                title={isEn ? 'Delete custom drill' : 'Xóa bài tập tự tạo'}
-                              >
-                                <Trash2 className="w-3 h-3" />
-                              </button>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-
-                  {/* Guest Unlock Prompt Card */}
-                  {!currentUser && lockedCountForGuest > 0 && (
-                    <button
-                      type="button"
-                      onClick={() => onOpenAuth?.()}
-                      className="w-full p-3 rounded-2xl bg-gradient-to-r from-indigo-950/70 to-purple-950/70 border border-indigo-500/30 hover:border-indigo-400/60 text-left space-y-1 transition-all cursor-pointer"
-                    >
-                      <div className="flex items-center space-x-1.5 text-xs font-black text-indigo-300">
-                        <Lock className="w-3.5 h-3.5" />
-                        <span>
-                          {isEn
-                            ? `Unlock +${lockedCountForGuest} Pro Drills & Vocab Sync`
-                            : `Mở khóa thêm +${lockedCountForGuest} bài & Sổ Tay Từ Vựng`}
-                        </span>
-                      </div>
-                      <p className="text-[10px] text-slate-400">
-                        {isEn
-                          ? 'Sign in free to unlock Band 7.0-8.5+ drills and practice words from your personal notebook.'
-                          : 'Đăng nhập miễn phí để mở kho nâng cao và luyện phát âm chính các từ trong Sổ Tay của bạn.'}
-                      </p>
-                    </button>
-                  )}
-                </>
-              )}
-            </div>
+            {renderDrillListContent(false)}
           </aside>
           )}
 
@@ -2571,152 +2490,7 @@ Return STRICTLY valid JSON: {"text": "...", "meaning": "${isEn ? 'concise Englis
                 </button>
               </div>
 
-              {/* Search & Band Filter inside Mobile Sheet */}
-              <div className="p-3 border-b border-slate-800/80 space-y-2 shrink-0">
-                <div className="flex items-center gap-1.5">
-                  <div className="relative flex-1">
-                    <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
-                    <input
-                      type="text"
-                      value={searchQuery}
-                      onChange={e => {
-                        setSearchQuery(e.target.value);
-                        setSelectedIdx(0);
-                      }}
-                      placeholder={
-                        isEn
-                          ? 'Search words, phrases, or topics...'
-                          : 'Tìm từ, cụm từ, câu hoặc chủ đề...'
-                      }
-                      className="w-full pl-8 pr-8 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
-                    />
-                    {searchQuery && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setSearchQuery('');
-                          setSelectedIdx(0);
-                        }}
-                        aria-label={isEn ? 'Clear search' : 'Xóa từ khóa'}
-                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white cursor-pointer"
-                      >
-                        <X className="w-3.5 h-3.5" />
-                      </button>
-                    )}
-                  </div>
-                  <button
-                    type="button"
-                    onClick={handlePickRandomDrill}
-                    disabled={activeTrackDrills.length <= 1}
-                    className="px-2.5 py-2 rounded-xl bg-slate-950 text-indigo-300 border border-indigo-500/30 text-[11px] font-bold flex items-center space-x-1 shrink-0 disabled:opacity-40 cursor-pointer"
-                  >
-                    <Shuffle className="w-3.5 h-3.5" />
-                    <span>{isEn ? 'Random' : 'Ngẫu nhiên'}</span>
-                  </button>
-                </div>
-
-                <div className="flex items-center justify-between gap-1">
-                  <div className="flex items-center space-x-1 overflow-x-auto no-scrollbar">
-                    {[
-                      { id: 'all', label: isEn ? 'All' : 'Tất cả' },
-                      { id: 'foundation', label: 'Band 5.5-6.5' },
-                      { id: 'band7', label: 'Band 7.0-7.5' },
-                      { id: 'band8', label: 'Band 8.0+' }
-                    ].map(b => (
-                      <button
-                        key={b.id}
-                        type="button"
-                        onClick={() => {
-                          setBandFilter(b.id);
-                          setSelectedIdx(0);
-                        }}
-                        className={`px-2.5 py-1.5 rounded-lg text-[11px] font-bold whitespace-nowrap cursor-pointer ${
-                          bandFilter === b.id
-                            ? 'bg-indigo-600 text-white'
-                            : 'bg-slate-950 text-slate-400 border border-slate-800'
-                        }`}
-                      >
-                        {b.label}
-                      </button>
-                    ))}
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={toggleHidePassed}
-                    className={`px-2.5 py-1.5 rounded-lg text-[11px] font-bold whitespace-nowrap cursor-pointer border ${
-                      hidePassed
-                        ? 'bg-emerald-950/80 text-emerald-300 border-emerald-500/40'
-                        : 'bg-slate-950 text-slate-400 border-slate-800'
-                    }`}
-                  >
-                    {isEn ? `Hide Passed (${passedCountInTab})` : `Ẩn đã đạt (${passedCountInTab})`}
-                  </button>
-                </div>
-              </div>
-
-              <div className="flex-1 overflow-y-auto p-3 space-y-2 overscroll-contain">
-                {activeTrackDrills.map((item, idx) => {
-                  const isSelected = currentDrill?.id === item.id;
-                  const best = pronStats.bestScores?.[item.id];
-                  const itemMastered = Array.isArray(masteredIds) && masteredIds.includes(item.id);
-                  return (
-                    <div
-                      key={item.id}
-                      onClick={() => {
-                        setJustPassedDrillId(null);
-                        setSelectedIdx(idx);
-                        setIsMobileListOpen(false);
-                      }}
-                      className={`p-3 rounded-2xl border flex items-center justify-between gap-2 min-h-[54px] cursor-pointer active:scale-98 transition-all ${
-                        isSelected
-                          ? 'bg-indigo-950/80 border-indigo-500/60 shadow-md'
-                          : 'bg-slate-950/70 border-slate-800'
-                      }`}
-                    >
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center space-x-1.5 mb-0.5">
-                          <span className="text-[10px] font-black px-1.5 py-0.2 rounded bg-slate-800 text-indigo-300">
-                            Band {item.bandLevel}
-                          </span>
-                          <span className="text-[10px] text-slate-400 truncate">
-                            {isEn ? item.topicEn : item.topicVi}
-                          </span>
-                          {item.isFromVocabVault && (
-                            <span className="text-[9px] font-black px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300">
-                              {isEn ? '📒 Vault' : '📒 Sổ Tay'}
-                            </span>
-                          )}
-                        </div>
-                        <div className="text-xs font-extrabold text-white truncate">
-                          {item.targetText}
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-1.5 shrink-0">
-                        {best ? (
-                          <span className="px-2 py-0.5 rounded-lg text-[10px] font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                            {best.accuracy}%
-                          </span>
-                        ) : (
-                          <span className="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-slate-800 text-amber-400">
-                            +{item.xpReward} XP
-                          </span>
-                        )}
-                        {itemMastered && <CheckCircle2 className="w-4 h-4 text-emerald-400" />}
-                        {item.isCustom && (
-                          <button
-                            type="button"
-                            onClick={e => handleDeleteCustomDrill(item.id, e)}
-                            className="p-1.5 rounded-lg bg-slate-800 text-rose-400"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+              {renderDrillListContent(true)}
             </div>
           </div>
         )}
@@ -2724,180 +2498,15 @@ Return STRICTLY valid JSON: {"text": "...", "meaning": "${isEn ? 'concise Englis
         {/* ================================================================= */}
         {/* 4. CUSTOM PRONUNCIATION DRILL CREATOR MODAL OVERLAY               */}
         {/* ================================================================= */}
-        {isCreatorOpen && (
-          <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 animate-in fade-in duration-150">
-            <div className="bg-slate-900 border-t sm:border border-slate-700 rounded-t-3xl sm:rounded-3xl w-full max-w-lg max-h-[92dvh] overflow-y-auto p-5 sm:p-6 pb-[max(1.25rem,env(safe-area-inset-bottom))] shadow-2xl space-y-4 text-slate-100">
-              <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                <div className="flex items-center space-x-2">
-                  <Sparkles className="w-5 h-5 text-indigo-400" />
-                  <h3 className="text-base font-black text-white">
-                    {isEn
-                      ? 'Create Custom Pronunciation Exercise'
-                      : 'Tạo Bài Tập Phát Âm Mới (Từ / Cụm Từ / Câu)'}
-                  </h3>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setIsCreatorOpen(false)}
-                  className="p-1 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 cursor-pointer"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              <form onSubmit={handleCreateCustomDrill} className="space-y-3.5">
-                {apiKey && (
-                  <div className="p-3 rounded-2xl bg-indigo-950/40 border border-indigo-500/30 space-y-2">
-                    <div className="text-xs font-bold text-indigo-300 flex items-center space-x-1">
-                      <Sparkles className="w-3.5 h-3.5" />
-                      <span>
-                        {isEn
-                          ? 'Optional: Suggest a Pronunciation Drill with Gemini AI'
-                          : 'Tùy chọn: Gợi ý nhanh bài luyện phát âm bằng Gemini AI'}
-                      </span>
-                    </div>
-                    <div className="flex gap-2">
-                      <input
-                        type="text"
-                        value={aiDrillTopic}
-                        onChange={e => setAiDrillTopic(e.target.value)}
-                        placeholder={
-                          isEn
-                            ? 'e.g., Climate change, AI ethics, or silent letters...'
-                            : 'VD: Biến đổi khí hậu, Trí tuệ nhân tạo, hoặc âm câm...'
-                        }
-                        className="flex-1 px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white"
-                      />
-                      <button
-                        type="button"
-                        onClick={handleGenerateAiDrill}
-                        disabled={isGeneratingAiDrill || !aiDrillTopic.trim()}
-                        className="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold cursor-pointer disabled:opacity-50 shrink-0"
-                      >
-                        {isGeneratingAiDrill
-                          ? isEn ? 'Generating...' : 'Đang tạo...'
-                          : isEn ? 'AI Suggest' : 'AI Gợi Ý'}
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                <div>
-                  <label className="block text-xs font-bold text-slate-300 mb-1">
-                    {isEn
-                      ? 'Target English Word, Phrase, or Full Sentence *'
-                      : 'Nhập Từ đơn, Cụm từ hoặc Câu tiếng Anh cần luyện phát âm *'}
-                  </label>
-                  <textarea
-                    rows={2}
-                    required
-                    value={customText}
-                    onChange={e => setCustomText(e.target.value)}
-                    placeholder={
-                      isEn
-                        ? 'e.g., conscientious, play a pivotal role in, or a full IELTS Speaking sentence...'
-                        : 'VD: conscientious, play a pivotal role in, hoặc cả một câu IELTS Speaking...'
-                    }
-                    className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs sm:text-sm text-white focus:outline-none focus:border-indigo-500"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-xs font-bold text-slate-300 mb-1">
-                      {isEn ? 'Exercise Track' : 'Phân loại bài tập'}
-                    </label>
-                    <select
-                      value={customType}
-                      onChange={e => setCustomType(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white"
-                    >
-                      <option value="auto">
-                        {isEn ? 'Auto-detect (Word/Phrase/Sentence)' : 'Tự động nhận diện (Từ/Cụm/Câu)'}
-                      </option>
-                      <option value="words">{isEn ? 'Single Word (+15 XP)' : 'Từ đơn (+15 XP)'}</option>
-                      <option value="phrases">{isEn ? 'Phrase / Collocation (+25 XP)' : 'Cụm từ (+25 XP)'}</option>
-                      <option value="sentences">{isEn ? 'Full Sentence (+35 XP)' : 'Cả câu (+35 XP)'}</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-slate-300 mb-1">
-                      {isEn ? 'Target Band Level' : 'Mức Band mục tiêu'}
-                    </label>
-                    <select
-                      value={customBand}
-                      onChange={e => setCustomBand(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white"
-                    >
-                      <option value="6.0">Band 6.0</option>
-                      <option value="6.5">Band 6.5</option>
-                      <option value="7.0">Band 7.0</option>
-                      <option value="7.5">Band 7.5</option>
-                      <option value="8.0">Band 8.0+</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-slate-300 mb-1">
-                    {isEn ? 'Meaning or Pronunciation Note (Optional)' : 'Nghĩa hoặc ghi chú phát âm (Tùy chọn)'}
-                  </label>
-                  <input
-                    type="text"
-                    value={customMeaning}
-                    onChange={e => setCustomMeaning(e.target.value)}
-                    placeholder={
-                      isEn
-                        ? 'e.g., Thorough and careful; pay attention to /ʃ/ sound'
-                        : 'VD: Tận tâm, chu đáo; chú ý âm /ʃ/ ở giữa từ'
-                    }
-                    className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white"
-                  />
-                </div>
-
-                {/* Quick Import from Personal Vocabulary Notebook if available */}
-                {Array.isArray(vocabList) && vocabList.length > 0 && (
-                  <div className="pt-2 border-t border-slate-800">
-                    <div className="text-[11px] font-bold text-amber-400 mb-1.5">
-                      {isEn
-                        ? 'Or 1-Click Import from Your Personal Vocabulary Notebook:'
-                        : 'Hoặc nạp nhanh 1-chạm từ Sổ Tay Từ Vựng Cá Nhân của bạn:'}
-                    </div>
-                    <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto">
-                      {vocabList.slice(0, 12).map(v => (
-                        <button
-                          key={v.id || v.word}
-                          type="button"
-                          onClick={() => handleImportFromVocabVault(v)}
-                          className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-indigo-600 text-[11px] font-bold text-slate-200 hover:text-white transition-colors cursor-pointer"
-                        >
-                          + {v.word}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                <div className="pt-2 flex items-center justify-end space-x-2">
-                  <button
-                    type="button"
-                    onClick={() => setIsCreatorOpen(false)}
-                    className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold cursor-pointer"
-                  >
-                    {isEn ? 'Cancel' : 'Hủy'}
-                  </button>
-                  <button
-                    type="submit"
-                    className="px-5 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-xs font-black shadow-lg cursor-pointer"
-                  >
-                    {isEn ? 'Create & Practice Now' : 'Tạo Bài Tập & Luyện Ngay'}
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
+        <PronunciationCustomDrillModal
+          isOpen={isCreatorOpen}
+          onClose={() => setIsCreatorOpen(false)}
+          apiKey={apiKey}
+          model={model}
+          vocabList={vocabList}
+          onCreatedDrill={handleCreatedCustomDrill}
+          isEn={isEn}
+        />
       </div>
     </div>
   );

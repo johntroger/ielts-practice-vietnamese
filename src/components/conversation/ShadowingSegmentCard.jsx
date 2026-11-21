@@ -20,25 +20,7 @@ import {
 } from 'lucide-react';
 import SpeechWaveVisualizer from '../speaking/SpeechWaveVisualizer';
 import { expandConversationalTokens } from '../../data/pronunciationData';
-
-function maskToKeywords(text = '') {
-  const functionWords = new Set([
-    'a', 'an', 'the', 'is', 'am', 'are', 'was', 'were', 'be', 'been',
-    'to', 'of', 'in', 'on', 'at', 'for', 'with', 'by', 'from', 'as',
-    'and', 'or', 'but', 'if', 'that', 'this', 'it', 'i', 'you', 'we', 'they',
-    'my', 'your', 'our', 'their', 'do', 'does', 'did', 'can', 'could', 'will', 'would'
-  ]);
-  return String(text || '')
-    .split(/\s+/)
-    .map((w) => {
-      const clean = w.toLowerCase().replace(/[^a-z']/g, '');
-      if (clean.length <= 2 || functionWords.has(clean)) {
-        return w.replace(/[a-zA-Z]/g, '•');
-      }
-      return w;
-    })
-    .join(' ');
-}
+import { maskToKeywords } from '../../utils/speakingPracticeHelpers';
 
 function ShadowingSegmentCard({
   segment,

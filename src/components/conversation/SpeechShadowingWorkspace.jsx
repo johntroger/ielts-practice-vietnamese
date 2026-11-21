@@ -30,16 +30,16 @@ import {
   resolveShadowingSegments,
   getShadowingTaskSegmentCount,
   evaluateShadowingSegment,
-  buildCustomShadowingTask,
   summarizeShadowingSession,
   loadSpeakingBankShadowingTasks
 } from '../../data/shadowingData';
 import { safeGet, safeSet } from '../../utils/storageService';
 import { speakingSoundEffects } from '../../utils/speakingSoundEffects';
 import { triggerHaptic } from '../../utils/hapticHelper';
-import { callGeminiApi } from '../../services/ai/coreGeminiClient';
 import ShadowingSegmentCard from './ShadowingSegmentCard';
 import ConversationSummaryCard from './ConversationSummaryCard';
+import ShadowingCustomCreatorModal from './ShadowingCustomCreatorModal';
+import { runLayer2PronunciationCheck, NOOP } from '../../utils/speakingPracticeHelpers';
 
 const CUSTOM_SHADOW_STORAGE_KEY = 'ielts_shadowing_custom_v1';
 const SHADOW_STATS_STORAGE_KEY = 'ielts_shadowing_stats_v1';
@@ -289,15 +289,6 @@ export default function SpeechShadowingWorkspace({
 
   // Custom Creator Modal State
   const [isCreatorOpen, setIsCreatorOpen] = useState(false);
-  const [customTitle, setCustomTitle] = useState('');
-  const [customPart, setCustomPart] = useState('part2');
-  const [customBand, setCustomBand] = useState('7.5');
-  const [customPrompt, setCustomPrompt] = useState('');
-  const [customRawText, setCustomRawText] = useState(
-    'I would like to talk about a memorable book that reshaped how I manage my time.\n\nRoughly two years ago, I felt constantly overwhelmed by university deadlines. Reading about deliberate focus habits helped me restructure my mornings and boost my productivity.'
-  );
-  const [aiTopicPrompt, setAiTopicPrompt] = useState('');
-  const [isGeneratingAiSample, setIsGeneratingAiSample] = useState(false);
 
   // Refs & Monotonic Session Guard
   const segContainerRef = useRef(null);
@@ -939,7 +930,7 @@ export default function SpeechShadowingWorkspace({
     advanceAfterPass();
   };
 
-  const handleReplayUserClip = (segId) => {
+  const handleReplayUserClip = useCallback((segId) => {
     const clipKey = `shad_${currentTask.id}_${segId}`;
     const clip = speechEngine.audioClips[clipKey];
     if (!clip?.url) return;
@@ -967,7 +958,24 @@ export default function SpeechShadowingWorkspace({
         .then(() => setPlayingUserClipSegId(segId))
         .catch(() => setPlayingUserClipSegId(null));
     }
-  };
+  }, [currentTask?.id, playingUserClipSegId, speechEngine.audioClips, speechEngine.stopListening, speechEngine.stopSpeaking]);
+
+  const handlePlaySegModel = useCallback((s, rate) => {
+    speechEngine.stopListening();
+    speechEngine.speak(s.text, { examinerId: selectedExaminerId, rate, silentChime: true });
+  }, [selectedExaminerId, speechEngine.stopListening, speechEngine.speak]);
+
+  const handleToggleRevealCurrentSeg = useCallback(() => {
+    setRevealCurrentSeg(prev => !prev);
+  }, []);
+
+  const handleToggleManualFallback = useCallback(() => {
+    setShowManualFallback(prev => !prev);
+  }, []);
+
+  const handleRunManualEvaluation = useCallback((txt) => {
+    handleRunEvaluationRef.current?.(txt);
+  }, []);
 
   const handleCompareSegAudio = useCallback((seg) => {
     if (!seg) return;
@@ -1009,54 +1017,33 @@ export default function SpeechShadowingWorkspace({
     );
   }, [comparingSegId, currentTask?.id, invalidateAndStopAudio, playbackSpeed, selectedExaminerId, speechEngine]);
 
-  // Layer 2 Gemini Native Audio Deep Check
+  // Layer 2 Gemini Native Audio Deep Check (via shared helper)
   const handleDeepAiAudioCheck = async () => {
     if (!activeSeg || !currentAudioClip?.blob || !apiKey || isDeepAiGrading) return;
     setIsDeepAiGrading(true);
     setDeepAiError('');
     try {
-      const { evaluatePronunciationWithGeminiAudio } = await import('../../services/ai/speakingAiService');
-      const aiRes = await evaluatePronunciationWithGeminiAudio({
+      const updatedEval = await runLayer2PronunciationCheck({
         audioBlob: currentAudioClip.blob,
         targetText: activeSeg.text,
         itemType: 'sentences',
         apiKey,
         model,
-        language: isEn ? 'en' : 'vi'
+        isEn,
+        passThreshold,
+        prevEval: evaluationResult,
+        xpHigh: 45,
+        xpNormal: 35
       });
-
-      const isPassed = aiRes.overallAccuracy >= passThreshold;
-      const mappedWords =
-        aiRes.wordBreakdown && aiRes.wordBreakdown.length > 0
-          ? aiRes.wordBreakdown.map(w => ({
-              word: w.word,
-              cleanWord: w.word,
-              status: w.status || (w.similarity >= 84 ? 'correct' : w.similarity >= 52 ? 'near' : 'missed'),
-              similarity: Number(w.similarity) || 80
-            }))
-          : evaluationResult?.wordBreakdown || [];
-      const earnedXp = isPassed ? (aiRes.overallAccuracy >= 92 ? 45 : 35) : evaluationResult?.xpEarned || 0;
-      const updatedEval = {
-        ...(evaluationResult || {}),
-        overallAccuracy: aiRes.overallAccuracy,
-        estimatedBand: aiRes.estimatedBand,
-        spokenTranscript: aiRes.heardTranscript || evaluationResult?.spokenTranscript || activeSeg.text,
-        wordBreakdown: mappedWords,
-        coachFeedbackEn: aiRes.coachFeedback,
-        coachFeedbackVi: aiRes.coachFeedback,
-        xpEarned: earnedXp,
-        isPassed,
-        engineTier: 'layer2_gemini_audio'
-      };
       setEvaluationResult(updatedEval);
-      if (isPassed) {
+      if (updatedEval.isPassed) {
         const alreadyPassed = Boolean(segmentResults[activeSeg.id]?.isPassed);
         speechEngine.stopListening();
         speakingSoundEffects.playCompletionChime();
         triggerHaptic('combo');
         setSegmentResults(prev => ({ ...prev, [activeSeg.id]: updatedEval }));
-        if (!alreadyPassed && earnedXp > 0 && awardXp) {
-          awardXp(earnedXp, `Speech Shadowing AI Deep Check: ${currentTask.titleEn}`);
+        if (!alreadyPassed && updatedEval.xpEarned > 0 && awardXp) {
+          awardXp(updatedEval.xpEarned, `Speech Shadowing AI Deep Check: ${currentTask.titleEn}`);
         }
       }
     } catch (err) {
@@ -1136,44 +1123,9 @@ export default function SpeechShadowingWorkspace({
     handleSelectChunkMode(next);
   };
 
-  // Custom Sample Generator & Save
-  const handleGenerateAiSample = async () => {
-    if (!apiKey || !aiTopicPrompt.trim() || isGeneratingAiSample) return;
-    setIsGeneratingAiSample(true);
-    try {
-      const prompt = `Write an authentic IELTS Speaking ${customPart.toUpperCase()} Band ${customBand} sample response on the topic: "${aiTopicPrompt.trim()}".
-Separate paragraphs with a blank line. If ${customPart} is part1 or part3, prefix 2 examiner questions with "Examiner: " before the sample answers. Return ONLY the clean script text.`;
-      const res = await callGeminiApi({
-        model,
-        apiKey,
-        body: { contents: [{ parts: [{ text: prompt }] }] }
-      });
-      const text = res?.candidates?.[0]?.content?.parts?.[0]?.text || '';
-      if (text.trim()) {
-        setCustomRawText(text.trim());
-        if (!customTitle.trim()) setCustomTitle(aiTopicPrompt.trim());
-        if (!customPrompt.trim()) setCustomPrompt(aiTopicPrompt.trim());
-      }
-    } catch (err) {
-      alert(err.message || (isEn ? 'Failed to generate sample.' : 'Không thể tạo bài mẫu bằng AI.'));
-    } finally {
-      setIsGeneratingAiSample(false);
-    }
-  };
-
-  const handleCreateCustomTask = (e) => {
-    e?.preventDefault();
-    const created = buildCustomShadowingTask({
-      title: customTitle,
-      part: customPart,
-      bandLevel: customBand,
-      prompt: customPrompt,
-      rawText: customRawText
-    });
-    if (!created.segments || created.segments.length === 0) {
-      alert(isEn ? 'Please enter at least 1 sentence or paragraph.' : 'Vui lòng nhập ít nhất 1 câu hoặc 1 đoạn.');
-      return;
-    }
+  // Save custom task returned by ShadowingCustomCreatorModal
+  const handleCreatedCustomTask = (created) => {
+    if (!created) return;
     const nextList = [created, ...(Array.isArray(customTasks) ? customTasks : [])];
     setCustomTasks(nextList);
     safeSet(CUSTOM_SHADOW_STORAGE_KEY, nextList);
@@ -1198,6 +1150,231 @@ Separate paragraphs with a blank line. If ${customPart} is part1 or part3, prefi
     .join(' ');
 
   const currentChunkMeta = SHADOWING_CHUNK_MODES.find(m => m.id === chunkMode) || SHADOWING_CHUNK_MODES[0];
+
+  // Shared Task Filter & List renderer for Desktop Sidebar & Mobile Bottom Sheet (DRY)
+  const renderTaskListContent = (isMobileSheet = false) => (
+    <>
+      <div className={`${isMobileSheet ? 'p-3' : 'p-2.5'} border-b border-slate-800/80 space-y-2 shrink-0`}>
+        <div className={isMobileSheet ? 'flex items-center space-x-1.5 overflow-x-auto no-scrollbar pb-0.5' : 'flex flex-wrap gap-1'}>
+          {SHADOWING_PARTS.map(p => (
+            <button
+              key={p.id}
+              type="button"
+              onClick={() => setActivePart(p.id)}
+              className={`${isMobileSheet ? 'px-2.5 py-1.5 rounded-xl text-[11px] shrink-0' : 'px-2 py-1 rounded-lg text-[10px]'} font-black transition-all cursor-pointer whitespace-nowrap ${
+                activePart === p.id
+                  ? `bg-gradient-to-r ${p.badgeColor} text-white shadow-sm`
+                  : `${isMobileSheet ? 'bg-slate-950' : 'bg-slate-900 hover:bg-slate-800'} text-slate-400 border border-slate-800`
+              }`}
+            >
+              {isEn ? p.labelEn : p.labelVi} ({partCounts[p.id] ?? 0})
+            </button>
+          ))}
+        </div>
+
+        <div className="flex items-center gap-1.5">
+          <div className="relative flex-1">
+            <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              placeholder={isEn ? 'Search Speaking samples...' : 'Tìm bài mẫu Speaking...'}
+              className={`w-full pl-8 pr-7 ${isMobileSheet ? 'py-2 bg-slate-950' : 'py-1.5 bg-slate-900'} rounded-xl border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500`}
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery('')}
+                aria-label={isEn ? 'Clear search' : 'Xóa từ khóa'}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white cursor-pointer"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+          <button
+            type="button"
+            onClick={handlePickRandomTask}
+            disabled={filteredTasks.length === 0}
+            title={isEn ? 'Pick a random task' : 'Chọn ngẫu nhiên 1 bài'}
+            aria-label={isEn ? 'Pick a random task' : 'Chọn ngẫu nhiên 1 bài'}
+            className={`${
+              isMobileSheet
+                ? 'px-2.5 py-2 bg-slate-950 border-purple-500/30 text-[11px] font-bold flex items-center space-x-1'
+                : 'p-1.5 bg-slate-900 hover:bg-purple-600/20 border-slate-800 hover:border-purple-500/40'
+            } rounded-xl text-purple-300 border disabled:opacity-40 cursor-pointer shrink-0 transition-colors`}
+          >
+            <Shuffle className="w-3.5 h-3.5" />
+            {isMobileSheet && <span>{isEn ? 'Random' : 'Ngẫu nhiên'}</span>}
+          </button>
+        </div>
+
+        {availableSources.length > 2 && (
+          <div className="flex items-center space-x-1 overflow-x-auto no-scrollbar">
+            {availableSources.map(src => (
+              <button
+                key={src}
+                type="button"
+                onClick={() => setSourceFilter(src)}
+                className={`${isMobileSheet ? 'px-2.5 py-1' : 'px-2 py-0.5'} rounded-lg text-[10px] font-bold whitespace-nowrap cursor-pointer border transition-colors ${
+                  sourceFilter === src
+                    ? 'bg-cyan-600/25 text-cyan-200 border-cyan-500/40'
+                    : `${isMobileSheet ? 'bg-slate-950' : 'bg-slate-900'} text-slate-400 border-slate-800 hover:text-slate-200`
+                }`}
+              >
+                {src === 'all' ? (isEn ? 'All Sources' : 'Mọi nguồn') : src}
+              </button>
+            ))}
+          </div>
+        )}
+
+        <div className="flex items-center justify-between gap-1">
+          <div className="flex items-center space-x-1 overflow-x-auto no-scrollbar">
+            {[
+              { id: 'all', label: isEn ? 'All' : 'Tất cả' },
+              { id: 'foundation', label: '5.5-6.5' },
+              { id: 'band7', label: '7.0-7.5' },
+              { id: 'band8', label: '8.0+' }
+            ].map(b => (
+              <button
+                key={b.id}
+                type="button"
+                onClick={() => setBandFilter(b.id)}
+                className={`${isMobileSheet ? 'px-2.5 py-1.5 text-[11px]' : 'px-2 py-1 text-[10px]'} rounded-lg font-bold whitespace-nowrap cursor-pointer ${
+                  bandFilter === b.id
+                    ? 'bg-purple-600 text-white'
+                    : `${isMobileSheet ? 'bg-slate-950' : 'bg-slate-900'} text-slate-400 border border-slate-800`
+                }`}
+              >
+                {b.label}
+              </button>
+            ))}
+          </div>
+          <button
+            type="button"
+            onClick={toggleHideCompleted}
+            className={`${isMobileSheet ? 'px-2.5 py-1.5 text-[11px]' : 'px-2 py-1 text-[10px]'} rounded-lg font-bold whitespace-nowrap cursor-pointer border ${
+              hideCompleted
+                ? 'bg-emerald-950/80 text-emerald-300 border-emerald-500/40'
+                : `${isMobileSheet ? 'bg-slate-950' : 'bg-slate-900'} text-slate-400 border-slate-800`
+            }`}
+          >
+            {isEn ? 'Hide Done' : 'Ẩn đã xong'}
+          </button>
+        </div>
+      </div>
+
+      <div
+        onScroll={handleListScroll}
+        className={`flex-1 overflow-y-auto ${isMobileSheet ? 'p-3 space-y-2' : 'p-2 space-y-1.5'} overscroll-contain`}
+      >
+        {isLoadingBank && (
+          <div className={`px-3 ${isMobileSheet ? 'py-2.5 bg-slate-950/90 text-xs' : 'py-2 bg-slate-900/90 text-[11px]'} rounded-xl border border-slate-800 text-cyan-300 flex items-center space-x-2`}>
+            <Loader2 className="w-3.5 h-3.5 animate-spin shrink-0" />
+            <span>{isEn ? 'Loading Speaking Bank...' : 'Đang tải ngân hàng đề Speaking...'}</span>
+          </div>
+        )}
+        {!isLoadingBank && visibleTasks.length === 0 && (
+          <div className="p-5 text-center text-xs text-slate-400 space-y-2.5">
+            <p>
+              {isEn
+                ? 'No Speaking samples match your current filter.'
+                : 'Không có bài mẫu Speaking nào khớp bộ lọc hiện tại.'}
+            </p>
+            <button
+              type="button"
+              onClick={() => {
+                setSearchQuery('');
+                setBandFilter('all');
+                setSourceFilter('all');
+                setActivePart('all');
+                if (hideCompleted) toggleHideCompleted();
+              }}
+              className="px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold cursor-pointer"
+            >
+              {isEn ? 'Reset Filters & Show All' : 'Đặt lại bộ lọc & Hiện tất cả'}
+            </button>
+          </div>
+        )}
+        {visibleTasks.map(item => {
+          const isSelected = currentTask?.id === item.id;
+          const best = shadowStats.bestScores?.[item.id];
+          const segCount = segmentCountByTaskId[item.id] ?? 0;
+          return (
+            <div
+              key={item.id}
+              onClick={() => {
+                setSelectedTaskId(item.id);
+                setIsMobileListOpen(false);
+              }}
+              className={`${isMobileSheet ? 'p-3 min-h-[54px] active:scale-98' : 'p-2.5'} rounded-2xl border text-left transition-all cursor-pointer flex items-start justify-between gap-2 ${
+                isSelected
+                  ? 'bg-purple-950/65 border-purple-500/60 shadow-md'
+                  : `${isMobileSheet ? 'bg-slate-950/70' : 'bg-slate-900/70 hover:bg-slate-900'} border-slate-800/80`
+              }`}
+            >
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center space-x-1.5 mb-0.5">
+                  <span className="text-[10px] font-black px-1.5 py-0.2 rounded bg-slate-800 text-purple-300">
+                    {item.part?.toUpperCase()} • Band {item.bandLevel}
+                  </span>
+                  <span className="text-[10px] text-slate-400">
+                    {segCount} {isEn ? 'parts' : 'đoạn'}
+                  </span>
+                  {item.sourceTag && (
+                    <span className="text-[9px] font-black px-1.5 py-0.2 rounded bg-cyan-500/15 text-cyan-300">
+                      {item.sourceTag}
+                    </span>
+                  )}
+                </div>
+                <div className="text-xs font-extrabold text-white truncate">
+                  {isEn ? item.titleEn : item.titleVi}
+                </div>
+                {!isMobileSheet && (
+                  <div className="text-[10px] text-slate-400 truncate mt-0.5">
+                    {isEn ? item.topicEn : item.topicVi}
+                  </div>
+                )}
+              </div>
+
+              <div className="flex flex-col items-end space-y-1 shrink-0">
+                {best ? (
+                  <span className="px-1.5 py-0.5 rounded-lg text-[10px] font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                    {best.accuracy}%
+                  </span>
+                ) : (
+                  <span className="px-1.5 py-0.5 rounded-lg text-[10px] font-bold bg-slate-800 text-amber-400">
+                    +{item.xpReward} XP
+                  </span>
+                )}
+                {item.isCustom && (
+                  <button
+                    type="button"
+                    onClick={e => handleDeleteCustomTask(item.id, e)}
+                    className="p-1 rounded hover:bg-rose-500/20 text-slate-500 hover:text-rose-400"
+                  >
+                    <Trash2 className="w-3 h-3" />
+                  </button>
+                )}
+              </div>
+            </div>
+          );
+        })}
+        {visibleTasks.length < filteredTasks.length && (
+          <button
+            type="button"
+            onClick={() => setVisibleTaskLimit(prev => prev + 40)}
+            className={`w-full ${isMobileSheet ? 'py-2.5 rounded-2xl bg-slate-950' : 'py-2 rounded-xl bg-slate-900'} hover:bg-slate-800 border border-slate-800 text-xs font-bold text-purple-300 cursor-pointer transition-colors`}
+          >
+            {isEn
+              ? `Show more (${filteredTasks.length - visibleTasks.length} remaining)`
+              : `Xem thêm (${filteredTasks.length - visibleTasks.length} bài còn lại)`}
+          </button>
+        )}
+      </div>
+    </>
+  );
 
   return (
     <>
@@ -1324,215 +1501,7 @@ Separate paragraphs with a blank line. If ${customPart} is part1 or part3, prefi
         {/* DESKTOP LEFT SIDEBAR (Collapsible for full-width shadowing focus) */}
         {isDesktopSidebarOpen && (
         <aside className="hidden lg:flex w-72 xl:w-80 bg-slate-950/60 border-r border-slate-800 flex-col shrink-0">
-          <div className="p-2.5 border-b border-slate-800/80 space-y-2">
-            <div className="flex flex-wrap gap-1">
-              {SHADOWING_PARTS.map(p => (
-                <button
-                  key={p.id}
-                  type="button"
-                  onClick={() => setActivePart(p.id)}
-                  className={`px-2 py-1 rounded-lg text-[10px] font-black transition-all cursor-pointer whitespace-nowrap ${
-                    activePart === p.id
-                      ? `bg-gradient-to-r ${p.badgeColor} text-white shadow-sm`
-                      : 'bg-slate-900 hover:bg-slate-800 text-slate-400 border border-slate-800'
-                  }`}
-                >
-                  {isEn ? p.labelEn : p.labelVi} ({partCounts[p.id] ?? 0})
-                </button>
-              ))}
-            </div>
-            <div className="flex items-center gap-1.5">
-              <div className="relative flex-1">
-                <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={e => setSearchQuery(e.target.value)}
-                  placeholder={isEn ? 'Search Speaking samples...' : 'Tìm bài mẫu Speaking...'}
-                  className="w-full pl-8 pr-7 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500"
-                />
-                {searchQuery && (
-                  <button
-                    type="button"
-                    onClick={() => setSearchQuery('')}
-                    aria-label={isEn ? 'Clear search' : 'Xóa từ khóa'}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white cursor-pointer"
-                  >
-                    <X className="w-3.5 h-3.5" />
-                  </button>
-                )}
-              </div>
-              <button
-                type="button"
-                onClick={handlePickRandomTask}
-                disabled={filteredTasks.length === 0}
-                title={isEn ? 'Pick a random task' : 'Chọn ngẫu nhiên 1 bài'}
-                aria-label={isEn ? 'Pick a random task' : 'Chọn ngẫu nhiên 1 bài'}
-                className="p-1.5 rounded-xl bg-slate-900 hover:bg-purple-600/20 text-purple-300 border border-slate-800 hover:border-purple-500/40 disabled:opacity-40 cursor-pointer shrink-0 transition-colors"
-              >
-                <Shuffle className="w-3.5 h-3.5" />
-              </button>
-            </div>
-
-            {availableSources.length > 2 && (
-              <div className="flex items-center space-x-1 overflow-x-auto no-scrollbar">
-                {availableSources.map(src => (
-                  <button
-                    key={src}
-                    type="button"
-                    onClick={() => setSourceFilter(src)}
-                    className={`px-2 py-0.5 rounded-lg text-[10px] font-bold whitespace-nowrap cursor-pointer border transition-colors ${
-                      sourceFilter === src
-                        ? 'bg-cyan-600/25 text-cyan-200 border-cyan-500/40'
-                        : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-slate-200'
-                    }`}
-                  >
-                    {src === 'all' ? (isEn ? 'All Sources' : 'Mọi nguồn') : src}
-                  </button>
-                ))}
-              </div>
-            )}
-
-            <div className="flex items-center justify-between gap-1">
-              <div className="flex items-center space-x-1 overflow-x-auto no-scrollbar">
-                {[
-                  { id: 'all', label: isEn ? 'All' : 'Tất cả' },
-                  { id: 'foundation', label: '5.5-6.5' },
-                  { id: 'band7', label: '7.0-7.5' },
-                  { id: 'band8', label: '8.0+' }
-                ].map(b => (
-                  <button
-                    key={b.id}
-                    type="button"
-                    onClick={() => setBandFilter(b.id)}
-                    className={`px-2 py-1 rounded-lg text-[10px] font-bold whitespace-nowrap cursor-pointer ${
-                      bandFilter === b.id ? 'bg-purple-600 text-white' : 'bg-slate-900 text-slate-400 border border-slate-800'
-                    }`}
-                  >
-                    {b.label}
-                  </button>
-                ))}
-              </div>
-              <button
-                type="button"
-                onClick={toggleHideCompleted}
-                className={`px-2 py-1 rounded-lg text-[10px] font-bold whitespace-nowrap cursor-pointer border ${
-                  hideCompleted
-                    ? 'bg-emerald-950/80 text-emerald-300 border-emerald-500/40'
-                    : 'bg-slate-900 text-slate-400 border-slate-800'
-                }`}
-              >
-                {isEn ? 'Hide Done' : 'Ẩn đã xong'}
-              </button>
-            </div>
-          </div>
-
-          <div
-            onScroll={handleListScroll}
-            className="flex-1 overflow-y-auto p-2 space-y-1.5 overscroll-contain"
-          >
-            {isLoadingBank && (
-              <div className="px-3 py-2 rounded-xl bg-slate-900/90 border border-slate-800 text-[11px] text-cyan-300 flex items-center space-x-2">
-                <Loader2 className="w-3.5 h-3.5 animate-spin shrink-0" />
-                <span>{isEn ? 'Loading Speaking Bank...' : 'Đang tải ngân hàng đề Speaking...'}</span>
-              </div>
-            )}
-            {!isLoadingBank && visibleTasks.length === 0 && (
-              <div className="p-5 text-center text-xs text-slate-400 space-y-2.5">
-                <p>
-                  {isEn
-                    ? 'No Speaking samples match your current filter.'
-                    : 'Không có bài mẫu Speaking nào khớp bộ lọc hiện tại.'}
-                </p>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSearchQuery('');
-                    setBandFilter('all');
-                    setSourceFilter('all');
-                    setActivePart('all');
-                    if (hideCompleted) toggleHideCompleted();
-                  }}
-                  className="px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold cursor-pointer"
-                >
-                  {isEn ? 'Reset Filters & Show All' : 'Đặt lại bộ lọc & Hiện tất cả'}
-                </button>
-              </div>
-            )}
-            {visibleTasks.map(item => {
-              const isSelected = currentTask?.id === item.id;
-              const best = shadowStats.bestScores?.[item.id];
-              const segCount = segmentCountByTaskId[item.id] ?? 0;
-              return (
-                <div
-                  key={item.id}
-                  onClick={() => {
-                    setSelectedTaskId(item.id);
-                    setIsMobileListOpen(false);
-                  }}
-                  className={`p-2.5 rounded-2xl border text-left transition-all cursor-pointer flex items-start justify-between gap-2 ${
-                    isSelected
-                      ? 'bg-purple-950/60 border-purple-500/60 shadow-md'
-                      : 'bg-slate-900/70 hover:bg-slate-900 border-slate-800/80'
-                  }`}
-                >
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center space-x-1.5 mb-0.5">
-                      <span className="text-[10px] font-black px-1.5 py-0.2 rounded bg-slate-800 text-purple-300">
-                        {item.part?.toUpperCase()} • Band {item.bandLevel}
-                      </span>
-                      <span className="text-[10px] text-slate-400">
-                        {segCount} {isEn ? 'parts' : 'đoạn'}
-                      </span>
-                      {item.sourceTag && (
-                        <span className="text-[9px] font-black px-1.5 py-0.2 rounded bg-cyan-500/15 text-cyan-300">
-                          {item.sourceTag}
-                        </span>
-                      )}
-                    </div>
-                    <div className="text-xs font-extrabold text-white truncate">
-                      {isEn ? item.titleEn : item.titleVi}
-                    </div>
-                    <div className="text-[10px] text-slate-400 truncate mt-0.5">
-                      {isEn ? item.topicEn : item.topicVi}
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col items-end space-y-1 shrink-0">
-                    {best ? (
-                      <span className="px-1.5 py-0.5 rounded-lg text-[10px] font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                        {best.accuracy}%
-                      </span>
-                    ) : (
-                      <span className="px-1.5 py-0.5 rounded-lg text-[10px] font-bold bg-slate-800 text-amber-400">
-                        +{item.xpReward} XP
-                      </span>
-                    )}
-                    {item.isCustom && (
-                      <button
-                        type="button"
-                        onClick={e => handleDeleteCustomTask(item.id, e)}
-                        className="p-1 rounded hover:bg-rose-500/20 text-slate-500 hover:text-rose-400"
-                      >
-                        <Trash2 className="w-3 h-3" />
-                      </button>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-            {visibleTasks.length < filteredTasks.length && (
-              <button
-                type="button"
-                onClick={() => setVisibleTaskLimit(prev => prev + 40)}
-                className="w-full py-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs font-bold text-purple-300 cursor-pointer transition-colors"
-              >
-                {isEn
-                  ? `Show more (${filteredTasks.length - visibleTasks.length} remaining)`
-                  : `Xem thêm (${filteredTasks.length - visibleTasks.length} bài còn lại)`}
-              </button>
-            )}
-          </div>
+          {renderTaskListContent(false)}
         </aside>
         )}
 
@@ -1705,13 +1674,10 @@ Separate paragraphs with a blank line. If ${customPart} is part1 or part3, prefi
                     isMachineSpeakingNow={isActive && phase === 'machine_reading' && speechEngine.isSpeaking}
                     showIntonation={showIntonation}
                     keywordsOnly={keywordsOnly}
-                    revealThisSeg={revealCurrentSeg}
-                    onToggleRevealThisSeg={() => setRevealCurrentSeg(prev => !prev)}
-                    onPlayModel={(s, rate) => {
-                      speechEngine.stopListening();
-                      speechEngine.speak(s.text, { examinerId: selectedExaminerId, rate, silentChime: true });
-                    }}
-                    onSkipReadingToSpeak={handleSkipReadingToSpeak}
+                    revealThisSeg={isActive ? revealCurrentSeg : false}
+                    onToggleRevealThisSeg={isActive ? handleToggleRevealCurrentSeg : NOOP}
+                    onPlayModel={handlePlaySegModel}
+                    onSkipReadingToSpeak={isActive ? handleSkipReadingToSpeak : NOOP}
                     isListening={isActive && speechEngine.isListening}
                     isAutoMode={isAutoMode}
                     liveSpokenText={isActive ? liveSpokenText : ''}
@@ -1726,21 +1692,21 @@ Separate paragraphs with a blank line. If ${customPart} is part1 or part3, prefi
                     currentAudioClip={clip}
                     isPlayingUserClip={playingUserClipSegId === seg.id}
                     isComparingAudio={comparingSegId === seg.id}
-                    onToggleRecording={handleToggleRecording}
+                    onToggleRecording={isActive ? handleToggleRecording : NOOP}
                     onReplayUserClip={handleReplayUserClip}
                     onCompareAudio={handleCompareSegAudio}
-                    onListenAndRetry={handleListenAndRetry}
-                    onSkipSegment={handleSkipSegment}
-                    onAdvanceAfterPass={advanceAfterPass}
+                    onListenAndRetry={isActive ? handleListenAndRetry : NOOP}
+                    onSkipSegment={isActive ? handleSkipSegment : NOOP}
+                    onAdvanceAfterPass={isActive ? advanceAfterPass : NOOP}
                     showManualFallback={isActive && showManualFallback}
-                    onToggleManualFallback={() => setShowManualFallback(prev => !prev)}
-                    manualSpokenInput={manualSpokenInput}
-                    onChangeManualSpokenInput={setManualSpokenInput}
-                    onRunManualEvaluation={(txt) => handleRunEvaluation(txt)}
+                    onToggleManualFallback={isActive ? handleToggleManualFallback : NOOP}
+                    manualSpokenInput={isActive ? manualSpokenInput : ''}
+                    onChangeManualSpokenInput={isActive ? setManualSpokenInput : NOOP}
+                    onRunManualEvaluation={isActive ? handleRunManualEvaluation : NOOP}
                     apiKey={apiKey}
-                    isDeepAiGrading={isDeepAiGrading}
-                    deepAiError={deepAiError}
-                    onDeepAiAudioCheck={handleDeepAiAudioCheck}
+                    isDeepAiGrading={isActive ? isDeepAiGrading : false}
+                    deepAiError={isActive ? deepAiError : ''}
+                    onDeepAiAudioCheck={isActive ? handleDeepAiAudioCheck : NOOP}
                     isEn={isEn}
                   />
                 </div>
@@ -1968,314 +1934,20 @@ Separate paragraphs with a blank line. If ${customPart} is part1 or part3, prefi
               </button>
             </div>
 
-            <div className="p-3 border-b border-slate-800/80 space-y-2 shrink-0">
-              <div className="flex items-center space-x-1.5 overflow-x-auto no-scrollbar pb-0.5">
-                {SHADOWING_PARTS.map(p => (
-                  <button
-                    key={p.id}
-                    type="button"
-                    onClick={() => setActivePart(p.id)}
-                    className={`px-2.5 py-1.5 rounded-xl text-[11px] font-black transition-all cursor-pointer whitespace-nowrap shrink-0 ${
-                      activePart === p.id
-                        ? `bg-gradient-to-r ${p.badgeColor} text-white shadow-sm`
-                        : 'bg-slate-950 text-slate-400 border border-slate-800'
-                    }`}
-                  >
-                    {isEn ? p.labelEn : p.labelVi} ({partCounts[p.id] ?? 0})
-                  </button>
-                ))}
-              </div>
-              <div className="flex items-center gap-1.5">
-                <div className="relative flex-1">
-                  <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={e => setSearchQuery(e.target.value)}
-                    placeholder={isEn ? 'Search Speaking samples...' : 'Tìm bài mẫu Speaking...'}
-                    className="w-full pl-8 pr-8 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500"
-                  />
-                  {searchQuery && (
-                    <button
-                      type="button"
-                      onClick={() => setSearchQuery('')}
-                      aria-label={isEn ? 'Clear search' : 'Xóa từ khóa'}
-                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white cursor-pointer"
-                    >
-                      <X className="w-3.5 h-3.5" />
-                    </button>
-                  )}
-                </div>
-                <button
-                  type="button"
-                  onClick={handlePickRandomTask}
-                  disabled={filteredTasks.length === 0}
-                  title={isEn ? 'Pick a random task' : 'Chọn ngẫu nhiên 1 bài'}
-                  className="px-2.5 py-2 rounded-xl bg-slate-950 text-purple-300 border border-purple-500/30 text-[11px] font-bold flex items-center space-x-1 shrink-0 disabled:opacity-40 cursor-pointer"
-                >
-                  <Shuffle className="w-3.5 h-3.5" />
-                  <span>{isEn ? 'Random' : 'Ngẫu nhiên'}</span>
-                </button>
-              </div>
-              {availableSources.length > 2 && (
-                <div className="flex items-center space-x-1 overflow-x-auto no-scrollbar">
-                  {availableSources.map(src => (
-                    <button
-                      key={src}
-                      type="button"
-                      onClick={() => setSourceFilter(src)}
-                      className={`px-2.5 py-1 rounded-lg text-[10px] font-bold whitespace-nowrap cursor-pointer border ${
-                        sourceFilter === src
-                          ? 'bg-cyan-600/25 text-cyan-200 border-cyan-500/40'
-                          : 'bg-slate-950 text-slate-400 border-slate-800'
-                      }`}
-                    >
-                      {src === 'all' ? (isEn ? 'All Sources' : 'Mọi nguồn') : src}
-                    </button>
-                  ))}
-                </div>
-              )}
-              <div className="flex items-center justify-between gap-1">
-                <div className="flex items-center space-x-1 overflow-x-auto no-scrollbar">
-                  {[
-                    { id: 'all', label: isEn ? 'All' : 'Tất cả' },
-                    { id: 'foundation', label: '5.5-6.5' },
-                    { id: 'band7', label: '7.0-7.5' },
-                    { id: 'band8', label: '8.0+' }
-                  ].map(b => (
-                    <button
-                      key={b.id}
-                      type="button"
-                      onClick={() => setBandFilter(b.id)}
-                      className={`px-2.5 py-1.5 rounded-lg text-[11px] font-bold whitespace-nowrap cursor-pointer ${
-                        bandFilter === b.id ? 'bg-purple-600 text-white' : 'bg-slate-950 text-slate-400 border border-slate-800'
-                      }`}
-                    >
-                      {b.label}
-                    </button>
-                  ))}
-                </div>
-                <button
-                  type="button"
-                  onClick={toggleHideCompleted}
-                  className={`px-2.5 py-1.5 rounded-lg text-[11px] font-bold whitespace-nowrap cursor-pointer border ${
-                    hideCompleted
-                      ? 'bg-emerald-950/80 text-emerald-300 border-emerald-500/40'
-                      : 'bg-slate-950 text-slate-400 border-slate-800'
-                  }`}
-                >
-                  {isEn ? 'Hide Done' : 'Ẩn đã xong'}
-                </button>
-              </div>
-            </div>
-
-            <div
-              onScroll={handleListScroll}
-              className="flex-1 overflow-y-auto p-3 space-y-2 overscroll-contain"
-            >
-              {isLoadingBank && (
-                <div className="px-3 py-2.5 rounded-xl bg-slate-950/90 border border-slate-800 text-xs text-cyan-300 flex items-center space-x-2">
-                  <Loader2 className="w-4 h-4 animate-spin shrink-0" />
-                  <span>{isEn ? 'Loading Speaking Bank...' : 'Đang tải ngân hàng đề Speaking...'}</span>
-                </div>
-              )}
-              {!isLoadingBank && visibleTasks.length === 0 && (
-                <div className="p-6 text-center text-xs text-slate-400 space-y-2.5">
-                  <p>
-                    {isEn
-                      ? 'No Speaking samples match your current filter.'
-                      : 'Không có bài mẫu Speaking nào khớp bộ lọc hiện tại.'}
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSearchQuery('');
-                      setBandFilter('all');
-                      setSourceFilter('all');
-                      setActivePart('all');
-                      if (hideCompleted) toggleHideCompleted();
-                    }}
-                    className="px-3.5 py-2 rounded-xl bg-purple-600 text-white font-bold cursor-pointer"
-                  >
-                    {isEn ? 'Reset Filters & Show All' : 'Đặt lại bộ lọc & Hiện tất cả'}
-                  </button>
-                </div>
-              )}
-              {visibleTasks.map(item => {
-                const segCount = segmentCountByTaskId[item.id] ?? 0;
-                return (
-                  <div
-                    key={item.id}
-                    onClick={() => {
-                      setSelectedTaskId(item.id);
-                      setIsMobileListOpen(false);
-                    }}
-                    className={`p-3 rounded-2xl border flex items-center justify-between gap-2 min-h-[54px] active:scale-98 transition-all cursor-pointer ${
-                      currentTask?.id === item.id
-                        ? 'bg-purple-950/70 border-purple-500/60'
-                        : 'bg-slate-950/70 border-slate-800'
-                    }`}
-                  >
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center space-x-1.5 text-[10px] font-black text-purple-300">
-                        <span>{item.part?.toUpperCase()} • Band {item.bandLevel} • {segCount} {isEn ? 'parts' : 'đoạn'}</span>
-                        {item.sourceTag && (
-                          <span className="px-1.5 py-0.2 rounded bg-cyan-500/15 text-cyan-300 text-[9px]">
-                            {item.sourceTag}
-                          </span>
-                        )}
-                      </div>
-                      <div className="text-xs font-extrabold text-white truncate">
-                        {isEn ? item.titleEn : item.titleVi}
-                      </div>
-                    </div>
-                    {shadowStats.bestScores?.[item.id] ? (
-                      <span className="px-2 py-0.5 rounded-lg text-[10px] font-black bg-emerald-500/20 text-emerald-300">
-                        {shadowStats.bestScores[item.id].accuracy}%
-                      </span>
-                    ) : (
-                      <span className="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-slate-800 text-amber-400">
-                        +{item.xpReward} XP
-                      </span>
-                    )}
-                  </div>
-                );
-              })}
-              {visibleTasks.length < filteredTasks.length && (
-                <button
-                  type="button"
-                  onClick={() => setVisibleTaskLimit(prev => prev + 40)}
-                  className="w-full py-2.5 rounded-2xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-xs font-bold text-purple-300 cursor-pointer"
-                >
-                  {isEn
-                    ? `Show more (${filteredTasks.length - visibleTasks.length} remaining)`
-                    : `Xem thêm (${filteredTasks.length - visibleTasks.length} bài còn lại)`}
-                </button>
-              )}
-            </div>
+            {renderTaskListContent(true)}
           </div>
         </div>
       )}
 
       {/* CUSTOM SHADOWING SAMPLE CREATOR MODAL */}
-      {isCreatorOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
-          <form
-            onSubmit={handleCreateCustomTask}
-            className="bg-slate-900 border-t sm:border border-slate-700 rounded-t-3xl sm:rounded-3xl w-full max-w-xl max-h-[92dvh] overflow-y-auto p-5 sm:p-6 pb-[max(1.25rem,env(safe-area-inset-bottom))] space-y-4 text-slate-100 shadow-2xl"
-          >
-            <div className="flex items-center justify-between">
-              <h3 className="text-base font-black text-white">
-                {isEn ? 'Add Speaking Sample for Shadowing' : 'Thêm Bài Mẫu Speaking Luyện Shadowing'}
-              </h3>
-              <button
-                type="button"
-                onClick={() => setIsCreatorOpen(false)}
-                className="p-1.5 rounded-xl bg-slate-800 text-slate-400 hover:text-white cursor-pointer"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            {apiKey && (
-              <div className="p-3 rounded-2xl bg-indigo-950/40 border border-indigo-500/30 space-y-2">
-                <div className="text-xs font-bold text-indigo-300 flex items-center space-x-1">
-                  <Sparkles className="w-3.5 h-3.5" />
-                  <span>{isEn ? 'Optional: Generate Band Sample with Gemini AI' : 'Tùy chọn: Tạo bài mẫu nhanh bằng Gemini AI'}</span>
-                </div>
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={aiTopicPrompt}
-                    onChange={e => setAiTopicPrompt(e.target.value)}
-                    placeholder={isEn ? 'e.g. Describe a helpful neighbour' : 'VD: Describe a helpful neighbour'}
-                    className="flex-1 px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white"
-                  />
-                  <button
-                    type="button"
-                    onClick={handleGenerateAiSample}
-                    disabled={isGeneratingAiSample}
-                    className="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold cursor-pointer disabled:opacity-50"
-                  >
-                    {isGeneratingAiSample ? (isEn ? 'Writing...' : 'Đang viết...') : (isEn ? 'AI Write' : 'AI Viết')}
-                  </button>
-                </div>
-              </div>
-            )}
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-              <input
-                type="text"
-                value={customTitle}
-                onChange={e => setCustomTitle(e.target.value)}
-                placeholder={isEn ? 'Sample title...' : 'Tiêu đề bài mẫu...'}
-                className="sm:col-span-2 px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white"
-                required
-              />
-              <select
-                value={customPart}
-                onChange={e => setCustomPart(e.target.value)}
-                className="px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white"
-              >
-                <option value="part1">Part 1</option>
-                <option value="part2">Part 2 Cue Card</option>
-                <option value="part3">Part 3 Discussion</option>
-              </select>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-              <input
-                type="text"
-                value={customPrompt}
-                onChange={e => setCustomPrompt(e.target.value)}
-                placeholder={isEn ? 'Speaking prompt / cue card question...' : 'Đề bài / câu hỏi gợi ý...'}
-                className="sm:col-span-2 px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white"
-              />
-              <select
-                value={customBand}
-                onChange={e => setCustomBand(e.target.value)}
-                className="px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white"
-              >
-                <option value="6.5">Band 6.5</option>
-                <option value="7.0">Band 7.0</option>
-                <option value="7.5">Band 7.5</option>
-                <option value="8.0">Band 8.0</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-[11px] font-bold text-slate-400 mb-1">
-                {isEn
-                  ? 'Sample Text (separate segments/paragraphs with a blank line; optional "Examiner:" prefix for questions)'
-                  : 'Nội dung bài mẫu (cách nhau bởi 1 dòng trống để chia câu/đoạn; có thể thêm "Examiner:" cho câu hỏi)'}
-              </label>
-              <textarea
-                rows={6}
-                value={customRawText}
-                onChange={e => setCustomRawText(e.target.value)}
-                className="w-full p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white font-mono"
-                required
-              />
-            </div>
-
-            <div className="flex justify-end gap-2">
-              <button
-                type="button"
-                onClick={() => setIsCreatorOpen(false)}
-                className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs font-bold cursor-pointer"
-              >
-                {isEn ? 'Cancel' : 'Hủy'}
-              </button>
-              <button
-                type="submit"
-                className="px-5 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-xs font-black cursor-pointer"
-              >
-                {isEn ? 'Save & Shadow' : 'Lưu & Luyện Tập'}
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
+      <ShadowingCustomCreatorModal
+        isOpen={isCreatorOpen}
+        onClose={() => setIsCreatorOpen(false)}
+        apiKey={apiKey}
+        model={model}
+        onCreatedTask={handleCreatedCustomTask}
+        isEn={isEn}
+      />
     </>
   );
 }
