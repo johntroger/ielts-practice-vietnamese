@@ -122,6 +122,7 @@ export default function Navbar({
   const SHOW_AI_GENERATOR_BUTTONS = false;
 
   const [isSkillMenuOpen, setIsSkillMenuOpen] = useState(false);
+  const [isShadowingMenuOpen, setIsShadowingMenuOpen] = useState(false);
   const [isPracticeMenuOpen, setIsPracticeMenuOpen] = useState(false);
   const [isToolsMenuOpen, setIsToolsMenuOpen] = useState(false);
   const [isProgressMenuOpen, setIsProgressMenuOpen] = useState(false);
@@ -149,6 +150,7 @@ export default function Navbar({
         setIsSkillMenuOpen(false);
       }
       if (desktopMenuRef.current && !desktopMenuRef.current.contains(e.target)) {
+        setIsShadowingMenuOpen(false);
         setIsPracticeMenuOpen(false);
         setIsToolsMenuOpen(false);
         setIsProgressMenuOpen(false);
@@ -161,6 +163,7 @@ export default function Navbar({
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') {
         setIsSkillMenuOpen(false);
+        setIsShadowingMenuOpen(false);
         setIsPracticeMenuOpen(false);
         setIsToolsMenuOpen(false);
         setIsProgressMenuOpen(false);
@@ -350,6 +353,7 @@ export default function Navbar({
                 type="button"
                 onClick={() => {
                   setIsSkillMenuOpen(prev => !prev);
+                  setIsShadowingMenuOpen(false);
                   setIsPracticeMenuOpen(false);
                   setIsToolsMenuOpen(false);
                   setIsProgressMenuOpen(false);
@@ -450,16 +454,6 @@ export default function Navbar({
           {/* 2. RIGHT ZONE: Actions & Mobile Hamburger */}
           <div className="flex items-center gap-1 sm:gap-1.5 xl:gap-1.5 2xl:gap-2 shrink-0 pr-0.5 sm:pr-1">
             
-            {/* Desktop Only Hero CTA: Thi Thử IELTS */}
-            <button
-              onClick={doOpenMockTest}
-              className="hidden xl:flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white text-xs font-black shadow-xs active:scale-95 transition-all cursor-pointer shrink-0"
-              title={isEn ? "Enter High-Pressure IELTS Mock Test" : "Vào Phòng Thi Thử IELTS Áp Lực Cao"}
-            >
-              <ShieldAlert className="w-3.5 h-3.5 text-amber-300 animate-pulse" />
-              <span>{isEn ? 'Mock Test' : 'Thi Thử'}</span>
-            </button>
-
             {/* Sinh Đề Bằng AI (Hiển thị khi activeSkill === 'writing' trên màn hình siêu rộng >= 1720px - Tạm thời ẩn theo yêu cầu) */}
             {SHOW_AI_GENERATOR_BUTTONS && activeSkill === 'writing' && (
               <button
@@ -474,11 +468,83 @@ export default function Navbar({
 
             {/* Desktop Menus Group (1-Click Fast Switching & Zero Duplicates) */}
             <div ref={desktopMenuRef} className="flex items-center gap-1 sm:gap-1.5 xl:gap-2">
+              {/* 0. Shadowing Dropdown (Pronunciation & Conversation) — Replaces Mock Test Hero CTA */}
+              <div className="relative hidden xl:block">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsShadowingMenuOpen(prev => !prev);
+                    setIsSkillMenuOpen(false);
+                    setIsPracticeMenuOpen(false);
+                    setIsToolsMenuOpen(false);
+                    setIsProgressMenuOpen(false);
+                  }}
+                  className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-rose-600 hover:from-indigo-700 hover:via-purple-700 hover:to-rose-700 text-white text-xs font-black shadow-xs active:scale-95 transition-all cursor-pointer shrink-0"
+                  title={isEn ? "Shadowing Hub: Pronunciation & Conversation Studios" : "Phòng Luyện Shadowing: Phát Âm & Hội Thoại"}
+                >
+                  <Headphones className="w-3.5 h-3.5 text-amber-200 shrink-0" />
+                  <span>Shadowing</span>
+                  <ChevronDown className={`w-3 h-3 text-white/85 transition-transform duration-200 ${isShadowingMenuOpen ? 'rotate-180' : ''}`} />
+                </button>
+
+                {isShadowingMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-xl border border-slate-200 p-2 z-50 animate-in fade-in zoom-in-95 duration-150 space-y-1.5">
+                    <div className="px-2.5 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                      {isEn ? 'Shadowing & Speaking Studios' : 'Phòng Luyện Shadowing & Nói'}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        doOpenPronunciation();
+                        setIsShadowingMenuOpen(false);
+                      }}
+                      className="w-full flex items-center space-x-2.5 p-2.5 rounded-xl bg-indigo-50/70 hover:bg-indigo-100/90 text-left text-xs font-bold text-indigo-950 transition-colors cursor-pointer border border-indigo-200/70"
+                    >
+                      <div className="p-1.5 rounded-lg bg-gradient-to-tr from-indigo-600 to-purple-600 text-white shadow-2xs shrink-0">
+                        <Mic className="w-4 h-4" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="font-extrabold truncate">{isEn ? 'Pronunciation' : 'Pronunciation (Phát Âm)'}</span>
+                          <span className="text-[9px] font-black text-indigo-600 bg-white border border-indigo-200 px-1.5 py-0.2 rounded-full shrink-0">/pronunciation</span>
+                        </div>
+                        <div className="text-[10px] text-indigo-700/80 font-normal truncate">
+                          {isEn ? 'Word stress, IPA, linking & AI audio check' : 'Trọng âm, IPA, nối âm & chấm sóng âm AI'}
+                        </div>
+                      </div>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        doOpenConversation();
+                        setIsShadowingMenuOpen(false);
+                      }}
+                      className="w-full flex items-center space-x-2.5 p-2.5 rounded-xl bg-cyan-50/70 hover:bg-cyan-100/90 text-left text-xs font-bold text-cyan-950 transition-colors cursor-pointer border border-cyan-200/70"
+                    >
+                      <div className="p-1.5 rounded-lg bg-gradient-to-tr from-cyan-600 to-indigo-600 text-white shadow-2xs shrink-0">
+                        <MessageSquare className="w-4 h-4" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="font-extrabold truncate">{isEn ? 'Conversation' : 'Conversation (Hội Thoại)'}</span>
+                          <span className="text-[9px] font-black text-cyan-700 bg-white border border-cyan-200 px-1.5 py-0.2 rounded-full shrink-0">/conversation</span>
+                        </div>
+                        <div className="text-[10px] text-cyan-800/80 font-normal truncate">
+                          {isEn ? 'Roleplay dialogues & Speech Shadowing' : 'Hội thoại đối đáp & Speech Shadowing'}
+                        </div>
+                      </div>
+                    </button>
+                  </div>
+                )}
+              </div>
+
               {/* 1. Luyện Tập Dropdown (Desktop >= 1280px) */}
               <div className="relative hidden xl:block">
                 <button
                   onClick={() => {
                     setIsPracticeMenuOpen(prev => !prev);
+                    setIsShadowingMenuOpen(false);
                     setIsSkillMenuOpen(false);
                     setIsToolsMenuOpen(false);
                     setIsProgressMenuOpen(false);
@@ -653,6 +719,7 @@ export default function Navbar({
                 <button
                   onClick={() => {
                     setIsToolsMenuOpen(prev => !prev);
+                    setIsShadowingMenuOpen(false);
                     setIsSkillMenuOpen(false);
                     setIsPracticeMenuOpen(false);
                     setIsProgressMenuOpen(false);
@@ -773,6 +840,7 @@ export default function Navbar({
                 <button
                   onClick={() => {
                     setIsProgressMenuOpen(prev => !prev);
+                    setIsShadowingMenuOpen(false);
                     setIsSkillMenuOpen(false);
                     setIsPracticeMenuOpen(false);
                     setIsToolsMenuOpen(false);
