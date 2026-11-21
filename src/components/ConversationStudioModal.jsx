@@ -210,8 +210,8 @@ export default function ConversationStudioModal({
 
   const levelProgress = useMemo(() => calculateLevelProgress(userTotalXp), [userTotalXp]);
 
-  // 4. Speech & Studio Audio Engines
-  const speechEngine = useSpeechEngine({ examinerId: selectedExaminerId });
+  // 4. Speech & Studio Audio Engines (rawPhoneticMode preserves true spoken errors without ESL auto-correct)
+  const speechEngine = useSpeechEngine({ examinerId: selectedExaminerId, rawPhoneticMode: true });
   const r2AudioRef = useRef(null);
   const r2SegmentTimerRef = useRef(null);
   const userAudioRef = useRef(null);

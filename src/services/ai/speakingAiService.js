@@ -918,26 +918,33 @@ export async function evaluatePronunciationWithGeminiAudio({
   }
 
   const isEnglish = language === 'en';
-  const prompt = `You are a strict Cambridge IELTS Phonetics & Pronunciation Examiner.
-Listen carefully to the candidate's raw audio recording attempting to pronounce this target:
+  const prompt = `You are a strict Cambridge IELTS Acoustic Phonetician & Senior Pronunciation Examiner.
+Listen directly to the candidate's raw audio waveform attempting to pronounce this target:
 Target (${itemType}): "${targetText}"
-${ipa ? `Reference IPA: ${ipa}` : ''}
+${ipa ? `Expected IPA: ${ipa}` : ''}
 
-Assess the ACTUAL acoustic pronunciation in the audio (word stress, vowel quality, consonant clusters, final/ending consonants /s/ /z/ /t/ /d/ /k/, linking, and intonation). Do NOT be overly generous if stress is misplaced or ending consonants are dropped.
+Assess the ACTUAL acoustic pronunciation in the audio:
+1. Primary & secondary word stress placement (flag misplaced stress strictly).
+2. Vowel quality & length (minimal pairs like /ɪ/ vs /iː/, /æ/ vs /e/, diphthongs).
+3. Consonant clusters, /θ/ /ð/ /ʃ/ /tʃ/ /ʒ/, and ending consonants (/s/ /z/ /t/ /d/ /k/ /l/).
+4. Connected speech (linking, weak forms) and natural rising/falling intonation contour.
+Do NOT be overly generous if stress is misplaced or ending consonants are dropped.
 
 Return ONLY valid JSON matching this schema:
 {
   "overallAccuracy": 84,
   "estimatedBand": "7.5",
-  "heardTranscript": "exact phonetic/word impression of what was spoken",
+  "heardTranscript": "exact word impression of what was spoken",
+  "heardIpa": "/narrow_or_broad_IPA_of_what_the_learner_actually_pronounced/",
   "stressFeedback": "${isEnglish ? 'Brief English note on word/sentence stress accuracy' : 'Nhận xét ngắn gọn bằng tiếng Việt về trọng âm từ/câu'}",
   "endingFeedback": "${isEnglish ? 'Brief English note on final consonants & linking' : 'Nhận xét ngắn gọn bằng tiếng Việt về âm đuôi & nối âm'}",
+  "prosodyNote": "${isEnglish ? 'Brief English note on intonation, rhythm & pacing' : 'Nhận xét ngắn bằng tiếng Việt về ngữ điệu & nhịp nói'}",
   "wordBreakdown": [
     {
       "word": "word_from_target",
       "status": "correct",
       "similarity": 92,
-      "phonemeNote": "${isEnglish ? 'Short note if near/missed' : 'Ghi chú ngắn nếu chưa chuẩn'}"
+      "phonemeNote": "${isEnglish ? 'Short IPA note if near/missed' : 'Ghi chú IPA ngắn nếu chưa chuẩn'}"
     }
   ],
   "coachFeedback": "${isEnglish ? '1-2 actionable English sentences telling the learner exactly how to improve' : '1-2 câu tiếng Việt chỉ rõ âm/trọng âm cần sửa để đạt Band 8.0+'}"
@@ -980,8 +987,10 @@ Return ONLY valid JSON matching this schema:
     overallAccuracy: acc,
     estimatedBand: String(parsed.estimatedBand || (acc >= 88 ? '8.0' : acc >= 75 ? '7.0' : '6.0')),
     heardTranscript: parsed.heardTranscript || targetText,
+    heardIpa: parsed.heardIpa || '',
     stressFeedback: parsed.stressFeedback || '',
     endingFeedback: parsed.endingFeedback || '',
+    prosodyNote: parsed.prosodyNote || '',
     wordBreakdown: Array.isArray(parsed.wordBreakdown) ? parsed.wordBreakdown : [],
     coachFeedback: parsed.coachFeedback || ''
   };

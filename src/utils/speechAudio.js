@@ -88,37 +88,39 @@ export function playChimeTone({ freq = 659.25, type = 'sine', duration = 0.2, vo
 }
 
 /**
- * Find the optimal voice for IELTS practice (British/UK preferred, fallback to any English)
+ * Find the optimal Neural/Natural voice for IELTS practice (British/UK preferred, fallback to any English)
  */
 export function findBestIELTSVoice(accent = 'en-GB') {
   const voices = getAvailableVoices();
   if (!voices || voices.length === 0) return null;
 
-  // 1. Exact match for requested accent (e.g. en-GB, en_GB)
-  let found = voices.find(v => v.lang === accent || v.lang.replace('_', '-') === accent);
-  if (found) return found;
+  const targetPrefix = String(accent || 'en-GB').toLowerCase().replace('_', '-');
 
-  // 2. UK / British keywords in voice name
-  found = voices.find(v => 
-    v.lang.startsWith('en') && 
-    (v.name.includes('UK') || v.name.includes('British') || v.name.includes('England') || 
-     v.name.includes('George') || v.name.includes('Hazel') || v.name.includes('Susan'))
-  );
-  if (found) return found;
+  const scoreVoice = (v) => {
+    const lang = (v.lang || '').toLowerCase().replace('_', '-');
+    const name = v.name || '';
+    if (!lang.startsWith('en')) return -1000;
 
-  // 3. High quality natural English voices (Edge / Chrome Natural / Online)
-  found = voices.find(v => 
-    v.lang.startsWith('en') && 
-    (v.name.includes('Natural') || v.name.includes('Online') || v.name.includes('Google') || v.name.includes('Microsoft'))
-  );
-  if (found) return found;
+    let score = 0;
+    if (lang === targetPrefix || lang.startsWith(targetPrefix)) score += 60;
+    else if (lang.startsWith('en')) score += 10;
 
-  // 4. Any English voice (e.g. en-US Microsoft David, en-AU, etc.)
-  found = voices.find(v => v.lang.startsWith('en'));
-  if (found) return found;
+    if (/natural|neural/i.test(name)) score += 100;
+    else if (/premium|enhanced|siri/i.test(name)) score += 75;
+    else if (/google\s+(uk|us)\s+english/i.test(name)) score += 55;
+    else if (/online/i.test(name)) score += 45;
 
-  // 5. System default
-  return voices.find(v => v.default) || voices[0];
+    if (targetPrefix.startsWith('en-gb') && /sonia|libby|ryan|george|daniel|uk|british/i.test(name)) score += 20;
+    if (targetPrefix.startsWith('en-us') && /aria|guy|andrew|ava|emma|google us/i.test(name)) score += 20;
+    if (/espeak|compact|whisper|trinoids|zarvox/i.test(name)) score -= 80;
+    return score;
+  };
+
+  const ranked = [...voices]
+    .filter(v => v.lang && v.lang.toLowerCase().startsWith('en'))
+    .sort((a, b) => scoreVoice(b) - scoreVoice(a));
+
+  return ranked[0] || voices.find(v => v.default) || voices[0];
 }
 
 // Speech session tracking to safely invalidate old runs on new speak / stop

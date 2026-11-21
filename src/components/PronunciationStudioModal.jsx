@@ -161,7 +161,8 @@ export default function PronunciationStudioModal({
   }, [selectedExaminerId]);
 
   const speechEngine = useSpeechEngine({
-    examinerId: selectedExaminerId
+    examinerId: selectedExaminerId,
+    rawPhoneticMode: true
   });
 
   // 4. Custom Drills & Persistent Stats
@@ -2204,23 +2205,53 @@ export default function PronunciationStudioModal({
                         </div>
                       )}
 
-                      {/* Layer 2 Stress & Ending Consonants Breakdown (if AI Audio checked) */}
-                      {(evaluationResult.stressFeedback || evaluationResult.endingFeedback) && (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px]">
-                          {evaluationResult.stressFeedback && (
-                            <div className="p-2.5 rounded-xl bg-purple-950/40 border border-purple-500/30 text-purple-200">
-                              <span className="font-black text-purple-300 mr-1">
-                                {isEn ? 'Stress:' : 'Trọng âm:'}
-                              </span>
-                              <span>{evaluationResult.stressFeedback}</span>
+                      {/* Layer 2 Heard IPA, Stress, Endings & Prosody Breakdown (if AI Audio checked) */}
+                      {(evaluationResult.heardIpa || evaluationResult.stressFeedback || evaluationResult.endingFeedback || evaluationResult.prosodyNote) && (
+                        <div className="space-y-2 text-[11px]">
+                          {evaluationResult.heardIpa && (
+                            <div className="p-2.5 rounded-xl bg-slate-900/90 border border-indigo-500/35 flex flex-wrap items-center justify-between gap-2">
+                              <div>
+                                <span className="font-black text-indigo-300 mr-1.5">
+                                  {isEn ? 'Expected IPA:' : 'IPA Chuẩn:'}
+                                </span>
+                                <span className="font-mono text-cyan-300">
+                                  {selectedExaminerId === 'examiner-oliver' ? currentDrill.ipaUs : currentDrill.ipaUk}
+                                </span>
+                              </div>
+                              <div>
+                                <span className="font-black text-amber-300 mr-1.5">
+                                  {isEn ? 'Heard IPA:' : 'IPA Nghe Được:'}
+                                </span>
+                                <span className="font-mono text-amber-200">{evaluationResult.heardIpa}</span>
+                              </div>
                             </div>
                           )}
-                          {evaluationResult.endingFeedback && (
-                            <div className="p-2.5 rounded-xl bg-cyan-950/40 border border-cyan-500/30 text-cyan-200">
-                              <span className="font-black text-cyan-300 mr-1">
-                                {isEn ? 'Endings & Linking:' : 'Âm đuôi & Nối âm:'}
-                              </span>
-                              <span>{evaluationResult.endingFeedback}</span>
+                          {(evaluationResult.stressFeedback || evaluationResult.endingFeedback || evaluationResult.prosodyNote) && (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                              {evaluationResult.stressFeedback && (
+                                <div className="p-2.5 rounded-xl bg-purple-950/40 border border-purple-500/30 text-purple-200">
+                                  <span className="font-black text-purple-300 mr-1">
+                                    {isEn ? 'Stress:' : 'Trọng âm:'}
+                                  </span>
+                                  <span>{evaluationResult.stressFeedback}</span>
+                                </div>
+                              )}
+                              {evaluationResult.endingFeedback && (
+                                <div className="p-2.5 rounded-xl bg-cyan-950/40 border border-cyan-500/30 text-cyan-200">
+                                  <span className="font-black text-cyan-300 mr-1">
+                                    {isEn ? 'Endings & Linking:' : 'Âm đuôi & Nối âm:'}
+                                  </span>
+                                  <span>{evaluationResult.endingFeedback}</span>
+                                </div>
+                              )}
+                              {evaluationResult.prosodyNote && (
+                                <div className="sm:col-span-2 p-2.5 rounded-xl bg-emerald-950/35 border border-emerald-500/30 text-emerald-200">
+                                  <span className="font-black text-emerald-300 mr-1">
+                                    {isEn ? 'Intonation & Rhythm:' : 'Ngữ điệu & Nhịp nói:'}
+                                  </span>
+                                  <span>{evaluationResult.prosodyNote}</span>
+                                </div>
+                              )}
                             </div>
                           )}
                         </div>

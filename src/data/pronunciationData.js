@@ -1883,21 +1883,36 @@ export function computeWordSimilarity(a, b) {
 }
 
 /**
- * Converts an English word into an approximate phonetic skeleton for acoustic comparison.
- * Handles silent letters, digraphs (ph->f, tion->shn, th->T, sh->S, ch->C), and double consonants.
+ * Converts an English word into a rich Grapheme-to-Phoneme (G2P) phonetic skeleton.
+ * Handles silent letters (kn, wr, ps, wh, gn, mb, bt, silent gh), soft c/g,
+ * morphological endings (-ed -> /Id/, /t/, /d/; -s/-es -> /Iz/, /s/, /z/),
+ * digraphs (ph, qu, sh, ch, th, ng, ck, tion/sion/tious), and vowel-pair normalization.
  */
 export function toPhoneticSkeleton(word) {
   const clean = normalizePhoneticWord(word);
   if (!clean) return '';
-  return clean
+
+  let s = clean
+    // Silent initial & final clusters
     .replace(/^kn/, 'n')
     .replace(/^wr/, 'r')
     .replace(/^ps/, 's')
     .replace(/^wh/, 'w')
+    .replace(/^gn/, 'n')
+    .replace(/gn$/, 'n')
     .replace(/bt$/, 't')
     .replace(/mb$/, 'm')
-    .replace(/tion$|sion$/g, 'shn')
-    .replace(/tious$|cious$/g, 'shs')
+    // Special -gh words (/f/) vs silent gh
+    .replace(/(en|r|t)ough$/, '$1uf')
+    .replace(/laugh/, 'laf')
+    .replace(/cough/, 'kof')
+    .replace(/([aeiou])gh/g, '$1')
+    // Common academic suffixes
+    .replace(/tion$|sion$/g, 'Sn')
+    .replace(/tious$|cious$/g, 'Ss')
+    .replace(/ture$/g, 'Cr')
+    .replace(/dge/g, 'J')
+    // Digraphs & consonant clusters
     .replace(/ph/g, 'f')
     .replace(/qu/g, 'kw')
     .replace(/sh/g, 'S')
@@ -1905,7 +1920,36 @@ export function toPhoneticSkeleton(word) {
     .replace(/th/g, 'T')
     .replace(/ng/g, 'N')
     .replace(/ck/g, 'k')
-    .replace(/([a-z])\1+/g, '$1');
+    .replace(/x/g, 'ks')
+    // Soft vs hard c and g
+    .replace(/c(?=[eiy])/g, 's')
+    .replace(/c/g, 'k')
+    .replace(/g(?=[eiy])/g, 'J')
+    // Vowel-pair normalization
+    .replace(/ee|ea/g, 'i')
+    .replace(/oo/g, 'u');
+
+  // Morphological -ed ending phonology (/Id/ after t/d, /t/ after voiceless, /d/ after voiced)
+  if (s.length >= 4 && s.endsWith('ed')) {
+    const stem = s.slice(0, -2);
+    const last = stem.slice(-1);
+    if (last === 't' || last === 'd') s = stem + 'Id';
+    else if (/[pkfsSC]/.test(last)) s = stem + 't';
+    else s = stem + 'd';
+  }
+
+  // Morphological -es / -s ending phonology (/Iz/ after sibilants, /s/ after voiceless, /z/ after voiced)
+  if (s.length >= 4 && s.endsWith('es') && /[szSCJ]$/.test(s.slice(0, -2))) {
+    s = s.slice(0, -2) + 'Iz';
+  } else if (s.length >= 4 && s.endsWith('s') && !s.endsWith('ss') && !s.endsWith('Ss')) {
+    const stem = s.slice(0, -1);
+    const last = stem.slice(-1);
+    if (/[pkftT]/.test(last)) s = stem + 's';
+    else if (!/[szSCJ]/.test(last)) s = stem + 'z';
+  }
+
+  // Collapse consecutive duplicate characters
+  return s.replace(/([a-zA-Z])\1+/g, '$1');
 }
 
 /**
@@ -2199,12 +2243,47 @@ export function evaluatePronunciationAttempt({
     rawScore -= Math.min(20, extraWordsCount * perExtraPenalty);
   }
 
-  // Acoustic Prosody / Stress Energy check (if Web Audio Analyser metrics available)
+  // Acoustic Prosody, Sibilant Coda & Pacing/Fluency DSP checks (when Web Audio 512-FFT metrics available)
   let lowDynamicEnergy = false;
+  let weakAcousticSibilant = false;
+  let choppyPacing = false;
+  let rushedPacing = false;
+  let wpm = null;
+  let voiceActivityRatio = null;
+
   if (acousticMetrics && acousticMetrics.sampleCount > 4) {
     if (acousticMetrics.dynamicRange < 6 && rawTargetWords.length >= 4 && rawScore > 75) {
       rawScore -= 4;
       lowDynamicEnergy = true;
+    }
+
+    // High-Frequency Sibilant/Plosive Coda check (3kHz-8.2kHz) when target contains ending sibilants/voiceless stops
+    const targetHasEndingSibilant = /[sztxk]\b|sh\b|ch\b|ed\b|es\b/i.test(targetText);
+    if (
+      targetHasEndingSibilant &&
+      acousticMetrics.sampleCount > 6 &&
+      typeof acousticMetrics.sibilantPeak === 'number' &&
+      acousticMetrics.sibilantPeak < 11 &&
+      (acousticMetrics.sibilantRatio || 0) < 0.06 &&
+      codaIssues.length > 0 &&
+      rawScore > 82
+    ) {
+      rawScore -= 2;
+      weakAcousticSibilant = true;
+    }
+
+    // Pacing & Fluency Continuity check for sentences/dialogues (>= 6 words)
+    const speechMs = acousticMetrics.speechDurationMs || acousticMetrics.activeMs || 0;
+    voiceActivityRatio = typeof acousticMetrics.voiceActivityRatio === 'number' ? acousticMetrics.voiceActivityRatio : null;
+    if (rawTargetWords.length >= 6 && spokenWords.length >= 5 && speechMs >= 1500) {
+      wpm = Math.round(spokenWords.length / (speechMs / 60000));
+      const pauseCount = acousticMetrics.pauseCount || 0;
+      if ((pauseCount >= 3 && voiceActivityRatio !== null && voiceActivityRatio < 0.48) || wpm < 65) {
+        if (rawScore > 78) rawScore -= 4;
+        choppyPacing = true;
+      } else if (wpm > 215) {
+        rushedPacing = true;
+      }
     }
   }
 
@@ -2245,8 +2324,18 @@ export function evaluatePronunciationAttempt({
 
   if (codaIssues.length > 0 && overallAccuracy >= 70) {
     const codaList = [...new Set(codaIssues)].slice(0, 3).join(', ');
-    coachFeedbackEn = `Clear core pronunciation, but watch out for weak ending consonants (coda) on: "${codaList}".`;
-    coachFeedbackVi = `Âm chính khá tốt, nhưng chú ý bật rõ phụ âm cuối (âm đuôi) ở từ: "${codaList}".`;
+    coachFeedbackEn = weakAcousticSibilant
+      ? `Core sounds were clear, but high-frequency ending bursts (/s/, /z/, /t/, /k/) were acoustically weak on: "${codaList}".`
+      : `Clear core pronunciation, but watch out for weak ending consonants (coda) on: "${codaList}".`;
+    coachFeedbackVi = weakAcousticSibilant
+      ? `Âm chính khá tốt, nhưng cảm biến âm thanh ghi nhận âm gió/phụ âm cuối (/s/, /z/, /t/, /k/) hơi nhẹ ở từ: "${codaList}".`
+      : `Âm chính khá tốt, nhưng chú ý bật rõ phụ âm cuối (âm đuôi) ở từ: "${codaList}".`;
+  } else if (choppyPacing && overallAccuracy >= 72) {
+    coachFeedbackEn = `Accurate words${wpm ? ` (${wpm} WPM)` : ''}, but your delivery had noticeable pauses. Try linking clauses more smoothly without stopping between words.`;
+    coachFeedbackVi = `Phát âm đúng từ${wpm ? ` (${wpm} từ/phút)` : ''}, nhưng nhịp nói còn ngắt quãng giữa chừng. Hãy luyện nối liền cụm từ mượt mà hơn.`;
+  } else if (rushedPacing && overallAccuracy >= 75) {
+    coachFeedbackEn = `Very fast delivery${wpm ? ` (${wpm} WPM)` : ''}! Slow down slightly so key stressed syllables and endings breathe naturally.`;
+    coachFeedbackVi = `Tốc độ nói hơi nhanh${wpm ? ` (${wpm} từ/phút)` : ''}! Hãy chậm lại một chút để nhấn trọng âm và bật âm đuôi rõ ràng hơn.`;
   } else if (lowDynamicEnergy && overallAccuracy >= 75) {
     coachFeedbackEn = 'Words were accurate, but your pitch/volume stayed flat. Emphasize key stressed syllables more clearly.';
     coachFeedbackVi = 'Phát âm đúng từ, nhưng ngữ điệu hơi đều. Hãy nhấn trọng âm các từ khóa rõ ràng hơn.';
@@ -2278,6 +2367,15 @@ export function evaluatePronunciationAttempt({
     baseXp,
     streakBonusXp,
     codaIssues,
+    acousticSummary: acousticMetrics
+      ? {
+          wpm,
+          voiceActivityRatio,
+          dynamicRange: acousticMetrics.dynamicRange ?? null,
+          sibilantPeak: acousticMetrics.sibilantPeak ?? null,
+          pauseCount: acousticMetrics.pauseCount ?? 0
+        }
+      : null,
     engineTier: 'layer1_phonetic',
     coachFeedbackEn,
     coachFeedbackVi

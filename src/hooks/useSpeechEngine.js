@@ -61,8 +61,25 @@ export function sanitizeSpeakingTranscript(text) {
  */
 export function useSpeechEngine({
   examinerId = 'examiner-arthur',
-  onCandidateSpeechEnd = null
+  onCandidateSpeechEnd = null,
+  rawPhoneticMode = false
 } = {}) {
+  const examinerIdRef = useRef(examinerId);
+  const rawPhoneticModeRef = useRef(rawPhoneticMode);
+  useEffect(() => {
+    examinerIdRef.current = examinerId;
+  }, [examinerId]);
+  useEffect(() => {
+    rawPhoneticModeRef.current = rawPhoneticMode;
+  }, [rawPhoneticMode]);
+
+  const formatRecognizedText = useCallback((rawText) => {
+    const normalized = String(rawText || '').replace(/\s+/g, ' ').trim();
+    if (!normalized) return '';
+    // In pronunciation/conversation modes, preserve raw STT tokens so ESL errors
+    // (e.g. "for sample", "kin on", "in my opinions") are NEVER auto-corrected away.
+    return rawPhoneticModeRef.current ? normalized : sanitizeSpeakingTranscript(normalized);
+  }, []);
   // 1. STT State
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState('');
@@ -78,13 +95,21 @@ export function useSpeechEngine({
   const confidenceHistoryRef = useRef([]);
   const [speechAlternatives, setSpeechAlternatives] = useState([]);
   const speechAlternativesRef = useRef([]);
-  const acousticMetricsRef = useRef({
+  const createEmptyAcousticMetrics = () => ({
     peakLevel: 0,
     totalLevel: 0,
     sampleCount: 0,
     activeCount: 0,
-    startedAt: 0
+    sibilantPeak: 0,
+    highFreqActiveCount: 0,
+    pauseCount: 0,
+    silenceFrames: 0,
+    wasSpeaking: false,
+    firstSpeechAt: 0,
+    lastSpeechAt: 0,
+    startedAt: Date.now()
   });
+  const acousticMetricsRef = useRef(createEmptyAcousticMetrics());
 
   // 2. TTS State
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -167,7 +192,7 @@ export function useSpeechEngine({
     };
   }, []);
 
-  // Helper: Pick best matched native voice for examiner profile
+  // Helper: Neural-First Voice Quality Ranking for Examiner Profiles (UK/US)
   const getExaminerVoice = useCallback((targetExaminerId) => {
     let voices = availableVoices;
     // If state availableVoices is empty, query live voices from window.speechSynthesis
@@ -176,30 +201,46 @@ export function useSpeechEngine({
     }
     if (!voices || voices.length === 0) return null;
 
-    if (targetExaminerId === 'examiner-oliver') {
-      // US Male / Natural (Supports Edge Microsoft Natural + Chrome Google + Standard US)
-      const usVoices = voices.filter(v => v.lang && (v.lang === 'en-US' || v.lang.startsWith('en_US') || v.lang.startsWith('en-US')));
-      return usVoices.find(v => /ryan|guy|christopher|eric|natural.*us|male|david|alex|aaron/i.test(v.name)) 
-        || usVoices[0] 
-        || voices.find(v => v.lang && v.lang.startsWith('en'))
-        || voices[0];
-    }
+    const isUs = targetExaminerId === 'examiner-oliver';
+    const isFemale = targetExaminerId === 'examiner-eleanor';
+    const targetLangPrefix = isUs ? 'en-us' : 'en-gb';
 
-    if (targetExaminerId === 'examiner-eleanor') {
-      // UK Female (Supports Edge Microsoft Natural + Chrome Google UK + Standard UK)
-      const ukVoices = voices.filter(v => v.lang && (v.lang === 'en-GB' || v.lang.startsWith('en_GB') || v.lang.startsWith('en-GB')));
-      return ukVoices.find(v => /libby|sonia|hazel|susan|victoria|natural.*uk|female/i.test(v.name)) 
-        || ukVoices[0] 
-        || voices.find(v => v.lang && v.lang.startsWith('en'))
-        || voices[0];
-    }
+    const scoreVoice = (v) => {
+      const lang = (v.lang || '').toLowerCase().replace('_', '-');
+      const name = v.name || '';
+      if (!lang.startsWith('en')) return -1000;
 
-    // Default Arthur: UK Male / Natural RP (Supports Edge Microsoft Ryan / George + Chrome Google UK)
-    const ukVoices = voices.filter(v => v.lang && (v.lang === 'en-GB' || v.lang.startsWith('en_GB') || v.lang.startsWith('en-GB')));
-    return ukVoices.find(v => /ryan|george|arthur|daniel|oliver|natural.*uk|male/i.test(v.name)) 
-      || ukVoices[0] 
-      || voices.find(v => v.lang && v.lang.startsWith('en'))
-      || voices[0];
+      let score = 0;
+      if (lang === targetLangPrefix || lang.startsWith(targetLangPrefix)) score += 60;
+      else if (lang.startsWith('en')) score += 10;
+
+      // Neural / Online Natural / Premium / Enhanced tiers (highest naturalness)
+      if (/natural|neural/i.test(name)) score += 100;
+      else if (/premium|enhanced|siri/i.test(name)) score += 75;
+      else if (/google\s+(uk|us)\s+english/i.test(name)) score += 55;
+      else if (/online/i.test(name)) score += 45;
+
+      // Profile gender & persona match
+      if (isUs) {
+        if (/andrew|brian|guy|ryan|christopher|eric|steffan|ava|emma|aria|alex|aaron|david|google us/i.test(name)) score += 25;
+        if (/guy|andrew|brian|christopher|eric|ryan|male|david|alex|aaron/i.test(name)) score += 10;
+      } else if (isFemale) {
+        if (/sonia|libby|maisie|hazel|susan|victoria|kate|serena|female/i.test(name)) score += 30;
+      } else {
+        // Arthur (UK Male RP)
+        if (/ryan|thomas|george|arthur|daniel|oliver|male/i.test(name)) score += 30;
+      }
+
+      // Penalize robotic legacy fallback voices if better ones exist
+      if (/espeak|compact|whisper|trinoids|zarvox/i.test(name)) score -= 80;
+      return score;
+    };
+
+    const ranked = [...voices]
+      .filter(v => v.lang && v.lang.toLowerCase().startsWith('en'))
+      .sort((a, b) => scoreVoice(b) - scoreVoice(a));
+
+    return ranked[0] || voices[0];
   }, [availableVoices]);
 
   // =========================================================================
@@ -399,7 +440,7 @@ export function useSpeechEngine({
     recognition.continuous = !isMobileDevice;
     recognition.interimResults = true;
     recognition.maxAlternatives = 5;
-    recognition.lang = 'en-US'; // Best recognition accuracy across accents
+    recognition.lang = examinerIdRef.current === 'examiner-oliver' ? 'en-US' : 'en-GB';
 
     recognition.onstart = () => {
       if (recognitionRef.current !== recognition) return;
@@ -445,7 +486,7 @@ export function useSpeechEngine({
       }
 
       if (newlyFinalized) {
-        accumulatedTranscriptRef.current = sanitizeSpeakingTranscript(
+        accumulatedTranscriptRef.current = formatRecognizedText(
           (accumulatedTranscriptRef.current + ' ' + newlyFinalized).replace(/\s+/g, ' ').trim()
         );
         const currentClip = currentClipIdRef.current;
@@ -507,7 +548,7 @@ export function useSpeechEngine({
       if (pendingInterim) {
         const prevAcc = accumulatedTranscriptRef.current || '';
         if (!prevAcc.toLowerCase().endsWith(pendingInterim.toLowerCase())) {
-          accumulatedTranscriptRef.current = sanitizeSpeakingTranscript(
+          accumulatedTranscriptRef.current = formatRecognizedText(
             (prevAcc + ' ' + pendingInterim).replace(/\s+/g, ' ').trim()
           );
           const currentClip = currentClipIdRef.current;
@@ -556,7 +597,7 @@ export function useSpeechEngine({
     };
 
     return recognition;
-  }, [detachRecognition, isMobileDevice, isSpeechRecognitionSupported]);
+  }, [detachRecognition, formatRecognizedText, isMobileDevice, isSpeechRecognitionSupported]);
 
   // Isolated per-segment MediaRecorder starter (prevents late onstop cross-clip corruption & stitch contamination)
   const startMediaRecorderSegment = useCallback((stream, clipId) => {
@@ -666,13 +707,7 @@ export function useSpeechEngine({
     // getUserMedia + MediaRecorder simultaneously with SpeechRecognition locks the mic hardware, and any
     // `await` before recognition.start() breaks Safari's user-gesture requirement.
     if ((isMobileDevice || isSafariDesktop) && isSpeechRecognitionSupported) {
-      acousticMetricsRef.current = {
-        peakLevel: 0,
-        totalLevel: 0,
-        sampleCount: 0,
-        activeCount: 0,
-        startedAt: Date.now()
-      };
+      acousticMetricsRef.current = createEmptyAcousticMetrics();
       try {
         if (mediaStreamRef.current) {
           try {
@@ -792,31 +827,57 @@ export function useSpeechEngine({
         const source = actx.createMediaStreamSource(stream);
         mediaSourceRef.current = source;
         const analyser = actx.createAnalyser();
-        analyser.fftSize = 64;
+        analyser.fftSize = 512; // 256 frequency bins (~93Hz/bin at 48kHz) for voice-band + sibilant DSP
+        analyser.smoothingTimeConstant = 0.65;
         source.connect(analyser);
         setAnalyserNode(analyser);
 
-        // Volume Level Polling & Acoustic Energy Envelope Tracking
-        acousticMetricsRef.current = {
-          peakLevel: 0,
-          totalLevel: 0,
-          sampleCount: 0,
-          activeCount: 0,
-          startedAt: Date.now()
-        };
+        // Acoustic DSP Polling: Voice-Band Energy (170Hz-3.4kHz), High-Freq Sibilant Energy (3kHz-8.2kHz) & Pause Continuity
+        acousticMetricsRef.current = createEmptyAcousticMetrics();
+        const binHz = (actx.sampleRate || 48000) / analyser.fftSize;
+        const voiceStartBin = Math.max(1, Math.floor(170 / binHz));
+        const voiceEndBin = Math.min(analyser.frequencyBinCount - 1, Math.ceil(3400 / binHz));
+        const sibStartBin = Math.max(voiceEndBin, Math.floor(3000 / binHz));
+        const sibEndBin = Math.min(analyser.frequencyBinCount - 1, Math.ceil(8200 / binHz));
+
         const dataArray = new Uint8Array(analyser.frequencyBinCount);
         if (volumeIntervalRef.current) clearInterval(volumeIntervalRef.current);
         volumeIntervalRef.current = setInterval(() => {
           analyser.getByteFrequencyData(dataArray);
-          let sum = 0;
-          for (let i = 0; i < 8; i++) sum += dataArray[i];
-          const level = Math.min(100, Math.round((sum / 8) * (100 / 128)));
+          let voiceSum = 0;
+          const voiceBins = Math.max(1, voiceEndBin - voiceStartBin + 1);
+          for (let i = voiceStartBin; i <= voiceEndBin; i++) voiceSum += dataArray[i];
+          const level = Math.min(100, Math.round((voiceSum / voiceBins) * (100 / 120)));
+
+          let sibSum = 0;
+          const sibBins = Math.max(1, sibEndBin - sibStartBin + 1);
+          for (let i = sibStartBin; i <= sibEndBin; i++) sibSum += dataArray[i];
+          const sibilantLevel = Math.min(100, Math.round((sibSum / sibBins) * (100 / 90)));
+
           setMicLevel(level);
           const m = acousticMetricsRef.current;
+          const now = Date.now();
           m.sampleCount += 1;
           m.totalLevel += level;
           if (level > m.peakLevel) m.peakLevel = level;
-          if (level >= 12) m.activeCount += 1;
+          if (sibilantLevel > m.sibilantPeak) m.sibilantPeak = sibilantLevel;
+
+          const isVoiced = level >= 12 || sibilantLevel >= 14;
+          if (isVoiced) {
+            m.activeCount += 1;
+            if (!m.firstSpeechAt) m.firstSpeechAt = now;
+            m.lastSpeechAt = now;
+            if (sibilantLevel >= 14) m.highFreqActiveCount += 1;
+            if (!m.wasSpeaking && m.silenceFrames >= 5 && m.activeCount > 3) {
+              // Silence gap >= 400ms (5 * 80ms) between speech bursts counts as a hesitation/pause
+              m.pauseCount += 1;
+            }
+            m.silenceFrames = 0;
+            m.wasSpeaking = true;
+          } else if (m.firstSpeechAt) {
+            m.silenceFrames += 1;
+            if (m.silenceFrames >= 3) m.wasSpeaking = false;
+          }
         }, 80);
       }
     } catch (actxErr) {
@@ -877,7 +938,7 @@ export function useSpeechEngine({
     // FLUSH INTERIM BUFFER: Prevent word truncation/loss at sentence end
     if (interimTranscriptRef.current && interimTranscriptRef.current.trim()) {
       const pending = interimTranscriptRef.current.trim();
-      accumulatedTranscriptRef.current = sanitizeSpeakingTranscript(
+      accumulatedTranscriptRef.current = formatRecognizedText(
         (accumulatedTranscriptRef.current + ' ' + pending).replace(/\s+/g, ' ').trim()
       );
       setTranscript(accumulatedTranscriptRef.current);
@@ -919,13 +980,7 @@ export function useSpeechEngine({
     interimTranscriptRef.current = '';
     confidenceHistoryRef.current = [];
     speechAlternativesRef.current = [];
-    acousticMetricsRef.current = {
-      peakLevel: 0,
-      totalLevel: 0,
-      sampleCount: 0,
-      activeCount: 0,
-      startedAt: Date.now()
-    };
+    acousticMetricsRef.current = createEmptyAcousticMetrics();
     setTranscript('');
     setInterimTranscript('');
     setSpeechAlternatives([]);
@@ -957,13 +1012,27 @@ export function useSpeechEngine({
     const avgLevel = m.sampleCount > 0 ? Math.round(m.totalLevel / m.sampleCount) : 0;
     const activeMs = m.activeCount * 80;
     const elapsedMs = m.startedAt ? Date.now() - m.startedAt : activeMs;
+    const speechDurationMs =
+      m.firstSpeechAt && m.lastSpeechAt && m.lastSpeechAt >= m.firstSpeechAt
+        ? Math.max(activeMs, m.lastSpeechAt - m.firstSpeechAt)
+        : activeMs;
+    const voiceActivityRatio =
+      speechDurationMs > 0 ? Math.min(1, Math.round((activeMs / speechDurationMs) * 100) / 100) : 1;
+    const sibilantRatio =
+      m.activeCount > 0 ? Math.min(1, Math.round((m.highFreqActiveCount / m.activeCount) * 100) / 100) : 0;
+
     return {
       sampleCount: m.sampleCount,
       peakLevel: m.peakLevel,
       avgLevel,
       dynamicRange: Math.max(0, m.peakLevel - avgLevel),
       activeMs,
-      elapsedMs
+      elapsedMs,
+      speechDurationMs,
+      voiceActivityRatio,
+      sibilantPeak: m.sibilantPeak,
+      sibilantRatio,
+      pauseCount: m.pauseCount
     };
   }, []);
 
