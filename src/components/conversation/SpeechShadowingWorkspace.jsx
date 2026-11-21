@@ -218,6 +218,14 @@ export default function SpeechShadowingWorkspace({
     }
   }, [filteredTasks, selectedTaskId]);
 
+  const currentTask = useMemo(() => {
+    return (
+      allTasks.find(t => t.id === selectedTaskId) ||
+      filteredTasks[0] ||
+      SHADOWING_STARTER_TASKS[0]
+    );
+  }, [allTasks, selectedTaskId, filteredTasks]);
+
   const handleNextTask = useCallback(() => {
     const curId = currentTask?.id;
     const isUnfinished = (t) => !shadowStats.bestScores?.[t.id];
@@ -243,14 +251,6 @@ export default function SpeechShadowingWorkspace({
       setIsMobileListOpen(false);
     }
   }, [currentTask?.id, filteredTasks, allTasks, shadowStats.bestScores]);
-
-  const currentTask = useMemo(() => {
-    return (
-      allTasks.find(t => t.id === selectedTaskId) ||
-      filteredTasks[0] ||
-      SHADOWING_STARTER_TASKS[0]
-    );
-  }, [allTasks, selectedTaskId, filteredTasks]);
 
   const resolvedSegments = useMemo(() => {
     return resolveShadowingSegments(currentTask, chunkMode);
