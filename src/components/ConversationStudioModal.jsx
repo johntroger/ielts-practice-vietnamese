@@ -25,7 +25,9 @@ import {
   RotateCcw,
   Eye,
   Lock,
-  SkipForward
+  SkipForward,
+  PanelLeftClose,
+  PanelLeftOpen
 } from 'lucide-react';
 import {
   CONVERSATION_DEFAULT_THRESHOLD,
@@ -178,6 +180,8 @@ export default function ConversationStudioModal({
   });
   const [isMobileListOpen, setIsMobileListOpen] = useState(false);
   const [isMobileSettingsOpen, setIsMobileSettingsOpen] = useState(false);
+  const [isDesktopSettingsOpen, setIsDesktopSettingsOpen] = useState(false);
+  const [isDesktopSidebarOpen, setIsDesktopSidebarOpen] = useState(true);
   const [isSoundcheckOpen, setIsSoundcheckOpen] = useState(false);
   const [copiedUrl, setCopiedUrl] = useState(false);
 
@@ -1273,84 +1277,108 @@ Return ONLY plain dialogue lines starting with "A:" and "B:", 1-2 sentences per 
     .join(' ');
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-0 sm:p-2 md:p-4 overflow-hidden animate-in fade-in duration-150">
+    <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-0 sm:p-1.5 md:p-2 overflow-hidden animate-in fade-in duration-150">
       <div
         className={`bg-slate-900 border border-slate-800 text-slate-100 shadow-2xl flex flex-col overflow-hidden transition-all duration-200 ${
           isExpanded
             ? 'w-screen h-[100dvh] max-w-none rounded-none'
-            : 'w-full max-w-[1480px] h-[100dvh] sm:h-[94dvh] sm:rounded-3xl'
+            : 'w-full max-w-[1520px] h-[100dvh] sm:h-[96dvh] sm:rounded-2xl'
         }`}
       >
-        {/* 1. HEADER */}
-        <header className="px-3 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-slate-950 via-cyan-950/60 to-slate-950 border-b border-slate-800 flex items-center justify-between gap-2 shrink-0">
-          <div className="flex items-center space-x-2 sm:space-x-2.5 min-w-0">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-cyan-600 via-indigo-600 to-purple-600 flex items-center justify-center text-white shadow-lg shrink-0">
-              <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5" />
+        {/* 1. COMPACT UNIFIED HEADER (1 single row on Desktop lg+) */}
+        <header className="px-3 sm:px-4 py-2 bg-gradient-to-r from-slate-950 via-cyan-950/50 to-slate-950 border-b border-slate-800 flex items-center justify-between gap-2 shrink-0">
+          <div className="flex items-center space-x-2 sm:space-x-3 min-w-0">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-cyan-600 via-indigo-600 to-purple-600 flex items-center justify-center text-white shadow-lg shrink-0">
+              <MessageSquare className="w-4 h-4" />
             </div>
-            <div className="min-w-0">
-              <div className="flex items-center space-x-1.5 sm:space-x-2">
-                <h2 className="text-xs sm:text-base font-black text-white tracking-tight truncate">
-                  {isEn ? 'Conversation Studio' : 'Luyện Hội Thoại'}
-                </h2>
-                <span className="hidden md:inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-black bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
-                  /conversation
-                </span>
-                <span className={`sm:hidden px-1.5 py-0.5 rounded-md text-[10px] font-black border shrink-0 ${levelProgress.tier.badgeColor}`}>
-                  Lv.{levelProgress.level}
-                </span>
-              </div>
-              <p className="hidden sm:block text-[11px] text-slate-400 truncate">
-                {studioTab === 'shadowing'
-                  ? isEn
-                    ? 'Speech Shadowing: machine reads each sentence or paragraph first; repeat at ≥' + passThreshold + '% to unlock the next part'
-                    : 'Speech Shadowing: máy đọc trước 1 câu hoặc 1 đoạn; lặp lại đạt ≥' + passThreshold + '% mới mở khóa phần tiếp'
-                  : isEn
-                  ? 'Turn-gated roleplay dialogues: pronounce accurately to unlock every next line'
-                  : 'Đối thoại theo lượt có kiểm định phát âm: đọc đạt chuẩn tối thiểu mới mở khóa câu tiếp theo'}
-              </p>
+            <div className="flex items-center space-x-2 min-w-0">
+              <h2 className="text-xs sm:text-sm font-black text-white tracking-tight truncate">
+                {isEn ? 'Conversation Studio' : 'Luyện Hội Thoại'}
+              </h2>
+              <span className={`sm:hidden px-1.5 py-0.5 rounded-md text-[10px] font-black border shrink-0 ${levelProgress.tier.badgeColor}`}>
+                Lv.{levelProgress.level}
+              </span>
+            </div>
+
+            {/* Inline Mode Switcher on Desktop (lg+) to save an entire vertical bar */}
+            <div className="hidden lg:inline-flex bg-slate-900 border border-slate-800 rounded-xl p-0.5 shrink-0">
+              <button
+                type="button"
+                onClick={() => handleSwitchStudioTab('roleplay')}
+                className={`px-2.5 py-1 rounded-lg text-[11px] font-black flex items-center space-x-1.5 transition-all cursor-pointer whitespace-nowrap ${
+                  studioTab === 'roleplay'
+                    ? 'bg-gradient-to-r from-cyan-600 to-indigo-600 text-white shadow-sm'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <MessageSquare className="w-3.5 h-3.5 shrink-0" />
+                <span>{isEn ? 'Dialogue Roleplay' : 'Hội Thoại Đối Đáp'}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleSwitchStudioTab('shadowing')}
+                className={`px-2.5 py-1 rounded-lg text-[11px] font-black flex items-center space-x-1.5 transition-all cursor-pointer whitespace-nowrap ${
+                  studioTab === 'shadowing'
+                    ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-sm'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <Headphones className="w-3.5 h-3.5 shrink-0" />
+                <span>Speech Shadowing</span>
+              </button>
             </div>
           </div>
 
-          {/* Center XP Bar */}
-          <div className="hidden sm:flex items-center space-x-3 bg-slate-950/90 border border-slate-800 px-3 py-1.5 rounded-2xl">
-            <span className={`px-2 py-0.5 rounded-lg text-[10px] font-black border ${levelProgress.tier.badgeColor}`}>
-              Lv.{levelProgress.level}
-            </span>
-            <div className="w-24">
-              <div className="flex items-center justify-between text-[9px] font-bold text-slate-400 mb-0.5">
-                <span className="text-amber-400 font-black">{userTotalXp.toLocaleString()} XP</span>
-                <span>{levelProgress.progressPercent}%</span>
-              </div>
-              <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-cyan-400 via-indigo-500 to-purple-500 transition-all duration-500"
-                  style={{ width: `${levelProgress.progressPercent}%` }}
-                />
-              </div>
-            </div>
-            <div className="flex items-center space-x-1.5 pl-1.5 border-l border-slate-800 text-[11px] font-black">
-              <span className="inline-flex items-center space-x-0.5 text-emerald-400 bg-emerald-950/80 border border-emerald-500/30 px-2 py-0.5 rounded-lg">
-                <Zap className="w-3 h-3 fill-current" />
-                <span>+{sessionXp} XP</span>
+          {/* Right Actions + Compact XP + Compact Desktop Audio Pill */}
+          <div className="flex items-center space-x-1.5 shrink-0">
+            {/* Compact Desktop Audio/Threshold Settings Toggle (lg+) */}
+            <button
+              type="button"
+              onClick={() => setIsDesktopSettingsOpen(prev => !prev)}
+              className={`hidden lg:flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl border text-[11px] font-bold cursor-pointer transition-colors ${
+                isDesktopSettingsOpen
+                  ? 'bg-amber-500/20 text-amber-200 border-amber-500/50'
+                  : 'bg-slate-900 hover:bg-slate-800 text-slate-300 border-slate-800'
+              }`}
+              title={isEn ? 'Audio, Accent & Pass Threshold Settings' : 'Cài đặt Âm thanh, Giọng & Ngưỡng đạt'}
+            >
+              <Sliders className="w-3 h-3 text-amber-400 shrink-0" />
+              <span className="text-amber-300 font-black">{passThreshold}%</span>
+              <span className="text-slate-600">•</span>
+              <span>{selectedExaminerId === 'examiner-oliver' ? '🇺🇸 US' : '🇬🇧 UK'}</span>
+              <span className="text-slate-600">•</span>
+              <span className="text-purple-300">{playbackSpeed}x</span>
+            </button>
+
+            {/* Compact XP & Streak Pill (sm+) */}
+            <div
+              className="hidden sm:flex items-center space-x-1.5 bg-slate-950/90 border border-slate-800 px-2 py-1 rounded-xl text-[10px] font-black"
+              title={`${userTotalXp.toLocaleString()} XP (${levelProgress.progressPercent}%)`}
+            >
+              <span className={`px-1.5 py-0.5 rounded-md border ${levelProgress.tier.badgeColor}`}>
+                Lv.{levelProgress.level}
               </span>
-              <span className="inline-flex items-center space-x-0.5 text-amber-400 bg-amber-950/80 border border-amber-500/30 px-2 py-0.5 rounded-lg">
+              {sessionXp > 0 && (
+                <span className="inline-flex items-center space-x-0.5 text-emerald-400">
+                  <Zap className="w-3 h-3 fill-current" />
+                  <span>+{sessionXp}</span>
+                </span>
+              )}
+              <span className="inline-flex items-center space-x-0.5 text-amber-400">
                 <Flame className="w-3 h-3 fill-current" />
                 <span>{convStats.streak || 0}</span>
               </span>
             </div>
-          </div>
 
-          {/* Right Actions */}
-          <div className="flex items-center space-x-1.5 shrink-0">
             <button
               type="button"
               onClick={() => setIsSoundcheckOpen(true)}
-              className="flex items-center justify-center space-x-1 w-9 h-9 md:w-auto md:px-2.5 md:py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold border border-slate-700 cursor-pointer"
+              className="flex items-center justify-center space-x-1 w-9 h-9 md:w-auto md:px-2.5 md:h-8 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold border border-slate-700 cursor-pointer"
               title={isEn ? 'Test Mic & Speaker' : 'Kiểm tra Micro & Loa'}
               aria-label={isEn ? 'Test Mic & Speaker' : 'Kiểm tra Micro & Loa'}
             >
               <Radio className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-              <span className="hidden md:inline">{isEn ? 'Mic Test' : 'Test Mic'}</span>
+              <span className="hidden xl:inline">{isEn ? 'Mic Test' : 'Test Mic'}</span>
             </button>
 
             <button
@@ -1360,13 +1388,13 @@ Return ONLY plain dialogue lines starting with "A:" and "B:", 1-2 sentences per 
                   ? setShadowingCreatorTrigger(c => c + 1)
                   : setIsCreatorOpen(true)
               }
-              className="flex items-center space-x-1 px-2.5 sm:px-3 min-h-[36px] py-1.5 rounded-xl bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white text-xs font-bold shadow-md cursor-pointer"
+              className="flex items-center space-x-1 px-2.5 h-9 sm:h-8 rounded-xl bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white text-xs font-bold shadow-md cursor-pointer"
             >
               <Plus className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">
                 {studioTab === 'shadowing'
-                  ? isEn ? 'Add Sample' : 'Thêm Bài Mẫu'
-                  : isEn ? 'New Script' : 'Tạo Hội Thoại'}
+                  ? isEn ? 'Add Sample' : 'Thêm Mẫu'
+                  : isEn ? 'New Script' : 'Tạo Mới'}
               </span>
               <span className="sm:hidden">{isEn ? 'New' : 'Tạo'}</span>
             </button>
@@ -1374,7 +1402,8 @@ Return ONLY plain dialogue lines starting with "A:" and "B:", 1-2 sentences per 
             <button
               type="button"
               onClick={handleShareUrl}
-              className="hidden sm:flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold border border-slate-700 cursor-pointer"
+              className="hidden sm:flex items-center justify-center w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 cursor-pointer"
+              title={isEn ? 'Copy link' : 'Sao chép liên kết'}
             >
               {copiedUrl ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Share2 className="w-3.5 h-3.5" />}
             </button>
@@ -1405,6 +1434,73 @@ Return ONLY plain dialogue lines starting with "A:" and "B:", 1-2 sentences per 
           </div>
         </header>
 
+        {/* Collapsible Desktop Audio & Threshold Settings Bar (lg+, only when toggled open) */}
+        {isDesktopSettingsOpen && (
+          <div className="hidden lg:flex px-4 py-1.5 bg-slate-950 border-b border-slate-800 items-center justify-between gap-3 shrink-0 animate-in fade-in duration-150">
+            <span className="text-[11px] font-bold text-slate-400">
+              {isEn ? 'Audio & Grading Settings' : 'Cài đặt Âm thanh & Ngưỡng điểm đạt'}
+            </span>
+            <div className="flex items-center space-x-2">
+              <div className="flex items-center bg-slate-900 border border-slate-800 rounded-xl p-0.5">
+                <Sliders className="w-3 h-3 text-amber-400 mx-1.5 shrink-0" />
+                {CONVERSATION_THRESHOLD_OPTIONS.map(opt => (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => {
+                      setPassThreshold(opt.value);
+                      safeSet('ielts_conversation_threshold', opt.value);
+                    }}
+                    className={`px-2 py-0.5 rounded-lg text-[10px] font-black cursor-pointer whitespace-nowrap ${
+                      passThreshold === opt.value
+                        ? 'bg-amber-500 text-slate-950'
+                        : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    {opt.value}%
+                  </button>
+                ))}
+              </div>
+
+              <div className="flex items-center bg-slate-900 border border-slate-800 rounded-xl p-0.5">
+                {[
+                  { id: 'examiner-arthur', label: '🇬🇧 UK' },
+                  { id: 'examiner-oliver', label: '🇺🇸 US' }
+                ].map(v => (
+                  <button
+                    key={v.id}
+                    type="button"
+                    onClick={() => {
+                      setSelectedExaminerId(v.id);
+                      safeSet('ielts_conversation_examiner', v.id);
+                    }}
+                    className={`px-2 py-0.5 rounded-lg text-[10px] font-bold cursor-pointer whitespace-nowrap ${
+                      selectedExaminerId === v.id ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    {v.label}
+                  </button>
+                ))}
+              </div>
+
+              <div className="flex items-center bg-slate-900 border border-slate-800 rounded-xl p-0.5">
+                {[0.8, 0.95, 1.0].map(rate => (
+                  <button
+                    key={rate}
+                    type="button"
+                    onClick={() => setPlaybackSpeed(rate)}
+                    className={`px-2 py-0.5 rounded-lg text-[10px] font-bold cursor-pointer ${
+                      playbackSpeed === rate ? 'bg-purple-600 text-white' : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    {rate}x
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* XP Toast & Level Up */}
         {xpToast && (
           <div className="bg-gradient-to-r from-emerald-950 via-teal-900 to-emerald-950 border-b border-emerald-500/40 px-4 py-1.5 flex items-center justify-center space-x-2 text-xs font-bold text-emerald-200 shrink-0">
@@ -1427,8 +1523,8 @@ Return ONLY plain dialogue lines starting with "A:" and "B:", 1-2 sentences per 
           </div>
         )}
 
-        {/* 2. STUDIO MODE TABS (ROLEPLAY vs SPEECH SHADOWING) + SHARED AUDIO SETTINGS */}
-        <div className="px-3 sm:px-6 py-1.5 sm:py-2 bg-slate-950/90 border-b border-slate-800/90 flex flex-col gap-2 shrink-0">
+        {/* 2. STUDIO MODE TABS & SHARED AUDIO SETTINGS (Mobile/Tablet < lg; Desktop lg+ is unified in Header above) */}
+        <div className="lg:hidden px-3 sm:px-6 py-1.5 sm:py-2 bg-slate-950/90 border-b border-slate-800/90 flex flex-col gap-2 shrink-0">
           <div className="flex items-center justify-between gap-2">
             {/* Primary Studio Tab Switcher */}
             <div className="flex-1 sm:flex-none grid grid-cols-2 sm:inline-flex bg-slate-900 border border-slate-800 rounded-xl p-0.5 shrink-0">
@@ -1654,25 +1750,7 @@ Return ONLY plain dialogue lines starting with "A:" and "B:", 1-2 sentences per 
           />
         ) : (
           <>
-            {/* ROLEPLAY TRACK SWITCHER (Desktop/Tablet lg+) */}
-            <div className="hidden lg:flex px-6 py-2 bg-slate-950/70 border-b border-slate-800/90 items-center space-x-1.5 overflow-x-auto no-scrollbar shrink-0">
-              {CONVERSATION_TRACKS.map(track => (
-                <button
-                  key={track.id}
-                  type="button"
-                  onClick={() => setActiveTrack(track.id)}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer whitespace-nowrap shrink-0 ${
-                    activeTrack === track.id
-                      ? `bg-gradient-to-r ${track.badgeColor} text-white shadow-md`
-                      : 'bg-slate-900 hover:bg-slate-800 text-slate-400 border border-slate-800'
-                  }`}
-                >
-                  {isEn ? track.labelEn : track.labelVi}
-                </button>
-              ))}
-            </div>
-
-        {/* MOBILE SCENARIO SELECTOR BAR (< lg) */}
+            {/* MOBILE SCENARIO SELECTOR BAR (< lg) */}
         <div className="lg:hidden px-3 py-1.5 bg-slate-900/95 border-b border-slate-800 flex items-center justify-between gap-1.5 shrink-0">
           <button
             type="button"
@@ -1750,9 +1828,26 @@ Return ONLY plain dialogue lines starting with "A:" and "B:", 1-2 sentences per 
 
         {/* 3. MAIN WORKSPACE */}
         <div className="flex-1 flex flex-col lg:flex-row min-h-0 overflow-hidden">
-          {/* DESKTOP SIDEBAR */}
-          <aside className="hidden lg:flex w-80 xl:w-96 bg-slate-950/60 border-r border-slate-800 flex-col shrink-0">
-            <div className="p-3 border-b border-slate-800/80 space-y-2">
+          {/* DESKTOP SIDEBAR (Collapsible for full-width dialogue focus) */}
+          {isDesktopSidebarOpen && (
+          <aside className="hidden lg:flex w-72 xl:w-80 bg-slate-950/60 border-r border-slate-800 flex-col shrink-0">
+            <div className="p-2.5 border-b border-slate-800/80 space-y-2">
+              <div className="flex flex-wrap gap-1">
+                {CONVERSATION_TRACKS.map(track => (
+                  <button
+                    key={track.id}
+                    type="button"
+                    onClick={() => setActiveTrack(track.id)}
+                    className={`px-2 py-1 rounded-lg text-[10px] font-black transition-all cursor-pointer whitespace-nowrap ${
+                      activeTrack === track.id
+                        ? `bg-gradient-to-r ${track.badgeColor} text-white shadow-sm`
+                        : 'bg-slate-900 hover:bg-slate-800 text-slate-400 border border-slate-800'
+                    }`}
+                  >
+                    {isEn ? track.labelEn : track.labelVi}
+                  </button>
+                ))}
+              </div>
               <div className="relative">
                 <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
@@ -1859,30 +1954,37 @@ Return ONLY plain dialogue lines starting with "A:" and "B:", 1-2 sentences per 
               })}
             </div>
           </aside>
+          )}
 
           {/* MAIN DIALOGUE STAGE */}
           <main className="flex-1 flex flex-col min-h-0 overflow-hidden bg-slate-900/40">
-            {/* Scenario Context & Role Control Strip (Desktop lg+) */}
-            <div className="hidden lg:flex px-6 py-3 bg-slate-950/70 border-b border-slate-800 flex-wrap items-center justify-between gap-2 shrink-0">
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center space-x-2">
-                  <h3 className="text-sm sm:text-base font-black text-white truncate">
-                    {isEn ? currentScenario.titleEn : currentScenario.titleVi}
-                  </h3>
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 shrink-0">
-                    {Math.min(activeTurnIndex + 1, turns.length)}/{turns.length}
-                  </span>
-                </div>
-                <p className="text-[11px] text-slate-400 truncate mt-0.5">
-                  {isEn ? currentScenario.contextEn : currentScenario.contextVi}
-                </p>
+            {/* Compact 1-Row Scenario Context & Role Control Strip (Desktop lg+) */}
+            <div className="hidden lg:flex px-4 py-2 bg-slate-950/70 border-b border-slate-800 items-center justify-between gap-2 shrink-0">
+              <div className="min-w-0 flex-1 flex items-center space-x-2">
+                <button
+                  type="button"
+                  onClick={() => setIsDesktopSidebarOpen(prev => !prev)}
+                  className="p-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white border border-slate-800 cursor-pointer shrink-0"
+                  title={isDesktopSidebarOpen ? (isEn ? 'Hide scenario list' : 'Thu gọn danh sách') : (isEn ? 'Show scenario list' : 'Mở danh sách')}
+                >
+                  {isDesktopSidebarOpen ? <PanelLeftClose className="w-3.5 h-3.5" /> : <PanelLeftOpen className="w-3.5 h-3.5" />}
+                </button>
+                <h3 className="text-sm font-black text-white truncate">
+                  {isEn ? currentScenario.titleEn : currentScenario.titleVi}
+                </h3>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 shrink-0">
+                  {Math.min(activeTurnIndex + 1, turns.length)}/{turns.length}
+                </span>
+                <span className="hidden xl:inline text-[11px] text-slate-400 truncate">
+                  — {isEn ? currentScenario.contextEn : currentScenario.contextVi}
+                </span>
               </div>
 
               <div className="flex items-center space-x-1.5 shrink-0">
                 <button
                   type="button"
                   onClick={() => setShowIntonation(prev => !prev)}
-                  className={`px-2.5 py-1 rounded-xl text-[11px] font-bold border cursor-pointer ${
+                  className={`px-2 py-1 rounded-lg text-[11px] font-bold border cursor-pointer ${
                     showIntonation
                       ? 'bg-amber-500/15 text-amber-300 border-amber-500/40'
                       : 'bg-slate-900 text-slate-400 border-slate-800'
@@ -1894,33 +1996,43 @@ Return ONLY plain dialogue lines starting with "A:" and "B:", 1-2 sentences per 
                 <button
                   type="button"
                   onClick={() => setKeywordsOnly(prev => !prev)}
-                  className={`px-2.5 py-1 rounded-xl text-[11px] font-bold border cursor-pointer flex items-center space-x-1 ${
+                  className={`px-2 py-1 rounded-lg text-[11px] font-bold border cursor-pointer flex items-center space-x-1 ${
                     keywordsOnly
                       ? 'bg-purple-500/20 text-purple-300 border-purple-500/40'
                       : 'bg-slate-900 text-slate-400 border-slate-800'
                   }`}
                 >
                   <Eye className="w-3 h-3" />
-                  <span>{isEn ? 'Keywords' : 'Ẩn bớt chữ'}</span>
+                  <span>{isEn ? 'Keywords' : 'Ẩn chữ'}</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => resetDialogueState(userRole === 'B' ? 'A' : 'B')}
-                  className="hidden lg:flex items-center space-x-1 px-2.5 py-1 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/40 text-indigo-300 border border-indigo-500/35 text-[11px] font-bold cursor-pointer"
+                  className="flex items-center space-x-1 px-2 py-1 rounded-lg bg-indigo-600/20 hover:bg-indigo-600/40 text-indigo-300 border border-indigo-500/35 text-[11px] font-bold cursor-pointer"
                 >
                   <ArrowLeftRight className="w-3 h-3" />
                   <span>
                     {isEn
-                      ? `Role: ${currentScenario.roles[userRole]?.nameEn} (Swap)`
-                      : `Vai: ${currentScenario.roles[userRole]?.nameVi} (Đổi)`}
+                      ? `${currentScenario.roles[userRole]?.nameEn}`
+                      : `${currentScenario.roles[userRole]?.nameVi}`}
                   </span>
                 </button>
 
                 <button
                   type="button"
+                  onClick={handleNextScenario}
+                  className="px-2 py-1 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/35 text-[11px] font-bold flex items-center space-x-1 cursor-pointer transition-colors"
+                  title={isEn ? 'Next conversation' : 'Hội thoại kế tiếp'}
+                >
+                  <span>{isEn ? 'Next' : 'Bài tiếp'}</span>
+                  <SkipForward className="w-3 h-3" />
+                </button>
+
+                <button
+                  type="button"
                   onClick={() => resetDialogueState(userRole)}
-                  className="p-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white border border-slate-800 cursor-pointer"
+                  className="p-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white border border-slate-800 cursor-pointer"
                   title={isEn ? 'Restart dialogue' : 'Chơi lại từ đầu'}
                 >
                   <RotateCcw className="w-3.5 h-3.5" />

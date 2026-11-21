@@ -18,7 +18,9 @@ import {
   Sliders,
   Shuffle,
   Loader2,
-  SkipForward
+  SkipForward,
+  PanelLeftClose,
+  PanelLeftOpen
 } from 'lucide-react';
 import {
   SHADOWING_DEFAULT_THRESHOLD,
@@ -114,10 +116,9 @@ export default function SpeechShadowingWorkspace({
   });
   const [isMobileListOpen, setIsMobileListOpen] = useState(false);
   const [isMobileDisplayOpen, setIsMobileDisplayOpen] = useState(false);
+  const [isDesktopSidebarOpen, setIsDesktopSidebarOpen] = useState(true);
 
-  const [showPromptCard, setShowPromptCard] = useState(() =>
-    typeof window !== 'undefined' ? window.innerWidth >= 640 : true
-  );
+  const [showPromptCard, setShowPromptCard] = useState(false);
   const [showIntonation, setShowIntonation] = useState(false);
   const [keywordsOnly, setKeywordsOnly] = useState(false);
   const [revealCurrentSeg, setRevealCurrentSeg] = useState(false);
@@ -1144,46 +1145,6 @@ Separate paragraphs with a blank line. If ${customPart} is part1 or part3, prefi
 
   return (
     <>
-      {/* PART & CHUNK FLOW FILTER STRIP (Desktop/Tablet lg+) */}
-      <div className="hidden lg:flex px-6 py-2 bg-slate-950/70 border-b border-slate-800/90 items-center justify-between gap-2 overflow-x-auto no-scrollbar shrink-0">
-        <div className="flex items-center space-x-1.5 shrink-0">
-          {SHADOWING_PARTS.map(p => (
-            <button
-              key={p.id}
-              type="button"
-              onClick={() => setActivePart(p.id)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer whitespace-nowrap ${
-                activePart === p.id
-                  ? `bg-gradient-to-r ${p.badgeColor} text-white shadow-md`
-                  : 'bg-slate-900 hover:bg-slate-800 text-slate-400 border border-slate-800'
-              }`}
-            >
-              {isEn ? p.labelEn : p.labelVi} ({partCounts[p.id] ?? 0})
-            </button>
-          ))}
-        </div>
-
-        {/* Chunk Flow Mode Pills (Desktop/Tablet) */}
-        <div className="flex items-center bg-slate-900 border border-slate-800 rounded-xl p-0.5 shrink-0">
-          <Layers className="w-3 h-3 text-cyan-400 mx-1.5 shrink-0" />
-          {SHADOWING_CHUNK_MODES.map(m => (
-            <button
-              key={m.id}
-              type="button"
-              onClick={() => handleSelectChunkMode(m.id)}
-              title={isEn ? m.descEn : m.descVi}
-              className={`px-2.5 py-1 rounded-lg text-[11px] font-black cursor-pointer whitespace-nowrap transition-all ${
-                chunkMode === m.id
-                  ? 'bg-cyan-600 text-white'
-                  : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              {isEn ? m.labelEn : m.labelVi}
-            </button>
-          ))}
-        </div>
-      </div>
-
       {/* MOBILE TASK SELECTOR & CHUNK MODE BAR (< lg) */}
       <div className="lg:hidden bg-slate-900/95 border-b border-slate-800 shrink-0">
         <div className="px-3 py-1.5 flex items-center justify-between gap-1.5">
@@ -1304,9 +1265,26 @@ Separate paragraphs with a blank line. If ${customPart} is part1 or part3, prefi
 
       {/* MAIN TWO-PANE WORKSPACE */}
       <div className="flex-1 flex flex-col lg:flex-row min-h-0 overflow-hidden">
-        {/* DESKTOP LEFT SIDEBAR */}
-        <aside className="hidden lg:flex w-80 xl:w-96 bg-slate-950/60 border-r border-slate-800 flex-col shrink-0">
-          <div className="p-3 border-b border-slate-800/80 space-y-2">
+        {/* DESKTOP LEFT SIDEBAR (Collapsible for full-width shadowing focus) */}
+        {isDesktopSidebarOpen && (
+        <aside className="hidden lg:flex w-72 xl:w-80 bg-slate-950/60 border-r border-slate-800 flex-col shrink-0">
+          <div className="p-2.5 border-b border-slate-800/80 space-y-2">
+            <div className="flex flex-wrap gap-1">
+              {SHADOWING_PARTS.map(p => (
+                <button
+                  key={p.id}
+                  type="button"
+                  onClick={() => setActivePart(p.id)}
+                  className={`px-2 py-1 rounded-lg text-[10px] font-black transition-all cursor-pointer whitespace-nowrap ${
+                    activePart === p.id
+                      ? `bg-gradient-to-r ${p.badgeColor} text-white shadow-sm`
+                      : 'bg-slate-900 hover:bg-slate-800 text-slate-400 border border-slate-800'
+                  }`}
+                >
+                  {isEn ? p.labelEn : p.labelVi} ({partCounts[p.id] ?? 0})
+                </button>
+              ))}
+            </div>
             <div className="flex items-center gap-1.5">
               <div className="relative flex-1">
                 <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -1478,36 +1456,67 @@ Separate paragraphs with a blank line. If ${customPart} is part1 or part3, prefi
             )}
           </div>
         </aside>
+        )}
 
         {/* MAIN SHADOWING STAGE */}
         <main className="flex-1 flex flex-col min-h-0 overflow-hidden bg-slate-900/40">
-          {/* Task Header & Display Controls (Desktop lg+) */}
-          <div className="hidden lg:flex px-6 py-3 bg-slate-950/70 border-b border-slate-800 flex-wrap items-center justify-between gap-2 shrink-0">
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center space-x-2">
-                <h3 className="text-sm sm:text-base font-black text-white truncate">
-                  {isEn ? currentTask.titleEn : currentTask.titleVi}
-                </h3>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-purple-500/15 text-purple-300 border border-purple-500/30 shrink-0">
-                  {Math.min(activeSegIndex + 1, resolvedSegments.length)}/{resolvedSegments.length}
-                </span>
-              </div>
+          {/* Compact 1-Row Task Header & Controls (Desktop lg+) */}
+          <div className="hidden lg:flex px-4 py-2 bg-slate-950/70 border-b border-slate-800 items-center justify-between gap-2 shrink-0">
+            <div className="min-w-0 flex-1 flex items-center space-x-2">
+              <button
+                type="button"
+                onClick={() => setIsDesktopSidebarOpen(prev => !prev)}
+                className="p-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white border border-slate-800 cursor-pointer shrink-0"
+                title={isDesktopSidebarOpen ? (isEn ? 'Hide task list' : 'Thu gọn danh sách') : (isEn ? 'Show task list' : 'Mở danh sách')}
+              >
+                {isDesktopSidebarOpen ? <PanelLeftClose className="w-3.5 h-3.5" /> : <PanelLeftOpen className="w-3.5 h-3.5" />}
+              </button>
+              <h3 className="text-sm font-black text-white truncate">
+                {isEn ? currentTask.titleEn : currentTask.titleVi}
+              </h3>
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-purple-500/15 text-purple-300 border border-purple-500/30 shrink-0">
+                {Math.min(activeSegIndex + 1, resolvedSegments.length)}/{resolvedSegments.length}
+              </span>
               <button
                 type="button"
                 onClick={() => setShowPromptCard(prev => !prev)}
-                className="text-[11px] text-cyan-300 hover:text-cyan-200 font-bold flex items-center space-x-1 mt-0.5 cursor-pointer"
+                className={`px-2 py-0.5 rounded-lg text-[10px] font-bold border flex items-center space-x-1 shrink-0 cursor-pointer transition-colors ${
+                  showPromptCard
+                    ? 'bg-indigo-600/25 text-indigo-200 border-indigo-500/40'
+                    : 'bg-slate-900 text-cyan-300 border-slate-800 hover:border-cyan-500/40'
+                }`}
               >
                 <BookOpen className="w-3 h-3" />
-                <span>{showPromptCard ? (isEn ? 'Hide Task Prompt' : 'Ẩn Đề Bài') : (isEn ? 'View Task Prompt / Cue Card' : 'Xem Đề Bài / Cue Card')}</span>
+                <span>{isEn ? 'Cue Card' : 'Đề bài'}</span>
                 {showPromptCard ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
               </button>
             </div>
 
             <div className="flex items-center space-x-1.5 shrink-0">
+              {/* Compact Chunk Flow Mode Pills */}
+              <div className="flex items-center bg-slate-900 border border-slate-800 rounded-lg p-0.5 shrink-0">
+                <Layers className="w-3 h-3 text-cyan-400 mx-1 shrink-0" />
+                {SHADOWING_CHUNK_MODES.map(m => (
+                  <button
+                    key={m.id}
+                    type="button"
+                    onClick={() => handleSelectChunkMode(m.id)}
+                    title={isEn ? m.descEn : m.descVi}
+                    className={`px-2 py-0.5 rounded-md text-[10px] font-black cursor-pointer whitespace-nowrap transition-all ${
+                      chunkMode === m.id
+                        ? 'bg-cyan-600 text-white'
+                        : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    {isEn ? m.labelEn : m.labelVi}
+                  </button>
+                ))}
+              </div>
+
               <button
                 type="button"
                 onClick={() => setShowIntonation(prev => !prev)}
-                className={`px-2.5 py-1 rounded-xl text-[11px] font-bold border cursor-pointer ${
+                className={`px-2 py-1 rounded-lg text-[11px] font-bold border cursor-pointer ${
                   showIntonation
                     ? 'bg-amber-500/15 text-amber-300 border-amber-500/40'
                     : 'bg-slate-900 text-slate-400 border-slate-800'
@@ -1519,20 +1528,20 @@ Separate paragraphs with a blank line. If ${customPart} is part1 or part3, prefi
               <button
                 type="button"
                 onClick={() => setKeywordsOnly(prev => !prev)}
-                className={`px-2.5 py-1 rounded-xl text-[11px] font-bold border cursor-pointer flex items-center space-x-1 ${
+                className={`px-2 py-1 rounded-lg text-[11px] font-bold border cursor-pointer flex items-center space-x-1 ${
                   keywordsOnly
                     ? 'bg-purple-500/20 text-purple-300 border-purple-500/40'
                     : 'bg-slate-900 text-slate-400 border-slate-800'
                 }`}
               >
                 <Eye className="w-3 h-3" />
-                <span>{isEn ? 'Keywords' : 'Ẩn bớt chữ'}</span>
+                <span>{isEn ? 'Keywords' : 'Ẩn chữ'}</span>
               </button>
 
               <button
                 type="button"
                 onClick={handleNextTask}
-                className="px-2.5 py-1 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/35 text-[11px] font-bold flex items-center space-x-1 cursor-pointer transition-colors"
+                className="px-2 py-1 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/35 text-[11px] font-bold flex items-center space-x-1 cursor-pointer transition-colors"
                 title={isEn ? 'Next task' : 'Chuyển sang bài kế tiếp'}
               >
                 <span>{isEn ? 'Next' : 'Bài tiếp'}</span>
@@ -1542,7 +1551,7 @@ Separate paragraphs with a blank line. If ${customPart} is part1 or part3, prefi
               <button
                 type="button"
                 onClick={() => resetShadowingState(true)}
-                className="p-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white border border-slate-800 cursor-pointer"
+                className="p-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white border border-slate-800 cursor-pointer"
                 title={isEn ? 'Restart task' : 'Làm lại từ đầu'}
               >
                 <RotateCcw className="w-3.5 h-3.5" />
