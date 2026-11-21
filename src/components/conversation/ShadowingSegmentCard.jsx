@@ -31,6 +31,7 @@ function ShadowingSegmentCard({
   isMachineSpeakingNow,
   showIntonation,
   keywordsOnly,
+  playbackSpeed = 0.85,
   revealThisSeg,
   onToggleRevealThisSeg,
   onPlayModel,
@@ -128,18 +129,11 @@ function ShadowingSegmentCard({
               <button
                 type="button"
                 onClick={() => onPlayModel(segment, null)}
-                className="px-2 py-1 rounded-lg bg-slate-800 hover:bg-indigo-600 text-slate-200 hover:text-white text-[10px] font-bold flex items-center space-x-1 cursor-pointer"
+                className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-indigo-600 text-slate-200 hover:text-white text-[10px] font-bold flex items-center space-x-1 cursor-pointer"
+                title={isEn ? `Listen (${playbackSpeed}x)` : `Nghe (${playbackSpeed}x)`}
               >
                 <Volume2 className="w-3 h-3" />
-                <span>{isEn ? 'Listen' : 'Nghe'}</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => onPlayModel(segment, 0.65)}
-                className="px-1.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-300 text-[10px] font-bold cursor-pointer"
-                title={isEn ? 'Listen very slowly (0.65x)' : 'Nghe rất chậm 0.65x'}
-              >
-                0.65x
+                <span>{isEn ? `Listen (${playbackSpeed}x)` : `Nghe (${playbackSpeed}x)`}</span>
               </button>
             </div>
           </div>
@@ -290,7 +284,7 @@ function ShadowingSegmentCard({
               title={isEn ? 'Listen to model at selected speed' : 'Nghe mẫu theo tốc độ đã chọn'}
             >
               <Headphones className="w-3 h-3" />
-              <span>{isEn ? 'Hear Model' : 'Nghe mẫu'}</span>
+              <span>{isEn ? `Hear Model (${playbackSpeed}x)` : `Nghe mẫu (${playbackSpeed}x)`}</span>
             </button>
 
             <button

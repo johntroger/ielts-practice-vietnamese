@@ -1844,14 +1844,16 @@ export default function PronunciationStudioModal({
                       </span>
                     </button>
 
-                    <button
-                      type="button"
-                      onClick={() => handlePlayModel(0.65)}
-                      className="py-2.5 px-4 rounded-2xl bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-cyan-500/30 text-sm font-bold flex items-center justify-center space-x-1.5 transition-all active:scale-98 cursor-pointer"
-                    >
-                      <Headphones className="w-4 h-4 shrink-0" />
-                      <span>{isEn ? '0.65x Very Slow' : 'Nghe Rất Chậm 0.65x'}</span>
-                    </button>
+                    {playbackSpeed > 0.65 && (
+                      <button
+                        type="button"
+                        onClick={() => handlePlayModel(0.65)}
+                        className="py-2.5 px-4 rounded-2xl bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-cyan-500/30 text-sm font-bold flex items-center justify-center space-x-1.5 transition-all active:scale-98 cursor-pointer"
+                      >
+                        <Headphones className="w-4 h-4 shrink-0" />
+                        <span>{isEn ? '0.65x Very Slow' : 'Nghe Rất Chậm 0.65x'}</span>
+                      </button>
+                    )}
                   </div>
                 </div>
 

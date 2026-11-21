@@ -1674,6 +1674,7 @@ export default function SpeechShadowingWorkspace({
                     isMachineSpeakingNow={isActive && phase === 'machine_reading' && speechEngine.isSpeaking}
                     showIntonation={showIntonation}
                     keywordsOnly={keywordsOnly}
+                    playbackSpeed={playbackSpeed}
                     revealThisSeg={isActive ? revealCurrentSeg : false}
                     onToggleRevealThisSeg={isActive ? handleToggleRevealCurrentSeg : NOOP}
                     onPlayModel={handlePlaySegModel}

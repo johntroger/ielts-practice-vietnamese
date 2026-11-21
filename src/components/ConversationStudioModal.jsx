@@ -2244,6 +2244,7 @@ export default function ConversationStudioModal({
                       hasStudioAudio={Boolean(currentScenario.audioUrl && typeof turn.audioStartSec === 'number')}
                       showIntonation={showIntonation}
                       keywordsOnly={keywordsOnly}
+                      playbackSpeed={playbackSpeed}
                       revealThisTurn={isActive ? revealCurrentTurn : false}
                       onToggleRevealThisTurn={isActive ? handleToggleRevealCurrentTurn : NOOP}
                       onPlayPartnerLine={handlePlayPartnerLine}

@@ -32,6 +32,7 @@ function ConversationTurnCard({
   hasStudioAudio,
   showIntonation,
   keywordsOnly,
+  playbackSpeed = 0.85,
   revealThisTurn,
   onToggleRevealThisTurn,
   onPlayPartnerLine,
@@ -124,19 +125,11 @@ function ConversationTurnCard({
               <button
                 type="button"
                 onClick={() => onPlayPartnerLine(turn, null)}
-                className="px-2 py-1 rounded-lg bg-slate-800 hover:bg-indigo-600 text-slate-200 hover:text-white text-[10px] font-bold flex items-center space-x-1 transition-colors cursor-pointer"
-                title={isEn ? 'Replay partner line' : 'Nghe lại câu này'}
+                className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-indigo-600 text-slate-200 hover:text-white text-[10px] font-bold flex items-center space-x-1 transition-colors cursor-pointer"
+                title={isEn ? `Replay partner line (${playbackSpeed}x)` : `Nghe lại câu này (${playbackSpeed}x)`}
               >
                 <Volume2 className="w-3 h-3" />
-                <span>{isEn ? 'Listen' : 'Nghe'}</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => onPlayPartnerLine(turn, 0.65)}
-                className="px-1.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-300 text-[10px] font-bold cursor-pointer"
-                title={isEn ? 'Listen very slowly (0.65x)' : 'Nghe rất chậm 0.65x'}
-              >
-                0.65x
+                <span>{isEn ? `Listen (${playbackSpeed}x)` : `Nghe (${playbackSpeed}x)`}</span>
               </button>
             </div>
           </div>
@@ -280,7 +273,7 @@ function ConversationTurnCard({
               title={isEn ? 'Hear model pronunciation at selected speed' : 'Nghe mẫu câu của bạn theo tốc độ đã chọn'}
             >
               <Headphones className="w-3 h-3" />
-              <span>{isEn ? 'Hear Model' : 'Nghe mẫu'}</span>
+              <span>{isEn ? `Hear Model (${playbackSpeed}x)` : `Nghe mẫu (${playbackSpeed}x)`}</span>
             </button>
 
             <button
