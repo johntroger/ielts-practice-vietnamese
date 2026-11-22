@@ -22,8 +22,9 @@ console.log('Testing Step 175: Dedicated URL Routing for Micro-Drills...');
 
 // 1. Verify App.jsx routing logic
 const appPath = path.resolve(__dirname, '../src/App.jsx');
+const deepLinkPath = path.resolve(__dirname, '../src/hooks/useUrlDeepLinking.js');
 assert.ok(fs.existsSync(appPath), 'src/App.jsx must exist');
-const appContent = fs.readFileSync(appPath, 'utf8');
+const appContent = fs.readFileSync(appPath, 'utf8') + '\n' + fs.readFileSync(deepLinkPath, 'utf8');
 
 assert.ok(
   appContent.includes("pathname === '/micro-drills'") &&
@@ -39,7 +40,7 @@ assert.ok(
 );
 
 assert.ok(
-  appContent.includes("openModal('drills', { room, tab, drillId })"),
+  appContent.includes("openModal('drills', extractDrillParams())"),
   'App.jsx must openModal drills with extracted deep-link payload'
 );
 

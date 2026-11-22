@@ -74,7 +74,7 @@ console.log(`  ✓ Both vi.js and en.js contain all ${requiredKeys.length} requi
 
 // Test 3: Verify two-way URL routing in App.jsx
 console.log('Test 3: Verifying Two-Way URL Routing in App.jsx');
-const appSource = fs.readFileSync(appPath, 'utf-8');
+const appSource = fs.readFileSync(appPath, 'utf-8') + '\n' + fs.readFileSync(path.resolve('src/hooks/useUrlDeepLinking.js'), 'utf-8');
 
 assert(appSource.includes("const AboutPage = React.lazy(() => import('./pages/AboutPage'))"), 'App.jsx must lazy-load AboutPage');
 assert(appSource.includes('isAboutViewOpen'), 'App.jsx must maintain isAboutViewOpen state');
@@ -85,7 +85,7 @@ assert(appSource.includes("search.get('page') === 'about'"), 'App.jsx must suppo
 assert(appSource.includes("window.history.pushState({ page: 'about' }, '', '/about')"), 'App.jsx must pushState /about on open');
 assert(appSource.includes("trackSkillView('about')"), 'App.jsx must log virtual pageview for GA4 analytics');
 assert(appSource.includes('<AboutPage'), 'App.jsx must render AboutPage');
-assert(appSource.includes('checkIsAboutRoute()'), 'App.jsx must check about route on mount');
+assert(appSource.includes('if (checkRoute())'), 'useUrlDeepLinking must check route on mount');
 console.log('  ✓ Two-Way URL Routing and deep-linking in App.jsx verified');
 
 // Test 4: Verify vercel.json SPA rewrites
@@ -94,7 +94,7 @@ const vercelConfigPath = path.resolve('vercel.json');
 assert(fs.existsSync(vercelConfigPath), 'vercel.json must exist');
 const vercelConfig = JSON.parse(fs.readFileSync(vercelConfigPath, 'utf-8'));
 assert(Array.isArray(vercelConfig.rewrites), 'vercel.json must define rewrites array for SPA routing');
-const spaRewrite = vercelConfig.rewrites.find(r => r.source === '/(.*)' && r.destination === '/');
+const spaRewrite = vercelConfig.rewrites.find(r => (r.source === '/(.*)' || r.source.startsWith('/((')) && r.destination === '/');
 assert(spaRewrite, 'vercel.json must rewrite all paths to / for SPA support');
 console.log('  ✓ vercel.json correctly configured for client-side SPA routing');
 

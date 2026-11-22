@@ -25,7 +25,7 @@ function it(desc, fn) {
 
 console.log('🧪 Testing Step 129: Atlas Arena Dedicated URL Routing (/atlas-arena)...\n');
 
-const appSource = fs.readFileSync(path.resolve('src/App.jsx'), 'utf-8');
+const appSource = fs.readFileSync(path.resolve('src/App.jsx'), 'utf-8') + '\n' + fs.readFileSync(path.resolve('src/hooks/useUrlDeepLinking.js'), 'utf-8');
 const arenaModalSource = fs.readFileSync(path.resolve('src/components/arena/AtlasEnglishArenaModal.jsx'), 'utf-8');
 const enSource = fs.readFileSync(path.resolve('src/i18n/locales/en.js'), 'utf-8');
 const viSource = fs.readFileSync(path.resolve('src/i18n/locales/vi.js'), 'utf-8');
@@ -34,8 +34,8 @@ const vercelConfig = JSON.parse(fs.readFileSync(path.resolve('vercel.json'), 'ut
 // 1. Vercel SPA Routing Rewrite Guard
 it('vercel.json has SPA catch-all rewrite rule for clean URL paths', () => {
   assert(Array.isArray(vercelConfig.rewrites), 'vercel.json must define rewrites array');
-  const catchAll = vercelConfig.rewrites.find(r => r.source === '/(.*)' && r.destination === '/');
-  assert(catchAll, 'vercel.json must have /{.*} -> / catch-all rewrite for SPA deep linking');
+  const catchAll = vercelConfig.rewrites.find(r => (r.source === '/(.*)' || r.source.startsWith('/((')) && r.destination === '/');
+  assert(catchAll, 'vercel.json must have SPA catch-all rewrite -> / for deep linking');
 });
 
 // 2. App.jsx Route Detection Logic
@@ -48,8 +48,8 @@ it('App.jsx detects /atlas-arena, /arena, #atlas-arena and ?mode=atlas-arena', (
 
 // 3. Direct Entry Auto-Open
 it('App.jsx automatically triggers openModal("atlasArena") on route match', () => {
-  assert(appSource.includes("if (checkIsArenaRoute()) {\n      openModal('atlasArena');"), 
-    'App.jsx must auto-open atlasArena modal on direct URL entry');
+  assert(appSource.includes("() => openModal('atlasArena')"), 
+    'App.jsx / useUrlDeepLinking must auto-open atlasArena modal on direct URL entry');
 });
 
 // 4. Browser History (Back / Forward) Navigation Sync
