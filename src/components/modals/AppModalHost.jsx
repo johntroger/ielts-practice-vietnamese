@@ -309,6 +309,8 @@ export default function AppModalHost({
             initialOptions={typeof modals.musicListening === 'object' && modals.musicListening !== null ? modals.musicListening : null}
             onClose={() => closeModal('musicListening')}
             currentUser={currentUser}
+            onOpenAuth={() => openModal('auth')}
+            onOpenArena={() => openModal('atlasArena')}
             onSaveToNotebook={(v) => {
               if (!addVocabUnique(vocabList, v, setVocabList)) return;
               if (onSaveUserVocab) onSaveUserVocab(v);

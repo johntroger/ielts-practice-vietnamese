@@ -21,8 +21,8 @@ import {
 } from 'lucide-react';
 import {
   MUSIC_GENRES,
-  MUSIC_LISTENING_TRACKS
-} from '../data/musicListeningData.js';
+  CANONICAL_MUSIC_BANK
+} from '../data/musicBank/index.js';
 import {
   MUSIC_PRACTICE_MODES,
   MUSIC_DIFFICULTY_LEVELS,
@@ -43,7 +43,13 @@ import {
   getLevelTierInfo
 } from '../services/gamification/levelEngine.js';
 import { getWallet, addGold } from '../services/gamification/atlasWalletService.js';
-import { GoldWalletHeaderBadge } from './common/BatchSelectorStrip.jsx';
+import * as eventBus from '../services/gamification/eventBus.js';
+import {
+  buildTrackBatches,
+  purchaseBatchUnlock
+} from '../services/gamification/batchProgressionService.js';
+import BatchSelectorStrip, { GoldWalletHeaderBadge } from './common/BatchSelectorStrip.jsx';
+import BatchUnlockGateCard from './common/BatchUnlockGateCard.jsx';
 import { getUnifiedStreakCount } from '../services/gamification/leagueEngine.js';
 import { speakingSoundEffects } from '../utils/speakingSoundEffects.js';
 import { triggerHaptic } from '../utils/hapticHelper.js';
@@ -55,24 +61,30 @@ import MusicCustomSongModal from './music/MusicCustomSongModal.jsx';
 const CUSTOM_SONGS_STORAGE_KEY = 'ielts_music_custom_songs_v1';
 const MUSIC_RESUME_STORAGE_KEY = 'ielts_music_resume_v1';
 const MUSIC_COMPLETED_STORAGE_KEY = 'ielts_music_completed_v1';
+const MUSIC_BATCH_STORAGE_KEY = 'ielts_music_batch_v1';
 
 export default function MusicListeningStudioModal({
   isOpen,
   onClose,
   currentUser = null,
+  onOpenAuth,
+  onOpenArena,
   onSaveToNotebook,
   onOpenPronunciation,
   initialOptions = null
 }) {
   const { isEn } = useTranslation();
 
-  // 1. Custom songs & mastered state
+  // 1. Custom songs, completed state & Progressive Batch State
   const [customSongs, setCustomSongs] = useState(() => safeGet(CUSTOM_SONGS_STORAGE_KEY, []));
   const [completedMap, setCompletedMap] = useState(() => safeGet(MUSIC_COMPLETED_STORAGE_KEY, {}));
+  const [selectedBatchIndex, setSelectedBatchIndex] = useState(() =>
+    safeGet(MUSIC_BATCH_STORAGE_KEY, 1)
+  );
   const [isCustomModalOpen, setIsCustomModalOpen] = useState(false);
 
   const allTracks = useMemo(
-    () => [...customSongs, ...MUSIC_LISTENING_TRACKS],
+    () => [...customSongs, ...CANONICAL_MUSIC_BANK],
     [customSongs]
   );
 
@@ -100,7 +112,7 @@ export default function MusicListeningStudioModal({
     getInitialParam('genre', MUSIC_GENRES.map(g => g.id), savedResume?.genre || 'all')
   );
   const [selectedTrackId, setSelectedTrackId] = useState(() =>
-    getInitialParam('song', null, savedResume?.trackId || MUSIC_LISTENING_TRACKS[0]?.id)
+    getInitialParam('song', null, savedResume?.trackId || CANONICAL_MUSIC_BANK[0]?.id)
   );
   const [practiceMode, setPracticeMode] = useState(() =>
     getInitialParam('mode', ['full', 'sentence', 'word', 'mixed'], savedResume?.mode || 'mixed')
@@ -137,12 +149,92 @@ export default function MusicListeningStudioModal({
   const [revealedLines, setRevealedLines] = useState({});
   const [hasClaimedReward, setHasClaimedReward] = useState(false);
 
-  // Gamification header stats
+  // Gamification header stats & live wallet synchronization
   const [totalXp, setTotalXp] = useState(() => getCurrentUserTotalXp());
   const [wallet, setWallet] = useState(() => getWallet());
   const streakCount = useMemo(() => getUnifiedStreakCount(), []);
   const levelProgress = useMemo(() => calculateLevelProgress(totalXp), [totalXp]);
   const tierInfo = useMemo(() => getLevelTierInfo(levelProgress.level), [levelProgress.level]);
+
+  useEffect(() => {
+    setWallet(getWallet());
+    const handleWalletUpdate = (updated) => {
+      setWallet(updated || getWallet());
+    };
+    const unsub = eventBus.on('wallet_updated', handleWalletUpdate);
+    return () => {
+      if (typeof unsub === 'function') unsub();
+    };
+  }, [isOpen]);
+
+  // Progressive Batch Slicing for the Canonical Music Bank (Batch 1 = 6 FREE starter songs, Batch 2..N = 6 songs each)
+  const musicBatches = useMemo(() => {
+    const completedIdSet = new Set(Object.keys(completedMap || {}));
+    return buildTrackBatches({
+      items: CANONICAL_MUSIC_BANK,
+      trackKey: 'music_dictation',
+      completedIdSet,
+      wallet,
+      currentUser
+    });
+  }, [completedMap, wallet, currentUser]);
+
+  const activeBatchObj = useMemo(() => {
+    if (selectedBatchIndex === 'personal') return null;
+    return (
+      musicBatches.find(b => b.batchIndex === selectedBatchIndex) ||
+      musicBatches[0] ||
+      null
+    );
+  }, [selectedBatchIndex, musicBatches]);
+
+  const isViewingLockedBatch = Boolean(activeBatchObj && !activeBatchObj.isUnlocked);
+
+  const nextLockedBatch = useMemo(() => {
+    if (!activeBatchObj || !activeBatchObj.isUnlocked) return null;
+    return (
+      musicBatches.find(
+        b => b.batchIndex === activeBatchObj.batchIndex + 1 && !b.isUnlocked
+      ) || null
+    );
+  }, [activeBatchObj, musicBatches]);
+
+  const handleSelectBatch = useCallback((nextBatchIdx) => {
+    setSelectedBatchIndex(nextBatchIdx);
+    safeSet(MUSIC_BATCH_STORAGE_KEY, nextBatchIdx);
+    if (nextBatchIdx === 'personal') {
+      if (customSongs[0]?.id) setSelectedTrackId(customSongs[0].id);
+      return;
+    }
+    const targetBatch = musicBatches.find(b => b.batchIndex === nextBatchIdx);
+    if (targetBatch?.isUnlocked && targetBatch.items[0]?.id) {
+      setSelectedTrackId(targetBatch.items[0].id);
+    }
+  }, [customSongs, musicBatches]);
+
+  const handlePurchaseMusicBatch = useCallback((batch) => {
+    if (!batch) return;
+    const res = purchaseBatchUnlock({
+      batchId: batch.batchId,
+      batchLabel: `Music & Lyrics Bank Batch ${batch.batchIndex}`,
+      costGold: batch.costGold,
+      currentUser
+    });
+    if (res?.success) {
+      setWallet(getWallet());
+      setSelectedBatchIndex(batch.batchIndex);
+      safeSet(MUSIC_BATCH_STORAGE_KEY, batch.batchIndex);
+      if (batch.items[0]?.id) {
+        setSelectedTrackId(batch.items[0].id);
+      }
+      try {
+        speakingSoundEffects.playCelebrationFanfare?.();
+        triggerHaptic('success');
+      } catch (e) {}
+    } else if (res?.message === 'need_auth') {
+      onOpenAuth?.();
+    }
+  }, [currentUser, onOpenAuth]);
 
   // Apply external initialOptions when deep-linked while mounted
   useEffect(() => {
@@ -178,9 +270,16 @@ export default function MusicListeningStudioModal({
     } catch (e) {}
   }, [isOpen, selectedGenre, selectedTrackId, practiceMode, difficulty]);
 
-  // Filter tracks by genre and search query
+  // Scope tracks to the currently selected Batch (or Personal Vault) + Genre + Search filter
+  const batchScopedTracks = useMemo(() => {
+    if (selectedBatchIndex === 'personal') {
+      return customSongs;
+    }
+    return activeBatchObj?.items || CANONICAL_MUSIC_BANK;
+  }, [selectedBatchIndex, customSongs, activeBatchObj]);
+
   const filteredTracks = useMemo(() => {
-    return allTracks.filter((tr) => {
+    return batchScopedTracks.filter((tr) => {
       const matchesGenre = selectedGenre === 'all' || tr.genreId === selectedGenre;
       if (!matchesGenre) return false;
       if (!searchQuery.trim()) return true;
@@ -191,15 +290,19 @@ export default function MusicListeningStudioModal({
         (tr.pedagogicalFocusEn && tr.pedagogicalFocusEn.toLowerCase().includes(q))
       );
     });
-  }, [allTracks, selectedGenre, searchQuery]);
+  }, [batchScopedTracks, selectedGenre, searchQuery]);
 
   const currentTrack = useMemo(() => {
+    const unlockedTracks = [
+      ...customSongs,
+      ...musicBatches.filter(b => b.isUnlocked).flatMap(b => b.items)
+    ];
     return (
-      allTracks.find(t => t.id === selectedTrackId) ||
+      unlockedTracks.find(t => t.id === selectedTrackId) ||
       filteredTracks[0] ||
-      MUSIC_LISTENING_TRACKS[0]
+      CANONICAL_MUSIC_BANK[0]
     );
-  }, [allTracks, filteredTracks, selectedTrackId]);
+  }, [customSongs, musicBatches, filteredTracks, selectedTrackId]);
 
   // Hydrate local IndexedDB audio URL if currentTrack is a local custom song
   const [resolvedAudioSrc, setResolvedAudioSrc] = useState(currentTrack?.audioUrl || '');
@@ -522,6 +625,26 @@ export default function MusicListeningStudioModal({
     };
   }, [blueprint.lines, wordInputs, sentenceInputs, revealedLines, difficulty, practiceMode]);
 
+  // Auto-record song mastery into completedMap when 100% tasks are completed (unlocks Batch N+1 mastery gate)
+  useEffect(() => {
+    if (!progressStats.isAllCompleted || !currentTrack?.id) return;
+    setCompletedMap((prev) => {
+      const existing = prev[currentTrack.id];
+      if (existing && existing.accuracy >= progressStats.accuracyPct) return prev;
+      const next = {
+        ...prev,
+        [currentTrack.id]: {
+          accuracy: progressStats.accuracyPct,
+          mode: practiceMode,
+          difficulty,
+          completedAt: new Date().toISOString()
+        }
+      };
+      safeSet(MUSIC_COMPLETED_STORAGE_KEY, next);
+      return next;
+    });
+  }, [progressStats.isAllCompleted, progressStats.accuracyPct, currentTrack, practiceMode, difficulty]);
+
   // Claim XP & Gold reward upon completing a song
   const handleClaimReward = useCallback(() => {
     if (hasClaimedReward || !currentTrack) return;
@@ -568,12 +691,14 @@ export default function MusicListeningStudioModal({
     setTimeout(() => setIsCopiedLink(false), 2000);
   };
 
-  // Add custom song handler
+  // Add custom song handler -> opens Personal Vault tab automatically
   const handleAddCustomSong = (newTrack) => {
     const updated = [newTrack, ...customSongs];
     setCustomSongs(updated);
     safeSet(CUSTOM_SONGS_STORAGE_KEY, updated);
     setSelectedGenre('all');
+    setSelectedBatchIndex('personal');
+    safeSet(MUSIC_BATCH_STORAGE_KEY, 'personal');
     setSelectedTrackId(newTrack.id);
     handleResetSession();
   };
@@ -588,7 +713,13 @@ export default function MusicListeningStudioModal({
     setCustomSongs(updated);
     safeSet(CUSTOM_SONGS_STORAGE_KEY, updated);
     if (selectedTrackId === track.id) {
-      setSelectedTrackId(MUSIC_LISTENING_TRACKS[0]?.id);
+      if (updated.length > 0) {
+        setSelectedTrackId(updated[0].id);
+      } else {
+        setSelectedBatchIndex(1);
+        safeSet(MUSIC_BATCH_STORAGE_KEY, 1);
+        setSelectedTrackId(CANONICAL_MUSIC_BANK[0]?.id);
+      }
       handleResetSession();
     }
   };
@@ -668,7 +799,13 @@ export default function MusicListeningStudioModal({
             </div>
 
             <div className="hidden md:block">
-              <GoldWalletHeaderBadge gold={wallet?.gold || 0} isEn={isEn} />
+              <GoldWalletHeaderBadge
+                isEn={isEn}
+                onOpenArena={() => {
+                  audioEngine.pause();
+                  onOpenArena?.();
+                }}
+              />
             </div>
 
             <div className="hidden xl:flex items-center space-x-1.5 px-2.5 py-1 rounded-xl bg-slate-900 border border-slate-800 text-xs font-bold">
@@ -761,9 +898,31 @@ export default function MusicListeningStudioModal({
         {/* 3. MAIN WORKSPACE: LEFT SONG SIDEBAR + RIGHT DICTATION STUDIO     */}
         {/* ================================================================= */}
         <div className="flex-1 flex min-h-0 overflow-hidden">
-          {/* LEFT SIDEBAR: Song Catalog */}
+          {/* LEFT SIDEBAR: Progressive Batch Selector + Song Catalog */}
           {!isSidebarCollapsed && (
             <aside className="w-64 sm:w-72 lg:w-80 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col shrink-0">
+              {/* Progressive Batch Unlock Selector Strip */}
+              <div className="p-2.5 bg-slate-950 border-b border-slate-800">
+                <div className="flex items-center justify-between mb-1.5 px-0.5">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">
+                    {isEn ? 'Music Bank Batches' : 'Lộ Trình Mở Lô Nhạc'}
+                  </span>
+                  {activeBatchObj && (
+                    <span className="text-[10px] font-bold text-emerald-400">
+                      {activeBatchObj.completedCount}/{activeBatchObj.totalCount}{' '}
+                      {isEn ? 'mastered' : 'đã xong'}
+                    </span>
+                  )}
+                </div>
+                <BatchSelectorStrip
+                  batches={musicBatches}
+                  selectedBatchIndex={selectedBatchIndex}
+                  onSelectBatch={handleSelectBatch}
+                  personalCount={customSongs.length}
+                  isEn={isEn}
+                />
+              </div>
+
               {/* Search Box */}
               <div className="p-3 border-b border-slate-200 dark:border-slate-800">
                 <div className="relative">
@@ -783,18 +942,23 @@ export default function MusicListeningStudioModal({
               {/* Track List */}
               <div className="flex-1 overflow-y-auto p-2.5 space-y-2">
                 {filteredTracks.map((tr) => {
-                  const isCurrent = currentTrack?.id === tr.id;
+                  const isCurrent = currentTrack?.id === tr.id && !isViewingLockedBatch;
                   const doneInfo = completedMap[tr.id];
                   const genreObj = MUSIC_GENRES.find(g => g.id === tr.genreId);
 
                   return (
                     <div
                       key={tr.id}
-                      onClick={() => handleSelectTrack(tr.id)}
-                      className={`group relative p-3 rounded-2xl border transition-all cursor-pointer ${
-                        isCurrent
-                          ? 'bg-gradient-to-r from-rose-50 via-purple-50 to-indigo-50 dark:from-slate-800 dark:to-indigo-950/70 border-purple-400 dark:border-purple-500 shadow-xs'
-                          : 'bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/60 border-slate-200/80 dark:border-slate-800'
+                      onClick={() => {
+                        if (isViewingLockedBatch) return;
+                        handleSelectTrack(tr.id);
+                      }}
+                      className={`group relative p-3 rounded-2xl border transition-all ${
+                        isViewingLockedBatch
+                          ? 'bg-slate-50 dark:bg-slate-900/50 border-slate-200/70 dark:border-slate-800/80 opacity-60 cursor-not-allowed'
+                          : isCurrent
+                          ? 'bg-gradient-to-r from-rose-50 via-purple-50 to-indigo-50 dark:from-slate-800 dark:to-indigo-950/70 border-purple-400 dark:border-purple-500 shadow-xs cursor-pointer'
+                          : 'bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/60 border-slate-200/80 dark:border-slate-800 cursor-pointer'
                       }`}
                     >
                       <div className="flex items-start justify-between gap-2">
@@ -847,8 +1011,52 @@ export default function MusicListeningStudioModal({
             </aside>
           )}
 
-          {/* RIGHT WORKSPACE: Mode Toolbar + Summary + Interactive Lyrics Canvas + Audio Dock */}
+          {/* RIGHT WORKSPACE: Locked Batch Gate OR Active Dictation Studio */}
           <div className="flex-1 flex flex-col min-w-0 min-h-0 overflow-hidden">
+            {isViewingLockedBatch && activeBatchObj ? (
+              <div className="flex-1 overflow-y-auto p-4 sm:p-8 flex items-center justify-center bg-slate-50 dark:bg-slate-950">
+                <div className="w-full max-w-xl">
+                  <BatchUnlockGateCard
+                    targetBatch={activeBatchObj}
+                    isCelebrationMode={false}
+                    isEn={isEn}
+                    onUnlockBatch={handlePurchaseMusicBatch}
+                    onGoToPrevBatch={(prevIdx) => handleSelectBatch(prevIdx)}
+                    onOpenAuth={() => {
+                      audioEngine.pause();
+                      onOpenAuth?.();
+                    }}
+                    onOpenArena={() => {
+                      audioEngine.pause();
+                      onOpenArena?.();
+                    }}
+                  />
+                </div>
+              </div>
+            ) : (
+              <>
+                {/* Batch Mastery Celebration Banner when Batch N-1 is 100% completed */}
+                {activeBatchObj?.isCompleted && nextLockedBatch && (
+                  <div className="px-3 sm:px-5 pt-3 bg-slate-50 dark:bg-slate-950 shrink-0">
+                    <BatchUnlockGateCard
+                      targetBatch={nextLockedBatch}
+                      isCelebrationMode={true}
+                      compact={true}
+                      isEn={isEn}
+                      onUnlockBatch={handlePurchaseMusicBatch}
+                      onGoToPrevBatch={(prevIdx) => handleSelectBatch(prevIdx)}
+                      onOpenAuth={() => {
+                        audioEngine.pause();
+                        onOpenAuth?.();
+                      }}
+                      onOpenArena={() => {
+                        audioEngine.pause();
+                        onOpenArena?.();
+                      }}
+                    />
+                  </div>
+                )}
+
             {/* 3.1. Sticky 4-Mode & Difficulty Control Bar */}
             <div className="px-3 sm:px-5 py-2.5 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2.5 shrink-0">
               {/* 4 Dictation Mode Pills */}
@@ -1039,6 +1247,8 @@ export default function MusicListeningStudioModal({
               isAutoPauseLine={isAutoPauseLine}
               onToggleAutoPauseLine={() => setIsAutoPauseLine(prev => !prev)}
             />
+              </>
+            )}
           </div>
         </div>
       </div>

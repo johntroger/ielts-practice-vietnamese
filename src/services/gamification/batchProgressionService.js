@@ -74,6 +74,13 @@ export const BATCH_TRACK_CONFIGS = {
     costGold: 700,
     labelEn: 'Speech Shadowing',
     labelVi: 'Nhại Giọng IELTS'
+  },
+  music_dictation: {
+    starterSize: 6,
+    batchSize: 6,
+    costGold: 650,
+    labelEn: 'Music & Lyrics Bank',
+    labelVi: 'Ngân Hàng Nhạc Chép Lời'
   }
 };
 
