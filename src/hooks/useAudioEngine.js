@@ -37,6 +37,7 @@ export function useAudioEngine({
   const [currentActiveSrc, setCurrentActiveSrc] = useState(initialSrc);
   const lastLoadedSrcRef = useRef('');
   const fallbackTriedRef = useRef(false);
+  const pendingSeekRef = useRef(null);
 
   // Helper to compute buffered percent and check minimum buffer readiness
   const updateBufferInfo = useCallback((audio) => {
@@ -80,6 +81,14 @@ export function useAudioEngine({
       setDuration(audio.duration || 0);
       setAudioState('ready');
       setErrorMessage(null);
+      if (pendingSeekRef.current !== null && isFinite(pendingSeekRef.current)) {
+        try {
+          const target = Math.max(0, Math.min(pendingSeekRef.current, audio.duration || pendingSeekRef.current));
+          audio.currentTime = target;
+          setCurrentTime(target);
+        } catch (e) {}
+        pendingSeekRef.current = null;
+      }
       updateBufferInfo(audio);
     };
 
@@ -385,9 +394,17 @@ export function useAudioEngine({
 
     const safeTime = Math.max(0, Math.min(Number(targetSeconds) || 0, audio.duration || 1800));
     try {
-      audio.currentTime = safeTime;
+      if (audio.readyState < 1) {
+        // Mobile browsers ignore currentTime before metadata loads; queue it for loadedmetadata
+        pendingSeekRef.current = safeTime;
+      } else {
+        pendingSeekRef.current = null;
+        audio.currentTime = safeTime;
+      }
       setCurrentTime(safeTime);
-    } catch (e) {}
+    } catch (e) {
+      pendingSeekRef.current = safeTime;
+    }
   }, [examMode]);
 
   // Volume

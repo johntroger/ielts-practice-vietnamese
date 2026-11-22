@@ -445,11 +445,23 @@ export default function MusicListeningStudioModal({
     handleResetSession();
   };
 
-  // Seek to a specific lyric line
+  // Seek to a specific lyric line (with smart guard so tapping 2nd blank on the same actively playing line doesn't restart it)
   const handleSeekToLine = useCallback(
-    (lineIdx, autoPlay = true) => {
+    (lineIdx, autoPlay = true, options = {}) => {
       const targetLine = blueprint.lines[lineIdx];
       if (!targetLine) return;
+
+      const cur = audioEngine.currentTime || 0;
+      const isAlreadyPlayingThisLine =
+        audioEngine.isPlaying &&
+        activeLineIndexRef.current === lineIdx &&
+        cur >= targetLine.start - 0.5 &&
+        cur < (targetLine.end || targetLine.start + 5);
+
+      if (options?.skipIfAlreadyPlayingLine && isAlreadyPlayingThisLine) {
+        return;
+      }
+
       setActiveLineIndex(lineIdx);
       pausedForLineRef.current = -1;
       audioEngine.seek(targetLine.start);
