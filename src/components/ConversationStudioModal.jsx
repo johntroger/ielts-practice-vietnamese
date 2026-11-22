@@ -2167,25 +2167,65 @@ export default function ConversationStudioModal({
           />
         ) : (
           <>
-            {/* MOBILE SCENARIO SELECTOR BAR (< lg) */}
-        <div className="lg:hidden px-3 py-1.5 bg-slate-900/95 border-b border-slate-800 flex items-center justify-between gap-1.5 shrink-0">
+            {/* MOBILE SCENARIO & BATCH SELECTOR BAR (< lg) */}
+        <div className="lg:hidden relative px-3 py-1.5 bg-slate-900/95 border-b border-slate-800 flex items-center justify-between gap-1.5 shrink-0">
           <button
             type="button"
             onClick={() => setIsMobileListOpen(true)}
-            className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-slate-800 text-cyan-300 border border-cyan-500/30 text-[11px] font-bold shrink-0 cursor-pointer"
+            className="flex items-center space-x-1.5 px-2.5 min-h-[36px] rounded-xl bg-slate-800 text-cyan-300 border border-cyan-500/30 text-[11px] font-bold shrink-0 cursor-pointer active:scale-95"
           >
-            <List className="w-3.5 h-3.5" />
-            <span>{isEn ? `Scenarios (${filteredScenarios.length})` : `Kịch bản (${filteredScenarios.length})`}</span>
+            <List className="w-3.5 h-3.5 shrink-0" />
+            {roleplayBatches.length > 0 && selectedRoleplayBatch !== 'personal' ? (
+              <span className="flex items-center space-x-1">
+                <span>
+                  {isEn
+                    ? `B${activeRoleplayBatchObj?.batchIndex || 1}/${roleplayBatches.length}`
+                    : `Lô ${activeRoleplayBatchObj?.batchIndex || 1}/${roleplayBatches.length}`}
+                </span>
+                <span className="text-[10px] font-mono opacity-80">
+                  {activeRoleplayBatchObj?.isUnlocked
+                    ? `${activeRoleplayBatchObj.completedCount}/${activeRoleplayBatchObj.totalCount}`
+                    : '🔒'}
+                </span>
+              </span>
+            ) : (
+              <span>{isEn ? `Scenarios (${filteredScenarios.length})` : `Kịch bản (${filteredScenarios.length})`}</span>
+            )}
           </button>
 
           <div className="min-w-0 flex-1 flex items-center justify-center space-x-1.5">
-            <span className="text-[11px] font-extrabold text-white truncate">
-              {isEn ? currentScenario.titleEn : currentScenario.titleVi}
-            </span>
-            <span className="px-1.5 py-0.2 rounded-full text-[10px] font-black bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 shrink-0">
-              {Math.min(activeTurnIndex + 1, turns.length)}/{turns.length}
-            </span>
+            {activeRoleplayBatchObj && !activeRoleplayBatchObj.isUnlocked ? (
+              <span className="text-[11px] font-extrabold text-amber-300 truncate">
+                {isEn
+                  ? `🔒 Batch ${activeRoleplayBatchObj.batchIndex} • ${activeRoleplayBatchObj.costGold} 🪙`
+                  : `🔒 Lô ${activeRoleplayBatchObj.batchIndex} • ${activeRoleplayBatchObj.costGold} 🪙`}
+              </span>
+            ) : (
+              <>
+                <span className="text-[11px] font-extrabold text-white truncate">
+                  {isEn ? currentScenario.titleEn : currentScenario.titleVi}
+                </span>
+                <span className="px-1.5 py-0.2 rounded-full text-[10px] font-black bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 shrink-0">
+                  {Math.min(activeTurnIndex + 1, turns.length)}/{turns.length}
+                </span>
+              </>
+            )}
           </div>
+
+          {activeRoleplayBatchObj && activeRoleplayBatchObj.isUnlocked && (
+            <div className="absolute left-0 right-0 bottom-0 h-[2px] bg-slate-800 overflow-hidden">
+              <div
+                className={`h-full transition-all duration-300 ${
+                  activeRoleplayBatchObj.isCompleted
+                    ? 'bg-gradient-to-r from-emerald-400 to-teal-400'
+                    : 'bg-gradient-to-r from-cyan-500 to-indigo-500'
+                }`}
+                style={{
+                  width: `${Math.min(100, Math.round((activeRoleplayBatchObj.completedCount / Math.max(1, activeRoleplayBatchObj.totalCount)) * 100))}%`
+                }}
+              />
+            </div>
+          )}
 
           <button
             type="button"

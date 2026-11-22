@@ -486,6 +486,7 @@ export default function PronunciationStudioModal({
       speakingSoundEffects.playCompletionChime();
       triggerHaptic('combo');
       handleSelectBatch(batch.batchIndex);
+      setIsMobileListOpen(false);
     }
   }, [activeTab, currentUser, handleSelectBatch]);
 
@@ -2010,45 +2011,98 @@ export default function PronunciationStudioModal({
           </div>
         </div>
 
-        {/* MOBILE DRILL SELECTOR BAR (< lg): Frees up 100% of phone screen for practicing */}
-        <div className="lg:hidden px-3 py-2 bg-slate-900/95 border-b border-slate-800 flex items-center justify-between gap-2 shrink-0">
+        {/* MOBILE DRILL & BATCH SELECTOR BAR (< lg): Frees up 100% of phone screen for practicing */}
+        <div className="lg:hidden relative px-3 py-2 bg-slate-900/95 border-b border-slate-800 flex items-center justify-between gap-2 shrink-0">
           <button
             type="button"
             onClick={() => setIsMobileListOpen(true)}
-            className="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-indigo-300 border border-indigo-500/30 text-xs font-bold shrink-0 cursor-pointer active:scale-95"
+            className="flex items-center space-x-1.5 px-2.5 min-h-[36px] rounded-xl bg-slate-800 hover:bg-slate-700 text-indigo-300 border border-indigo-500/30 text-xs font-bold shrink-0 cursor-pointer active:scale-95"
           >
-            <List className="w-3.5 h-3.5" />
-            <span>
-              {isEn ? `Drills (${activeTrackDrills.length})` : `Danh sách (${activeTrackDrills.length})`}
-            </span>
+            <List className="w-3.5 h-3.5 shrink-0" />
+            {activeTab !== 'ipa' && trackBatches.length > 0 ? (
+              selectedBatchIndex === 'personal' ? (
+                <span>{isEn ? `📒 Vault (${personalDrillsForTab.length})` : `📒 Sổ Tay (${personalDrillsForTab.length})`}</span>
+              ) : (
+                <span className="flex items-center space-x-1">
+                  <span>
+                    {isEn
+                      ? `B${activeBatchObj?.batchIndex || 1}/${trackBatches.length}`
+                      : `Lô ${activeBatchObj?.batchIndex || 1}/${trackBatches.length}`}
+                  </span>
+                  <span className="text-[10px] font-mono opacity-80">
+                    {activeBatchObj?.isUnlocked
+                      ? `${activeBatchObj.completedCount}/${activeBatchObj.totalCount}`
+                      : '🔒'}
+                  </span>
+                </span>
+              )
+            ) : (
+              <span>
+                {isEn ? `Drills (${activeTrackDrills.length})` : `Danh sách (${activeTrackDrills.length})`}
+              </span>
+            )}
           </button>
 
           <div className="min-w-0 flex-1 text-center">
             <div className="text-[11px] font-extrabold text-white truncate">
-              {selectedIdx + 1}/{activeTrackDrills.length} • {currentDrill?.targetText || ''}
+              {activeBatchObj && !activeBatchObj.isUnlocked ? (
+                <span className="text-amber-300">
+                  {isEn
+                    ? `🔒 Batch ${activeBatchObj.batchIndex} • ${activeBatchObj.costGold} 🪙`
+                    : `🔒 Lô ${activeBatchObj.batchIndex} • ${activeBatchObj.costGold} 🪙`}
+                </span>
+              ) : isLoadingBatchShard ? (
+                <span className="text-indigo-300 animate-pulse">
+                  {isEn ? `Loading Batch ${activeBatchObj?.batchIndex || ''}...` : `Đang tải Lô ${activeBatchObj?.batchIndex || ''}...`}
+                </span>
+              ) : activeTrackDrills.length > 0 ? (
+                `${selectedIdx + 1}/${activeTrackDrills.length} • ${currentDrill?.targetText || ''}`
+              ) : (
+                <span className="text-emerald-300">
+                  {isEn ? '🎉 Batch Complete' : '🎉 Hoàn thành Lô'}
+                </span>
+              )}
             </div>
           </div>
 
           <div className="flex items-center space-x-1 shrink-0">
             <button
               type="button"
+              disabled={activeTrackDrills.length <= 1}
               onClick={() =>
                 setSelectedIdx(prev => (prev > 0 ? prev - 1 : activeTrackDrills.length - 1))
               }
-              className="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 flex items-center justify-center border border-slate-700 cursor-pointer active:scale-95"
+              className="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 disabled:opacity-40 text-slate-200 flex items-center justify-center border border-slate-700 cursor-pointer disabled:cursor-not-allowed active:scale-95"
               aria-label={isEn ? 'Previous drill' : 'Bài trước'}
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
             <button
               type="button"
+              disabled={activeTrackDrills.length <= 1}
               onClick={handleAdvanceToNextDrill}
-              className="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 flex items-center justify-center border border-slate-700 cursor-pointer active:scale-95"
+              className="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 disabled:opacity-40 text-slate-200 flex items-center justify-center border border-slate-700 cursor-pointer disabled:cursor-not-allowed active:scale-95"
               aria-label={isEn ? 'Next drill' : 'Bài tiếp'}
             >
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>
+
+          {/* Razor-thin 2px live Batch Progress Bar along bottom edge (0 extra vertical space) */}
+          {activeBatchObj && activeBatchObj.isUnlocked && (
+            <div className="absolute left-0 right-0 bottom-0 h-[2px] bg-slate-800 overflow-hidden">
+              <div
+                className={`h-full transition-all duration-300 ${
+                  activeBatchObj.isCompleted
+                    ? 'bg-gradient-to-r from-emerald-400 to-teal-400'
+                    : 'bg-gradient-to-r from-indigo-500 to-purple-500'
+                }`}
+                style={{
+                  width: `${Math.min(100, Math.round((activeBatchObj.completedCount / Math.max(1, activeBatchObj.totalCount)) * 100))}%`
+                }}
+              />
+            </div>
+          )}
         </div>
 
         {/* ================================================================= */}

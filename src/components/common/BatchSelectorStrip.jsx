@@ -30,7 +30,7 @@ export function GoldWalletHeaderBadge({ isEn = false, onOpenArena, compact = fal
       type="button"
       onClick={() => onOpenArena?.()}
       className={`inline-flex items-center space-x-1 rounded-xl bg-amber-950/70 hover:bg-amber-900/80 border border-amber-500/40 text-amber-300 font-black transition-all cursor-pointer shrink-0 active:scale-95 ${
-        compact ? 'px-1.5 py-0.5 text-[10px]' : 'px-2 py-1 text-[11px]'
+        compact ? 'px-2 h-8 text-[11px]' : 'px-2 h-9 sm:h-8 text-[11px]'
       }`}
       title={
         isEn
@@ -87,14 +87,14 @@ export default function BatchSelectorStrip({
   return (
     <div className="space-y-1.5">
       <div className="flex items-center justify-between gap-1.5">
-        <div className="flex items-center gap-1 overflow-x-auto no-scrollbar flex-1 min-w-0">
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar touch-pan-x flex-1 min-w-0 py-0.5">
           {personalCount > 0 && (
             <button
               type="button"
               onClick={() => onSelectBatch('personal')}
               className={`${
-                isMobileSheet ? 'px-2.5 py-1.5 text-[11px]' : 'px-2 py-1 text-[10px]'
-              } rounded-lg font-black whitespace-nowrap cursor-pointer border transition-all ${
+                isMobileSheet ? 'px-3 min-h-[36px] text-xs' : 'px-2 py-1 text-[10px]'
+              } rounded-xl font-black whitespace-nowrap cursor-pointer border transition-all active:scale-95 shrink-0 ${
                 selectedBatchIndex === 'personal'
                   ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-xs'
                   : 'bg-amber-950/40 text-amber-300 border-amber-500/35 hover:bg-amber-900/50'
@@ -112,8 +112,8 @@ export default function BatchSelectorStrip({
                 type="button"
                 onClick={() => onSelectBatch(b.batchIndex)}
                 className={`${
-                  isMobileSheet ? 'px-2.5 py-1.5 text-[11px]' : 'px-2 py-1 text-[10px]'
-                } rounded-lg font-black whitespace-nowrap cursor-pointer border transition-all flex items-center space-x-1 ${
+                  isMobileSheet ? 'px-3 min-h-[36px] text-xs' : 'px-2 py-1 text-[10px]'
+                } rounded-xl font-black whitespace-nowrap cursor-pointer border transition-all active:scale-95 shrink-0 flex items-center space-x-1 ${
                   isSelected
                     ? b.isUnlocked
                       ? 'bg-indigo-600 text-white border-indigo-400 shadow-xs'
@@ -126,16 +126,16 @@ export default function BatchSelectorStrip({
                 }`}
               >
                 {b.isCompleted ? (
-                  <CheckCircle2 className="w-3 h-3 text-emerald-400 shrink-0" />
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                 ) : b.isUnlocked ? (
-                  <Unlock className="w-2.5 h-2.5 shrink-0 opacity-80" />
+                  <Unlock className="w-3 h-3 shrink-0 opacity-80" />
                 ) : (
-                  <Lock className="w-2.5 h-2.5 text-amber-400 shrink-0" />
+                  <Lock className="w-3 h-3 text-amber-400 shrink-0" />
                 )}
                 <span>
                   {isEn ? `Batch ${b.batchIndex}` : `Lô ${b.batchIndex}`}
                 </span>
-                <span className="opacity-80 font-mono text-[9px]">
+                <span className="opacity-80 font-mono text-[10px]">
                   {b.isUnlocked ? `${b.completedCount}/${b.totalCount}` : `${b.costGold}🪙`}
                 </span>
               </button>
@@ -152,7 +152,11 @@ export default function BatchSelectorStrip({
                 onSelectBatch(val === 'personal' ? 'personal' : Number(val));
               }}
               aria-label={isEn ? 'Select batch' : 'Chọn Lô bài tập'}
-              className="appearance-none pl-2 pr-6 py-1 rounded-lg bg-slate-900 border border-slate-700 text-[10px] font-black text-indigo-300 cursor-pointer focus:outline-none focus:border-indigo-400"
+              className={`appearance-none rounded-xl bg-slate-900 border border-slate-700 font-black text-indigo-300 cursor-pointer focus:outline-none focus:border-indigo-400 ${
+                isMobileSheet
+                  ? 'pl-2.5 pr-7 min-h-[36px] text-xs max-w-[138px]'
+                  : 'pl-2 pr-6 py-1 text-[10px] max-w-[118px]'
+              }`}
             >
               {personalCount > 0 && (
                 <option value="personal">
@@ -162,12 +166,12 @@ export default function BatchSelectorStrip({
               {batches.map((b) => (
                 <option key={b.batchId} value={String(b.batchIndex)}>
                   {isEn
-                    ? `Batch ${b.batchIndex} (${b.isUnlocked ? `${b.completedCount}/${b.totalCount}` : `🔒 ${b.costGold} Gold`})`
-                    : `Lô ${b.batchIndex} (${b.isUnlocked ? `${b.completedCount}/${b.totalCount}` : `🔒 ${b.costGold} Vàng`})`}
+                    ? `Batch ${b.batchIndex}/${batches.length} (${b.isUnlocked ? `${b.completedCount}/${b.totalCount}` : `🔒 ${b.costGold}g`})`
+                    : `Lô ${b.batchIndex}/${batches.length} (${b.isUnlocked ? `${b.completedCount}/${b.totalCount}` : `🔒 ${b.costGold}🪙`})`}
                 </option>
               ))}
             </select>
-            <ChevronDown className="w-3 h-3 text-slate-400 absolute right-1.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
           </div>
         )}
       </div>
@@ -189,8 +193,8 @@ export default function BatchSelectorStrip({
           </div>
           <span className="font-mono font-bold text-slate-400 shrink-0">
             {isEn
-              ? `Batch ${activeBatch.batchIndex}: ${activeBatch.completedCount}/${activeBatch.totalCount}`
-              : `Lô ${activeBatch.batchIndex}: ${activeBatch.completedCount}/${activeBatch.totalCount}`}
+              ? `Batch ${activeBatch.batchIndex}/${batches.length}: ${activeBatch.completedCount}/${activeBatch.totalCount}`
+              : `Lô ${activeBatch.batchIndex}/${batches.length}: ${activeBatch.completedCount}/${activeBatch.totalCount}`}
           </span>
         </div>
       )}

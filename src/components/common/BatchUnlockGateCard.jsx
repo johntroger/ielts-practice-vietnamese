@@ -34,11 +34,11 @@ export default function BatchUnlockGateCard({
     estimatedArenaMatchesLeft
   } = targetBatch;
 
-  const pad = compact ? 'p-4 space-y-2.5' : 'p-6 sm:p-8 space-y-4';
+  const pad = compact ? 'p-4 space-y-2.5' : 'p-4 sm:p-7 space-y-3.5 sm:space-y-4';
 
   return (
     <div
-      className={`${pad} rounded-3xl bg-gradient-to-br from-slate-950 via-slate-900 to-amber-950/30 border border-amber-500/35 text-center shadow-xl`}
+      className={`${pad} rounded-2xl sm:rounded-3xl bg-gradient-to-br from-slate-950 via-slate-900 to-amber-950/30 border border-amber-500/35 text-center shadow-xl`}
     >
       <div className="flex justify-center">
         {isCelebrationMode || unlockBlockReason === 'ready' ? (
@@ -101,14 +101,14 @@ export default function BatchUnlockGateCard({
       </div>
 
       {/* Action Buttons */}
-      <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
+      <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center justify-center gap-2 pt-1">
         {unlockBlockReason === 'need_complete_prev' && onGoToPrevBatch && (
           <button
             type="button"
             onClick={() => onGoToPrevBatch(prevBatchIndex)}
-            className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-black flex items-center space-x-1.5 cursor-pointer transition-all shadow-md"
+            className="w-full sm:w-auto min-h-[44px] px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs sm:text-sm font-black flex items-center justify-center space-x-1.5 cursor-pointer transition-all active:scale-95 shadow-md"
           >
-            <ArrowLeft className="w-3.5 h-3.5" />
+            <ArrowLeft className="w-4 h-4 shrink-0" />
             <span>
               {isEn ? `Back to Batch ${prevBatchIndex}` : `Quay lại hoàn thành Lô ${prevBatchIndex}`}
             </span>
@@ -119,9 +119,9 @@ export default function BatchUnlockGateCard({
           <button
             type="button"
             onClick={() => onOpenAuth()}
-            className="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 text-xs font-black flex items-center space-x-1.5 cursor-pointer transition-all shadow-md"
+            className="w-full sm:w-auto min-h-[44px] px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 text-xs sm:text-sm font-black flex items-center justify-center space-x-1.5 cursor-pointer transition-all active:scale-95 shadow-md"
           >
-            <LogIn className="w-3.5 h-3.5" />
+            <LogIn className="w-4 h-4 shrink-0" />
             <span>
               {isEn ? `Sign In to Unlock Batch ${batchIndex}` : `Đăng Nhập Để Chơi Game & Mở Lô ${batchIndex}`}
             </span>
@@ -132,9 +132,9 @@ export default function BatchUnlockGateCard({
           <button
             type="button"
             onClick={() => onOpenArena()}
-            className="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 text-xs font-black flex items-center space-x-1.5 cursor-pointer transition-all shadow-lg"
+            className="w-full sm:w-auto min-h-[44px] px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 text-xs sm:text-sm font-black flex items-center justify-center space-x-1.5 cursor-pointer transition-all active:scale-95 shadow-lg"
           >
-            <Swords className="w-3.5 h-3.5" />
+            <Swords className="w-4 h-4 shrink-0" />
             <span>
               {isEn ? 'Play Atlas Arena to Earn Gold' : 'Vào Atlas Arena Cày Vàng Ngay'}
             </span>
@@ -145,9 +145,9 @@ export default function BatchUnlockGateCard({
           <button
             type="button"
             onClick={() => onUnlockBatch(targetBatch)}
-            className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 text-xs sm:text-sm font-black flex items-center space-x-1.5 cursor-pointer transition-all shadow-lg ring-2 ring-emerald-400/40 active:scale-95"
+            className="w-full sm:w-auto min-h-[44px] px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 text-xs sm:text-sm font-black flex items-center justify-center space-x-1.5 cursor-pointer transition-all shadow-lg ring-2 ring-emerald-400/40 active:scale-95"
           >
-            <Unlock className="w-4 h-4" />
+            <Unlock className="w-4 h-4 shrink-0" />
             <span>
               {isEn
                 ? `Unlock Batch ${batchIndex} (${costGold} 🪙 Gold)`
