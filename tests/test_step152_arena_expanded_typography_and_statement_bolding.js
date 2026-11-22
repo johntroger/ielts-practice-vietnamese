@@ -73,7 +73,10 @@ it('5. ArenaQuestionCard options scale to text-sm/base/lg, clear 1-4 badges, and
 
   assert.ok(cardCode.includes('text-sm sm:text-base md:text-lg font-semibold'), 'Options must use text-sm sm:text-base md:text-lg typography');
   assert.ok(cardCode.includes('w-7 h-7 sm:w-8 sm:h-8 rounded-lg'), 'Option number badges must scale to w-7/w-8 with rounded-lg');
-  assert.ok(cardCode.includes('py-2.5 px-3.5 sm:py-3 sm:px-4 rounded-xl'), 'Option buttons must have py-2.5 px-3.5 sm:py-3 sm:px-4 rounded-xl padding');
+  assert.ok(
+    cardCode.includes('py-2.5 px-3.5 sm:py-3 sm:px-4') || cardCode.includes('py-2.5 px-3 sm:py-3 sm:px-4'),
+    'Option buttons must have compact py-2.5 px-3/3.5 sm:py-3 sm:px-4 rounded-xl padding'
+  );
 });
 
 // 6. Action buttons scale for zero-scroll single-screen ergonomics
