@@ -242,7 +242,16 @@ export default function ConversationStudioModal({
 
   // Wallet & Progressive Batch State for Roleplay Conversations
   const [walletSnapshot, setWalletSnapshot] = useState(() => getWallet());
-  const [selectedRoleplayBatch, setSelectedRoleplayBatch] = useState(1);
+  const [selectedRoleplayBatch, setSelectedRoleplayBatch] = useState(() =>
+    safeGet('ielts_conv_roleplay_batch_v1', 1)
+  );
+
+  const handleSelectRoleplayBatch = useCallback((nextB) => {
+    if (speechEngine.isListening) speechEngine.stopListening();
+    if (speechEngine.isSpeaking) speechEngine.stopSpeaking();
+    setSelectedRoleplayBatch(nextB);
+    safeSet('ielts_conv_roleplay_batch_v1', nextB);
+  }, [speechEngine.isListening, speechEngine.stopListening, speechEngine.isSpeaking, speechEngine.stopSpeaking]);
 
   useEffect(() => {
     setWalletSnapshot(getWallet());
@@ -303,12 +312,12 @@ export default function ConversationStudioModal({
       setWalletSnapshot(getWallet());
       speakingSoundEffects.playCompletionChime();
       triggerHaptic('combo');
-      setSelectedRoleplayBatch(batch.batchIndex);
+      handleSelectRoleplayBatch(batch.batchIndex);
       if (batch.items[0]) {
         setSelectedScenarioId(batch.items[0].id);
       }
     }
-  }, [currentUser]);
+  }, [currentUser, handleSelectRoleplayBatch]);
 
   const allScenarios = useMemo(() => {
     if (selectedRoleplayBatch === 'personal') return personalRoleplayScenarios;
@@ -1410,7 +1419,7 @@ export default function ConversationStudioModal({
             batches={roleplayBatches}
             selectedBatchIndex={selectedRoleplayBatch}
             onSelectBatch={(nextB) => {
-              setSelectedRoleplayBatch(nextB);
+              handleSelectRoleplayBatch(nextB);
               if (nextB === 'personal' && personalRoleplayScenarios[0]) {
                 setSelectedScenarioId(personalRoleplayScenarios[0].id);
               } else if (typeof nextB === 'number') {
@@ -1542,7 +1551,7 @@ export default function ConversationStudioModal({
             compact
             isEn={isEn}
             onUnlockBatch={handlePurchaseRoleplayBatch}
-            onGoToPrevBatch={(prevIdx) => setSelectedRoleplayBatch(prevIdx)}
+            onGoToPrevBatch={(prevIdx) => handleSelectRoleplayBatch(prevIdx)}
             onOpenAuth={onOpenAuth}
             onOpenArena={handleOpenArenaSafe}
           />
@@ -2240,7 +2249,7 @@ export default function ConversationStudioModal({
                     targetBatch={activeRoleplayBatchObj}
                     isEn={isEn}
                     onUnlockBatch={handlePurchaseRoleplayBatch}
-                    onGoToPrevBatch={(prevIdx) => setSelectedRoleplayBatch(prevIdx)}
+                    onGoToPrevBatch={(prevIdx) => handleSelectRoleplayBatch(prevIdx)}
                     onOpenAuth={onOpenAuth}
                     onOpenArena={handleOpenArenaSafe}
                   />
@@ -2514,7 +2523,7 @@ export default function ConversationStudioModal({
         </div>
 
         {/* MOBILE STICKY BOTTOM THUMB-ZONE BAR (< lg) */}
-        {activeTurn && !isCompleted && (
+        {activeTurn && !isCompleted && (!activeRoleplayBatchObj || activeRoleplayBatchObj.isUnlocked) && (
           <div className="lg:hidden shrink-0 bg-slate-950/95 backdrop-blur-md border-t border-slate-800 px-3 py-2.5 pb-[max(0.625rem,env(safe-area-inset-bottom))] flex items-center gap-2 z-30">
             <button
               type="button"

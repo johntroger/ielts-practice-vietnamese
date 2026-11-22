@@ -143,8 +143,17 @@ export default function SpeechShadowingWorkspace({
   const [keywordsOnly, setKeywordsOnly] = useState(false);
   const [revealCurrentSeg, setRevealCurrentSeg] = useState(false);
 
-  const [selectedShadowBatch, setSelectedShadowBatch] = useState(1);
+  const [selectedShadowBatch, setSelectedShadowBatch] = useState(() =>
+    safeGet('ielts_conv_shadowing_batch_v1', 1)
+  );
   const [localWalletTick, setLocalWalletTick] = useState(0);
+
+  const handleSelectShadowBatch = useCallback((nextB) => {
+    if (speechEngine.isListening) speechEngine.stopListening();
+    if (speechEngine.isSpeaking) speechEngine.stopSpeaking();
+    setSelectedShadowBatch(nextB);
+    safeSet('ielts_conv_shadowing_batch_v1', nextB);
+  }, [speechEngine.isListening, speechEngine.stopListening, speechEngine.isSpeaking, speechEngine.stopSpeaking]);
 
   const canonicalShadowTasks = useMemo(() => {
     return [...SHADOWING_STARTER_TASKS, ...dynamicTasks];
@@ -187,12 +196,12 @@ export default function SpeechShadowingWorkspace({
       setLocalWalletTick(t => t + 1);
       speakingSoundEffects.playCompletionChime();
       triggerHaptic('combo');
-      setSelectedShadowBatch(batch.batchIndex);
+      handleSelectShadowBatch(batch.batchIndex);
       if (batch.items[0]) {
         setSelectedTaskId(batch.items[0].id);
       }
     }
-  }, [currentUser]);
+  }, [currentUser, handleSelectShadowBatch]);
 
   const allTasks = useMemo(() => {
     if (selectedShadowBatch === 'personal') return personalShadowTasks;
@@ -1223,7 +1232,7 @@ export default function SpeechShadowingWorkspace({
             batches={shadowBatches}
             selectedBatchIndex={selectedShadowBatch}
             onSelectBatch={(nextB) => {
-              setSelectedShadowBatch(nextB);
+              handleSelectShadowBatch(nextB);
               if (nextB === 'personal' && personalShadowTasks[0]) {
                 setSelectedTaskId(personalShadowTasks[0].id);
               } else if (typeof nextB === 'number') {
@@ -1364,7 +1373,7 @@ export default function SpeechShadowingWorkspace({
             compact
             isEn={isEn}
             onUnlockBatch={handlePurchaseShadowBatch}
-            onGoToPrevBatch={(prevIdx) => setSelectedShadowBatch(prevIdx)}
+            onGoToPrevBatch={(prevIdx) => handleSelectShadowBatch(prevIdx)}
             onOpenAuth={onOpenAuth}
             onOpenArena={onOpenArena}
           />
@@ -1618,7 +1627,7 @@ export default function SpeechShadowingWorkspace({
                   targetBatch={activeShadowBatchObj}
                   isEn={isEn}
                   onUnlockBatch={handlePurchaseShadowBatch}
-                  onGoToPrevBatch={(prevIdx) => setSelectedShadowBatch(prevIdx)}
+                  onGoToPrevBatch={(prevIdx) => handleSelectShadowBatch(prevIdx)}
                   onOpenAuth={onOpenAuth}
                   onOpenArena={onOpenArena}
                 />
@@ -1928,7 +1937,7 @@ export default function SpeechShadowingWorkspace({
       </div>
 
       {/* MOBILE STICKY BOTTOM THUMB-ZONE BAR (< lg) */}
-      {activeSeg && !isCompleted && (
+      {activeSeg && !isCompleted && (!activeShadowBatchObj || activeShadowBatchObj.isUnlocked) && (
         <div className="lg:hidden shrink-0 bg-slate-950/95 backdrop-blur-md border-t border-slate-800 px-3 py-2.5 pb-[max(0.625rem,env(safe-area-inset-bottom))] flex items-center gap-2 z-30">
           <button
             type="button"

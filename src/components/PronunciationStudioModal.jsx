@@ -301,13 +301,15 @@ export default function PronunciationStudioModal({
 
   // Wallet snapshot (auto-synced with Atlas English Arena Gold via eventBus)
   const [walletSnapshot, setWalletSnapshot] = useState(() => getWallet());
-  const [selectedBatchByTab, setSelectedBatchByTab] = useState({
-    words: 1,
-    stress: 1,
-    phrases: 1,
-    sentences: 1,
-    twisters: 1
-  });
+  const [selectedBatchByTab, setSelectedBatchByTab] = useState(() =>
+    safeGet('ielts_pronunciation_selected_batches_v1', {
+      words: 1,
+      stress: 1,
+      phrases: 1,
+      sentences: 1,
+      twisters: 1
+    })
+  );
 
   useEffect(() => {
     setWalletSnapshot(getWallet());
@@ -329,11 +331,17 @@ export default function PronunciationStudioModal({
   const selectedBatchIndex = activeTab === 'ipa' ? 1 : (selectedBatchByTab[activeTab] || 1);
 
   const handleSelectBatch = useCallback((nextBatch) => {
-    setSelectedBatchByTab(prev => ({ ...prev, [activeTab]: nextBatch }));
+    if (speechEngine.isListening) speechEngine.stopListening();
+    if (speechEngine.isSpeaking) speechEngine.stopSpeaking();
+    setSelectedBatchByTab(prev => {
+      const updated = { ...prev, [activeTab]: nextBatch };
+      safeSet('ielts_pronunciation_selected_batches_v1', updated);
+      return updated;
+    });
     setSelectedIdx(0);
     setEvaluationResult(null);
     setJustPassedDrillId(null);
-  }, [activeTab]);
+  }, [activeTab, speechEngine.isListening, speechEngine.stopListening, speechEngine.isSpeaking, speechEngine.stopSpeaking]);
 
   // Step 1: Canonical Bank & Personal Vault Separation (prevents custom/vocab items from shifting batches)
   const rawBaseForTab = useMemo(() => {
