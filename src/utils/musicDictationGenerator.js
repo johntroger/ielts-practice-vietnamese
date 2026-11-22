@@ -49,8 +49,8 @@ export const MUSIC_PRACTICE_MODES = [
     id: 'mixed',
     labelEn: 'Hybrid Sentence & Word Blanks',
     labelVi: 'Kết Hợp Trống Câu & Từ',
-    shortEn: 'Hybrid Mixed',
-    shortVi: 'Kết Hợp Câu & Từ',
+    shortEn: 'Mixed',
+    shortVi: 'Kết Hợp',
     descEn: 'Dynamic combination of karaoke anchors, inline word blanks, and full-sentence dictation.',
     descVi: 'Kết hợp thông minh giữa câu dẫn nhịp, câu đục lỗ từ vựng và câu để trống nguyên câu.'
   }

@@ -1366,8 +1366,13 @@ export default function App() {
   }, [openModal, closeModal]);
 
   // Sync address bar when modals.musicListening opens or closes
+  const musicMountedRef = React.useRef(false);
   useEffect(() => {
     if (typeof window === 'undefined') return;
+    if (!musicMountedRef.current) {
+      musicMountedRef.current = true;
+      return;
+    }
     const isMusicOpen = Boolean(modals.musicListening);
     const pathname = window.location.pathname.toLowerCase().replace(/\/+$/, '');
     const hash = window.location.hash.toLowerCase();

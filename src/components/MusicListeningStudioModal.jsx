@@ -745,7 +745,7 @@ export default function MusicListeningStudioModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-xs flex items-center justify-center p-0 sm:p-3 animate-in fade-in duration-150">
+    <div className="fixed inset-0 z-[60] bg-slate-950/80 backdrop-blur-xs flex items-center justify-center p-0 sm:p-3 animate-in fade-in duration-150">
       <div
         className={`bg-white dark:bg-slate-900 flex flex-col shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden transition-all ${
           isFullscreen
@@ -1389,7 +1389,7 @@ export default function MusicListeningStudioModal({
       {/* Mobile & Tablet Slide-Up Song Library & Batch Selector Sheet (< 1024px) */}
       {isMobileLibraryOpen && (
         <div
-          className="lg:hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-xs flex items-end animate-in fade-in duration-150"
+          className="lg:hidden fixed inset-0 z-[65] bg-slate-950/80 backdrop-blur-xs flex items-end animate-in fade-in duration-150"
           onClick={() => setIsMobileLibraryOpen(false)}
         >
           <div

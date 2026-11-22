@@ -322,8 +322,24 @@ export function useCloudAndStorageSync({
     safeSet('ielts_gemini_model', model);
   }, [model]);
 
-  // 5. Launch onboarding for first-time visitors
+  // 5. Launch onboarding for first-time visitors (skip if landing directly on a dedicated studio deep-link URL)
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const path = window.location.pathname.toLowerCase();
+      const isDedicatedStudioPath =
+        path.includes('/music-listening') ||
+        path.includes('/music-dictation') ||
+        path.includes('/luyen-nghe-nhac') ||
+        path.includes('/pronunciation') ||
+        path.includes('/conversation') ||
+        path.includes('/shadowing') ||
+        path.includes('/micro-drills') ||
+        path.includes('/atlas-arena') ||
+        path.includes('/arena') ||
+        path.includes('/vocab-studio') ||
+        path.includes('/about');
+      if (isDedicatedStudioPath) return;
+    }
     if (!safeGet('ielts_user_onboarded', false)) {
       openModal('onboarding');
     }
