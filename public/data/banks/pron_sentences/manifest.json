@@ -1,0 +1,55 @@
+{
+  "version": 1,
+  "trackKey": "pron_sentences",
+  "source": "Harold Levine 22,000 Essential Words Context Sentences (Sanitized)",
+  "idPrefix": "pron-hl-s-",
+  "totalItems": 823,
+  "shardSize": 100,
+  "shards": [
+    {
+      "index": 0,
+      "file": "shard-001.json",
+      "count": 100
+    },
+    {
+      "index": 1,
+      "file": "shard-002.json",
+      "count": 100
+    },
+    {
+      "index": 2,
+      "file": "shard-003.json",
+      "count": 100
+    },
+    {
+      "index": 3,
+      "file": "shard-004.json",
+      "count": 100
+    },
+    {
+      "index": 4,
+      "file": "shard-005.json",
+      "count": 100
+    },
+    {
+      "index": 5,
+      "file": "shard-006.json",
+      "count": 100
+    },
+    {
+      "index": 6,
+      "file": "shard-007.json",
+      "count": 100
+    },
+    {
+      "index": 7,
+      "file": "shard-008.json",
+      "count": 100
+    },
+    {
+      "index": 8,
+      "file": "shard-009.json",
+      "count": 23
+    }
+  ]
+}

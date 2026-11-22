@@ -10,6 +10,7 @@
     "test": "node tests/run_all_tests.js",
     "test:simulation": "node tests/test_step78_testing_mock_engine_and_dom_simulation.js",
     "docs:sync": "node scripts/sync_features_to_gitbook.js",
+    "banks:build": "node scripts/build-pronunciation-bank-shards.mjs",
     "cloudflare:deploy": "node cloudflare/setup_and_deploy.mjs"
   },
   "dependencies": {

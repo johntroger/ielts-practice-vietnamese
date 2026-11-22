@@ -83,6 +83,12 @@ import {
   buildTrackBatches,
   purchaseBatchUnlock
 } from '../services/gamification/batchProgressionService';
+import {
+  SHARDED_TRACKS,
+  loadTrackManifest,
+  buildExternalPlaceholderItems,
+  hydrateBatchItems
+} from '../services/data/bankShardService';
 import BatchSelectorStrip, { GoldWalletHeaderBadge } from './common/BatchSelectorStrip';
 import BatchUnlockGateCard from './common/BatchUnlockGateCard';
 import { getUnifiedStreakCount } from '../services/gamification/leagueEngine';
@@ -350,23 +356,54 @@ export default function PronunciationStudioModal({
     setJustPassedDrillId(null);
   }, [activeTab, speechEngine.isListening, speechEngine.stopListening, speechEngine.isSpeaking, speechEngine.stopSpeaking]);
 
+  // Scalable Batch-Sharded External Bank State (loads only ~1 KB manifest + active unlocked shard JSON)
+  const [externalManifests, setExternalManifests] = useState({});
+  const [shardHydrationTick, setShardHydrationTick] = useState(0);
+  const [isLoadingBatchShard, setIsLoadingBatchShard] = useState(false);
+
+  const activeTrackKey = `pron_${activeTab}`;
+
+  useEffect(() => {
+    if (!isOpen || !SHARDED_TRACKS.has(activeTrackKey)) return;
+    if (externalManifests[activeTrackKey] !== undefined) return;
+    let cancelled = false;
+    loadTrackManifest(activeTrackKey).then((manifest) => {
+      if (!cancelled) {
+        setExternalManifests(prev => ({ ...prev, [activeTrackKey]: manifest || null }));
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [isOpen, activeTrackKey, externalManifests]);
+
   // Step 1: Canonical Bank & Personal Vault Separation (prevents custom/vocab items from shifting batches)
   const rawBaseForTab = useMemo(() => {
-    return activeTab === 'ipa'
-      ? PRONUNCIATION_IPA_DRILLS
-      : activeTab === 'words'
-      ? PRONUNCIATION_WORD_DRILLS
-      : activeTab === 'stress'
-      ? PRONUNCIATION_STRESS_SHIFT_DRILLS
-      : activeTab === 'phrases'
-      ? PRONUNCIATION_PHRASE_DRILLS
-      : activeTab === 'twisters'
-      ? PRONUNCIATION_TWISTER_DRILLS
-      : PRONUNCIATION_SENTENCE_DRILLS;
-  }, [activeTab]);
+    const builtIn =
+      activeTab === 'ipa'
+        ? PRONUNCIATION_IPA_DRILLS
+        : activeTab === 'words'
+        ? PRONUNCIATION_WORD_DRILLS
+        : activeTab === 'stress'
+        ? PRONUNCIATION_STRESS_SHIFT_DRILLS
+        : activeTab === 'phrases'
+        ? PRONUNCIATION_PHRASE_DRILLS
+        : activeTab === 'twisters'
+        ? PRONUNCIATION_TWISTER_DRILLS
+        : PRONUNCIATION_SENTENCE_DRILLS;
+
+    const manifest = externalManifests[activeTrackKey];
+    if (!manifest || activeTab === 'ipa') return builtIn;
+    const externalItems = buildExternalPlaceholderItems(manifest);
+    return externalItems.length > 0 ? [...builtIn, ...externalItems] : builtIn;
+  }, [activeTab, activeTrackKey, externalManifests, shardHydrationTick]);
 
   const personalDrillsForTab = useMemo(() => {
-    const existingTexts = new Set(rawBaseForTab.map(d => d.targetText?.toLowerCase().trim()));
+    const existingTexts = new Set(
+      rawBaseForTab
+        .filter(d => d && !d._isShardPlaceholder && d.targetText)
+        .map(d => d.targetText.toLowerCase().trim())
+    );
     const vocabDrillsForTab =
       currentUser && activeTab !== 'ipa' && activeTab !== 'stress' && activeTab !== 'twisters'
         ? mapVocabListToPronunciationDrills(vocabList, existingTexts).filter(d => d.type === activeTab)
@@ -383,17 +420,53 @@ export default function PronunciationStudioModal({
     const passedSet = new Set(Array.isArray(passedDrillIds) ? passedDrillIds : []);
     return buildTrackBatches({
       items: rawBaseForTab,
-      trackKey: `pron_${activeTab}`,
+      trackKey: activeTrackKey,
       completedIdSet: passedSet,
       wallet: walletSnapshot,
       currentUser
     });
-  }, [activeTab, rawBaseForTab, passedDrillIds, walletSnapshot, currentUser]);
+  }, [activeTab, activeTrackKey, rawBaseForTab, passedDrillIds, walletSnapshot, currentUser]);
 
   const activeBatchObj = useMemo(() => {
     if (activeTab === 'ipa' || selectedBatchIndex === 'personal') return null;
     return trackBatches.find(b => b.batchIndex === selectedBatchIndex) || trackBatches[0] || null;
   }, [activeTab, selectedBatchIndex, trackBatches]);
+
+  // Step 2b: On-Demand Shard Hydration — only fetches the shard JSON when an unlocked Batch contains unloaded external items
+  useEffect(() => {
+    if (!isOpen || !activeBatchObj || !activeBatchObj.isUnlocked) {
+      setIsLoadingBatchShard(false);
+      return;
+    }
+    const manifest = externalManifests[activeTrackKey];
+    const needsHydration =
+      manifest &&
+      Array.isArray(activeBatchObj.items) &&
+      activeBatchObj.items.some(item => item?._isShardPlaceholder);
+
+    if (!needsHydration) {
+      setIsLoadingBatchShard(false);
+      return;
+    }
+
+    let cancelled = false;
+    setIsLoadingBatchShard(true);
+    hydrateBatchItems(activeTrackKey, manifest, activeBatchObj.items)
+      .then(() => {
+        if (!cancelled) {
+          setShardHydrationTick(t => t + 1);
+        }
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setIsLoadingBatchShard(false);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isOpen, activeTrackKey, externalManifests, activeBatchObj]);
 
   const nextLockedBatchAfterCurrent = useMemo(() => {
     if (!activeBatchObj || !activeBatchObj.isUnlocked) return null;
@@ -420,7 +493,8 @@ export default function PronunciationStudioModal({
     if (activeTab === 'ipa') return [...personalDrillsForTab, ...rawBaseForTab];
     if (selectedBatchIndex === 'personal') return personalDrillsForTab;
     if (activeBatchObj && !activeBatchObj.isUnlocked) return [];
-    return activeBatchObj ? activeBatchObj.items : rawBaseForTab;
+    const items = activeBatchObj ? activeBatchObj.items : rawBaseForTab;
+    return items.filter(item => item && !item._isShardPlaceholder);
   }, [activeTab, selectedBatchIndex, personalDrillsForTab, rawBaseForTab, activeBatchObj]);
 
   const lockedCountForGuest = useMemo(() => {
@@ -1443,6 +1517,14 @@ export default function PronunciationStudioModal({
             onOpenArena={handleOpenArenaSafe}
             onShowCompletedItems={toggleHidePassed}
           />
+        ) : isLoadingBatchShard ? (
+          <div className="p-6 text-center text-xs text-indigo-300 space-y-2 animate-pulse">
+            <p className="font-bold">
+              {isEn
+                ? `Loading Batch ${activeBatchObj?.batchIndex || ''}...`
+                : `Đang tải Lô ${activeBatchObj?.batchIndex || ''}...`}
+            </p>
+          </div>
         ) : activeTrackDrills.length === 0 ? (
           <div className="p-6 text-center text-xs text-slate-400 space-y-2.5">
             <p>
