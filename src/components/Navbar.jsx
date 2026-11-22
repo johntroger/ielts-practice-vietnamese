@@ -471,7 +471,7 @@ export default function Navbar({
 
             {/* Desktop Menus Group (1-Click Fast Switching & Zero Duplicates) */}
             <div ref={desktopMenuRef} className="flex items-center gap-1 sm:gap-1.5 xl:gap-2">
-              {/* 0. Shadowing Dropdown (Pronunciation & Conversation) — Replaces Mock Test Hero CTA */}
+              {/* 0. Shadowing Dropdown (Pronunciation, Conversation & Music Listening) — Replaces Mock Test Hero CTA */}
               <div className="relative hidden xl:block">
                 <button
                   type="button"
@@ -483,7 +483,7 @@ export default function Navbar({
                     setIsProgressMenuOpen(false);
                   }}
                   className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-rose-600 hover:from-indigo-700 hover:via-purple-700 hover:to-rose-700 text-white text-xs font-black shadow-xs active:scale-95 transition-all cursor-pointer shrink-0"
-                  title={isEn ? "Shadowing Hub: Pronunciation & Conversation Studios" : "Phòng Luyện Shadowing: Phát Âm & Hội Thoại"}
+                  title={isEn ? "Shadowing Hub: Pronunciation, Conversation & Music Listening" : "Phòng Luyện Shadowing: Phát Âm, Hội Thoại & Nghe Nhạc"}
                 >
                   <Headphones className="w-3.5 h-3.5 text-amber-200 shrink-0" />
                   <span>Shadowing</span>
@@ -491,9 +491,9 @@ export default function Navbar({
                 </button>
 
                 {isShadowingMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-xl border border-slate-200 p-2 z-50 animate-in fade-in zoom-in-95 duration-150 space-y-1.5">
+                  <div className="absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-xl border border-slate-200 p-2 z-50 animate-in fade-in zoom-in-95 duration-150 space-y-1.5">
                     <div className="px-2.5 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                      {isEn ? 'Shadowing & Speaking Studios' : 'Phòng Luyện Shadowing & Nói'}
+                      {isEn ? 'Shadowing & Audio Studios' : 'Phòng Luyện Shadowing & Âm Thanh'}
                     </div>
                     <button
                       type="button"
@@ -535,6 +535,28 @@ export default function Navbar({
                         </div>
                         <div className="text-[10px] text-cyan-800/80 font-normal truncate">
                           {isEn ? 'Roleplay dialogues & Speech Shadowing' : 'Hội thoại đối đáp & Speech Shadowing'}
+                        </div>
+                      </div>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        doOpenMusicListening();
+                        setIsShadowingMenuOpen(false);
+                      }}
+                      className="w-full flex items-center space-x-2.5 p-2.5 rounded-xl bg-rose-50/70 hover:bg-rose-100/90 text-left text-xs font-bold text-rose-950 transition-colors cursor-pointer border border-rose-200/70"
+                    >
+                      <div className="p-1.5 rounded-lg bg-gradient-to-tr from-rose-600 to-pink-600 text-white shadow-2xs shrink-0">
+                        <Music className="w-4 h-4" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="font-extrabold truncate">{isEn ? 'Music Listening' : 'Music Listening (Nghe Nhạc)'}</span>
+                          <span className="text-[9px] font-black text-rose-600 bg-white border border-rose-200 px-1.5 py-0.2 rounded-full shrink-0">/music-listening</span>
+                        </div>
+                        <div className="text-[10px] text-rose-700/80 font-normal truncate">
+                          {isEn ? 'Songs, lyrics dictation & gap-fill studio' : 'Nghe nhạc, chép lời & điền khuyết theo câu'}
                         </div>
                       </div>
                     </button>
