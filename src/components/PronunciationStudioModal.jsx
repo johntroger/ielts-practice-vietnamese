@@ -44,9 +44,12 @@ import {
   PRONUNCIATION_STRESS_SHIFT_DRILLS,
   PRONUNCIATION_PHRASE_DRILLS,
   PRONUNCIATION_SENTENCE_DRILLS,
+  PRONUNCIATION_TWISTER_DRILLS,
+  TWISTER_GROUPS,
   evaluatePronunciationAttempt,
   evaluateIsolatedIpaSoundAttempt,
   evaluateMinimalPairDuelAttempt,
+  evaluateTwisterAttempt,
   buildPhonemeFeedbackSegments,
   buildSentenceRhythmNodes,
   buildCustomPronunciationDrill,
@@ -100,9 +103,9 @@ export default function PronunciationStudioModal({
 }) {
   const { isEn } = useTranslation();
 
-  const validTabs = ['ipa', 'words', 'stress', 'phrases', 'sentences'];
+  const validTabs = ['ipa', 'words', 'stress', 'phrases', 'sentences', 'twisters'];
 
-  // 1. Active Track Tab ('ipa' | 'words' | 'stress' | 'phrases' | 'sentences')
+  // 1. Active Track Tab ('ipa' | 'words' | 'stress' | 'phrases' | 'sentences' | 'twisters')
   const [activeTab, setActiveTab] = useState(() => {
     if (initialOptions?.tab && validTabs.includes(initialOptions.tab)) {
       return initialOptions.tab;
@@ -116,6 +119,7 @@ export default function PronunciationStudioModal({
       if (pathname.endsWith('/stress')) return 'stress';
       if (pathname.endsWith('/phrases')) return 'phrases';
       if (pathname.endsWith('/sentences')) return 'sentences';
+      if (pathname.endsWith('/twisters')) return 'twisters';
       if (pathname.endsWith('/words')) return 'words';
     }
     const savedTab = safeGet('ielts_pronunciation_active_tab', 'words');
@@ -219,8 +223,10 @@ export default function PronunciationStudioModal({
   const [searchQuery, setSearchQuery] = useState('');
   const [bandFilter, setBandFilter] = useState('all'); // 'all' | 'foundation' | 'band7' | 'band8'
   const [ipaGroupFilter, setIpaGroupFilter] = useState('all'); // 'all' | 'monophthongs' | 'diphthongs' | 'consonants'
+  const [twisterGroupFilter, setTwisterGroupFilter] = useState('all'); // 'all' | 'classic' | 'academic' | 'weak'
   const [showIpaChart, setShowIpaChart] = useState(true);
-  const [ipaPracticeMode, setIpaPracticeMode] = useState('sound'); // 'sound' (Chính âm IPA) | 'words' (Từ ví dụ)
+  const [ipaPracticeMode, setIpaPracticeMode] = useState('sound'); // 'sound' (Chính âm IPA) | 'words' (Từ ví dụ) | 'duel'
+  const twisterSpeakStartRef = useRef(0);
   const [hidePassed, setHidePassed] = useState(() =>
     Boolean(safeGet('ielts_pronunciation_hide_passed', true))
   );
@@ -296,6 +302,8 @@ export default function PronunciationStudioModal({
         ? PRONUNCIATION_STRESS_SHIFT_DRILLS
         : activeTab === 'phrases'
         ? PRONUNCIATION_PHRASE_DRILLS
+        : activeTab === 'twisters'
+        ? PRONUNCIATION_TWISTER_DRILLS
         : PRONUNCIATION_SENTENCE_DRILLS;
 
     // Guest users get free tier; Registered users unlock full Cambridge bank + Personal Vocab Notebook
@@ -305,7 +313,7 @@ export default function PronunciationStudioModal({
 
     const existingTexts = new Set(rawBase.map(d => d.targetText?.toLowerCase().trim()));
     const vocabDrillsForTab =
-      currentUser && activeTab !== 'ipa' && activeTab !== 'stress'
+      currentUser && activeTab !== 'ipa' && activeTab !== 'stress' && activeTab !== 'twisters'
         ? mapVocabListToPronunciationDrills(vocabList, existingTexts).filter(d => d.type === activeTab)
         : [];
 
@@ -327,6 +335,8 @@ export default function PronunciationStudioModal({
         ? PRONUNCIATION_STRESS_SHIFT_DRILLS
         : activeTab === 'phrases'
         ? PRONUNCIATION_PHRASE_DRILLS
+        : activeTab === 'twisters'
+        ? PRONUNCIATION_TWISTER_DRILLS
         : PRONUNCIATION_SENTENCE_DRILLS;
     return rawBase.filter(d => d.requiresAuth).length;
   }, [activeTab, currentUser]);
@@ -376,6 +386,14 @@ export default function PronunciationStudioModal({
       } else if (ipaGroupFilter !== 'all') {
         combined = combined.filter(d => d.ipaGroup === ipaGroupFilter);
       }
+    } else if (activeTab === 'twisters') {
+      if (twisterGroupFilter === 'weak') {
+        combined = combined.filter(
+          d => scores[d.id] && scores[d.id].accuracy < PRONUNCIATION_PASS_THRESHOLD
+        );
+      } else if (twisterGroupFilter !== 'all') {
+        combined = combined.filter(d => d.twisterGroup === twisterGroupFilter);
+      }
     } else if (bandFilter === 'weak') {
       combined = combined.filter(
         d => scores[d.id] && scores[d.id].accuracy < PRONUNCIATION_PASS_THRESHOLD
@@ -414,7 +432,7 @@ export default function PronunciationStudioModal({
     }
 
     return combined;
-  }, [allUnfilteredForTab, activeTab, ipaGroupFilter, bandFilter, hidePassed, passedDrillIds, justPassedDrillId, searchQuery, pronStats?.bestScores]);
+  }, [allUnfilteredForTab, activeTab, ipaGroupFilter, twisterGroupFilter, bandFilter, hidePassed, passedDrillIds, justPassedDrillId, searchQuery, pronStats?.bestScores]);
 
   const currentDrill = activeTrackDrills[selectedIdx] || activeTrackDrills[0] || null;
   const clipKey = currentDrill ? `pron_clip_${currentDrill.id}` : 'pron_clip_default';
@@ -553,6 +571,7 @@ export default function PronunciationStudioModal({
     hasAwardedXpRef.current = false;
     lastAutoEvaluatedRef.current = '';
     liveSpokenTextRef.current = '';
+    twisterSpeakStartRef.current = 0;
     speechEngine.resetTranscript();
   }, [currentDrill?.id]);
 
@@ -717,6 +736,19 @@ export default function PronunciationStudioModal({
               streak: pronStats.streak || 0,
               alternatives
             })
+          : currentDrill.type === 'twisters'
+          ? evaluateTwisterAttempt({
+              drill: currentDrill,
+              spokenText: cleanSpoken,
+              confidence,
+              streak: pronStats.streak || 0,
+              alternatives,
+              acousticMetrics,
+              durationSeconds:
+                twisterSpeakStartRef.current > 0
+                  ? (Date.now() - twisterSpeakStartRef.current) / 1000
+                  : null
+            })
           : evaluatePronunciationAttempt({
               targetText: currentDrill.targetText,
               spokenText: cleanSpoken,
@@ -839,6 +871,9 @@ export default function PronunciationStudioModal({
 
     // User has started speaking again
     setIsWaitingForRetrySpeech(false);
+    if (!twisterSpeakStartRef.current) {
+      twisterSpeakStartRef.current = Date.now();
+    }
 
     if (liveSpokenText === lastAutoEvaluatedRef.current) {
       return;
@@ -1223,6 +1258,31 @@ export default function PronunciationStudioModal({
                     {isEn ? g.labelEn : g.labelVi}
                   </button>
                 ))
+              : activeTab === 'twisters'
+              ? [
+                  ...TWISTER_GROUPS,
+                  ...(weakCountInTab > 0
+                    ? [{ id: 'weak', labelEn: `Needs Polish (${weakCountInTab})`, labelVi: `Cần sửa (${weakCountInTab})` }]
+                    : [])
+                ].map(g => (
+                  <button
+                    key={g.id}
+                    type="button"
+                    onClick={() => {
+                      setTwisterGroupFilter(g.id);
+                      setSelectedIdx(0);
+                    }}
+                    className={`${isMobileSheet ? 'px-2.5 py-1.5 text-[11px]' : 'px-2 py-1 text-[10px]'} rounded-lg font-bold whitespace-nowrap cursor-pointer ${
+                      twisterGroupFilter === g.id
+                        ? g.id === 'weak'
+                          ? 'bg-amber-500 text-slate-950'
+                          : 'bg-fuchsia-600 text-white'
+                        : `${isMobileSheet ? 'bg-slate-950' : 'bg-slate-900'} text-slate-400 hover:text-slate-200 border border-slate-800`
+                    }`}
+                  >
+                    {isEn ? g.labelEn : g.labelVi}
+                  </button>
+                ))
               : [
                   { id: 'all', label: isEn ? 'All' : 'Tất cả' },
                   ...(weakCountInTab > 0
@@ -1338,6 +1398,10 @@ export default function PronunciationStudioModal({
                       {item.ipaSymbol ? (
                         <span className="text-[11px] font-mono font-black px-2 py-0.5 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
                           {item.ipaSymbol}
+                        </span>
+                      ) : item.phonemeTag ? (
+                        <span className="text-[10px] font-mono font-black px-1.5 py-0.5 rounded-lg bg-fuchsia-500/20 text-fuchsia-300 border border-fuchsia-500/40">
+                          {item.phonemeTag}
                         </span>
                       ) : (
                         <span className="text-[10px] font-black px-1.5 py-0.2 rounded bg-slate-800 text-indigo-300">
@@ -2180,6 +2244,98 @@ export default function PronunciationStudioModal({
                           })}
                         </div>
                       );
+                    })() : currentDrill.type === 'twisters' ? (() => {
+                      const patterns = Array.isArray(currentDrill.targetPhonemes)
+                        ? currentDrill.targetPhonemes.map(tp => {
+                            try {
+                              return { ...tp, rx: new RegExp(tp.regex, 'gi') };
+                            } catch (e) {
+                              return null;
+                            }
+                          }).filter(Boolean)
+                        : [];
+
+                      const highlightWord = (word) => {
+                        if (patterns.length === 0) return word;
+                        for (let pIdx = 0; pIdx < patterns.length; pIdx++) {
+                          const p = patterns[pIdx];
+                          p.rx.lastIndex = 0;
+                          if (p.rx.test(word)) {
+                            const parts = word.split(new RegExp(`(${p.regex})`, 'gi'));
+                            const colorCls =
+                              p.color === 'fuchsia'
+                                ? 'text-fuchsia-300 underline decoration-fuchsia-500/70'
+                                : 'text-cyan-300 underline decoration-cyan-500/70';
+                            return parts.map((part, i) =>
+                              part && new RegExp(`^(${p.regex})$`, 'i').test(part) ? (
+                                <span key={i} className={colorCls}>{part}</span>
+                              ) : (
+                                <span key={i}>{part}</span>
+                              )
+                            );
+                          }
+                        }
+                        return word;
+                      };
+
+                      return (
+                        <div className="space-y-3">
+                          <div className="text-xl sm:text-2xl font-black text-white tracking-tight leading-relaxed flex flex-wrap gap-x-1.5 gap-y-1">
+                            {currentDrill.targetText.split(/\s+/).map((w, idx) => (
+                              <span key={`${w}-${idx}`}>{highlightWord(w)}</span>
+                            ))}
+                          </div>
+
+                          {/* Target Repeated Phoneme Legend + 3-Speed Challenge Quick Listen */}
+                          <div className="p-3 rounded-2xl bg-fuchsia-950/25 border border-fuchsia-500/35 space-y-2.5">
+                            <div className="flex flex-wrap items-center justify-between gap-2">
+                              <div className="flex flex-wrap items-center gap-1.5 text-xs">
+                                <span className="text-[11px] font-black text-fuchsia-300">
+                                  {isEn ? '🎯 Target Repeated Sounds:' : '🎯 Bản đồ Âm Lặp:'}
+                                </span>
+                                {(currentDrill.targetPhonemes || []).map(tp => (
+                                  <span
+                                    key={tp.symbol}
+                                    className={`px-2 py-0.5 rounded-lg font-mono text-[11px] font-black border ${
+                                      tp.color === 'fuchsia'
+                                        ? 'bg-fuchsia-500/20 text-fuchsia-300 border-fuchsia-500/40'
+                                        : 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40'
+                                    }`}
+                                  >
+                                    {tp.symbol}
+                                  </span>
+                                ))}
+                              </div>
+
+                              <div className="flex items-center gap-1">
+                                {[
+                                  { rate: 0.65, labelVi: '🐢 0.65x Chậm', labelEn: '🐢 0.65x Slow' },
+                                  { rate: 0.85, labelVi: '🚶 0.85x Vừa', labelEn: '🚶 0.85x Steady' },
+                                  { rate: 1.0, labelVi: '⚡ 1.0x Nhanh', labelEn: '⚡ 1.0x Fast' }
+                                ].map(sp => (
+                                  <button
+                                    key={sp.rate}
+                                    type="button"
+                                    onClick={() => {
+                                      setPlaybackSpeed(sp.rate);
+                                      handlePlayModel(sp.rate, currentDrill.targetText);
+                                    }}
+                                    className="px-2 py-1 rounded-lg bg-slate-900 hover:bg-fuchsia-950/80 border border-slate-700 hover:border-fuchsia-400/60 text-[10px] font-bold text-slate-200 cursor-pointer transition-all"
+                                  >
+                                    {isEn ? sp.labelEn : sp.labelVi}
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+
+                            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] font-bold text-slate-400 pt-1 border-t border-fuchsia-500/20">
+                              <span className="text-amber-300">⭐ {isEn ? '≥80% Clear' : '≥80% Chuẩn'}</span>
+                              <span className="text-amber-300">⭐⭐ {isEn ? '≥85% & 105+ WPM' : '≥85% & 105+ từ/phút'}</span>
+                              <span className="text-fuchsia-300 font-black">⭐⭐⭐ {isEn ? '≥90% & 135+ WPM (+50 XP)' : '≥90% & 135+ từ/phút (+50 XP)'}</span>
+                            </div>
+                          </div>
+                        </div>
+                      );
                     })() : (
                       <div className="text-2xl sm:text-3xl font-black text-white tracking-tight leading-snug">
                         {currentDrill.targetText}
@@ -2701,6 +2857,37 @@ export default function PronunciationStudioModal({
                             <Volume2 className="w-4 h-4 shrink-0" />
                             <span>{isEn ? '🔊 Listen Model & Retry' : '🔊 Nghe mẫu & Đọc lại'}</span>
                           </button>
+                        </div>
+                      )}
+
+                      {/* Twister 3-Star Speed & Repeated Phoneme Combo Banner */}
+                      {evaluationResult.twisterMetrics && (
+                        <div className="p-3 rounded-2xl bg-gradient-to-r from-fuchsia-950/60 via-slate-900 to-amber-950/40 border border-fuchsia-500/40 flex flex-wrap items-center justify-between gap-2.5 text-xs">
+                          <div className="flex items-center space-x-2">
+                            <span className="text-base tracking-widest">
+                              {evaluationResult.twisterMetrics.stars === 3
+                                ? '⭐⭐⭐'
+                                : evaluationResult.twisterMetrics.stars === 2
+                                ? '⭐⭐☆'
+                                : evaluationResult.twisterMetrics.stars === 1
+                                ? '⭐☆☆'
+                                : '☆☆☆'}
+                            </span>
+                            <span className="font-black text-white">
+                              {isEn
+                                ? evaluationResult.twisterMetrics.tierLabelEn
+                                : evaluationResult.twisterMetrics.tierLabelVi}
+                            </span>
+                          </div>
+                          <div className="flex flex-wrap items-center gap-1.5">
+                            <span className="px-2 py-0.5 rounded-lg bg-slate-900 border border-slate-700 text-cyan-300 font-mono font-bold text-[11px]">
+                              ⚡ {evaluationResult.twisterMetrics.wpm} {isEn ? 'WPM' : 'từ/phút'} ({evaluationResult.twisterMetrics.durationSec}s)
+                            </span>
+                            <span className="px-2 py-0.5 rounded-lg bg-fuchsia-500/20 border border-fuchsia-500/40 text-fuchsia-200 font-bold text-[11px]">
+                              🔥 {isEn ? 'Phoneme Combo:' : 'Combo Âm Lặp:'}{' '}
+                              {evaluationResult.twisterMetrics.comboHits}/{evaluationResult.twisterMetrics.comboTotal}
+                            </span>
+                          </div>
                         </div>
                       )}
 

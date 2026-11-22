@@ -60,6 +60,16 @@ export const PRONUNCIATION_TRACKS = [
     baseXp: 35,
     perfectXp: 45,
     badgeColor: 'from-rose-500 to-amber-500'
+  },
+  {
+    id: 'twisters',
+    labelEn: 'Twisters',
+    labelVi: 'Xoắn Lưỡi',
+    shortDescEn: 'Tongue twisters & IELTS alliteration agility drills with 3-Star Speed Challenge',
+    shortDescVi: 'Thử thách xoắn lưỡi & câu lặp âm học thuật (chấm chuẩn âm + tốc độ 3 sao)',
+    baseXp: 30,
+    perfectXp: 50,
+    badgeColor: 'from-fuchsia-500 to-pink-600'
   }
 ];
 
@@ -3819,6 +3829,477 @@ export function buildSentenceRhythmNodes(targetText = '', intonationText = '') {
 
   return { nodes, endArrow };
 }
+
+export const TWISTER_GROUPS = [
+  { id: 'all', labelEn: 'All Twisters', labelVi: 'Tất cả (12)' },
+  { id: 'classic', labelEn: 'Classic Fun', labelVi: 'Kinh điển vui nhộn' },
+  { id: 'academic', labelEn: 'IELTS Academic', labelVi: 'Học thuật IELTS' }
+];
+
+export const PRONUNCIATION_TWISTER_DRILLS = [
+  // ================= 6 CLASSIC FUN TWISTERS =================
+  {
+    id: 'pron-tw-01',
+    type: 'twisters',
+    twisterGroup: 'classic',
+    phonemeTag: '/ʃ/ ↔ /s/',
+    targetPhonemes: [
+      { symbol: '/ʃ/', regex: '(sh|sure)', color: 'fuchsia' },
+      { symbol: '/s/', regex: '(s)', color: 'cyan' }
+    ],
+    targetText: 'She sells seashells by the seashore, and the shells she sells are surely seashells.',
+    ipaUk: '/ʃiː selz ˈsiː.ʃelz baɪ ðə ˈsiː.ʃɔː | ænd ðə ʃelz ʃiː selz ɑː ˈʃʊə.li ˈsiː.ʃelz/',
+    ipaUs: '/ʃiː selz ˈsiː.ʃelz baɪ ðə ˈsiː.ʃɔːr | ænd ðə ʃelz ʃiː selz ɑːr ˈʃʊr.li ˈsiː.ʃelz/',
+    bandLevel: '7.0',
+    categoryEn: 'Sibilant Agility (/ʃ/ vs /s/)',
+    categoryVi: 'Phản xạ đổi môi /ʃ/ ↔ /s/',
+    topicEn: 'Classic Twister',
+    topicVi: 'Xoắn lưỡi kinh điển',
+    meaningEn: 'Rapidly alternates between rounded /ʃ/ ("sh") and flat /s/ ("s").',
+    meaningVi: 'Luyện chuyển khẩu hình liên tục giữa chu môi /ʃ/ và khép răng /s/.',
+    trapEn: 'Blurring "seashells" into *she-sells or *see-sells when speeding up.',
+    trapVi: 'Dễ đọc nhầm "seashells" thành *she-sells hoặc *see-sells khi tăng tốc.',
+    mouthTipEn: 'Exaggerate lip rounding on /ʃ/ (She, shells, shore, surely) and pull corners back on /s/ (sells, sea).',
+    mouthTipVi: 'Chu môi rõ ở /ʃ/ (She, shells, shore, surely) và kéo khóe miệng ngang ở /s/ (sells, sea).',
+    exampleEn: 'She sells seashells by the seashore, and the shells she sells are surely seashells.',
+    exampleVi: 'Cô ấy bán vỏ sò bên bờ biển, và những chiếc vỏ cô bán chắc chắn là vỏ sò biển.',
+    xpReward: 30,
+    requiresAuth: false
+  },
+  {
+    id: 'pron-tw-02',
+    type: 'twisters',
+    twisterGroup: 'classic',
+    phonemeTag: '/θ/ ↔ /ð/',
+    targetPhonemes: [
+      { symbol: '/θ/', regex: '(th(?!(ey|e\\b|at|is)))', color: 'fuchsia' },
+      { symbol: '/ð/', regex: '(they|the\\b)', color: 'cyan' }
+    ],
+    targetText: 'Thirty-three thousand thoughtless youths thought they thrilled the throne throughout Thursday.',
+    ipaUk: '/ˈθɜː.ti θriː ˈθaʊ.zənd ˈθɔːt.ləs juːðz θɔːt ðeɪ θrɪld ðə θrəʊn θruːˈaʊt ˈθɜːz.deɪ/',
+    ipaUs: '/ˈθɝː.t̬i θriː ˈθaʊ.zənd ˈθɑːt.ləs juːðz θɑːt ðeɪ θrɪld ðə θroʊn θruːˈaʊt ˈθɝːz.deɪ/',
+    bandLevel: '7.5',
+    categoryEn: 'Dental TH Agility (/θ/ vs /ð/)',
+    categoryVi: 'Luyện âm TH liên hoàn (/θ/ ↔ /ð/)',
+    topicEn: 'Classic Twister',
+    topicVi: 'Xoắn lưỡi kinh điển',
+    meaningEn: 'Master the tongue-between-teeth /θ/ and voiced /ð/ at natural speed.',
+    meaningVi: 'Rèn trí nhớ cơ đầu lưỡi đặt giữa hai hàm răng liên tục không bị rụt thành "th/đ" tiếng Việt.',
+    trapEn: 'Pulling the tongue back into Vietnamese "th" or /t/ after the third word.',
+    trapVi: 'Đọc được 2–3 từ đầu đúng nhưng từ thứ 4 trở đi lưỡi bị rụt vào trong thành âm "th/đ" tiếng Việt.',
+    mouthTipEn: 'Keep your tongue tip relaxed and hovering right behind your front teeth so it taps out effortlessly.',
+    mouthTipVi: 'Giữ đầu lưỡi thật thả lỏng ngay sát kẽ răng cửa để chạm ra nhẹ nhàng ở mỗi từ bắt đầu bằng TH.',
+    exampleEn: 'Thirty-three thousand thoughtless youths thought they thrilled the throne throughout Thursday.',
+    exampleVi: 'Ba mươi ba nghìn thanh niên vô tư tưởng rằng họ đã làm rung chuyển ngai vàng suốt ngày thứ Năm.',
+    xpReward: 30,
+    requiresAuth: false
+  },
+  {
+    id: 'pron-tw-03',
+    type: 'twisters',
+    twisterGroup: 'classic',
+    phonemeTag: '/r/ ↔ /l/',
+    targetPhonemes: [
+      { symbol: '/r/', regex: '(r)', color: 'fuchsia' },
+      { symbol: '/l/', regex: '(l)', color: 'cyan' }
+    ],
+    targetText: 'Red lorry, yellow lorry, rural travelers rarely roll along rough roads.',
+    ipaUk: '/red ˈlɒr.i ˈjel.əʊ ˈlɒr.i | ˈrʊə.rəl ˈtræv.əl.əz ˈreə.li rəʊl əˈlɒŋ rʌf rəʊdz/',
+    ipaUs: '/red ˈlɔːr.i ˈjel.oʊ ˈlɔːr.i | ˈrʊr.əl ˈtræv.əl.ɚz ˈrer.li roʊl əˈlɔːŋ rʌf roʊdz/',
+    bandLevel: '7.5',
+    categoryEn: 'Liquid Contrast (/r/ vs /l/)',
+    categoryVi: 'Phản xạ lưỡi /r/ ↔ /l/',
+    topicEn: 'Classic Twister',
+    topicVi: 'Xoắn lưỡi kinh điển',
+    meaningEn: 'Separates curled-back /r/ from alveolar-tap /l/ in rapid succession.',
+    meaningVi: 'Tách bạch tuyệt đối âm /r/ (cong lưỡi không chạm lợi) và /l/ (đầu lưỡi chạm chắc chân răng trên).',
+    trapEn: 'Swapping /r/ and /l/ in "lorry", "rural", and "rarely".',
+    trapVi: 'Líu lưỡi đảo lẫn /r/ và /l/ trong "lorry", "rural", "rarely".',
+    mouthTipEn: 'Round lips for /r/ (no roof contact); touch the ridge firmly behind upper teeth for /l/.',
+    mouthTipVi: 'Chu môi cong lưỡi cho /r/ (không chạm vòm miệng); chạm chắc đầu lưỡi lên chân răng trên cho /l/.',
+    exampleEn: 'Red lorry, yellow lorry, rural travelers rarely roll along rough roads.',
+    exampleVi: 'Xe tải đỏ, xe tải vàng, du khách vùng quê hiếm khi lăn bánh dọc theo những con đường gập ghềnh.',
+    xpReward: 30,
+    requiresAuth: false
+  },
+  {
+    id: 'pron-tw-04',
+    type: 'twisters',
+    twisterGroup: 'classic',
+    phonemeTag: '/v/ ↔ /w/',
+    targetPhonemes: [
+      { symbol: '/v/', regex: '(v)', color: 'fuchsia' },
+      { symbol: '/w/', regex: '(w)', color: 'cyan' }
+    ],
+    targetText: 'Very well, Victor willingly went with Wendy to visit the vibrant western village.',
+    ipaUk: '/ˈver.i wel | ˈvɪk.tə ˈwɪl.ɪŋ.li went wɪð ˈwen.di tuː ˈvɪz.ɪt ðə ˈvaɪ.brənt ˈwes.tən ˈvɪl.ɪdʒ/',
+    ipaUs: '/ˈver.i wel | ˈvɪk.tɚ ˈwɪl.ɪŋ.li went wɪð ˈwen.di tuː ˈvɪz.ɪt ðə ˈvaɪ.brənt ˈwes.tɚn ˈvɪl.ɪdʒ/',
+    bandLevel: '7.0',
+    categoryEn: 'Labial Agility (/v/ vs /w/)',
+    categoryVi: 'Chuyển môi răng /v/ ↔ /w/',
+    topicEn: 'Classic Twister',
+    topicVi: 'Xoắn lưỡi kinh điển',
+    meaningEn: 'Alternates teeth-on-lip /v/ with tightly rounded /w/.',
+    meaningVi: 'Chuyển liên hoàn giữa răng chạm môi dưới /v/ và chu tròn môi bật nhanh /w/.',
+    trapEn: 'Using /v/ for "went/Wendy" or forgetting lip vibration on "visit/village".',
+    trapVi: 'Đọc lẫn /v/ và /w/ (ví dụ đọc "very well" thành *wery well hoặc *very vell).',
+    mouthTipEn: 'Touch upper teeth to lower lip for V; push both lips into a small "oo" circle for W.',
+    mouthTipVi: 'Răng trên chạm môi dưới rung nhẹ cho V; chu tròn 2 môi không chạm răng cho W.',
+    exampleEn: 'Very well, Victor willingly went with Wendy to visit the vibrant western village.',
+    exampleVi: 'Rất tốt, Victor sẵn lòng đi cùng Wendy đến thăm ngôi làng sôi động phía tây.',
+    xpReward: 30,
+    requiresAuth: false
+  },
+  {
+    id: 'pron-tw-05',
+    type: 'twisters',
+    twisterGroup: 'classic',
+    phonemeTag: '/pʰ/ Plosive',
+    targetPhonemes: [
+      { symbol: '/p/', regex: '(p)', color: 'fuchsia' },
+      { symbol: '/k/', regex: '(ck|k)', color: 'cyan' }
+    ],
+    targetText: 'Peter Piper picked a peck of pickled peppers.',
+    ipaUk: '/ˈpiː.tə ˈpaɪ.pə pɪkt ə pek əv ˈpɪk.əld ˈpep.əz/',
+    ipaUs: '/ˈpiː.t̬ɚ ˈpaɪ.pɚ pɪkt ə pek əv ˈpɪk.əld ˈpep.ɚz/',
+    bandLevel: '6.5',
+    categoryEn: 'Aspirated /p/ Burst',
+    categoryVi: 'Bật hơi liên hoàn âm /p/',
+    topicEn: 'Classic Twister',
+    topicVi: 'Xoắn lưỡi kinh điển',
+    meaningEn: 'Trains crisp voiceless /p/ aspiration and /-kt/ / /-ld/ endings.',
+    meaningVi: 'Luyện bật hơi chuẩn âm /p/ vô thanh và giữ rõ đuôi /-kt/ (picked), /-ld/ (pickled).',
+    trapEn: 'Dropping aspiration on /p/ so it sounds like /b/, or swallowing "-ed" endings.',
+    trapVi: 'Đọc /p/ bẹt không bật hơi giống /b/ hoặc nuốt mất đuôi "-ed" ở picked/pickled.',
+    mouthTipEn: 'Hold a tissue in front of your mouth — every stressed P should make it flutter!',
+    mouthTipVi: 'Mím 2 môi nén hơi và bật dứt khoát từng âm P; giữ rõ âm /t/ ở cuối "picked".',
+    exampleEn: 'Peter Piper picked a peck of pickled peppers.',
+    exampleVi: 'Peter Piper đã hái một giỏ ớt ngâm chua.',
+    xpReward: 30,
+    requiresAuth: false
+  },
+  {
+    id: 'pron-tw-06',
+    type: 'twisters',
+    twisterGroup: 'classic',
+    phonemeTag: '/w/ ↔ /tʃ/',
+    targetPhonemes: [
+      { symbol: '/w/', regex: '(w)', color: 'cyan' },
+      { symbol: '/tʃ/', regex: '(ch)', color: 'fuchsia' }
+    ],
+    targetText: 'How much wood would a woodchuck chuck if a woodchuck could chuck wood?',
+    ipaUk: '/haʊ mʌtʃ wʊd wʊd ə ˈwʊd.tʃʌk tʃʌk ɪf ə ˈwʊd.tʃʌk kʊd tʃʌk wʊd/',
+    ipaUs: '/haʊ mʌtʃ wʊd wʊd ə ˈwʊd.tʃʌk tʃʌk ɪf ə ˈwʊd.tʃʌk kʊd tʃʌk wʊd/',
+    bandLevel: '7.0',
+    categoryEn: 'Rounded /wʊ/ & /tʃʌ/ Rhythm',
+    categoryVi: 'Nhịp tròn môi /wʊ/ & bật gió /tʃ/',
+    topicEn: 'Classic Twister',
+    topicVi: 'Xoắn lưỡi kinh điển',
+    meaningEn: 'Tests rhythmic contrast between short /ʊ/ (wood, would, could) and /ʌ/ (much, chuck).',
+    meaningVi: 'Luyện phân biệt nguyên âm ngắn /ʊ/ (wood, would, could) và /ʌ/ (much, chuck) kèm âm bật /tʃ/.',
+    trapEn: 'Merging "wood" and "would" with "chuck" or losing the /k/ endings.',
+    trapVi: 'Mất phụ âm cuối /d/ ở wood/would và /k/ ở woodchuck/chuck khi đọc nhanh.',
+    mouthTipEn: 'Bounce crisply between rounded "wuh" and punchy "chuh-k".',
+    mouthTipVi: 'Giữ nhịp nảy đều giữa môi tròn "wʊd" và bật gió dứt khoát "tʃʌk".',
+    exampleEn: 'How much wood would a woodchuck chuck if a woodchuck could chuck wood?',
+    exampleVi: 'Một chú sóc đất sẽ ném được bao nhiêu gỗ nếu nó có thể ném gỗ?',
+    xpReward: 30,
+    requiresAuth: true
+  },
+
+  // ================= 6 IELTS ACADEMIC ALLITERATION TWISTERS =================
+  {
+    id: 'pron-tw-07',
+    type: 'twisters',
+    twisterGroup: 'academic',
+    phonemeTag: '/s/ • /st/ • /str/',
+    targetPhonemes: [
+      { symbol: '/str/', regex: '(str)', color: 'fuchsia' },
+      { symbol: '/s/ /st/', regex: '(st|s)', color: 'cyan' }
+    ],
+    targetText: 'Sustainable strategies strictly strengthen social stability in stressful situations.',
+    ipaUk: '/səˈsteɪ.nə.bəl ˈstræt.ə.dʒiz ˈstrɪkt.li ˈstreŋ.θən ˈsəʊ.ʃəl stəˈbɪl.ə.ti ɪn ˈstres.fəl ˌsɪtʃ.uˈeɪ.ʃənz/',
+    ipaUs: '/səˈsteɪ.nə.bəl ˈstræt̬.ə.dʒiz ˈstrɪkt.li ˈstreŋ.θən ˈsoʊ.ʃəl stəˈbɪl.ə.t̬i ɪn ˈstres.fəl ˌsɪtʃ.uˈeɪ.ʃənz/',
+    bandLevel: '8.0',
+    categoryEn: 'IELTS Cluster Agility (/str/ & /st/)',
+    categoryVi: 'Cụm phụ âm học thuật /str/ & /st/',
+    topicEn: 'IELTS Academic Twister',
+    topicVi: 'Xoắn lưỡi học thuật IELTS',
+    meaningEn: 'High-density Band 8.0 vocabulary drilling /s/, /st/, and /str/ consonant clusters.',
+    meaningVi: 'Câu học thuật Band 8.0 chứa mật độ dày đặc cụm /s/, /st/, /str/ cực dễ vấp khi nói nhanh.',
+    trapEn: 'Inserting an extra vowel (*sơ-tra-te-gies) or dropping /t/ in "strictly".',
+    trapVi: 'Thêm nguyên âm thừa (*sơ-tra-te-gies) hoặc nuốt âm /k-t/ trong "strictly".',
+    mouthTipEn: 'Glide straight from /s/ into /tr/ without adding an "uh" vowel in between.',
+    mouthTipVi: 'Xì gió /s/ rồi trượt thẳng sang /tr/ không chèn âm "ơ" ở giữa; giữ âm /θ/ trong "strengthen".',
+    exampleEn: 'Sustainable strategies strictly strengthen social stability in stressful situations.',
+    exampleVi: 'Các chiến lược bền vững củng cố vững chắc sự ổn định xã hội trong những tình huống căng thẳng.',
+    xpReward: 35,
+    requiresAuth: false
+  },
+  {
+    id: 'pron-tw-08',
+    type: 'twisters',
+    twisterGroup: 'academic',
+    phonemeTag: '/p/ • /pr/ • /pl/',
+    targetPhonemes: [
+      { symbol: '/pr/ /pl/', regex: '(pr|pl)', color: 'fuchsia' },
+      { symbol: '/p/', regex: '(p)', color: 'cyan' }
+    ],
+    targetText: 'Public policies proactively promote practical plans for pressing pollution problems.',
+    ipaUk: '/ˈpʌb.lɪk ˈpɒl.ə.siz ˌprəʊˈæk.tɪv.li prəˈməʊt ˈpræk.tɪ.kəl plænz fɔː ˈpres.ɪŋ pəˈluː.ʃən ˈprɒb.ləmz/',
+    ipaUs: '/ˈpʌb.lɪk ˈpɑː.lə.siz ˌproʊˈæk.tɪv.li prəˈmoʊt ˈpræk.tɪ.kəl plænz fɔːr ˈpres.ɪŋ pəˈluː.ʃən ˈprɑːb.ləmz/',
+    bandLevel: '8.0',
+    categoryEn: 'IELTS Policy Alliteration (/p/, /pr/, /pl/)',
+    categoryVi: 'Lặp âm bật hơi IELTS (/p/, /pr/, /pl/)',
+    topicEn: 'IELTS Academic Twister',
+    topicVi: 'Xoắn lưỡi học thuật IELTS',
+    meaningEn: 'Builds crisp bilabial aspiration across Band 7.5–8.0 Environment & Government vocabulary.',
+    meaningVi: 'Rèn bật hơi âm /p/ và cụm /pr/, /pl/ trên bộ từ vựng chủ đề Chính phủ & Môi trường.',
+    trapEn: 'Blurring /pr/ and /pl/ in "practical plans" and "pollution problems".',
+    trapVi: 'Líu lưỡi giữa /pr/ và /pl/ ở hai cặp "practical plans" và "pollution problems".',
+    mouthTipEn: 'Keep every initial P crisp and aspirated; clearly separate L in "plans" from R in "pressing/problems".',
+    mouthTipVi: 'Bật hơi gọn từng âm P và tách rõ đầu lưỡi chạm lợi ở "plans" với cong lưỡi ở "pressing/problems".',
+    exampleEn: 'Public policies proactively promote practical plans for pressing pollution problems.',
+    exampleVi: 'Các chính sách công chủ động thúc đẩy những kế hoạch thiết thực cho các vấn đề ô nhiễm cấp bách.',
+    xpReward: 35,
+    requiresAuth: false
+  },
+  {
+    id: 'pron-tw-09',
+    type: 'twisters',
+    twisterGroup: 'academic',
+    phonemeTag: '/k/ • /kr/ • /kl/',
+    targetPhonemes: [
+      { symbol: '/kr/ /kl/', regex: '(cr|cl)', color: 'fuchsia' },
+      { symbol: '/k/', regex: '(c(?=[aou])|k)', color: 'cyan' }
+    ],
+    targetText: 'Critical climate crises create complex challenges for coastal communities.',
+    ipaUk: '/ˈkrɪt.ɪ.kəl ˈklaɪ.mət ˈkraɪ.siːz kriˈeɪt ˈkɒm.pleks ˈtʃæl.ɪn.dʒɪz fɔː ˈkəʊs.təl kəˈmjuː.nə.tiz/',
+    ipaUs: '/ˈkrɪt̬.ɪ.kəl ˈklaɪ.mət ˈkraɪ.siːz kriˈeɪt ˈkɑːm.pleks ˈtʃæl.ɪn.dʒɪz fɔːr ˈkoʊs.təl kəˈmjuː.nə.t̬iz/',
+    bandLevel: '8.0',
+    categoryEn: 'IELTS Velar Clusters (/k/, /kr/, /kl/)',
+    categoryVi: 'Cụm cuống lưỡi học thuật (/k/, /kr/, /kl/)',
+    topicEn: 'IELTS Academic Twister',
+    topicVi: 'Xoắn lưỡi học thuật IELTS',
+    meaningEn: 'Drills rapid switching between /kr/ (critical, crises, create) and /kl/ (climate) + /tʃ/ (challenges).',
+    meaningVi: 'Luyện chuyển nhanh giữa /kr/ (critical, crises, create), /kl/ (climate) và âm bật /tʃ/ (challenges).',
+    trapEn: 'Dropping /r/ in "crises" or pronouncing plural "crises" as singular "crisis".',
+    trapVi: 'Đọc nhầm số nhiều "crises" (/ˈkraɪ.siːz/) thành "crisis" hoặc nuốt âm /s/ trong "complex".',
+    mouthTipEn: 'Notice the plural ending /-siːz/ in "crises" and crisp /-ks/ in "complex".',
+    mouthTipVi: 'Nhấn rõ đuôi /-siːz/ của "crises" và bật gọn cụm /-ks/ ở cuối "complex".',
+    exampleEn: 'Critical climate crises create complex challenges for coastal communities.',
+    exampleVi: 'Các cuộc khủng hoảng khí hậu nghiêm trọng tạo ra những thách thức phức tạp cho cộng đồng ven biển.',
+    xpReward: 35,
+    requiresAuth: false
+  },
+  {
+    id: 'pron-tw-10',
+    type: 'twisters',
+    twisterGroup: 'academic',
+    phonemeTag: '/θ/ ↔ /ð/ Academic',
+    targetPhonemes: [
+      { symbol: '/θ/', regex: '(th(?!(an\\b|e\\b)))', color: 'fuchsia' },
+      { symbol: '/ð/', regex: '(than|rather)', color: 'cyan' }
+    ],
+    targetText: 'Theoretically, thorough thinkers thrive through thoughtful methods rather than mere myths.',
+    ipaUk: '/ˌθɪəˈret.ɪ.kəl.i ˈθʌr.ə ˈθɪŋ.kəz θraɪv θruː ˈθɔːt.fəl ˈmeθ.ədz ˈrɑː.ðə ðæn mɪə mɪθs/',
+    ipaUs: '/ˌθiː.əˈret̬.ɪ.kəl.i ˈθɝː.oʊ ˈθɪŋ.kɚz θraɪv θruː ˈθɑːt.fəl ˈmeθ.ədz ˈræð.ɚ ðæn mɪr mɪθs/',
+    bandLevel: '8.5',
+    categoryEn: 'Band 8.5 Academic TH Drill',
+    categoryVi: 'Thử thách TH học thuật Band 8.5',
+    topicEn: 'IELTS Academic Twister',
+    topicVi: 'Xoắn lưỡi học thuật IELTS',
+    meaningEn: 'The ultimate IELTS Part 3 /θ/ and /ð/ mastery test, ending on the hard cluster /θs/ ("myths").',
+    meaningVi: 'Bài test đỉnh cao âm /θ/ và /ð/ cho Speaking Part 3, chốt bằng cụm cực khó /θs/ trong "myths".',
+    trapEn: 'Mispronouncing "thorough" (/ˈθʌr.ə/) like "through" (/θruː/) or dropping /θs/ in "myths".',
+    trapVi: 'Nhầm "thorough" (/ˈθʌr.ə/) với "through" (/θruː/) và bỏ quên cụm cuối /θs/ của "myths".',
+    mouthTipEn: 'Separate "thorough" (2 syllables) from "through" (1 syllable) and hiss /θ-s/ cleanly on "myths".',
+    mouthTipVi: 'Tách rõ "thorough" (2 âm tiết) với "through" (1 âm tiết), rồi trượt nhẹ đầu lưỡi từ /θ/ sang /s/ ở "myths".',
+    exampleEn: 'Theoretically, thorough thinkers thrive through thoughtful methods rather than mere myths.',
+    exampleVi: 'Về mặt lý thuyết, những nhà tư tưởng thấu đáo phát triển nhờ phương pháp sâu sắc hơn là lời đồn đại.',
+    xpReward: 40,
+    requiresAuth: true
+  },
+  {
+    id: 'pron-tw-11',
+    type: 'twisters',
+    twisterGroup: 'academic',
+    phonemeTag: '/tʃ/ • /dʒ/ • /ʃ/',
+    targetPhonemes: [
+      { symbol: '/tʃ/', regex: '(ch|tu(?=r))', color: 'fuchsia' },
+      { symbol: '/dʒ/ /ʃ/', regex: '(j|dge|sh|ci|ti(?=on))', color: 'cyan' }
+    ],
+    targetText: 'Major social changes challenge traditional cultures to cherish shared knowledge.',
+    ipaUk: '/ˈmeɪ.dʒə ˈsəʊ.ʃəl ˈtʃeɪn.dʒɪz ˈtʃæl.ɪndʒ trəˈdɪʃ.ən.əl ˈkʌl.tʃəz tuː ˈtʃer.ɪʃ ʃeəd ˈnɒl.ɪdʒ/',
+    ipaUs: '/ˈmeɪ.dʒɚ ˈsoʊ.ʃəl ˈtʃeɪn.dʒɪz ˈtʃæl.ɪndʒ trəˈdɪʃ.ən.əl ˈkʌl.tʃɚz tuː ˈtʃer.ɪʃ ʃerd ˈnɑː.lɪdʒ/',
+    bandLevel: '8.0',
+    categoryEn: 'Postalveolar Trio (/tʃ/, /dʒ/, /ʃ/)',
+    categoryVi: 'Bộ ba tròn môi (/tʃ/, /dʒ/, /ʃ/)',
+    topicEn: 'IELTS Academic Twister',
+    topicVi: 'Xoắn lưỡi học thuật IELTS',
+    meaningEn: 'Trains smooth lip-rounded transitions across Band 8.0 Culture & Society vocabulary.',
+    meaningVi: 'Luyện chuyển mượt bộ ba âm tròn môi /tʃ/, /dʒ/, /ʃ/ trong từ vựng chủ đề Văn hóa & Xã hội.',
+    trapEn: 'Dropping final /-dʒ/ in "challenge" and "knowledge" or flattening /ʃ/ in "social/traditional".',
+    trapVi: 'Nuốt âm đuôi /-dʒ/ ở "challenge", "knowledge" hoặc quên tròn môi ở "social", "traditional".',
+    mouthTipEn: 'Keep your lips gently rounded throughout and voice the final /-dʒ/ on "knowledge".',
+    mouthTipVi: 'Giữ môi hơi chu nhẹ xuyên suốt câu và bật rung rõ âm cuối /-dʒ/ của "knowledge".',
+    exampleEn: 'Major social changes challenge traditional cultures to cherish shared knowledge.',
+    exampleVi: 'Những thay đổi xã hội lớn thách thức các nền văn hóa truyền thống trân trọng tri thức chung.',
+    xpReward: 35,
+    requiresAuth: true
+  },
+  {
+    id: 'pron-tw-12',
+    type: 'twisters',
+    twisterGroup: 'academic',
+    phonemeTag: '/f/ • /v/ • /r/',
+    targetPhonemes: [
+      { symbol: '/f/ /v/', regex: '(f|v)', color: 'fuchsia' },
+      { symbol: '/r/', regex: '(r)', color: 'cyan' }
+    ],
+    targetText: 'Flexible financial frameworks foster rapid recovery for vulnerable rural farmers.',
+    ipaUk: '/ˈflek.sə.bəl faɪˈnæn.ʃəl ˈfreɪm.wɜːks ˈfɒs.tə ˈræp.ɪd rɪˈkʌv.ər.i fɔː ˈvʌl.nər.ə.bəl ˈrʊə.rəl ˈfɑː.məz/',
+    ipaUs: '/ˈflek.sə.bəl faɪˈnæn.ʃəl ˈfreɪm.wɝːks ˈfɑːs.tɚ ˈræp.ɪd rɪˈkʌv.ɚ.i fɔːr ˈvʌl.nɚ.ə.bəl ˈrʊr.əl ˈfɑːr.mɚz/',
+    bandLevel: '8.5',
+    categoryEn: 'Labiodental & Rhotic Agility (/f/, /v/, /r/)',
+    categoryVi: 'Phản xạ /f/, /v/ & cong lưỡi /r/',
+    topicEn: 'IELTS Academic Twister',
+    topicVi: 'Xoắn lưỡi học thuật IELTS',
+    meaningEn: 'Combines /f/ & /v/ teeth-on-lip friction with back-to-back /r/ clusters ("rapid recovery", "rural").',
+    meaningVi: 'Kết hợp chuyển nhanh giữa /f/ - /v/ và chuỗi cong lưỡi /r/ liên tiếp ("rapid recovery", "rural").',
+    trapEn: 'Stumbling over "vulnerable rural" (/ˈvʌl.nər.ə.bəl ˈrʊə.rəl/).',
+    trapVi: 'Rất dễ vấp ở cụm "vulnerable rural" khi phải chuyển liên tiếp giữa /v/, /l/ và /r/.',
+    mouthTipEn: 'Slow down slightly on "vulnerable rural", then speed back up on "farmers".',
+    mouthTipVi: 'Hãm nhẹ nhịp ở cụm "vulnerable rural" để tách rõ /l/ và /r/, sau đó kết gọn ở "farmers".',
+    exampleEn: 'Flexible financial frameworks foster rapid recovery for vulnerable rural farmers.',
+    exampleVi: 'Khung tài chính linh hoạt thúc đẩy sự phục hồi nhanh chóng cho nông dân nông thôn dễ bị tổn thương.',
+    xpReward: 40,
+    requiresAuth: true
+  }
+];
+
+/**
+ * Evaluates a Tongue Twister / Alliteration drill with Dual Scoring:
+ * 1. Phonetic Accuracy (%) + Repeated Phoneme Combo Counter
+ * 2. Fluency Speed (WPM) -> 3-Star Speed Challenge Rating (⭐ / ⭐⭐ / ⭐⭐⭐)
+ */
+export function evaluateTwisterAttempt({
+  drill,
+  spokenText = '',
+  confidence = 0.88,
+  streak = 0,
+  alternatives = [],
+  acousticMetrics = null,
+  durationSeconds = null
+}) {
+  const base = evaluatePronunciationAttempt({
+    targetText: drill?.targetText || '',
+    spokenText,
+    confidence,
+    itemType: 'twisters',
+    streak,
+    alternatives,
+    acousticMetrics
+  });
+
+  const spokenCount = expandConversationalTokens(spokenText).length;
+  const elapsedFromAcoustic =
+    acousticMetrics?.startedAt && acousticMetrics.startedAt > 0
+      ? (Date.now() - acousticMetrics.startedAt) / 1000
+      : null;
+
+  const rawElapsed =
+    typeof durationSeconds === 'number' && durationSeconds > 0.6
+      ? durationSeconds
+      : typeof elapsedFromAcoustic === 'number' && elapsedFromAcoustic > 0.6
+      ? elapsedFromAcoustic
+      : Math.max(2.0, spokenCount / 2.0);
+
+  const safeElapsed = Math.max(1.2, Math.min(30, rawElapsed));
+  const wpm = spokenCount > 0 ? Math.max(40, Math.min(220, Math.round((spokenCount / safeElapsed) * 60))) : 0;
+
+  // Compute Repeated Phoneme Combo: how many words containing target repeated phonemes were hit cleanly
+  const patterns = Array.isArray(drill?.targetPhonemes)
+    ? drill.targetPhonemes
+        .map(tp => {
+          try {
+            return new RegExp(tp.regex, 'i');
+          } catch (e) {
+            return null;
+          }
+        })
+        .filter(Boolean)
+    : [];
+
+  let comboTotal = 0;
+  let comboHits = 0;
+  (base.wordBreakdown || []).forEach(wb => {
+    const matchesTarget = patterns.length === 0 || patterns.some(rx => rx.test(wb.word || ''));
+    if (matchesTarget) {
+      comboTotal += 1;
+      if (wb.status === 'correct') comboHits += 1;
+    }
+  });
+
+  // 3-Star Speed Challenge Tier
+  let stars = 0;
+  let tierLabelEn = 'Keep Practicing';
+  let tierLabelVi = 'Thử lại nhé';
+  let bonusXp = 0;
+
+  if (base.overallAccuracy >= 90 && wpm >= 135) {
+    stars = 3;
+    tierLabelEn = 'Speed Master';
+    tierLabelVi = 'Bậc Thầy Xoắn Lưỡi';
+    bonusXp = 50;
+  } else if (base.overallAccuracy >= 85 && wpm >= 105) {
+    stars = 2;
+    tierLabelEn = 'Fluent Flow';
+    tierLabelVi = 'Trôi Chảy Tự Nhiên';
+    bonusXp = 40;
+  } else if (base.overallAccuracy >= 80) {
+    stars = 1;
+    tierLabelEn = 'Clear Articulation';
+    tierLabelVi = 'Chuẩn Xác Chắc Nhịp';
+    bonusXp = 30;
+  }
+
+  const streakBonusXp = stars > 0 ? Math.min(15, streak * 3) : 0;
+  const xpEarned = stars > 0 ? bonusXp + streakBonusXp : 5;
+
+  return {
+    ...base,
+    xpEarned,
+    streakBonusXp,
+    twisterMetrics: {
+      stars,
+      wpm,
+      durationSec: Math.round(safeElapsed * 10) / 10,
+      comboHits,
+      comboTotal,
+      tierLabelEn,
+      tierLabelVi,
+      phonemeTag: drill?.phonemeTag || ''
+    },
+    coachFeedbackEn:
+      stars === 3
+        ? `🔥 3-Star Speed Master (${base.overallAccuracy}% at ${wpm} WPM)! You nailed ${comboHits}/${comboTotal} repeated-sound words without stumbling.`
+        : stars === 2
+        ? `⭐⭐ Fluent Flow (${base.overallAccuracy}% at ${wpm} WPM)! Push to 135+ WPM & ≥90% accuracy for 3 Stars (+50 XP).`
+        : stars === 1
+        ? `⭐ Clear Articulation (${base.overallAccuracy}% at ${wpm} WPM)! Now try speeding up slightly for 2–3 Stars.`
+        : `Tricky sounds! You hit ${comboHits}/${comboTotal} target words. Listen at 0.65x slow first, then build speed.`,
+    coachFeedbackVi:
+      stars === 3
+        ? `🔥 Bậc Thầy Xoắn Lưỡi 3 Sao (${base.overallAccuracy}% • ${wpm} từ/phút)! Bạn chinh phục ${comboHits}/${comboTotal} từ lặp âm siêu mượt.`
+        : stars === 2
+        ? `⭐⭐ Trôi Chảy Tự Nhiên (${base.overallAccuracy}% • ${wpm} từ/phút)! Tăng tốc lên ≥135 từ/phút & ≥90% để đạt 3 Sao (+50 XP).`
+        : stars === 1
+        ? `⭐ Chuẩn Xác Chắc Nhịp (${base.overallAccuracy}% • ${wpm} từ/phút)! Hãy thử đọc nhanh hơn chút nữa để lên 2–3 Sao.`
+        : `Câu này khá xoắn lưỡi! Bạn đạt ${comboHits}/${comboTotal} từ lặp âm. Hãy nghe mẫu 0.65x chậm trước rồi tăng tốc dần.`
+  };
+}
+
 
 
 
