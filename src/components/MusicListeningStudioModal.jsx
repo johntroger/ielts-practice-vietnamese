@@ -16,6 +16,7 @@ import {
   Sparkles,
   CheckCircle2,
   Eye,
+  EyeOff,
   Languages,
   Trash2,
   ListMusic,
@@ -716,10 +717,27 @@ export default function MusicListeningStudioModal({
     [blueprint.lines, wordInputs, sentenceInputs, handleWordInputChange, handleSentenceInputChange, handleReplayLine]
   );
 
-  // Reveal full line answer
+  // Toggle reveal / hide full line answer
   const handleRevealLine = useCallback((lineIdx) => {
-    setRevealedLines(prev => ({ ...prev, [lineIdx]: true }));
+    setRevealedLines(prev => ({ ...prev, [lineIdx]: !prev[lineIdx] }));
   }, []);
+
+  const hasAnyRevealedLine = useMemo(
+    () => Object.values(revealedLines).some(Boolean),
+    [revealedLines]
+  );
+
+  const handleToggleRevealAll = useCallback(() => {
+    if (hasAnyRevealedLine) {
+      setRevealedLines({});
+    } else {
+      const allRev = {};
+      blueprint.lines.forEach((_, idx) => {
+        allRev[idx] = true;
+      });
+      setRevealedLines(allRev);
+    }
+  }, [hasAnyRevealedLine, blueprint.lines]);
 
   // Compute real-time completion & accuracy progress across the song
   const progressStats = useMemo(() => {
@@ -1428,17 +1446,21 @@ export default function MusicListeningStudioModal({
                         <button
                           type="button"
                           onClick={() => {
-                            const allRev = {};
-                            blueprint.lines.forEach((_, idx) => {
-                              allRev[idx] = true;
-                            });
-                            setRevealedLines(allRev);
+                            handleToggleRevealAll();
                             setIsDesktopOptionsOpen(false);
                           }}
-                          className="w-full flex items-center space-x-2 px-3 py-2 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/40 text-slate-700 dark:text-slate-200 hover:text-rose-700 dark:hover:text-rose-300 text-xs font-bold transition-colors cursor-pointer"
+                          className={`w-full flex items-center space-x-2 px-3 py-2 rounded-xl text-xs font-bold transition-colors cursor-pointer ${
+                            hasAnyRevealedLine
+                              ? 'bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300'
+                              : 'hover:bg-rose-50 dark:hover:bg-rose-950/40 text-slate-700 dark:text-slate-200 hover:text-rose-700 dark:hover:text-rose-300'
+                          }`}
                         >
-                          <Eye className="w-3.5 h-3.5" />
-                          <span>{isEn ? 'Show All Answers' : 'Hiện tất cả đáp án'}</span>
+                          {hasAnyRevealedLine ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                          <span>
+                            {hasAnyRevealedLine
+                              ? (isEn ? 'Hide All Answers' : 'Ẩn tất cả đáp án')
+                              : (isEn ? 'Show All Answers' : 'Hiện tất cả đáp án')}
+                          </span>
                         </button>
 
                         <button
@@ -1521,17 +1543,19 @@ export default function MusicListeningStudioModal({
 
                   <button
                     type="button"
-                    onClick={() => {
-                      const allRev = {};
-                      blueprint.lines.forEach((_, idx) => {
-                        allRev[idx] = true;
-                      });
-                      setRevealedLines(allRev);
-                    }}
-                    className="inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[11px] font-bold cursor-pointer"
+                    onClick={handleToggleRevealAll}
+                    className={`inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-xl text-[11px] font-bold cursor-pointer ${
+                      hasAnyRevealedLine
+                        ? 'bg-rose-100 dark:bg-rose-950/70 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800'
+                        : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
+                    }`}
                   >
-                    <Eye className="w-3.5 h-3.5" />
-                    <span>{isEn ? 'Reveal All' : 'Đáp án'}</span>
+                    {hasAnyRevealedLine ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                    <span>
+                      {hasAnyRevealedLine
+                        ? (isEn ? 'Hide All' : 'Ẩn đáp án')
+                        : (isEn ? 'Show All' : 'Hiện đáp án')}
+                    </span>
                   </button>
 
                   <button

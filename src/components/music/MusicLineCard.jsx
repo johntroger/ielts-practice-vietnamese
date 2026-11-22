@@ -5,6 +5,7 @@ import {
   CheckCircle2,
   Lightbulb,
   Eye,
+  EyeOff,
   RotateCcw,
   Sparkles,
   Mic,
@@ -185,27 +186,39 @@ const MusicLineCard = memo(function MusicLineCard({
           </button>
 
           {lineType !== 'anchor' && !isLineCompleted && (
-            <>
-              <button
-                type="button"
-                onClick={() => onHintLine?.(lineIdx)}
-                className="inline-flex items-center space-x-1 px-2 py-1 rounded-lg bg-amber-50 dark:bg-amber-950/50 hover:bg-amber-100 text-amber-700 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800 text-[11px] font-bold transition-colors cursor-pointer"
-                title={isEn ? 'Get a hint for the next missing word' : 'Gợi ý từ còn thiếu tiếp theo'}
-              >
-                <Lightbulb className="w-3 h-3" />
-                <span>{isEn ? 'Hint' : 'Gợi ý'}</span>
-              </button>
+            <button
+              type="button"
+              onClick={() => onHintLine?.(lineIdx)}
+              className="inline-flex items-center space-x-1 px-2 py-1 rounded-lg bg-amber-50 dark:bg-amber-950/50 hover:bg-amber-100 text-amber-700 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800 text-[11px] font-bold transition-colors cursor-pointer"
+              title={isEn ? 'Get a hint for the next missing word' : 'Gợi ý từ còn thiếu tiếp theo'}
+            >
+              <Lightbulb className="w-3 h-3" />
+              <span>{isEn ? 'Hint' : 'Gợi ý'}</span>
+            </button>
+          )}
 
-              <button
-                type="button"
-                onClick={() => onRevealLine?.(lineIdx)}
-                className="inline-flex items-center space-x-1 px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-rose-50 hover:text-rose-700 text-slate-600 dark:text-slate-400 text-[11px] font-semibold transition-colors cursor-pointer"
-                title={isEn ? 'Reveal full answer for this line' : 'Hiện đáp án của câu này'}
-              >
-                <Eye className="w-3 h-3" />
-                <span className="hidden sm:inline">{isEn ? 'Answer' : 'Đáp án'}</span>
-              </button>
-            </>
+          {lineType !== 'anchor' && (!isLineCompleted || isLineRevealed) && (
+            <button
+              type="button"
+              onClick={() => onRevealLine?.(lineIdx)}
+              className={`inline-flex items-center space-x-1 px-2 py-1 rounded-lg text-[11px] font-semibold transition-colors cursor-pointer ${
+                isLineRevealed
+                  ? 'bg-rose-100 dark:bg-rose-950/70 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800 hover:bg-rose-200/80'
+                  : 'bg-slate-100 dark:bg-slate-800 hover:bg-rose-50 hover:text-rose-700 text-slate-600 dark:text-slate-400'
+              }`}
+              title={
+                isLineRevealed
+                  ? (isEn ? 'Hide answer for this line' : 'Ẩn đáp án của câu này')
+                  : (isEn ? 'Show answer for this line' : 'Hiện đáp án của câu này')
+              }
+            >
+              {isLineRevealed ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
+              <span className="hidden sm:inline">
+                {isLineRevealed
+                  ? (isEn ? 'Hide' : 'Ẩn đáp án')
+                  : (isEn ? 'Answer' : 'Đáp án')}
+              </span>
+            </button>
           )}
         </div>
       </div>
