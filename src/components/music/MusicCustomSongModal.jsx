@@ -39,6 +39,28 @@ export function extractYouTubeId(rawInput = '') {
 }
 
 /**
+ * Checks whether a lyric string is genuinely English (no Vietnamese diacritics and predominantly ASCII Latin letters).
+ * Prevents LRCLIB from accidentally loading translated Vietnamese/CJK/Cyrillic lyrics for English dictation.
+ */
+function isEnglishLyricsText(rawLyrics = '') {
+  const stripped = String(rawLyrics || '')
+    .replace(/\[[^\]]+\]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (stripped.length < 20) return false;
+
+  // Reject if Vietnamese-specific diacritics appear
+  if (/[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]/i.test(stripped)) {
+    return false;
+  }
+
+  const lettersOnly = stripped.replace(/[^a-zA-Z\p{L}]/gu, '');
+  if (lettersOnly.length < 10) return false;
+  const asciiLetters = stripped.replace(/[^a-zA-Z]/g, '');
+  return asciiLetters.length / lettersOnly.length >= 0.85;
+}
+
+/**
  * Cleans up raw YouTube video titles like "Ed Sheeran - Perfect (Official Music Video) [Lyrics]"
  * into { artist, title }.
  */
@@ -111,34 +133,55 @@ export default function MusicCustomSongModal({
       if (!silent) setInfoMsg('');
 
       try {
+        const searchUrls = [];
+        if (qArtist) {
+          searchUrls.push(
+            `https://lrclib.net/api/search?track_name=${encodeURIComponent(qTitle)}&artist_name=${encodeURIComponent(qArtist)}`
+          );
+        }
         const query = qArtist ? `${qTitle} ${qArtist}` : qTitle;
-        const res = await fetch(
-          `https://lrclib.net/api/search?q=${encodeURIComponent(query)}`
-        );
-        if (!res.ok) throw new Error('LRCLIB search failed');
-        const list = await res.json();
+        searchUrls.push(`https://lrclib.net/api/search?q=${encodeURIComponent(query)}`);
 
-        if (Array.isArray(list) && list.length > 0) {
-          // Prefer entry with timestamped syncedLyrics
-          const bestSynced =
-            list.find((item) => item?.syncedLyrics && item.syncedLyrics.trim().length > 40) ||
-            list[0];
+        let allResults = [];
+        for (const url of searchUrls) {
+          try {
+            const res = await fetch(url);
+            if (!res.ok) continue;
+            const list = await res.json();
+            if (Array.isArray(list) && list.length > 0) {
+              allResults = [...allResults, ...list];
+              // Stop early if we already found a valid English synced LRC entry
+              if (allResults.some((item) => item?.syncedLyrics && isEnglishLyricsText(item.syncedLyrics))) {
+                break;
+              }
+            }
+          } catch (e) {}
+        }
 
-          if (bestSynced?.syncedLyrics) {
-            setLrcContent(bestSynced.syncedLyrics.trim());
+        if (allResults.length > 0) {
+          // Strictly prefer English syncedLyrics first, then English plainLyrics (never load Vietnamese translations)
+          const bestEnglishSynced = allResults.find(
+            (item) => item?.syncedLyrics && item.syncedLyrics.trim().length > 40 && isEnglishLyricsText(item.syncedLyrics)
+          );
+          if (bestEnglishSynced) {
+            setLrcContent(bestEnglishSynced.syncedLyrics.trim());
             setInfoMsg(
               isEn
-                ? `Auto-loaded synced [MM:SS] .LRC lyrics for "${bestSynced.trackName || qTitle}"!`
-                : `Đã tự động nạp lời .LRC khớp mốc thời gian [MM:SS] cho bài "${bestSynced.trackName || qTitle}"!`
+                ? `Auto-loaded synced English [MM:SS] .LRC lyrics for "${bestEnglishSynced.trackName || qTitle}"!`
+                : `Đã tự động nạp lời tiếng Anh .LRC khớp mốc thời gian [MM:SS] cho bài "${bestEnglishSynced.trackName || qTitle}"!`
             );
             return;
           }
-          if (bestSynced?.plainLyrics) {
-            setLrcContent(bestSynced.plainLyrics.trim());
+
+          const bestEnglishPlain = allResults.find(
+            (item) => item?.plainLyrics && item.plainLyrics.trim().length > 40 && isEnglishLyricsText(item.plainLyrics)
+          );
+          if (bestEnglishPlain) {
+            setLrcContent(bestEnglishPlain.plainLyrics.trim());
             setInfoMsg(
               isEn
-                ? `Loaded plain lyrics for "${bestSynced.trackName || qTitle}" (timestamps will be distributed automatically).`
-                : `Đã nạp lời bài hát cho "${bestSynced.trackName || qTitle}" (hệ thống sẽ tự phân bổ mốc thời gian).`
+                ? `Loaded plain English lyrics for "${bestEnglishPlain.trackName || qTitle}" (timestamps will be distributed automatically).`
+                : `Đã nạp lời tiếng Anh cho "${bestEnglishPlain.trackName || qTitle}" (hệ thống sẽ tự phân bổ mốc thời gian).`
             );
             return;
           }
@@ -147,8 +190,8 @@ export default function MusicCustomSongModal({
         if (!silent) {
           setErrorMsg(
             isEn
-              ? 'Could not find synced .LRC automatically for this song. Please paste the lyrics manually below.'
-              : 'Chưa tìm thấy lời .LRC tự động cho bài này. Bạn hãy copy và dán lời bài hát vào ô bên dưới nhé.'
+              ? 'Could not find English .LRC lyrics automatically for this song. Please paste the English lyrics manually below.'
+              : 'Chưa tìm thấy lời tiếng Anh .LRC tự động cho bài này (tránh nạp nhầm bản dịch tiếng Việt). Vui lòng dán lời tiếng Anh vào ô bên dưới nhé.'
           );
         }
       } catch (e) {
