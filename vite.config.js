@@ -78,6 +78,22 @@ export default defineConfig({
             if (id.includes('shadowingDarshanBank')) {
               return 'data-shadowing-darshan';
             }
+            if (id.includes('pronunciationData')) {
+              return 'data-pronunciation-bank';
+            }
+            if (
+              id.includes('conversationData') ||
+              id.includes('conversationAdapters') ||
+              id.includes('shadowingData')
+            ) {
+              return 'data-conversation-shadowing';
+            }
+            if (
+              id.includes('haroldLevine22000Data') ||
+              id.includes('collinsGrammarForIeltsData')
+            ) {
+              return 'data-vocab-grammar-books';
+            }
             // Skill-specific Dynamic Chunks for Theory & Strategy Guides
             if (id.includes('writingTheoryData')) {
               return 'data-theory-writing';

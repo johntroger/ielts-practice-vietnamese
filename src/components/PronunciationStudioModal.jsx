@@ -336,13 +336,50 @@ export default function PronunciationStudioModal({
     return allUnfilteredForTab.filter(d => passedSet.has(d.id)).length;
   }, [allUnfilteredForTab, passedDrillIds]);
 
+  const weakCountInTab = useMemo(() => {
+    const scores = pronStats?.bestScores || {};
+    return allUnfilteredForTab.filter(
+      d => scores[d.id] && scores[d.id].accuracy < PRONUNCIATION_PASS_THRESHOLD
+    ).length;
+  }, [allUnfilteredForTab, pronStats?.bestScores]);
+
+  const masteredIpaCount = useMemo(() => {
+    const passedSet = new Set(Array.isArray(passedDrillIds) ? passedDrillIds : []);
+    const scores = pronStats?.bestScores || {};
+    return PRONUNCIATION_IPA_DRILLS.filter(
+      d => passedSet.has(d.id) || (scores[d.id] && scores[d.id].accuracy >= PRONUNCIATION_PASS_THRESHOLD)
+    ).length;
+  }, [passedDrillIds, pronStats?.bestScores]);
+
+  const handleJumpToIpaSymbol = useCallback((symbol) => {
+    const idx = PRONUNCIATION_IPA_DRILLS.findIndex(d => d.ipaSymbol === symbol);
+    if (idx === -1) return;
+    setActiveTab('ipa');
+    safeSet('ielts_pronunciation_active_tab', 'ipa');
+    setIpaGroupFilter('all');
+    setIpaPracticeMode('sound');
+    setHidePassed(false);
+    setSearchQuery('');
+    setSelectedIdx(idx);
+    setEvaluationResult(null);
+  }, []);
+
   const activeTrackDrills = useMemo(() => {
     let combined = allUnfilteredForTab;
+    const scores = pronStats?.bestScores || {};
 
     if (activeTab === 'ipa') {
-      if (ipaGroupFilter !== 'all') {
+      if (ipaGroupFilter === 'weak') {
+        combined = combined.filter(
+          d => scores[d.id] && scores[d.id].accuracy < PRONUNCIATION_PASS_THRESHOLD
+        );
+      } else if (ipaGroupFilter !== 'all') {
         combined = combined.filter(d => d.ipaGroup === ipaGroupFilter);
       }
+    } else if (bandFilter === 'weak') {
+      combined = combined.filter(
+        d => scores[d.id] && scores[d.id].accuracy < PRONUNCIATION_PASS_THRESHOLD
+      );
     } else if (bandFilter === 'foundation') {
       combined = combined.filter(d => parseFloat(d.bandLevel) <= 6.5);
     } else if (bandFilter === 'band7') {
@@ -377,7 +414,7 @@ export default function PronunciationStudioModal({
     }
 
     return combined;
-  }, [allUnfilteredForTab, activeTab, ipaGroupFilter, bandFilter, hidePassed, passedDrillIds, justPassedDrillId, searchQuery]);
+  }, [allUnfilteredForTab, activeTab, ipaGroupFilter, bandFilter, hidePassed, passedDrillIds, justPassedDrillId, searchQuery, pronStats?.bestScores]);
 
   const currentDrill = activeTrackDrills[selectedIdx] || activeTrackDrills[0] || null;
   const clipKey = currentDrill ? `pron_clip_${currentDrill.id}` : 'pron_clip_default';
@@ -1162,7 +1199,12 @@ export default function PronunciationStudioModal({
         <div className="flex items-center justify-between gap-1">
           <div className="flex items-center space-x-1 overflow-x-auto no-scrollbar">
             {activeTab === 'ipa'
-              ? IPA_SOUND_GROUPS.map(g => (
+              ? [
+                  ...IPA_SOUND_GROUPS,
+                  ...(weakCountInTab > 0
+                    ? [{ id: 'weak', labelEn: `Needs Polish (${weakCountInTab})`, labelVi: `Cần sửa (${weakCountInTab})` }]
+                    : [])
+                ].map(g => (
                   <button
                     key={g.id}
                     type="button"
@@ -1172,7 +1214,9 @@ export default function PronunciationStudioModal({
                     }}
                     className={`${isMobileSheet ? 'px-2.5 py-1.5 text-[11px]' : 'px-2 py-1 text-[10px]'} rounded-lg font-bold whitespace-nowrap cursor-pointer ${
                       ipaGroupFilter === g.id
-                        ? 'bg-emerald-600 text-white'
+                        ? g.id === 'weak'
+                          ? 'bg-amber-500 text-slate-950'
+                          : 'bg-emerald-600 text-white'
                         : `${isMobileSheet ? 'bg-slate-950' : 'bg-slate-900'} text-slate-400 hover:text-slate-200 border border-slate-800`
                     }`}
                   >
@@ -1181,6 +1225,9 @@ export default function PronunciationStudioModal({
                 ))
               : [
                   { id: 'all', label: isEn ? 'All' : 'Tất cả' },
+                  ...(weakCountInTab > 0
+                    ? [{ id: 'weak', label: isEn ? `Needs Polish (${weakCountInTab})` : `Cần sửa (${weakCountInTab})` }]
+                    : []),
                   { id: 'foundation', label: 'Band 5.5-6.5' },
                   { id: 'band7', label: 'Band 7.0-7.5' },
                   { id: 'band8', label: 'Band 8.0+' }
@@ -1194,7 +1241,9 @@ export default function PronunciationStudioModal({
                     }}
                     className={`${isMobileSheet ? 'px-2.5 py-1.5 text-[11px]' : 'px-2 py-1 text-[10px]'} rounded-lg font-bold whitespace-nowrap cursor-pointer ${
                       bandFilter === b.id
-                        ? 'bg-indigo-600 text-white'
+                        ? b.id === 'weak'
+                          ? 'bg-amber-500 text-slate-950'
+                          : 'bg-indigo-600 text-white'
                         : `${isMobileSheet ? 'bg-slate-950' : 'bg-slate-900'} text-slate-400 hover:text-slate-200 border border-slate-800`
                     }`}
                   >
@@ -1772,7 +1821,7 @@ export default function PronunciationStudioModal({
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div className="flex items-center space-x-2">
                     <span className="px-2 py-0.5 rounded-lg bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs font-black font-mono">
-                      IPA 44
+                      IPA {masteredIpaCount}/44
                     </span>
                     <span className="text-xs sm:text-sm font-black text-white">
                       {isEn ? 'Interactive Cambridge 44-Sound IPA Chart' : 'Bảng 44 Âm Quốc Tế IPA (Chạm để nghe & luyện)'}
@@ -2733,38 +2782,72 @@ export default function PronunciationStudioModal({
                           accent: accentKey
                         });
                         if (ipaSegments.length === 0) return null;
+
+                        // Find up to 3 weak IPA symbols from PRONUNCIATION_IPA_DRILLS to offer a 1-click bridge
+                        const weakIpaString = ipaSegments
+                          .filter(s => !s.isSeparator && s.status !== 'correct')
+                          .map(s => s.ipa)
+                          .join(' ');
+                        const suggestedIpaDrills =
+                          currentDrill.type !== 'ipa' && weakIpaString
+                            ? PRONUNCIATION_IPA_DRILLS.filter(d => {
+                                const rawSym = d.ipaSymbol.replace(/\//g, '');
+                                return rawSym.length >= 1 && weakIpaString.includes(rawSym);
+                              }).slice(0, 3)
+                            : [];
+
                         return (
-                          <div className="p-2.5 rounded-xl bg-slate-950/80 border border-slate-800 flex flex-wrap items-center gap-1.5 text-xs">
-                            <span className="text-[10px] font-black text-slate-400 mr-1">
-                              {isEn ? 'IPA Phoneme Map:' : 'Chi tiết âm tiết IPA:'}
-                            </span>
-                            {ipaSegments.map(seg =>
-                              seg.isSeparator ? (
-                                <span key={seg.id} className="text-slate-600 font-bold px-0.5">
-                                  •
+                          <div className="p-2.5 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2 text-xs">
+                            <div className="flex flex-wrap items-center gap-1.5">
+                              <span className="text-[10px] font-black text-slate-400 mr-1">
+                                {isEn ? 'IPA Phoneme Map:' : 'Chi tiết âm tiết IPA:'}
+                              </span>
+                              {ipaSegments.map(seg =>
+                                seg.isSeparator ? (
+                                  <span key={seg.id} className="text-slate-600 font-bold px-0.5">
+                                    •
+                                  </span>
+                                ) : (
+                                  <span
+                                    key={seg.id}
+                                    className={`px-2 py-0.5 rounded-lg font-mono font-bold border ${
+                                      seg.status === 'correct'
+                                        ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/35'
+                                        : seg.status === 'approximate'
+                                        ? 'bg-amber-500/15 text-amber-300 border-amber-500/40'
+                                        : 'bg-rose-500/15 text-rose-300 border-rose-500/40'
+                                    }`}
+                                    title={
+                                      seg.isCodaWarning
+                                        ? isEn
+                                          ? 'Missing/weak final consonant sound'
+                                          : 'Âm cuối bị nuốt hoặc bật chưa rõ'
+                                        : undefined
+                                    }
+                                  >
+                                    /{seg.ipa}/
+                                    {seg.isCodaWarning && <span className="ml-1 text-[9px] font-sans">⚠️</span>}
+                                  </span>
+                                )
+                              )}
+                            </div>
+
+                            {suggestedIpaDrills.length > 0 && (
+                              <div className="flex flex-wrap items-center gap-1.5 pt-1 border-t border-slate-800/80">
+                                <span className="text-[10px] font-bold text-amber-300">
+                                  {isEn ? '🎯 Drill weak IPA sound directly:' : '🎯 Luyện riêng khẩu hình âm chưa chuẩn:'}
                                 </span>
-                              ) : (
-                                <span
-                                  key={seg.id}
-                                  className={`px-2 py-0.5 rounded-lg font-mono font-bold border ${
-                                    seg.status === 'correct'
-                                      ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/35'
-                                      : seg.status === 'approximate'
-                                      ? 'bg-amber-500/15 text-amber-300 border-amber-500/40'
-                                      : 'bg-rose-500/15 text-rose-300 border-rose-500/40'
-                                  }`}
-                                  title={
-                                    seg.isCodaWarning
-                                      ? isEn
-                                        ? 'Missing/weak final consonant sound'
-                                        : 'Âm cuối bị nuốt hoặc bật chưa rõ'
-                                      : undefined
-                                  }
-                                >
-                                  /{seg.ipa}/
-                                  {seg.isCodaWarning && <span className="ml-1 text-[9px] font-sans">⚠️</span>}
-                                </span>
-                              )
+                                {suggestedIpaDrills.map(ipaD => (
+                                  <button
+                                    key={ipaD.id}
+                                    type="button"
+                                    onClick={() => handleJumpToIpaSymbol(ipaD.ipaSymbol)}
+                                    className="px-2 py-0.5 rounded-lg bg-emerald-950/70 hover:bg-emerald-900 border border-emerald-500/40 text-emerald-300 font-mono text-[11px] font-black cursor-pointer transition-all"
+                                  >
+                                    {ipaD.ipaSymbol} ({ipaD.sampleWord}) ➔
+                                  </button>
+                                ))}
+                              </div>
                             )}
                           </div>
                         );
