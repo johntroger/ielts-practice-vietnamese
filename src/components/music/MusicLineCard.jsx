@@ -74,28 +74,29 @@ const MusicLineCard = memo(function MusicLineCard({
 
   const handleKeyDownInBlank = (e, tokenIndex) => {
     if (e.key === 'Tab') {
-      // Tab key replays the current lyric line immediately for hands-free dictation
+      // Tab / Shift+Tab jumps directly to the next / previous input box without stopping on buttons
       e.preventDefault();
-      onReplayLine?.(lineIdx);
+      onAdvanceFromBlank?.(lineIdx, tokenIndex, e.shiftKey ? -1 : 1);
       return;
     }
     if (e.key === 'Enter') {
       e.preventDefault();
-      onAdvanceFromBlank?.(lineIdx, tokenIndex);
+      onAdvanceFromBlank?.(lineIdx, tokenIndex, 1);
     }
   };
 
   const handleKeyDownInSentence = (e) => {
     if (e.key === 'Tab') {
+      // Tab / Shift+Tab jumps directly to the next / previous sentence or blank input
       e.preventDefault();
-      onReplayLine?.(lineIdx);
+      onAdvanceFromBlank?.(lineIdx, null, e.shiftKey ? -1 : 1);
       return;
     }
     if (e.key === 'Enter') {
       e.preventDefault();
       setHasSubmittedSentence(true);
       if (sentenceEval?.isPassed) {
-        onAdvanceFromBlank?.(lineIdx, null);
+        onAdvanceFromBlank?.(lineIdx, null, 1);
       }
     }
   };
@@ -177,7 +178,7 @@ const MusicLineCard = memo(function MusicLineCard({
             type="button"
             onClick={() => onReplayLine?.(lineIdx)}
             className="inline-flex items-center space-x-1 px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-[11px] font-bold transition-colors cursor-pointer"
-            title={isEn ? 'Replay this line (Tab)' : 'Nghe lại câu này (Phím Tab)'}
+            title={isEn ? 'Replay this line' : 'Nghe lại câu này'}
           >
             <RotateCcw className="w-3 h-3" />
             <span className="hidden sm:inline">{isEn ? 'Replay' : 'Nghe lại'}</span>

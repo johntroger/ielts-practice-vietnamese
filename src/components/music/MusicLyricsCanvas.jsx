@@ -48,25 +48,29 @@ export default function MusicLyricsCanvas({
     return keys;
   }, [blueprint]);
 
-  // Move focus smoothly to the next blank input (or next sentence input)
+  // Move focus smoothly to the next (or previous with Shift+Tab) enabled blank/sentence input
   const handleAdvanceFromBlank = useCallback(
-    (currentLineIdx, currentTokenIdx) => {
+    (currentLineIdx, currentTokenIdx, direction = 1) => {
       const currentKey =
         currentTokenIdx === null || currentTokenIdx === undefined
           ? `${currentLineIdx}:sentence`
           : `${currentLineIdx}:${currentTokenIdx}`;
 
       const idxInOrder = orderedInputKeys.findIndex(item => item.key === currentKey);
-      if (idxInOrder !== -1 && idxInOrder + 1 < orderedInputKeys.length) {
-        const nextTarget = orderedInputKeys[idxInOrder + 1];
+      if (idxInOrder === -1) return;
+
+      const step = direction < 0 ? -1 : 1;
+      for (let i = idxInOrder + step; i >= 0 && i < orderedInputKeys.length; i += step) {
+        const nextTarget = orderedInputKeys[i];
         const nextEl = inputRefsMap.current.get(nextTarget.key);
         if (nextEl && !nextEl.disabled) {
           nextEl.focus();
           scrollToActiveElement(nextEl);
+          break;
         }
       }
     },
-    [orderedInputKeys, onSeekToLine, scrollToActiveElement]
+    [orderedInputKeys, scrollToActiveElement]
   );
 
   // Auto-scroll active lyric line into view when song progresses

@@ -279,13 +279,10 @@ export default function MusicAudioControlDock({
             type="button"
             onClick={onReplayActiveLine}
             className="h-8 px-2 sm:px-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-amber-300 border border-amber-500/30 text-[11px] font-bold flex items-center space-x-1 transition-all active:scale-95 cursor-pointer"
-            title={isEn ? 'Replay current line (Shortcut: Tab)' : 'Nghe lại câu hiện tại (Phím tắt: Tab)'}
+            title={isEn ? 'Replay current line' : 'Nghe lại câu hiện tại'}
           >
             <RotateCcw className="w-3 h-3 shrink-0" />
             <span>{isEn ? 'Replay' : 'Nghe lại'}</span>
-            <kbd className="hidden xl:inline-block px-1 py-0.2 rounded bg-slate-800 text-amber-200 font-mono text-[9px] border border-slate-700">
-              Tab
-            </kbd>
           </button>
         </div>
 
