@@ -421,10 +421,23 @@ export function evaluateSentenceBlankAttempt(targetSentence = '', userSentence =
 }
 
 /**
+ * Splits a lyric line into single-word tokens, ensuring hyphenated/slashed/dashed compounds
+ * (e.g. "long-lost", "day/night", "you—I") or unspaced punctuation ("hello,world")
+ * are separated into individual 1-word tokens so 1 blank box always equals 1 word.
+ */
+function tokenizeLyricLine(text = '') {
+  return String(text || '')
+    .trim()
+    .replace(/([a-zA-Z0-9'’])([,.;:!?\/—–-]+)([a-zA-Z0-9'’])/g, '$1$2 $3')
+    .split(/\s+/)
+    .filter(Boolean);
+}
+
+/**
  * Selects which word token indices in a lyric line should be turned into inline blanks.
  */
 function selectWordBlanksForLine(line, difficulty = 'medium', rng, seed = 1) {
-  const tokens = String(line.text || '').trim().split(/\s+/).filter(Boolean);
+  const tokens = tokenizeLyricLine(line.text);
   if (tokens.length === 0) return [];
 
   const isShuffledRound = Number(seed) > 1;
@@ -607,7 +620,7 @@ export function buildMusicDictationBlueprint({
   } else if (mode === 'word') {
     // MODE 3: Word Gap-Fill (Cloze) — Every line has inline word blanks
     normalizedLines.forEach((line) => {
-      const rawTokens = String(line.text || '').trim().split(/\s+/).filter(Boolean);
+      const rawTokens = tokenizeLyricLine(line.text);
       const blankIndices = selectWordBlanksForLine(line, difficulty, rng, seed);
       const blankSet = new Set(blankIndices);
 
@@ -643,7 +656,7 @@ export function buildMusicDictationBlueprint({
     const maxConsecutiveSentence = difficulty === 'hard' ? 2 : 1;
 
     normalizedLines.forEach((line, idx) => {
-      const rawTokens = String(line.text || '').trim().split(/\s+/).filter(Boolean);
+      const rawTokens = tokenizeLyricLine(line.text);
       let lineType = 'anchor';
 
       if (idx === 0) {
