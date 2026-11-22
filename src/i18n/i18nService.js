@@ -13,8 +13,8 @@ import { vi } from './locales/vi.js';
 import { en } from './locales/en.js';
 
 export const LANGUAGE_STORAGE_KEY = 'ielts_language_preference';
-export const SUPPORTED_LANGUAGES = ['vi', 'en'];
-export const DEFAULT_LANGUAGE = 'vi';
+export const SUPPORTED_LANGUAGES = ['en', 'vi'];
+export const DEFAULT_LANGUAGE = 'en';
 
 const dictionaries = {
   vi,
@@ -125,7 +125,7 @@ export function t(key, params = {}, fallback = '') {
   // 1. Look up in active dictionary
   let text = resolvePath(dict, key);
 
-  // 2. Fallback to default (Vietnamese) if not found in active dictionary
+  // 2. Fallback to default (English) if not found in active dictionary
   if (text === undefined && activeLang !== DEFAULT_LANGUAGE) {
     text = resolvePath(dictionaries[DEFAULT_LANGUAGE], key);
   }

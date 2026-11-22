@@ -7,6 +7,7 @@
  */
 
 import { supabase } from '../supabaseClient.js';
+import { isEnglish } from '../../i18n/i18nService.js';
 import { safeGet, safeSet } from '../../utils/storageService.js';
 import { getLeagueTier, getUnifiedStreakCount } from './leagueEngine.js';
 import { calculateLevelProgress } from './levelEngine.js';
@@ -55,12 +56,7 @@ export function isUserOwner(user) {
 }
 
 function isUiEnglish() {
-  try {
-    if (typeof localStorage !== 'undefined') {
-      return localStorage.getItem('ielts_ui_language') === 'en';
-    }
-  } catch (e) {}
-  return false;
+  return isEnglish();
 }
 
 /**

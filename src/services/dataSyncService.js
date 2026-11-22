@@ -14,13 +14,10 @@ import {
 } from './cloudflareStorageService.js';
 
 
+import { isEnglish } from '../i18n/i18nService.js';
+
 function isUiEnglish() {
-  try {
-    if (typeof localStorage !== 'undefined') {
-      return localStorage.getItem('ielts_ui_language') === 'en';
-    }
-  } catch (e) {}
-  return false;
+  return isEnglish();
 }
 
 // --- SUBMISSIONS SYNC ---

@@ -3,6 +3,7 @@
  * Handles low-level HTTP requests, rate limiting, model fallback chains, and robust JSON parsing.
  */
 import { getAiProviderConfig, callUniversalLlm } from '../aiProviderService.js';
+import { isEnglish } from '../../i18n/i18nService.js';
 
 export const DEFAULT_MODEL = 'gemini-3.6-flash';
 
@@ -22,12 +23,7 @@ export const DEPRECATED_GEMINI_MODELS = [
 export function isCurrentUiEnglish(langOverride = null) {
   if (langOverride === 'en' || langOverride === true) return true;
   if (langOverride === 'vi' || langOverride === false) return false;
-  try {
-    if (typeof localStorage !== 'undefined') {
-      return localStorage.getItem('ielts_ui_language') === 'en';
-    }
-  } catch (e) {}
-  return false;
+  return isEnglish();
 }
 
 export const POPULAR_GEMINI_MODELS = [
