@@ -265,6 +265,7 @@ export default function AppModalHost({
             masteredIds={resolvedMasteredIds}
             onToggleMastered={resolvedToggleMastered}
             onOpenAuth={() => openModal('auth')}
+            onOpenArena={() => openModal('atlasArena')}
             onOpenVocabNotebook={() => openModal('notebook', { openAdd: true })}
             onOpenConversation={() => {
               closeModal('pronunciation');
@@ -284,6 +285,8 @@ export default function AppModalHost({
             apiKey={apiKey}
             model={model}
             currentUser={currentUser}
+            onOpenAuth={() => openModal('auth')}
+            onOpenArena={() => openModal('atlasArena')}
             onSaveToNotebook={(v) => {
               if (!addVocabUnique(vocabList, v, setVocabList)) return;
               if (onSaveUserVocab) onSaveUserVocab(v);

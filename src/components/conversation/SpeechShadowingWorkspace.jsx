@@ -40,6 +40,13 @@ import ShadowingSegmentCard from './ShadowingSegmentCard';
 import ConversationSummaryCard from './ConversationSummaryCard';
 import ShadowingCustomCreatorModal from './ShadowingCustomCreatorModal';
 import { runLayer2PronunciationCheck, NOOP } from '../../utils/speakingPracticeHelpers';
+import { getWallet } from '../../services/gamification/atlasWalletService';
+import {
+  buildTrackBatches,
+  purchaseBatchUnlock
+} from '../../services/gamification/batchProgressionService';
+import BatchSelectorStrip from '../common/BatchSelectorStrip';
+import BatchUnlockGateCard from '../common/BatchUnlockGateCard';
 
 const CUSTOM_SHADOW_STORAGE_KEY = 'ielts_shadowing_custom_v1';
 const SHADOW_STATS_STORAGE_KEY = 'ielts_shadowing_stats_v1';
@@ -60,6 +67,10 @@ export default function SpeechShadowingWorkspace({
   onSaveToNotebook,
   onSaveMistake,
   onOpenPronunciation,
+  currentUser = null,
+  walletSnapshot = null,
+  onOpenAuth,
+  onOpenArena,
   creatorTrigger = 0,
   initialTaskId = null
 }) {
@@ -132,10 +143,62 @@ export default function SpeechShadowingWorkspace({
   const [keywordsOnly, setKeywordsOnly] = useState(false);
   const [revealCurrentSeg, setRevealCurrentSeg] = useState(false);
 
+  const [selectedShadowBatch, setSelectedShadowBatch] = useState(1);
+  const [localWalletTick, setLocalWalletTick] = useState(0);
+
+  const canonicalShadowTasks = useMemo(() => {
+    return [...SHADOWING_STARTER_TASKS, ...dynamicTasks];
+  }, [dynamicTasks]);
+
+  const personalShadowTasks = useMemo(() => {
+    return Array.isArray(customTasks) ? customTasks : [];
+  }, [customTasks]);
+
+  const shadowBatches = useMemo(() => {
+    const completedSet = new Set(Object.keys(shadowStats.bestScores || {}));
+    return buildTrackBatches({
+      items: canonicalShadowTasks,
+      trackKey: 'conv_shadowing',
+      completedIdSet: completedSet,
+      wallet: walletSnapshot || getWallet(),
+      currentUser
+    });
+  }, [canonicalShadowTasks, shadowStats.bestScores, walletSnapshot, currentUser, localWalletTick]);
+
+  const activeShadowBatchObj = useMemo(() => {
+    if (selectedShadowBatch === 'personal') return null;
+    return shadowBatches.find(b => b.batchIndex === selectedShadowBatch) || shadowBatches[0] || null;
+  }, [selectedShadowBatch, shadowBatches]);
+
+  const nextLockedShadowBatch = useMemo(() => {
+    if (!activeShadowBatchObj || !activeShadowBatchObj.isUnlocked) return null;
+    return shadowBatches.find(b => b.batchIndex === activeShadowBatchObj.batchIndex + 1 && !b.isUnlocked) || null;
+  }, [activeShadowBatchObj, shadowBatches]);
+
+  const handlePurchaseShadowBatch = useCallback((batch) => {
+    if (!batch) return;
+    const res = purchaseBatchUnlock({
+      batchId: batch.batchId,
+      batchLabel: `Speech Shadowing Batch ${batch.batchIndex}`,
+      costGold: batch.costGold,
+      currentUser
+    });
+    if (res.success) {
+      setLocalWalletTick(t => t + 1);
+      speakingSoundEffects.playCompletionChime();
+      triggerHaptic('combo');
+      setSelectedShadowBatch(batch.batchIndex);
+      if (batch.items[0]) {
+        setSelectedTaskId(batch.items[0].id);
+      }
+    }
+  }, [currentUser]);
+
   const allTasks = useMemo(() => {
-    const customList = Array.isArray(customTasks) ? customTasks : [];
-    return [...customList, ...SHADOWING_STARTER_TASKS, ...dynamicTasks];
-  }, [customTasks, dynamicTasks]);
+    if (selectedShadowBatch === 'personal') return personalShadowTasks;
+    if (activeShadowBatchObj && !activeShadowBatchObj.isUnlocked) return [];
+    return activeShadowBatchObj ? activeShadowBatchObj.items : canonicalShadowTasks;
+  }, [selectedShadowBatch, personalShadowTasks, activeShadowBatchObj, canonicalShadowTasks]);
 
   const partCounts = useMemo(() => {
     const counts = { all: allTasks.length, part1: 0, part2: 0, part3: 0 };
@@ -1155,6 +1218,26 @@ export default function SpeechShadowingWorkspace({
   const renderTaskListContent = (isMobileSheet = false) => (
     <>
       <div className={`${isMobileSheet ? 'p-3' : 'p-2.5'} border-b border-slate-800/80 space-y-2 shrink-0`}>
+        {shadowBatches.length > 0 && (
+          <BatchSelectorStrip
+            batches={shadowBatches}
+            selectedBatchIndex={selectedShadowBatch}
+            onSelectBatch={(nextB) => {
+              setSelectedShadowBatch(nextB);
+              if (nextB === 'personal' && personalShadowTasks[0]) {
+                setSelectedTaskId(personalShadowTasks[0].id);
+              } else if (typeof nextB === 'number') {
+                const found = shadowBatches.find(b => b.batchIndex === nextB);
+                if (found?.isUnlocked && found.items[0]) {
+                  setSelectedTaskId(found.items[0].id);
+                }
+              }
+            }}
+            personalCount={personalShadowTasks.length}
+            isEn={isEn}
+            isMobileSheet={isMobileSheet}
+          />
+        )}
         <div className={isMobileSheet ? 'flex items-center space-x-1.5 overflow-x-auto no-scrollbar pb-0.5' : 'flex flex-wrap gap-1'}>
           {SHADOWING_PARTS.map(p => (
             <button
@@ -1275,7 +1358,28 @@ export default function SpeechShadowingWorkspace({
             <span>{isEn ? 'Loading Speaking Bank...' : 'Đang tải ngân hàng đề Speaking...'}</span>
           </div>
         )}
-        {!isLoadingBank && visibleTasks.length === 0 && (
+        {activeShadowBatchObj && !activeShadowBatchObj.isUnlocked ? (
+          <BatchUnlockGateCard
+            targetBatch={activeShadowBatchObj}
+            compact
+            isEn={isEn}
+            onUnlockBatch={handlePurchaseShadowBatch}
+            onGoToPrevBatch={(prevIdx) => setSelectedShadowBatch(prevIdx)}
+            onOpenAuth={onOpenAuth}
+            onOpenArena={onOpenArena}
+          />
+        ) : !isLoadingBank && visibleTasks.length === 0 && nextLockedShadowBatch && activeShadowBatchObj?.isCompleted ? (
+          <BatchUnlockGateCard
+            targetBatch={nextLockedShadowBatch}
+            isCelebrationMode
+            compact
+            isEn={isEn}
+            onUnlockBatch={handlePurchaseShadowBatch}
+            onOpenAuth={onOpenAuth}
+            onOpenArena={onOpenArena}
+            onShowCompletedItems={toggleHideCompleted}
+          />
+        ) : !isLoadingBank && visibleTasks.length === 0 && (
           <div className="p-5 text-center text-xs text-slate-400 space-y-2.5">
             <p>
               {isEn
@@ -1507,6 +1611,21 @@ export default function SpeechShadowingWorkspace({
 
         {/* MAIN SHADOWING STAGE */}
         <main className="flex-1 flex flex-col min-h-0 overflow-hidden bg-slate-900/40">
+          {activeShadowBatchObj && !activeShadowBatchObj.isUnlocked ? (
+            <div className="flex-1 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+              <div className="w-full max-w-xl">
+                <BatchUnlockGateCard
+                  targetBatch={activeShadowBatchObj}
+                  isEn={isEn}
+                  onUnlockBatch={handlePurchaseShadowBatch}
+                  onGoToPrevBatch={(prevIdx) => setSelectedShadowBatch(prevIdx)}
+                  onOpenAuth={onOpenAuth}
+                  onOpenArena={onOpenArena}
+                />
+              </div>
+            </div>
+          ) : (
+          <>
           {/* Compact 1-Row Task Header & Controls (Desktop lg+) */}
           <div className="hidden lg:flex px-4 py-2 bg-slate-950/70 border-b border-slate-800 items-center justify-between gap-2 shrink-0">
             <div className="min-w-0 flex-1 flex items-center space-x-2">
@@ -1803,6 +1922,8 @@ export default function SpeechShadowingWorkspace({
             )}
             <div className="h-3 lg:hidden" />
           </div>
+          </>
+          )}
         </main>
       </div>
 

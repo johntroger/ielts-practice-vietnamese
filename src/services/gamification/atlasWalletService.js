@@ -21,7 +21,7 @@ import * as eventBus from './eventBus.js';
 
 export const WALLET_STORAGE_KEY = 'ielts_atlas_wallet_v1';
 export const DAILY_GOLD_CAP_STORAGE_KEY = 'ielts_atlas_daily_gold_cap_v1';
-export const DAILY_BLITZ_GOLD_LIMIT = 500;
+export const DAILY_BLITZ_GOLD_LIMIT = 2000;
 
 export const CURRENCY_TYPES = {
   GOLD: 'gold',

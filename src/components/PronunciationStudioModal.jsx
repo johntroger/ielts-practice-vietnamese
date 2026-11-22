@@ -77,7 +77,14 @@ import {
   calculateLevelFromXp,
   getLevelTierInfo
 } from '../services/gamification/levelEngine';
-import { addGold } from '../services/gamification/atlasWalletService';
+import { getWallet } from '../services/gamification/atlasWalletService';
+import * as eventBus from '../services/gamification/eventBus';
+import {
+  buildTrackBatches,
+  purchaseBatchUnlock
+} from '../services/gamification/batchProgressionService';
+import BatchSelectorStrip, { GoldWalletHeaderBadge } from './common/BatchSelectorStrip';
+import BatchUnlockGateCard from './common/BatchUnlockGateCard';
 import { getUnifiedStreakCount } from '../services/gamification/leagueEngine';
 import { speakingSoundEffects } from '../utils/speakingSoundEffects';
 import { triggerHaptic } from '../utils/hapticHelper';
@@ -97,6 +104,7 @@ export default function PronunciationStudioModal({
   masteredIds = [],
   onToggleMastered,
   onOpenAuth,
+  onOpenArena,
   onOpenVocabNotebook,
   onOpenConversation,
   initialOptions = null
@@ -291,55 +299,119 @@ export default function PronunciationStudioModal({
     });
   };
 
-  // Combine built-in drills (Guest vs Registered) + User's Vocab Notebook + Custom drills
-  const allUnfilteredForTab = useMemo(() => {
-    const rawBase =
-      activeTab === 'ipa'
-        ? PRONUNCIATION_IPA_DRILLS
-        : activeTab === 'words'
-        ? PRONUNCIATION_WORD_DRILLS
-        : activeTab === 'stress'
-        ? PRONUNCIATION_STRESS_SHIFT_DRILLS
-        : activeTab === 'phrases'
-        ? PRONUNCIATION_PHRASE_DRILLS
-        : activeTab === 'twisters'
-        ? PRONUNCIATION_TWISTER_DRILLS
-        : PRONUNCIATION_SENTENCE_DRILLS;
+  // Wallet snapshot (auto-synced with Atlas English Arena Gold via eventBus)
+  const [walletSnapshot, setWalletSnapshot] = useState(() => getWallet());
+  const [selectedBatchByTab, setSelectedBatchByTab] = useState({
+    words: 1,
+    stress: 1,
+    phrases: 1,
+    sentences: 1,
+    twisters: 1
+  });
 
-    // Guest users get free tier; Registered users unlock full Cambridge bank + Personal Vocab Notebook
-    const accessibleBase = currentUser
-      ? rawBase
-      : rawBase.filter(d => !d.requiresAuth);
+  useEffect(() => {
+    setWalletSnapshot(getWallet());
+    const onWalletUpdate = (updated) => {
+      setWalletSnapshot(updated || getWallet());
+    };
+    const unsub = eventBus.on('wallet_updated', onWalletUpdate);
+    return () => {
+      if (typeof unsub === 'function') unsub();
+    };
+  }, [isOpen]);
 
-    const existingTexts = new Set(rawBase.map(d => d.targetText?.toLowerCase().trim()));
+  const handleOpenArenaSafe = useCallback(() => {
+    if (speechEngine.isListening) speechEngine.stopListening();
+    if (speechEngine.isSpeaking) speechEngine.stopSpeaking();
+    onOpenArena?.();
+  }, [speechEngine.isListening, speechEngine.stopListening, speechEngine.isSpeaking, speechEngine.stopSpeaking, onOpenArena]);
+
+  const selectedBatchIndex = activeTab === 'ipa' ? 1 : (selectedBatchByTab[activeTab] || 1);
+
+  const handleSelectBatch = useCallback((nextBatch) => {
+    setSelectedBatchByTab(prev => ({ ...prev, [activeTab]: nextBatch }));
+    setSelectedIdx(0);
+    setEvaluationResult(null);
+    setJustPassedDrillId(null);
+  }, [activeTab]);
+
+  // Step 1: Canonical Bank & Personal Vault Separation (prevents custom/vocab items from shifting batches)
+  const rawBaseForTab = useMemo(() => {
+    return activeTab === 'ipa'
+      ? PRONUNCIATION_IPA_DRILLS
+      : activeTab === 'words'
+      ? PRONUNCIATION_WORD_DRILLS
+      : activeTab === 'stress'
+      ? PRONUNCIATION_STRESS_SHIFT_DRILLS
+      : activeTab === 'phrases'
+      ? PRONUNCIATION_PHRASE_DRILLS
+      : activeTab === 'twisters'
+      ? PRONUNCIATION_TWISTER_DRILLS
+      : PRONUNCIATION_SENTENCE_DRILLS;
+  }, [activeTab]);
+
+  const personalDrillsForTab = useMemo(() => {
+    const existingTexts = new Set(rawBaseForTab.map(d => d.targetText?.toLowerCase().trim()));
     const vocabDrillsForTab =
       currentUser && activeTab !== 'ipa' && activeTab !== 'stress' && activeTab !== 'twisters'
         ? mapVocabListToPronunciationDrills(vocabList, existingTexts).filter(d => d.type === activeTab)
         : [];
-
     const customForTab = (Array.isArray(customDrills) ? customDrills : []).filter(
       d => d.type === activeTab
     );
+    return [...customForTab, ...vocabDrillsForTab];
+  }, [rawBaseForTab, activeTab, currentUser, vocabList, customDrills]);
 
-    return [...customForTab, ...vocabDrillsForTab, ...accessibleBase];
-  }, [activeTab, currentUser, vocabList, customDrills]);
+  // Step 2: Deterministic Auto-Expanding Batches (IPA is unbatched & always 100% open)
+  const trackBatches = useMemo(() => {
+    if (activeTab === 'ipa') return [];
+    const passedSet = new Set(Array.isArray(passedDrillIds) ? passedDrillIds : []);
+    return buildTrackBatches({
+      items: rawBaseForTab,
+      trackKey: `pron_${activeTab}`,
+      completedIdSet: passedSet,
+      wallet: walletSnapshot,
+      currentUser
+    });
+  }, [activeTab, rawBaseForTab, passedDrillIds, walletSnapshot, currentUser]);
+
+  const activeBatchObj = useMemo(() => {
+    if (activeTab === 'ipa' || selectedBatchIndex === 'personal') return null;
+    return trackBatches.find(b => b.batchIndex === selectedBatchIndex) || trackBatches[0] || null;
+  }, [activeTab, selectedBatchIndex, trackBatches]);
+
+  const nextLockedBatchAfterCurrent = useMemo(() => {
+    if (!activeBatchObj || !activeBatchObj.isUnlocked) return null;
+    return trackBatches.find(b => b.batchIndex === activeBatchObj.batchIndex + 1 && !b.isUnlocked) || null;
+  }, [activeBatchObj, trackBatches]);
+
+  const handlePurchaseBatch = useCallback((batch) => {
+    if (!batch) return;
+    const res = purchaseBatchUnlock({
+      batchId: batch.batchId,
+      batchLabel: `${activeTab.toUpperCase()} Batch ${batch.batchIndex}`,
+      costGold: batch.costGold,
+      currentUser
+    });
+    if (res.success) {
+      setWalletSnapshot(getWallet());
+      speakingSoundEffects.playCompletionChime();
+      triggerHaptic('combo');
+      handleSelectBatch(batch.batchIndex);
+    }
+  }, [activeTab, currentUser, handleSelectBatch]);
+
+  const allUnfilteredForTab = useMemo(() => {
+    if (activeTab === 'ipa') return [...personalDrillsForTab, ...rawBaseForTab];
+    if (selectedBatchIndex === 'personal') return personalDrillsForTab;
+    if (activeBatchObj && !activeBatchObj.isUnlocked) return [];
+    return activeBatchObj ? activeBatchObj.items : rawBaseForTab;
+  }, [activeTab, selectedBatchIndex, personalDrillsForTab, rawBaseForTab, activeBatchObj]);
 
   const lockedCountForGuest = useMemo(() => {
-    if (currentUser) return 0;
-    const rawBase =
-      activeTab === 'ipa'
-        ? PRONUNCIATION_IPA_DRILLS
-        : activeTab === 'words'
-        ? PRONUNCIATION_WORD_DRILLS
-        : activeTab === 'stress'
-        ? PRONUNCIATION_STRESS_SHIFT_DRILLS
-        : activeTab === 'phrases'
-        ? PRONUNCIATION_PHRASE_DRILLS
-        : activeTab === 'twisters'
-        ? PRONUNCIATION_TWISTER_DRILLS
-        : PRONUNCIATION_SENTENCE_DRILLS;
-    return rawBase.filter(d => d.requiresAuth).length;
-  }, [activeTab, currentUser]);
+    if (activeTab === 'ipa' || currentUser) return 0;
+    return trackBatches.filter(b => !b.isUnlocked).reduce((sum, b) => sum + b.totalCount, 0);
+  }, [activeTab, currentUser, trackBatches]);
 
   const passedCountInTab = useMemo(() => {
     const passedSet = new Set(Array.isArray(passedDrillIds) ? passedDrillIds : []);
@@ -668,13 +740,7 @@ export default function PronunciationStudioModal({
       setUserTotalXp(newTotalXp);
       setSessionXp(prev => prev + totalDeltaXp);
 
-      // 3. Award Scholastic Gold
-      const goldReward = Math.max(5, Math.round(totalDeltaXp * 0.4));
-      try {
-        addGold(goldReward, `Pronunciation Practice: ${drill.targetText.slice(0, 24)}`, true);
-      } catch (e) {}
-
-      // 4. Show Floating XP Toast
+      // 3. Show Floating XP Toast (Gold is strictly earned in Atlas English Arena)
       setXpToast({
         xp: totalDeltaXp,
         milestoneBonus,
@@ -1183,6 +1249,16 @@ export default function PronunciationStudioModal({
   const renderDrillListContent = (isMobileSheet = false) => (
     <>
       <div className="p-3 border-b border-slate-800/80 space-y-2 shrink-0">
+        {activeTab !== 'ipa' && trackBatches.length > 0 && (
+          <BatchSelectorStrip
+            batches={trackBatches}
+            selectedBatchIndex={selectedBatchIndex}
+            onSelectBatch={handleSelectBatch}
+            personalCount={personalDrillsForTab.length}
+            isEn={isEn}
+            isMobileSheet={isMobileSheet}
+          />
+        )}
         <div className="flex items-center gap-1.5">
           <div className="relative flex-1">
             <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -1330,7 +1406,28 @@ export default function PronunciationStudioModal({
       </div>
 
       <div className={`flex-1 overflow-y-auto ${isMobileSheet ? 'p-3 space-y-2' : 'p-2 space-y-1.5'} overscroll-contain`}>
-        {activeTrackDrills.length === 0 ? (
+        {activeBatchObj && !activeBatchObj.isUnlocked ? (
+          <BatchUnlockGateCard
+            targetBatch={activeBatchObj}
+            compact
+            isEn={isEn}
+            onUnlockBatch={handlePurchaseBatch}
+            onGoToPrevBatch={(prevIdx) => handleSelectBatch(prevIdx)}
+            onOpenAuth={onOpenAuth}
+            onOpenArena={handleOpenArenaSafe}
+          />
+        ) : activeTrackDrills.length === 0 && nextLockedBatchAfterCurrent && activeBatchObj?.isCompleted ? (
+          <BatchUnlockGateCard
+            targetBatch={nextLockedBatchAfterCurrent}
+            isCelebrationMode
+            compact
+            isEn={isEn}
+            onUnlockBatch={handlePurchaseBatch}
+            onOpenAuth={onOpenAuth}
+            onOpenArena={handleOpenArenaSafe}
+            onShowCompletedItems={toggleHidePassed}
+          />
+        ) : activeTrackDrills.length === 0 ? (
           <div className="p-6 text-center text-xs text-slate-400 space-y-2.5">
             <p>
               {passedCountInTab > 0 && hidePassed
@@ -1589,6 +1686,12 @@ export default function PronunciationStudioModal({
               <Sliders className="w-3 h-3 text-indigo-400 shrink-0" />
               <span>{selectedExaminerId === 'examiner-oliver' ? '🇺🇸 US' : '🇬🇧 UK'}</span>
             </button>
+
+            {/* Live Atlas Gold Balance Pill */}
+            <GoldWalletHeaderBadge
+              isEn={isEn}
+              onOpenArena={handleOpenArenaSafe}
+            />
 
             {/* Compact XP & Streak Pill (sm+) */}
             <div
@@ -3250,6 +3353,29 @@ export default function PronunciationStudioModal({
                 </div>
                 <div className="h-3 lg:hidden" />
               </>
+            ) : activeBatchObj && !activeBatchObj.isUnlocked ? (
+              <div className="my-auto">
+                <BatchUnlockGateCard
+                  targetBatch={activeBatchObj}
+                  isEn={isEn}
+                  onUnlockBatch={handlePurchaseBatch}
+                  onGoToPrevBatch={(prevIdx) => handleSelectBatch(prevIdx)}
+                  onOpenAuth={onOpenAuth}
+                  onOpenArena={handleOpenArenaSafe}
+                />
+              </div>
+            ) : nextLockedBatchAfterCurrent && activeBatchObj?.isCompleted ? (
+              <div className="my-auto">
+                <BatchUnlockGateCard
+                  targetBatch={nextLockedBatchAfterCurrent}
+                  isCelebrationMode
+                  isEn={isEn}
+                  onUnlockBatch={handlePurchaseBatch}
+                  onOpenAuth={onOpenAuth}
+                  onOpenArena={handleOpenArenaSafe}
+                  onShowCompletedItems={toggleHidePassed}
+                />
+              </div>
             ) : (
               <div className="p-8 rounded-3xl bg-slate-950/80 border border-slate-800 text-center space-y-3 my-auto">
                 <Trophy className="w-10 h-10 text-amber-400 mx-auto" />

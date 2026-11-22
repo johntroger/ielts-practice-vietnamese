@@ -51,7 +51,14 @@ import {
   calculateLevelFromXp,
   getLevelTierInfo
 } from '../services/gamification/levelEngine';
-import { addGold } from '../services/gamification/atlasWalletService';
+import { getWallet } from '../services/gamification/atlasWalletService';
+import * as eventBus from '../services/gamification/eventBus';
+import {
+  buildTrackBatches,
+  purchaseBatchUnlock
+} from '../services/gamification/batchProgressionService';
+import BatchSelectorStrip, { GoldWalletHeaderBadge } from './common/BatchSelectorStrip';
+import BatchUnlockGateCard from './common/BatchUnlockGateCard';
 import { getUnifiedStreakCount } from '../services/gamification/leagueEngine';
 import { speakingSoundEffects } from '../utils/speakingSoundEffects';
 import { triggerHaptic } from '../utils/hapticHelper';
@@ -80,6 +87,8 @@ export default function ConversationStudioModal({
   onSaveToNotebook,
   onSaveMistake,
   onOpenPronunciation,
+  onOpenAuth,
+  onOpenArena,
   initialOptions = null
 }) {
   const { isEn } = useTranslation();
@@ -231,11 +240,81 @@ export default function ConversationStudioModal({
   const [playingUserClipTurnId, setPlayingUserClipTurnId] = useState(null);
   const [comparingTurnId, setComparingTurnId] = useState(null);
 
-  // Combine built-in + dynamic + custom scenarios (100% open access)
+  // Wallet & Progressive Batch State for Roleplay Conversations
+  const [walletSnapshot, setWalletSnapshot] = useState(() => getWallet());
+  const [selectedRoleplayBatch, setSelectedRoleplayBatch] = useState(1);
+
+  useEffect(() => {
+    setWalletSnapshot(getWallet());
+    const onWalletUpdate = (updated) => {
+      setWalletSnapshot(updated || getWallet());
+    };
+    const unsub = eventBus.on('wallet_updated', onWalletUpdate);
+    return () => {
+      if (typeof unsub === 'function') unsub();
+    };
+  }, [isOpen]);
+
+  const handleOpenArenaSafe = useCallback(() => {
+    if (speechEngine.isListening) speechEngine.stopListening();
+    if (speechEngine.isSpeaking) speechEngine.stopSpeaking();
+    onOpenArena?.();
+  }, [speechEngine.isListening, speechEngine.stopListening, speechEngine.isSpeaking, speechEngine.stopSpeaking, onOpenArena]);
+
+  // Deterministic canonical list: static scenarios first, then dynamic scenarios (prevents Batch 1 flicker)
+  const canonicalRoleplayScenarios = useMemo(() => {
+    return [...CONVERSATION_SCENARIOS, ...dynamicScenarios];
+  }, [dynamicScenarios]);
+
+  const personalRoleplayScenarios = useMemo(() => {
+    return Array.isArray(customScenarios) ? customScenarios : [];
+  }, [customScenarios]);
+
+  const roleplayBatches = useMemo(() => {
+    const completedSet = new Set(Object.keys(convStats.bestScores || {}));
+    return buildTrackBatches({
+      items: canonicalRoleplayScenarios,
+      trackKey: 'conv_roleplay',
+      completedIdSet: completedSet,
+      wallet: walletSnapshot,
+      currentUser
+    });
+  }, [canonicalRoleplayScenarios, convStats.bestScores, walletSnapshot, currentUser]);
+
+  const activeRoleplayBatchObj = useMemo(() => {
+    if (selectedRoleplayBatch === 'personal') return null;
+    return roleplayBatches.find(b => b.batchIndex === selectedRoleplayBatch) || roleplayBatches[0] || null;
+  }, [selectedRoleplayBatch, roleplayBatches]);
+
+  const nextLockedRoleplayBatch = useMemo(() => {
+    if (!activeRoleplayBatchObj || !activeRoleplayBatchObj.isUnlocked) return null;
+    return roleplayBatches.find(b => b.batchIndex === activeRoleplayBatchObj.batchIndex + 1 && !b.isUnlocked) || null;
+  }, [activeRoleplayBatchObj, roleplayBatches]);
+
+  const handlePurchaseRoleplayBatch = useCallback((batch) => {
+    if (!batch) return;
+    const res = purchaseBatchUnlock({
+      batchId: batch.batchId,
+      batchLabel: `Conversation Roleplay Batch ${batch.batchIndex}`,
+      costGold: batch.costGold,
+      currentUser
+    });
+    if (res.success) {
+      setWalletSnapshot(getWallet());
+      speakingSoundEffects.playCompletionChime();
+      triggerHaptic('combo');
+      setSelectedRoleplayBatch(batch.batchIndex);
+      if (batch.items[0]) {
+        setSelectedScenarioId(batch.items[0].id);
+      }
+    }
+  }, [currentUser]);
+
   const allScenarios = useMemo(() => {
-    const customList = Array.isArray(customScenarios) ? customScenarios : [];
-    return [...customList, ...CONVERSATION_SCENARIOS, ...dynamicScenarios];
-  }, [customScenarios, dynamicScenarios]);
+    if (selectedRoleplayBatch === 'personal') return personalRoleplayScenarios;
+    if (activeRoleplayBatchObj && !activeRoleplayBatchObj.isUnlocked) return [];
+    return activeRoleplayBatchObj ? activeRoleplayBatchObj.items : canonicalRoleplayScenarios;
+  }, [selectedRoleplayBatch, personalRoleplayScenarios, activeRoleplayBatchObj, canonicalRoleplayScenarios]);
 
   const availableSources = useMemo(() => {
     const set = new Set();
@@ -729,10 +808,6 @@ export default function ConversationStudioModal({
 
       setUserTotalXp(newTotalXp);
       setSessionXp(prev => prev + deltaXp);
-
-      try {
-        addGold(Math.max(4, Math.round(deltaXp * 0.4)), label, true);
-      } catch (e) {}
 
       setXpToast({ xp: deltaXp, label });
       setTimeout(() => setXpToast(null), 3200);
@@ -1330,6 +1405,26 @@ export default function ConversationStudioModal({
   const renderScenarioListContent = (isMobileSheet = false) => (
     <>
       <div className={`${isMobileSheet ? 'p-3' : 'p-2.5'} border-b border-slate-800/80 space-y-2 shrink-0`}>
+        {roleplayBatches.length > 0 && (
+          <BatchSelectorStrip
+            batches={roleplayBatches}
+            selectedBatchIndex={selectedRoleplayBatch}
+            onSelectBatch={(nextB) => {
+              setSelectedRoleplayBatch(nextB);
+              if (nextB === 'personal' && personalRoleplayScenarios[0]) {
+                setSelectedScenarioId(personalRoleplayScenarios[0].id);
+              } else if (typeof nextB === 'number') {
+                const found = roleplayBatches.find(b => b.batchIndex === nextB);
+                if (found?.isUnlocked && found.items[0]) {
+                  setSelectedScenarioId(found.items[0].id);
+                }
+              }
+            }}
+            personalCount={personalRoleplayScenarios.length}
+            isEn={isEn}
+            isMobileSheet={isMobileSheet}
+          />
+        )}
         <div className={isMobileSheet ? 'flex items-center space-x-1.5 overflow-x-auto no-scrollbar pb-0.5' : 'flex flex-wrap gap-1'}>
           {CONVERSATION_TRACKS.map(track => (
             <button
@@ -1441,7 +1536,28 @@ export default function ConversationStudioModal({
       </div>
 
       <div className={`flex-1 overflow-y-auto ${isMobileSheet ? 'p-3 space-y-2' : 'p-2 space-y-1.5'} overscroll-contain`}>
-        {filteredScenarios.length === 0 ? (
+        {activeRoleplayBatchObj && !activeRoleplayBatchObj.isUnlocked ? (
+          <BatchUnlockGateCard
+            targetBatch={activeRoleplayBatchObj}
+            compact
+            isEn={isEn}
+            onUnlockBatch={handlePurchaseRoleplayBatch}
+            onGoToPrevBatch={(prevIdx) => setSelectedRoleplayBatch(prevIdx)}
+            onOpenAuth={onOpenAuth}
+            onOpenArena={handleOpenArenaSafe}
+          />
+        ) : filteredScenarios.length === 0 && nextLockedRoleplayBatch && activeRoleplayBatchObj?.isCompleted ? (
+          <BatchUnlockGateCard
+            targetBatch={nextLockedRoleplayBatch}
+            isCelebrationMode
+            compact
+            isEn={isEn}
+            onUnlockBatch={handlePurchaseRoleplayBatch}
+            onOpenAuth={onOpenAuth}
+            onOpenArena={handleOpenArenaSafe}
+            onShowCompletedItems={toggleHideCompleted}
+          />
+        ) : filteredScenarios.length === 0 ? (
           <div className="p-5 text-center text-xs text-slate-400 space-y-2.5">
             <p>
               {isEn
@@ -1619,6 +1735,12 @@ export default function ConversationStudioModal({
               <span className="text-slate-600">•</span>
               <span>{selectedExaminerId === 'examiner-oliver' ? '🇺🇸 US' : '🇬🇧 UK'}</span>
             </button>
+
+            {/* Live Atlas Gold Balance Pill */}
+            <GoldWalletHeaderBadge
+              isEn={isEn}
+              onOpenArena={handleOpenArenaSafe}
+            />
 
             {/* Compact XP & Streak Pill (sm+) */}
             <div
@@ -2015,6 +2137,10 @@ export default function ConversationStudioModal({
             onSaveToNotebook={onSaveToNotebook}
             onSaveMistake={onSaveMistake}
             onOpenPronunciation={onOpenPronunciation}
+            currentUser={currentUser}
+            walletSnapshot={walletSnapshot}
+            onOpenAuth={onOpenAuth}
+            onOpenArena={handleOpenArenaSafe}
             creatorTrigger={shadowingCreatorTrigger}
             initialTaskId={initialOptions?.shadowingTask}
           />
@@ -2107,6 +2233,21 @@ export default function ConversationStudioModal({
 
           {/* MAIN DIALOGUE STAGE */}
           <main className="flex-1 flex flex-col min-h-0 overflow-hidden bg-slate-900/40">
+            {activeRoleplayBatchObj && !activeRoleplayBatchObj.isUnlocked ? (
+              <div className="flex-1 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+                <div className="w-full max-w-xl">
+                  <BatchUnlockGateCard
+                    targetBatch={activeRoleplayBatchObj}
+                    isEn={isEn}
+                    onUnlockBatch={handlePurchaseRoleplayBatch}
+                    onGoToPrevBatch={(prevIdx) => setSelectedRoleplayBatch(prevIdx)}
+                    onOpenAuth={onOpenAuth}
+                    onOpenArena={handleOpenArenaSafe}
+                  />
+                </div>
+              </div>
+            ) : (
+            <>
             {/* Compact 1-Row Scenario Context & Role Control Strip (Desktop lg+) */}
             <div className="hidden lg:flex px-4 py-2 bg-slate-950/70 border-b border-slate-800 items-center justify-between gap-2 shrink-0">
               <div className="min-w-0 flex-1 flex items-center space-x-2">
@@ -2367,6 +2508,8 @@ export default function ConversationStudioModal({
               )}
               <div className="h-3 lg:hidden" />
             </div>
+            </>
+            )}
           </main>
         </div>
 
