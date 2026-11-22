@@ -19,7 +19,8 @@ import {
   Languages,
   Trash2,
   ListMusic,
-  SlidersHorizontal
+  SlidersHorizontal,
+  ChevronDown
 } from 'lucide-react';
 import {
   MUSIC_GENRES,
@@ -154,6 +155,8 @@ export default function MusicListeningStudioModal({
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobileLibraryOpen, setIsMobileLibraryOpen] = useState(false);
   const [isMobileOptionsOpen, setIsMobileOptionsOpen] = useState(false);
+  const [isDesktopOptionsOpen, setIsDesktopOptionsOpen] = useState(false);
+  const desktopOptionsRef = useRef(null);
   const [showVocabFocusDrawer, setShowVocabFocusDrawer] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(true);
   const [isCopiedLink, setIsCopiedLink] = useState(false);
@@ -198,6 +201,25 @@ export default function MusicListeningStudioModal({
       if (typeof unsub === 'function') unsub();
     };
   }, [isOpen]);
+
+  // Close desktop options dropdown on outside click or Escape
+  useEffect(() => {
+    if (!isDesktopOptionsOpen) return;
+    const handleOutside = (e) => {
+      if (desktopOptionsRef.current && !desktopOptionsRef.current.contains(e.target)) {
+        setIsDesktopOptionsOpen(false);
+      }
+    };
+    const handleEsc = (e) => {
+      if (e.key === 'Escape') setIsDesktopOptionsOpen(false);
+    };
+    document.addEventListener('mousedown', handleOutside);
+    document.addEventListener('keydown', handleEsc);
+    return () => {
+      document.removeEventListener('mousedown', handleOutside);
+      document.removeEventListener('keydown', handleEsc);
+    };
+  }, [isDesktopOptionsOpen]);
 
   // Progressive Batch Slicing for the Canonical Music Bank (Batch 1 = 6 FREE starter songs, Batch 2..N = 6 songs each)
   const musicBatches = useMemo(() => {
@@ -1169,10 +1191,10 @@ export default function MusicListeningStudioModal({
                   </div>
                 )}
 
-            {/* 3.1. Sticky 4-Mode & Difficulty Control Bar */}
+            {/* 3.1. Sticky Single-Line 4-Mode & Difficulty Control Bar */}
             <div className="px-2.5 sm:px-4 py-1.5 sm:py-2 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 space-y-1.5 shrink-0">
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                {/* 4 Dictation Mode Pills — Crisp labels so all 4 modes are always 100% visible without clipping */}
+              <div className="flex flex-nowrap items-center justify-between gap-2">
+                {/* 4 Dictation Mode Pills — Always on 1 line */}
                 <div className="flex items-center space-x-1 sm:space-x-1.5 overflow-x-auto scrollbar-none flex-nowrap min-w-0">
                   {MUSIC_PRACTICE_MODES.map((m) => {
                     const isActiveMode = practiceMode === m.id;
@@ -1210,8 +1232,8 @@ export default function MusicListeningStudioModal({
                   <span>{isEn ? 'Options' : 'Tùy chọn'}</span>
                 </button>
 
-                {/* Desktop Inline Options (>= 768px) */}
-                <div className="hidden md:flex items-center flex-wrap gap-1.5 shrink-0">
+                {/* Desktop Single-Line Controls (>= 768px): Difficulty Pill + Consolidated Options Dropdown */}
+                <div className="hidden md:flex items-center gap-1.5 shrink-0">
                   {practiceMode !== 'full' && (
                     <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-0.5 rounded-xl border border-slate-200 dark:border-slate-700">
                       {MUSIC_DIFFICULTY_LEVELS.map((lv) => {
@@ -1230,77 +1252,120 @@ export default function MusicListeningStudioModal({
                             }`}
                             title={isEn ? lv.labelEn : lv.labelVi}
                           >
-                            <span className="xl:hidden">{shortLabel}</span>
-                            <span className="hidden xl:inline">{isEn ? lv.labelEn : lv.labelVi}</span>
+                            <span className="2xl:hidden">{shortLabel}</span>
+                            <span className="hidden 2xl:inline">{isEn ? lv.labelEn : lv.labelVi}</span>
                           </button>
                         );
                       })}
                     </div>
                   )}
 
-                  {practiceMode !== 'full' && (
+                  {/* Consolidated Options Dropdown (Shuffle, Translation, Phonetics, Show All, Reset) */}
+                  <div className="relative" ref={desktopOptionsRef}>
                     <button
                       type="button"
-                      onClick={handleShuffleBlanks}
-                      className="inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-purple-50 dark:bg-purple-950/60 hover:bg-purple-100 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800 text-xs font-bold transition-colors cursor-pointer"
-                      title={isEn ? 'Randomize blank positions' : 'Đổi ngẫu nhiên vị trí các ô trống / câu trống'}
-                    >
-                      <Shuffle className="w-3.5 h-3.5" />
-                      <span>{isEn ? 'Shuffle' : 'Đổi ô trống'}</span>
-                    </button>
-                  )}
-
-                  {!isEn && (
-                    <button
-                      type="button"
-                      onClick={() => setShowTranslation(prev => !prev)}
-                      className={`inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-colors cursor-pointer ${
-                        showTranslation
-                          ? 'bg-sky-50 border-sky-200 text-sky-700'
-                          : 'bg-slate-100 border-slate-200 text-slate-500'
+                      onClick={() => setIsDesktopOptionsOpen(prev => !prev)}
+                      className={`inline-flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-extrabold whitespace-nowrap transition-colors cursor-pointer ${
+                        isDesktopOptionsOpen
+                          ? 'bg-purple-600 text-white border-purple-500 shadow-xs'
+                          : 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
                       }`}
+                      aria-expanded={isDesktopOptionsOpen}
+                      aria-label={isEn ? 'Exercise options and tools' : 'Tùy chọn & công cụ bài tập'}
                     >
-                      <Languages className="w-3.5 h-3.5" />
-                      <span className="hidden lg:inline">Dịch nghĩa</span>
+                      <SlidersHorizontal className="w-3.5 h-3.5" />
+                      <span>{isEn ? 'Options' : 'Tùy chỉnh'}</span>
+                      <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-150 ${isDesktopOptionsOpen ? 'rotate-180' : ''}`} />
                     </button>
-                  )}
 
-                  <button
-                    type="button"
-                    onClick={() => setShowPhoneticTips(prev => !prev)}
-                    className={`inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-colors cursor-pointer ${
-                      showPhoneticTips
-                        ? 'bg-indigo-50 dark:bg-indigo-950/60 border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-300'
-                        : 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500'
-                    }`}
-                  >
-                    <Sparkles className="w-3.5 h-3.5" />
-                    <span className="hidden lg:inline">{isEn ? 'Phonetics' : 'Nối âm'}</span>
-                  </button>
+                    {isDesktopOptionsOpen && (
+                      <div className="absolute right-0 mt-2 w-60 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-xl z-50 p-1.5 space-y-1 animate-in fade-in zoom-in-95 duration-150">
+                        {practiceMode !== 'full' && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              handleShuffleBlanks();
+                              setIsDesktopOptionsOpen(false);
+                            }}
+                            className="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-purple-50 dark:hover:bg-purple-950/50 text-slate-700 dark:text-slate-200 text-xs font-bold transition-colors cursor-pointer"
+                          >
+                            <span className="inline-flex items-center space-x-2">
+                              <Shuffle className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
+                              <span>{isEn ? 'Shuffle Blanks' : 'Đổi ngẫu nhiên ô trống'}</span>
+                            </span>
+                          </button>
+                        )}
 
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const allRev = {};
-                      blueprint.lines.forEach((_, idx) => {
-                        allRev[idx] = true;
-                      });
-                      setRevealedLines(allRev);
-                    }}
-                    className="inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-rose-50 hover:text-rose-700 text-slate-600 dark:text-slate-300 text-xs font-bold transition-colors cursor-pointer"
-                  >
-                    <Eye className="w-3.5 h-3.5" />
-                    <span className="hidden xl:inline">{isEn ? 'Show All' : 'Hiện đáp án'}</span>
-                  </button>
+                        {!isEn && (
+                          <button
+                            type="button"
+                            onClick={() => setShowTranslation(prev => !prev)}
+                            className="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold transition-colors cursor-pointer"
+                          >
+                            <span className="inline-flex items-center space-x-2">
+                              <Languages className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400" />
+                              <span>Dịch nghĩa tiếng Việt</span>
+                            </span>
+                            <span className={`px-1.5 py-0.5 rounded-md text-[10px] font-extrabold ${
+                              showTranslation
+                                ? 'bg-sky-100 dark:bg-sky-900/60 text-sky-700 dark:text-sky-300'
+                                : 'bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400'
+                            }`}>
+                              {showTranslation ? 'ON' : 'OFF'}
+                            </span>
+                          </button>
+                        )}
 
-                  <button
-                    type="button"
-                    onClick={handleResetSession}
-                    className="p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
-                    title={isEn ? 'Reset current exercise' : 'Làm lại từ đầu'}
-                  >
-                    <RotateCcw className="w-3.5 h-3.5" />
-                  </button>
+                        <button
+                          type="button"
+                          onClick={() => setShowPhoneticTips(prev => !prev)}
+                          className="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold transition-colors cursor-pointer"
+                        >
+                          <span className="inline-flex items-center space-x-2">
+                            <Sparkles className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+                            <span>{isEn ? 'Phonetics Tips' : 'Mẹo nối âm'}</span>
+                          </span>
+                          <span className={`px-1.5 py-0.5 rounded-md text-[10px] font-extrabold ${
+                            showPhoneticTips
+                              ? 'bg-indigo-100 dark:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300'
+                              : 'bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400'
+                          }`}>
+                            {showPhoneticTips ? 'ON' : 'OFF'}
+                          </span>
+                        </button>
+
+                        <div className="my-1 border-t border-slate-100 dark:border-slate-800" />
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const allRev = {};
+                            blueprint.lines.forEach((_, idx) => {
+                              allRev[idx] = true;
+                            });
+                            setRevealedLines(allRev);
+                            setIsDesktopOptionsOpen(false);
+                          }}
+                          className="w-full flex items-center space-x-2 px-3 py-2 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/40 text-slate-700 dark:text-slate-200 hover:text-rose-700 dark:hover:text-rose-300 text-xs font-bold transition-colors cursor-pointer"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                          <span>{isEn ? 'Show All Answers' : 'Hiện tất cả đáp án'}</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            handleResetSession();
+                            setIsDesktopOptionsOpen(false);
+                          }}
+                          className="w-full flex items-center space-x-2 px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold transition-colors cursor-pointer"
+                        >
+                          <RotateCcw className="w-3.5 h-3.5" />
+                          <span>{isEn ? 'Reset Exercise' : 'Làm lại từ đầu'}</span>
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
 
