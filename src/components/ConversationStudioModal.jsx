@@ -258,9 +258,20 @@ export default function ConversationStudioModal({
     const onWalletUpdate = (updated) => {
       setWalletSnapshot(updated || getWallet());
     };
+    const onCloudBatchSync = (payload) => {
+      if (payload?.convBestScores) {
+        setConvStats(prev => ({
+          ...prev,
+          bestScores: payload.convBestScores,
+          completedCount: Object.keys(payload.convBestScores).length
+        }));
+      }
+    };
     const unsub = eventBus.on('wallet_updated', onWalletUpdate);
+    const unsubCloud = eventBus.on('cloud_batch_progress_synced', onCloudBatchSync);
     return () => {
       if (typeof unsub === 'function') unsub();
+      if (typeof unsubCloud === 'function') unsubCloud();
     };
   }, [isOpen]);
 
@@ -1041,6 +1052,7 @@ export default function ConversationStudioModal({
       };
       setConvStats(updatedStats);
       safeSet(CONV_STATS_STORAGE_KEY, updatedStats);
+      eventBus.emit('batch_progress_updated');
 
       if (sessionSummary.bonusXp > 0) {
         awardXp(sessionSummary.bonusXp, `Completed Dialogue: ${currentScenario.titleEn}`);

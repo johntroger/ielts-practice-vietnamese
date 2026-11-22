@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { safeGet, safeSet } from '../utils/storageService';
 import { supabase } from '../services/supabaseClient';
 import {
@@ -10,8 +10,12 @@ import {
   fetchPublicTasks,
   saveUserCustomTask,
   fetchUserMasteredItems,
-  saveUserMasteredItems
+  saveUserMasteredItems,
+  fetchUserWalletAndBatchProgress,
+  saveUserWalletAndBatchProgress
 } from '../services/dataSyncService';
+import { getWallet, saveWallet } from '../services/gamification/atlasWalletService';
+import * as eventBus from '../services/gamification/eventBus';
 import { INITIAL_TASKS, COMMUNITY_DEFAULT_TASKS } from '../data/sampleTasks';
 
 /**
@@ -178,7 +182,135 @@ export function useCloudAndStorageSync({
           saveUserMasteredItems(currentUser.id, masteredIds);
         }
       });
+
+      // Sync Atlas Wallet (Gold, Diamonds, Unlocked Batches) & Pronunciation/Conversation Progress
+      const pronKey = `ielts_pronunciation_passed_ids_v1_${currentUser.id}`;
+      fetchUserWalletAndBatchProgress(currentUser.id).then(cloudData => {
+        const localWallet = getWallet();
+        const localPronPassed = safeGet(pronKey, []);
+        const localConvStats = safeGet('ielts_conversation_stats_v1', { totalXpEarned: 0, completedCount: 0, bestScores: {}, streak: 0 });
+        const localShadowStats = safeGet('ielts_shadowing_stats_v1', { totalXpEarned: 0, completedCount: 0, bestScores: {}, streak: 0 });
+
+        if (cloudData && typeof cloudData === 'object') {
+          const cloudWallet = cloudData.wallet || {};
+          const cloudTs = Date.parse(cloudWallet.updatedAt || 0) || 0;
+          const localTs = Date.parse(localWallet.updatedAt || 0) || 0;
+          const useCloudBalances = cloudTs >= localTs;
+
+          // Union-merge inventory so unlocked batches & purchased items are never lost across devices
+          const mergedInventory = { ...(localWallet.inventory || {}) };
+          Object.entries(cloudWallet.inventory || {}).forEach(([itemId, itemVal]) => {
+            const existing = mergedInventory[itemId];
+            if (!existing || (itemVal?.quantity || 0) > (existing?.quantity || 0)) {
+              mergedInventory[itemId] = itemVal;
+            }
+          });
+
+          const mergedWallet = {
+            ...(useCloudBalances ? cloudWallet : localWallet),
+            gold: useCloudBalances
+              ? Math.max(0, Number(cloudWallet.gold) || 0)
+              : Math.max(0, Number(localWallet.gold) || 0),
+            diamonds: useCloudBalances
+              ? Math.max(0, Number(cloudWallet.diamonds) || 0)
+              : Math.max(0, Number(localWallet.diamonds) || 0),
+            inventory: mergedInventory,
+            transactions: useCloudBalances
+              ? (Array.isArray(cloudWallet.transactions) ? cloudWallet.transactions : localWallet.transactions)
+              : localWallet.transactions,
+            backfillClaimed: Boolean(cloudWallet.backfillClaimed || localWallet.backfillClaimed)
+          };
+
+          const mergedPronPassed = Array.from(
+            new Set([
+              ...(Array.isArray(localPronPassed) ? localPronPassed : []),
+              ...(Array.isArray(cloudData.pronPassedIds) ? cloudData.pronPassedIds : [])
+            ])
+          );
+
+          const mergeBestScores = (localMap = {}, cloudMap = {}) => {
+            const merged = { ...localMap };
+            Object.entries(cloudMap || {}).forEach(([id, scoreObj]) => {
+              if (!merged[id] || (scoreObj?.accuracy || 0) > (merged[id]?.accuracy || 0)) {
+                merged[id] = scoreObj;
+              }
+            });
+            return merged;
+          };
+
+          const mergedConvBest = mergeBestScores(localConvStats.bestScores, cloudData.convBestScores);
+          const mergedShadowBest = mergeBestScores(localShadowStats.bestScores, cloudData.shadowBestScores);
+
+          isApplyingCloudWalletRef.current = true;
+          saveWallet(mergedWallet);
+          safeSet(pronKey, mergedPronPassed);
+          safeSet('ielts_conversation_stats_v1', {
+            ...localConvStats,
+            bestScores: mergedConvBest,
+            completedCount: Object.keys(mergedConvBest).length
+          });
+          safeSet('ielts_shadowing_stats_v1', {
+            ...localShadowStats,
+            bestScores: mergedShadowBest,
+            completedCount: Object.keys(mergedShadowBest).length
+          });
+          eventBus.emit('cloud_batch_progress_synced', {
+            pronPassedIds: mergedPronPassed,
+            convBestScores: mergedConvBest,
+            shadowBestScores: mergedShadowBest
+          });
+          setTimeout(() => {
+            isApplyingCloudWalletRef.current = false;
+          }, 300);
+        } else {
+          // First-time cloud seed from current device
+          saveUserWalletAndBatchProgress(currentUser.id, {
+            wallet: localWallet,
+            pronPassedIds: Array.isArray(localPronPassed) ? localPronPassed : [],
+            convBestScores: localConvStats.bestScores || {},
+            shadowBestScores: localShadowStats.bestScores || {},
+            updatedAt: new Date().toISOString()
+          });
+        }
+      });
     }
+  }, [currentUser]);
+
+  const isApplyingCloudWalletRef = useRef(false);
+
+  // 3b. Debounced auto-push Wallet & Batch Progression to Supabase Cloud
+  useEffect(() => {
+    if (!currentUser) return;
+    let pushTimer = null;
+
+    const scheduleCloudPush = () => {
+      if (isApplyingCloudWalletRef.current) return;
+      if (pushTimer) clearTimeout(pushTimer);
+      pushTimer = setTimeout(() => {
+        const pronKey = `ielts_pronunciation_passed_ids_v1_${currentUser.id}`;
+        const localWallet = getWallet();
+        const localPronPassed = safeGet(pronKey, []);
+        const localConvStats = safeGet('ielts_conversation_stats_v1', { bestScores: {} });
+        const localShadowStats = safeGet('ielts_shadowing_stats_v1', { bestScores: {} });
+
+        saveUserWalletAndBatchProgress(currentUser.id, {
+          wallet: localWallet,
+          pronPassedIds: Array.isArray(localPronPassed) ? localPronPassed : [],
+          convBestScores: localConvStats.bestScores || {},
+          shadowBestScores: localShadowStats.bestScores || {},
+          updatedAt: new Date().toISOString()
+        });
+      }, 1200);
+    };
+
+    const unsubWallet = eventBus.on('wallet_updated', scheduleCloudPush);
+    const unsubBatch = eventBus.on('batch_progress_updated', scheduleCloudPush);
+
+    return () => {
+      if (pushTimer) clearTimeout(pushTimer);
+      if (typeof unsubWallet === 'function') unsubWallet();
+      if (typeof unsubBatch === 'function') unsubBatch();
+    };
   }, [currentUser]);
 
   // 4. Auto-save API Key & Model settings (study data persistence is handled by useStudyData)

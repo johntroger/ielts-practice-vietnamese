@@ -41,6 +41,7 @@ import ConversationSummaryCard from './ConversationSummaryCard';
 import ShadowingCustomCreatorModal from './ShadowingCustomCreatorModal';
 import { runLayer2PronunciationCheck, NOOP } from '../../utils/speakingPracticeHelpers';
 import { getWallet } from '../../services/gamification/atlasWalletService';
+import * as eventBus from '../../services/gamification/eventBus';
 import {
   buildTrackBatches,
   purchaseBatchUnlock
@@ -142,6 +143,21 @@ export default function SpeechShadowingWorkspace({
   const [showIntonation, setShowIntonation] = useState(false);
   const [keywordsOnly, setKeywordsOnly] = useState(false);
   const [revealCurrentSeg, setRevealCurrentSeg] = useState(false);
+
+  useEffect(() => {
+    const unsubCloud = eventBus.on('cloud_batch_progress_synced', (payload) => {
+      if (payload?.shadowBestScores) {
+        setShadowStats(prev => ({
+          ...prev,
+          bestScores: payload.shadowBestScores,
+          completedCount: Object.keys(payload.shadowBestScores).length
+        }));
+      }
+    });
+    return () => {
+      if (typeof unsubCloud === 'function') unsubCloud();
+    };
+  }, []);
 
   const [selectedShadowBatch, setSelectedShadowBatch] = useState(() =>
     safeGet('ielts_conv_shadowing_batch_v1', 1)
@@ -884,6 +900,7 @@ export default function SpeechShadowingWorkspace({
       };
       setShadowStats(updatedStats);
       safeSet(SHADOW_STATS_STORAGE_KEY, updatedStats);
+      eventBus.emit('batch_progress_updated');
 
       if (sessionSummary.bonusXp > 0 && awardXp) {
         awardXp(sessionSummary.bonusXp, `Completed Shadowing: ${currentTask.titleEn}`);

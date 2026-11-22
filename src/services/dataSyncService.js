@@ -113,7 +113,7 @@ export async function fetchUserVocab(userId) {
     if (error) throw error;
 
     return (data || [])
-      .filter(row => row.topic !== '_mastered_meta')
+      .filter(row => row.topic !== '_mastered_meta' && row.topic !== '_wallet_progress_meta')
       .map(row => ({
         id: row.id,
         phrase: row.phrase,
@@ -450,6 +450,62 @@ export async function saveUserMasteredItems(userId, masteredIds = []) {
     return data;
   } catch (err) {
     console.warn('Error saving mastered items to Cloud:', err);
+    return null;
+  }
+}
+
+/**
+ * Fetch Atlas Wallet (Gold, Diamonds, Unlocked Batches) and Pronunciation/Conversation progress from Supabase Cloud
+ */
+export async function fetchUserWalletAndBatchProgress(userId) {
+  if (!userId) return null;
+  try {
+    const { data, error } = await supabase
+      .from('user_vocab')
+      .select('phrase')
+      .eq('user_id', userId)
+      .eq('topic', '_wallet_progress_meta')
+      .maybeSingle();
+
+    if (error) {
+      console.warn('Could not fetch wallet & batch progress from Cloud:', error.message);
+      return null;
+    }
+    if (data?.phrase) {
+      return JSON.parse(data.phrase);
+    }
+    return null;
+  } catch (err) {
+    console.warn('Error fetching wallet & batch progress:', err);
+    return null;
+  }
+}
+
+/**
+ * Save Atlas Wallet (Gold, Diamonds, Unlocked Batches) and Pronunciation/Conversation progress to Supabase Cloud
+ */
+export async function saveUserWalletAndBatchProgress(userId, payload = {}) {
+  if (!userId || !payload) return null;
+  try {
+    const row = {
+      id: `wallet-progress-${userId}`,
+      user_id: userId,
+      phrase: JSON.stringify(payload),
+      meaning_vi: 'Atlas Wallet & Batch Progression Sync',
+      topic: '_wallet_progress_meta',
+      created_at: new Date().toISOString()
+    };
+    const { data, error } = await supabase
+      .from('user_vocab')
+      .upsert(row);
+
+    if (error) {
+      console.warn('Could not save wallet & batch progress to Cloud:', error.message);
+      return null;
+    }
+    return data;
+  } catch (err) {
+    console.warn('Error saving wallet & batch progress:', err);
     return null;
   }
 }

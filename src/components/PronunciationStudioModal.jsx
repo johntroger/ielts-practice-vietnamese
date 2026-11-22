@@ -316,9 +316,16 @@ export default function PronunciationStudioModal({
     const onWalletUpdate = (updated) => {
       setWalletSnapshot(updated || getWallet());
     };
+    const onCloudBatchSync = (payload) => {
+      if (Array.isArray(payload?.pronPassedIds)) {
+        setPassedDrillIds(payload.pronPassedIds);
+      }
+    };
     const unsub = eventBus.on('wallet_updated', onWalletUpdate);
+    const unsubCloud = eventBus.on('cloud_batch_progress_synced', onCloudBatchSync);
     return () => {
       if (typeof unsub === 'function') unsub();
+      if (typeof unsubCloud === 'function') unsubCloud();
     };
   }, [isOpen]);
 
@@ -856,6 +863,7 @@ export default function PronunciationStudioModal({
           if (prevList.includes(currentDrill.id)) return prevList;
           const nextList = [...prevList, currentDrill.id];
           safeSet(passedStorageKey, nextList);
+          eventBus.emit('batch_progress_updated');
           return nextList;
         });
         if (speechEngine.isListening) {
