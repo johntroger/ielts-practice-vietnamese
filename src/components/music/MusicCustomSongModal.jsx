@@ -4,7 +4,6 @@ import {
   Music,
   Sparkles,
   CheckCircle2,
-  Link,
   FileText,
   Youtube,
   Lock,
@@ -222,27 +221,18 @@ export default function MusicCustomSongModal({
     if (!cleanUrl) {
       setErrorMsg(
         isEn
-          ? 'Please paste a YouTube link or a direct online audio URL (.mp3 / .m4a / R2).'
-          : 'Vui lòng dán đường dẫn YouTube hoặc link nhạc trực tuyến (.mp3 / .m4a / R2).'
+          ? 'Please paste a YouTube link (youtube.com / youtu.be / music.youtube.com).'
+          : 'Vui lòng dán đường dẫn YouTube (youtube.com / youtu.be / music.youtube.com).'
       );
       return;
     }
 
-    // Strictly block local file blobs or base64 data URLs to protect web storage
-    if (/^(blob:|data:|file:)/i.test(cleanUrl)) {
+    // Strictly allow YouTube links only (no file uploads, no external MP3/other platforms)
+    if (!detectedYoutubeId) {
       setErrorMsg(
         isEn
-          ? 'Direct file uploads are disabled to save web storage. Please paste a YouTube URL or an online audio link (https://...).'
-          : 'Hệ thống không nhận file tải lên để tiết kiệm bộ nhớ web. Vui lòng dán link YouTube hoặc link nhạc trực tuyến (https://...).'
-      );
-      return;
-    }
-
-    if (!detectedYoutubeId && !/^https?:\/\//i.test(cleanUrl)) {
-      setErrorMsg(
-        isEn
-          ? 'Please enter a valid YouTube link (youtube.com / youtu.be) or an https:// audio link.'
-          : 'Vui lòng nhập link YouTube hợp lệ (youtube.com / youtu.be) hoặc link nhạc bắt đầu bằng https://.'
+          ? 'Only YouTube links are supported (e.g. https://www.youtube.com/watch?v=... or https://youtu.be/...).'
+          : 'Hệ thống chỉ hỗ trợ dán link YouTube (VD: https://www.youtube.com/watch?v=... hoặc https://youtu.be/...).'
       );
       return;
     }
@@ -256,7 +246,7 @@ export default function MusicCustomSongModal({
       setErrorMsg(
         isEn
           ? 'Please auto-fetch or paste the song lyrics (with [MM:SS] LRC timestamps or plain lines).'
-          : 'Vui lòng bấm "Tự lấy lời .LRC" hoặc dán lời bài hát vào ô bên dưới.'
+          : 'Vui lòng bấm "Tự tìm lời .LRC" hoặc dán lời bài hát vào ô bên dưới.'
       );
       return;
     }
@@ -272,7 +262,6 @@ export default function MusicCustomSongModal({
     }
 
     const lastLineEnd = lines[lines.length - 1]?.end || 180;
-    const isYt = Boolean(detectedYoutubeId);
 
     const customTrack = {
       id: `custom-music-${currentUser.id.slice(0, 8)}-${Date.now()}`,
@@ -284,21 +273,21 @@ export default function MusicCustomSongModal({
       titleEn: cleanTitle,
       titleVi: cleanTitle,
       artist: artist.trim() || (isEn ? 'Custom Artist' : 'Nghệ sĩ Tự chọn'),
-      license: isYt ? 'YouTube Official Embed (Personal Account)' : 'External Audio Stream Link (Personal Account)',
+      license: 'YouTube Official Embed (Personal Account)',
       bandTarget: '5.5 - 7.5',
       bpm: Number(bpm) || 96,
-      accentEn: isYt ? 'YouTube Stream' : 'External Audio Link',
-      accentVi: isYt ? 'Phát từ YouTube' : 'Phát từ Link Nhạc',
-      sourceType: isYt ? 'youtube' : 'r2',
-      source: isYt ? 'youtube_custom_link' : 'external_audio_url',
-      youtubeId: isYt ? detectedYoutubeId : undefined,
-      audioUrl: isYt ? '' : cleanUrl,
-      fallbackAudioUrl: isYt ? '' : cleanUrl,
-      externalSourceUrl: cleanUrl,
+      accentEn: 'YouTube Stream',
+      accentVi: 'Phát từ YouTube',
+      sourceType: 'youtube',
+      source: 'youtube_custom_link',
+      youtubeId: detectedYoutubeId,
+      audioUrl: '',
+      fallbackAudioUrl: '',
+      externalSourceUrl: `https://www.youtube.com/watch?v=${detectedYoutubeId}`,
       audioDuration: Math.max(60, Math.ceil(lastLineEnd + 8)),
       coverGradient: 'from-purple-600 via-pink-600 to-rose-600',
-      pedagogicalFocusEn: 'Personal song linked via external stream URL across all 4 dictation modes.',
-      pedagogicalFocusVi: 'Bài nhạc cá nhân gắn qua link trực tuyến trên cả 4 chế độ chép lời.',
+      pedagogicalFocusEn: 'Personal YouTube song linked privately to your account across all 4 dictation modes.',
+      pedagogicalFocusVi: 'Bài nhạc YouTube cá nhân lưu riêng tư theo tài khoản trên cả 4 chế độ chép lời.',
       lines,
       vocabHighlights: []
     };
@@ -318,12 +307,12 @@ export default function MusicCustomSongModal({
             </div>
             <div>
               <h3 className="font-black text-slate-900 dark:text-white text-sm sm:text-base">
-                {isEn ? 'Link Personal Song (YouTube / Audio URL)' : 'Gắn Link Nhạc Cá Nhân (YouTube / Link Nhạc)'}
+                {isEn ? 'Add Personal YouTube Song' : 'Gắn Link Nhạc YouTube Cá Nhân'}
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400">
                 {isEn
-                  ? 'Stream directly from a YouTube link or online audio URL — 0 MB web storage used'
-                  : 'Phát trực tiếp từ link YouTube hoặc link nhạc online — Không tải file lên web (0 MB)'}
+                  ? 'Paste a YouTube link only — streams directly with 0 MB web storage'
+                  : 'Chỉ hỗ trợ dán link YouTube — Phát trực tiếp không tốn dung lượng web (0 MB)'}
               </p>
             </div>
           </div>
@@ -388,8 +377,8 @@ export default function MusicCustomSongModal({
                     : `Lưu riêng cho tài khoản (${currentUser.email || 'Thành viên'}) — chỉ hiển thị cho mình bạn`}
                 </span>
               </div>
-              <span className="px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-900/70 text-emerald-700 dark:text-emerald-300 text-[10px] font-extrabold shrink-0">
-                {isEn ? 'Link Only • 0 MB' : 'Chỉ dùng Link • 0 MB'}
+              <span className="px-2 py-0.5 rounded-md bg-rose-100 dark:bg-rose-900/70 text-rose-700 dark:text-rose-300 text-[10px] font-extrabold shrink-0">
+                {isEn ? 'YouTube Only • 0 MB' : 'Chỉ YouTube • 0 MB'}
               </span>
             </div>
 
@@ -406,19 +395,15 @@ export default function MusicCustomSongModal({
               </div>
             )}
 
-            {/* 1. YouTube Link or External Audio URL Input (Primary Field!) */}
+            {/* 1. YouTube Link Input (Strictly YouTube Only) */}
             <div className="space-y-2">
               <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
                 {isEn
-                  ? '1. Paste YouTube Link or Direct Audio URL (.mp3 / .m4a) *'
-                  : '1. Dán Link YouTube hoặc Link Nhạc Trực Tuyến (.mp3 / .m4a) *'}
+                  ? '1. Paste YouTube Link *'
+                  : '1. Dán Link YouTube *'}
               </label>
               <div className="relative">
-                {detectedYoutubeId ? (
-                  <Youtube className="w-4 h-4 text-rose-500 absolute left-3 top-1/2 -translate-y-1/2" />
-                ) : (
-                  <Link className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                )}
+                <Youtube className={`w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 ${detectedYoutubeId ? 'text-rose-500' : 'text-slate-400'}`} />
                 <input
                   type="text"
                   value={sourceUrl}
@@ -428,12 +413,20 @@ export default function MusicCustomSongModal({
                   }}
                   placeholder={
                     isEn
-                      ? 'https://www.youtube.com/watch?v=... or https://.../song.mp3'
-                      : 'https://www.youtube.com/watch?v=... hoặc https://.../song.mp3'
+                      ? 'https://www.youtube.com/watch?v=... or https://youtu.be/...'
+                      : 'https://www.youtube.com/watch?v=... hoặc https://youtu.be/...'
                   }
                   className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-mono focus:outline-none focus:border-purple-500"
                 />
               </div>
+
+              {sourceUrl.trim().length > 0 && !detectedYoutubeId && (
+                <p className="text-[11px] font-bold text-amber-600 dark:text-amber-400">
+                  {isEn
+                    ? 'Only YouTube links (youtube.com, youtu.be, music.youtube.com) are accepted.'
+                    : 'Chỉ chấp nhận link YouTube (youtube.com, youtu.be, music.youtube.com).'}
+                </p>
+              )}
 
               {/* Instant YouTube Stream Detection Preview Card */}
               {detectedYoutubeId && (
