@@ -1169,11 +1169,11 @@ export default function MusicListeningStudioModal({
                   </div>
                 )}
 
-            {/* 3.1. Sticky 4-Mode & Difficulty Control Bar (Single-Row Scrollable on Mobile) */}
-            <div className="px-2.5 sm:px-5 py-2 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 space-y-2 shrink-0">
-              <div className="flex items-center justify-between gap-2">
-                {/* 4 Dictation Mode Pills — Single horizontal scrollable strip on mobile so it never eats vertical height */}
-                <div className="flex items-center space-x-1.5 overflow-x-auto scrollbar-none flex-nowrap min-w-0">
+            {/* 3.1. Sticky 4-Mode & Difficulty Control Bar */}
+            <div className="px-2.5 sm:px-4 py-1.5 sm:py-2 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 space-y-1.5 shrink-0">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                {/* 4 Dictation Mode Pills — Crisp labels so all 4 modes are always 100% visible without clipping */}
+                <div className="flex items-center space-x-1 sm:space-x-1.5 overflow-x-auto scrollbar-none flex-nowrap min-w-0">
                   {MUSIC_PRACTICE_MODES.map((m) => {
                     const isActiveMode = practiceMode === m.id;
                     return (
@@ -1181,15 +1181,15 @@ export default function MusicListeningStudioModal({
                         key={m.id}
                         type="button"
                         onClick={() => handleChangeMode(m.id)}
-                        className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-extrabold whitespace-nowrap transition-all cursor-pointer shrink-0 ${
+                        className={`px-2.5 py-1.5 rounded-xl text-[11px] sm:text-xs font-extrabold whitespace-nowrap transition-all cursor-pointer shrink-0 ${
                           isActiveMode
                             ? 'bg-slate-900 dark:bg-purple-600 text-white shadow-xs'
                             : 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300'
                         }`}
                         title={isEn ? m.descEn : m.descVi}
                       >
-                        <span className="sm:hidden">{isEn ? m.shortEn : m.shortVi}</span>
-                        <span className="hidden sm:inline">{isEn ? m.labelEn : m.labelVi}</span>
+                        <span className="2xl:hidden">{isEn ? m.shortEn : m.shortVi}</span>
+                        <span className="hidden 2xl:inline">{isEn ? m.labelEn : m.labelVi}</span>
                       </button>
                     );
                   })}
@@ -1214,20 +1214,27 @@ export default function MusicListeningStudioModal({
                 <div className="hidden md:flex items-center flex-wrap gap-1.5 shrink-0">
                   {practiceMode !== 'full' && (
                     <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-0.5 rounded-xl border border-slate-200 dark:border-slate-700">
-                      {MUSIC_DIFFICULTY_LEVELS.map((lv) => (
-                        <button
-                          key={lv.id}
-                          type="button"
-                          onClick={() => handleChangeDifficulty(lv.id)}
-                          className={`px-2.5 py-1 rounded-lg text-[11px] font-extrabold transition-all cursor-pointer ${
-                            difficulty === lv.id
-                              ? 'bg-white dark:bg-slate-900 text-purple-700 dark:text-purple-300 shadow-2xs'
-                              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
-                          }`}
-                        >
-                          {isEn ? lv.labelEn : lv.labelVi}
-                        </button>
-                      ))}
+                      {MUSIC_DIFFICULTY_LEVELS.map((lv) => {
+                        const shortLabel = isEn
+                          ? lv.labelEn.replace(/\s*\(.*?\)/, '')
+                          : lv.labelVi.replace(/\s*\(.*?\)/, '');
+                        return (
+                          <button
+                            key={lv.id}
+                            type="button"
+                            onClick={() => handleChangeDifficulty(lv.id)}
+                            className={`px-2 py-1 rounded-lg text-[11px] font-extrabold transition-all cursor-pointer whitespace-nowrap ${
+                              difficulty === lv.id
+                                ? 'bg-white dark:bg-slate-900 text-purple-700 dark:text-purple-300 shadow-2xs'
+                                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+                            }`}
+                            title={isEn ? lv.labelEn : lv.labelVi}
+                          >
+                            <span className="xl:hidden">{shortLabel}</span>
+                            <span className="hidden xl:inline">{isEn ? lv.labelEn : lv.labelVi}</span>
+                          </button>
+                        );
+                      })}
                     </div>
                   )}
 
