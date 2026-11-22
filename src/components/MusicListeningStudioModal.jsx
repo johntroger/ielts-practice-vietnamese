@@ -1735,12 +1735,20 @@ export default function MusicListeningStudioModal({
                   const genreObj = MUSIC_GENRES.find(g => g.id === tr.genreId);
 
                   return (
-                    <button
+                    <div
                       key={tr.id}
-                      type="button"
+                      role="button"
+                      tabIndex={0}
                       onClick={() => {
                         handleSelectTrack(tr.id);
                         setIsMobileLibraryOpen(false);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          handleSelectTrack(tr.id);
+                          setIsMobileLibraryOpen(false);
+                        }
                       }}
                       className={`w-full text-left p-3.5 rounded-2xl border transition-all cursor-pointer active:scale-[0.99] ${
                         isCurrent
@@ -1758,16 +1766,30 @@ export default function MusicListeningStudioModal({
                           </div>
                         </div>
 
-                        {doneInfo ? (
-                          <span className="inline-flex items-center space-x-0.5 px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 text-xs font-black shrink-0">
-                            <CheckCircle2 className="w-3.5 h-3.5" />
-                            <span>{doneInfo.accuracy}%</span>
-                          </span>
-                        ) : (
-                          <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[11px] font-bold shrink-0">
-                            Band {tr.bandTarget}
-                          </span>
-                        )}
+                        <div className="flex items-center space-x-1.5 shrink-0">
+                          {doneInfo ? (
+                            <span className="inline-flex items-center space-x-0.5 px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 text-xs font-black">
+                              <CheckCircle2 className="w-3.5 h-3.5" />
+                              <span>{doneInfo.accuracy}%</span>
+                            </span>
+                          ) : (
+                            <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[11px] font-bold">
+                              Band {tr.bandTarget}
+                            </span>
+                          )}
+
+                          {tr.isCustom && (
+                            <button
+                              type="button"
+                              onClick={(e) => handleDeleteCustomSong(e, tr)}
+                              className="p-1.5 rounded-lg bg-rose-50 dark:bg-rose-950/60 hover:bg-rose-100 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800 cursor-pointer active:scale-95 transition-all"
+                              aria-label={isEn ? 'Delete custom song' : 'Xóa bài hát cá nhân'}
+                              title={isEn ? 'Delete song' : 'Xóa bài hát'}
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          )}
+                        </div>
                       </div>
 
                       <div className="mt-2 flex items-center justify-between text-[11px]">
@@ -1778,7 +1800,7 @@ export default function MusicListeningStudioModal({
                           {tr.lines?.length || 0} {isEn ? 'lines' : 'câu hát'}
                         </span>
                       </div>
-                    </button>
+                    </div>
                   );
                 })
               )}
