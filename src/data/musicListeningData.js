@@ -14,13 +14,23 @@ export const R2_MUSIC_BASE_URL = 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r
 export const MUSIC_GENRES = [
   {
     id: 'all',
-    labelEn: 'All Genres (12)',
-    labelVi: 'Tất Cả Thể Loại (12)',
+    labelEn: 'All Genres',
+    labelVi: 'Tất Cả Thể Loại',
     shortEn: 'All Genres',
     shortVi: 'Tất Cả',
-    descEn: 'Complete library of 12 English vocal songs across 6 musical styles hosted on Cloudflare R2.',
-    descVi: 'Trọn bộ 12 bài hát tiếng Anh thuộc 6 thể loại âm nhạc lưu trữ trên Cloudflare R2.',
-    bpmRange: '70–130 BPM'
+    descEn: 'Complete multi-genre English song library (Cloudflare R2 + Official US-UK Hits).',
+    descVi: 'Trọn bộ ngân hàng nhạc tiếng Anh đa thể loại (Cloudflare R2 + Hit US-UK chính thức).',
+    bpmRange: '65–138 BPM'
+  },
+  {
+    id: 'usuk_hits',
+    labelEn: 'US-UK Pop Hits (Official)',
+    labelVi: 'Nhạc Hit US-UK (Chính Thức)',
+    shortEn: 'US-UK Hits',
+    shortVi: 'Hit US-UK',
+    descEn: 'Iconic global chart-toppers by Ed Sheeran, Adele, Coldplay, Taylor Swift, Bruno Mars & more.',
+    descVi: 'Những bản Hit kinh điển toàn cầu của Ed Sheeran, Adele, Coldplay, Taylor Swift, Bruno Mars...',
+    bpmRange: '63–138 BPM'
   },
   {
     id: 'acoustic_folk',

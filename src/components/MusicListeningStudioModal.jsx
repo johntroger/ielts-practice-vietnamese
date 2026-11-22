@@ -23,7 +23,10 @@ import {
 } from 'lucide-react';
 import {
   MUSIC_GENRES,
-  CANONICAL_MUSIC_BANK
+  CANONICAL_MUSIC_BANK,
+  loadMusicBankManifest,
+  loadMusicBankShard,
+  buildExpansionPlaceholders
 } from '../data/musicBank/index.js';
 import {
   MUSIC_PRACTICE_MODES,
@@ -33,6 +36,7 @@ import {
   evaluateSentenceBlankAttempt
 } from '../utils/musicDictationGenerator.js';
 import { useAudioEngine } from '../hooks/useAudioEngine.js';
+import { useYouTubeAudioEngine } from '../hooks/useYouTubeAudioEngine.js';
 import { useVisualViewport } from '../hooks/useVisualViewport.js';
 import { getAudioPlayableUrl, deleteAudioBlob } from '../utils/audioStorage.js';
 import { useTranslation } from '../i18n/index.js';
@@ -78,7 +82,7 @@ export default function MusicListeningStudioModal({
 }) {
   const { isEn } = useTranslation();
 
-  // 1. Custom songs, completed state & Progressive Batch State
+  // 1. Custom songs, completed state, Sharded Expansion Bank & Progressive Batch State
   const [customSongs, setCustomSongs] = useState(() => safeGet(CUSTOM_SONGS_STORAGE_KEY, []));
   const [completedMap, setCompletedMap] = useState(() => safeGet(MUSIC_COMPLETED_STORAGE_KEY, {}));
   const [selectedBatchIndex, setSelectedBatchIndex] = useState(() =>
@@ -86,9 +90,30 @@ export default function MusicListeningStudioModal({
   );
   const [isCustomModalOpen, setIsCustomModalOpen] = useState(false);
 
+  const [expansionPlaceholders, setExpansionPlaceholders] = useState([]);
+  const [hydratedExpansionById, setHydratedExpansionById] = useState({});
+
+  useEffect(() => {
+    if (!isOpen) return;
+    let active = true;
+    loadMusicBankManifest().then((manifest) => {
+      if (!active || !manifest) return;
+      setExpansionPlaceholders(buildExpansionPlaceholders(manifest));
+    });
+    return () => {
+      active = false;
+    };
+  }, [isOpen]);
+
+  const fullCanonicalBank = useMemo(() => {
+    if (expansionPlaceholders.length === 0) return CANONICAL_MUSIC_BANK;
+    const expanded = expansionPlaceholders.map((p) => hydratedExpansionById[p.id] || p);
+    return [...CANONICAL_MUSIC_BANK, ...expanded];
+  }, [expansionPlaceholders, hydratedExpansionById]);
+
   const allTracks = useMemo(
-    () => [...customSongs, ...CANONICAL_MUSIC_BANK],
-    [customSongs]
+    () => [...customSongs, ...fullCanonicalBank],
+    [customSongs, fullCanonicalBank]
   );
 
   // 2. Parse initial URL / initialOptions parameters
@@ -178,13 +203,13 @@ export default function MusicListeningStudioModal({
   const musicBatches = useMemo(() => {
     const completedIdSet = new Set(Object.keys(completedMap || {}));
     return buildTrackBatches({
-      items: CANONICAL_MUSIC_BANK,
+      items: fullCanonicalBank,
       trackKey: 'music_dictation',
       completedIdSet,
       wallet,
       currentUser
     });
-  }, [completedMap, wallet, currentUser]);
+  }, [fullCanonicalBank, completedMap, wallet, currentUser]);
 
   const activeBatchObj = useMemo(() => {
     if (selectedBatchIndex === 'personal') return null;
@@ -194,6 +219,33 @@ export default function MusicListeningStudioModal({
       null
     );
   }, [selectedBatchIndex, musicBatches]);
+
+  // Lazily hydrate expansion shard JSON whenever user views an unlocked expansion batch
+  useEffect(() => {
+    if (!isOpen || !activeBatchObj || !activeBatchObj.isUnlocked) return;
+    const shardIndicesToLoad = new Set();
+    activeBatchObj.items.forEach((item) => {
+      if (item?._isShardPlaceholder && typeof item.shardIndex === 'number') {
+        shardIndicesToLoad.add(item.shardIndex);
+      }
+    });
+    if (shardIndicesToLoad.size === 0) return;
+
+    let active = true;
+    Promise.all(Array.from(shardIndicesToLoad).map(idx => loadMusicBankShard(idx))).then((chunks) => {
+      if (!active) return;
+      const merged = {};
+      chunks.flat().forEach((tr) => {
+        if (tr?.id) merged[tr.id] = tr;
+      });
+      if (Object.keys(merged).length > 0) {
+        setHydratedExpansionById(prev => ({ ...prev, ...merged }));
+      }
+    });
+    return () => {
+      active = false;
+    };
+  }, [isOpen, activeBatchObj]);
 
   const isViewingLockedBatch = Boolean(activeBatchObj && !activeBatchObj.isUnlocked);
 
@@ -282,8 +334,8 @@ export default function MusicListeningStudioModal({
     if (selectedBatchIndex === 'personal') {
       return customSongs;
     }
-    return activeBatchObj?.items || CANONICAL_MUSIC_BANK;
-  }, [selectedBatchIndex, customSongs, activeBatchObj]);
+    return activeBatchObj?.items || fullCanonicalBank;
+  }, [selectedBatchIndex, customSongs, activeBatchObj, fullCanonicalBank]);
 
   const filteredTracks = useMemo(() => {
     return batchScopedTracks.filter((tr) => {
@@ -350,11 +402,20 @@ export default function MusicListeningStudioModal({
   blueprintLinesRef.current = blueprint.lines;
   const pausedForLineRef = useRef(-1);
 
-  const audioEngine = useAudioEngine({
-    initialSrc: resolvedAudioSrc,
-    fallbackSrc: currentTrack?.fallbackAudioUrl || currentTrack?.audioUrl || '',
+  const isYouTubeTrack = Boolean(currentTrack?.sourceType === 'youtube' && currentTrack?.youtubeId);
+
+  const htmlAudioEngine = useAudioEngine({
+    initialSrc: isYouTubeTrack ? '' : resolvedAudioSrc,
+    fallbackSrc: isYouTubeTrack ? '' : (currentTrack?.fallbackAudioUrl || currentTrack?.audioUrl || ''),
     examMode: 'practice'
   });
+
+  const ytAudioEngine = useYouTubeAudioEngine({
+    youtubeId: currentTrack?.youtubeId || '',
+    enabled: isOpen && isYouTubeTrack
+  });
+
+  const audioEngine = isYouTubeTrack ? ytAudioEngine : htmlAudioEngine;
 
   // Monitor audioEngine.currentTime for active line sync, A-B Line Loop, and Auto-Pause at Line End
   useEffect(() => {
@@ -1337,25 +1398,49 @@ export default function MusicListeningStudioModal({
               />
             )}
 
-            {/* 3.3. Interactive Karaoke & Dictation Lyrics Canvas */}
-            <MusicLyricsCanvas
-              blueprint={blueprint}
-              activeLineIndex={activeLineIndex}
-              isPlaying={audioEngine.isPlaying}
-              isEn={isEn}
-              showTranslation={showTranslation}
-              showPhoneticTips={showPhoneticTips}
-              wordInputs={wordInputs}
-              sentenceInputs={sentenceInputs}
-              revealedLines={revealedLines}
-              onWordInputChange={handleWordInputChange}
-              onSentenceInputChange={handleSentenceInputChange}
-              onRevealLine={handleRevealLine}
-              onHintLine={handleHintLine}
-              onSeekToLine={handleSeekToLine}
-              onReplayLine={handleReplayLine}
-              onPracticeLinePronunciation={handlePracticeLinePronunciation}
-            />
+            {/* 3.3. Interactive Karaoke & Dictation Lyrics Canvas + Official YouTube Pip when playing US-UK Hit */}
+            <div className="relative flex-1 flex flex-col min-h-0 overflow-hidden">
+              {isYouTubeTrack && (
+                <div className="bg-slate-950 border-b border-slate-800 px-3 py-1.5 flex items-center justify-between gap-2 lg:hidden shrink-0">
+                  <div
+                    ref={ytAudioEngine.containerRef}
+                    className="w-28 h-16 rounded-lg overflow-hidden bg-black shrink-0"
+                  />
+                  <div className="min-w-0 flex-1 text-xs text-slate-300">
+                    <div className="font-bold text-white truncate">{currentTrack?.title}</div>
+                    <div className="text-[11px] text-rose-400 font-semibold">
+                      {isEn ? 'Official YouTube Stream' : 'Phát trực tiếp từ YouTube Official'}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <MusicLyricsCanvas
+                blueprint={blueprint}
+                activeLineIndex={activeLineIndex}
+                isPlaying={audioEngine.isPlaying}
+                isEn={isEn}
+                showTranslation={showTranslation}
+                showPhoneticTips={showPhoneticTips}
+                wordInputs={wordInputs}
+                sentenceInputs={sentenceInputs}
+                revealedLines={revealedLines}
+                onWordInputChange={handleWordInputChange}
+                onSentenceInputChange={handleSentenceInputChange}
+                onRevealLine={handleRevealLine}
+                onHintLine={handleHintLine}
+                onSeekToLine={handleSeekToLine}
+                onReplayLine={handleReplayLine}
+                onPracticeLinePronunciation={handlePracticeLinePronunciation}
+              />
+
+              {/* Desktop Compact YouTube Mini-Player Pip (Bottom-Right) */}
+              {isYouTubeTrack && (
+                <div className="hidden lg:block absolute bottom-3 right-4 z-20 w-56 h-[126px] rounded-xl overflow-hidden shadow-2xl border-2 border-slate-700 bg-black">
+                  <div ref={ytAudioEngine.containerRef} className="w-full h-full" />
+                </div>
+              )}
+            </div>
 
             {/* 3.4. Sticky Music Dictation Audio Dock */}
             <MusicAudioControlDock

@@ -1,22 +1,18 @@
 /**
  * src/data/musicBank/index.js
  *
- * Dedicated, Forward-Compatible Music Bank Registry for /music-listening.
+ * Dedicated, Forward-Compatible & Sharded Music Bank Registry for /music-listening.
  *
- * Architecture for Progressive Batch Scaling (Batch 1 -> Batch N):
- * - Batch 1 (FREE Starter, 6 songs): Always includes 1 curated track from each of the 6 musical genres
- *   so Guests & new learners experience every style immediately.
- * - Batch 2 (650 Gold, 6 songs): Expansion wave #1 with 1 new track per genre.
- * - Future Expansion Batches (Batch 3, 4, ... N):
- *   To add new songs gradually over time without EVER shifting existing unlocked batches,
- *   create a new module (e.g., `src/data/musicBank/batch3Tracks.js`) and append it to
- *   `FUTURE_MUSIC_BANK_BATCHES` below. `batchProgressionService` automatically slices every
- *   6 appended tracks into Batch 3, Batch 4, ... Batch N.
+ * Architecture for Progressive Batch Scaling (Batch 1 -> Batch 17+ / 100+ Songs):
+ * - Core Batch 1 (FREE Starter, 6 R2 songs) & Batch 2 (650 Gold, 6 R2 songs) are bundled directly.
+ * - Expansion Batches 3..N (~90+ Hybrid songs: 30 Official US-UK YouTube Hits + 60 R2 Classic/CC-BY tracks)
+ *   are stored in static sharded JSONs at `/data/banks/music_dictation/manifest.json` & `shard-*.json`
+ *   so initial JS bundle size stays 0 KB heavier while scaling to 100+ songs!
  */
 
 import { MUSIC_GENRES, MUSIC_LISTENING_TRACKS } from '../musicListeningData.js';
 
-// Canonical Batch 1 (FREE Starter — 1 song per genre across all 6 genres)
+// Canonical Batch 1 (FREE Starter — 1 song per genre across all 6 core R2 genres)
 const BATCH_1_CANONICAL_IDS = [
   'music-acoustic-crazy-glue',
   'music-indiepop-bad-sign',
@@ -26,7 +22,7 @@ const BATCH_1_CANONICAL_IDS = [
   'music-altrock-destroy-something-beautiful'
 ];
 
-// Canonical Batch 2 (Expansion Wave 1 — 1 song per genre across all 6 genres)
+// Canonical Batch 2 (Expansion Wave 1 — 1 song per genre across all 6 core R2 genres)
 const BATCH_2_CANONICAL_IDS = [
   'music-acoustic-branches',
   'music-indiepop-this-is-everything',
@@ -36,12 +32,8 @@ const BATCH_2_CANONICAL_IDS = [
   'music-altrock-memory-replaced'
 ];
 
-// Append future batch arrays here (e.g. ...batch3Tracks, ...batch4Tracks)
-// Existing Batch 1 & Batch 2 indices will NEVER shift when new songs are appended.
-const FUTURE_MUSIC_BANK_BATCHES = [];
-
 /**
- * Returns the deterministic, forward-compatible canonical song list for `buildTrackBatches`.
+ * Returns the deterministic core 12-song canonical list (Batch 1 & Batch 2).
  */
 export function getCanonicalMusicBankTracks() {
   const trackById = new Map();
@@ -61,22 +53,10 @@ export function getCanonicalMusicBankTracks() {
     }
   };
 
-  // 1. Batch 1 (Starter 6 songs — all 6 genres represented)
   BATCH_1_CANONICAL_IDS.forEach(pushById);
-
-  // 2. Batch 2 (Expansion 6 songs — all 6 genres represented)
   BATCH_2_CANONICAL_IDS.forEach(pushById);
 
-  // 3. Any remaining tracks in MUSIC_LISTENING_TRACKS not yet listed
   MUSIC_LISTENING_TRACKS.forEach((tr) => {
-    if (tr?.id && !seen.has(tr.id)) {
-      ordered.push(tr);
-      seen.add(tr.id);
-    }
-  });
-
-  // 4. Future expansion batches appended over time
-  FUTURE_MUSIC_BANK_BATCHES.forEach((tr) => {
     if (tr?.id && !seen.has(tr.id)) {
       ordered.push(tr);
       seen.add(tr.id);
@@ -88,12 +68,81 @@ export function getCanonicalMusicBankTracks() {
 
 export const CANONICAL_MUSIC_BANK = getCanonicalMusicBankTracks();
 
+// =============================================================================
+// LAZY SHARDED EXPANSION LOADER (/data/banks/music_dictation/)
+// =============================================================================
+let cachedManifest = null;
+let manifestPromise = null;
+const shardCache = new Map();
+const shardPromiseCache = new Map();
+
+export async function loadMusicBankManifest() {
+  if (cachedManifest) return cachedManifest;
+  if (manifestPromise) return manifestPromise;
+
+  manifestPromise = (async () => {
+    try {
+      const res = await fetch('/data/banks/music_dictation/manifest.json', {
+        headers: { Accept: 'application/json' }
+      });
+      if (!res.ok) return null;
+      const data = await res.json();
+      if (!data || !Array.isArray(data.items)) return null;
+      cachedManifest = data;
+      return data;
+    } catch {
+      return null;
+    }
+  })();
+
+  return manifestPromise;
+}
+
+export async function loadMusicBankShard(shardIndex) {
+  if (shardCache.has(shardIndex)) return shardCache.get(shardIndex);
+  if (shardPromiseCache.has(shardIndex)) return shardPromiseCache.get(shardIndex);
+
+  const promise = (async () => {
+    try {
+      const res = await fetch(`/data/banks/music_dictation/shard-${shardIndex}.json`, {
+        headers: { Accept: 'application/json' }
+      });
+      if (!res.ok) return [];
+      const data = await res.json();
+      if (Array.isArray(data)) {
+        shardCache.set(shardIndex, data);
+        return data;
+      }
+      return [];
+    } catch {
+      return [];
+    }
+  })();
+
+  shardPromiseCache.set(shardIndex, promise);
+  return promise;
+}
+
+/**
+ * Builds lightweight placeholder track entries from manifest.json so `buildTrackBatches`
+ * immediately creates all 17+ Batches without downloading full lyric payloads until needed.
+ */
+export function buildExpansionPlaceholders(manifest) {
+  if (!manifest || !Array.isArray(manifest.items)) return [];
+  return manifest.items.map((item) => ({
+    ...item,
+    _isShardPlaceholder: true,
+    lines: [],
+    vocabHighlights: []
+  }));
+}
+
 export const MUSIC_BANK_MANIFEST = {
   trackKey: 'music_dictation',
   starterBatchSize: 6,
   expansionBatchSize: 6,
   unlockCostGold: 650,
-  totalSongs: CANONICAL_MUSIC_BANK.length,
+  totalCoreSongs: CANONICAL_MUSIC_BANK.length,
   totalGenres: MUSIC_GENRES.filter(g => g.id !== 'all').length
 };
 
