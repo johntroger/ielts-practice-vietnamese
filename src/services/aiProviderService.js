@@ -257,9 +257,13 @@ export async function callUniversalLlm({
   systemPrompt = '',
   temperature = 0.7,
   maxTokens = 2048,
-  jsonMode = false
+  jsonMode = false,
+  geminiFallbackApiKey = ''
 }) {
   const config = getAiProviderConfig();
+  if (!config.geminiApiKey && geminiFallbackApiKey) {
+    config.geminiApiKey = geminiFallbackApiKey;
+  }
   const primaryProvider = config.provider || 'gemini';
   const req = buildProviderRequest(primaryProvider, config);
 

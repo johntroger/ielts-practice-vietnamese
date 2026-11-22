@@ -2,6 +2,7 @@
  * Core Gemini API Client & Resilience Engine
  * Handles low-level HTTP requests, rate limiting, model fallback chains, and robust JSON parsing.
  */
+import { getAiProviderConfig, callUniversalLlm } from '../aiProviderService.js';
 
 export const DEFAULT_MODEL = 'gemini-3.6-flash';
 
@@ -243,6 +244,67 @@ export async function callGeminiApi({
           'X-IELTS-AI-Hash': promptHash
         }
       });
+    }
+  }
+
+  // Multi-Model AI Provider Adapter: if user configured OpenAI, DeepSeek, Claude, or Custom/Ollama in Settings
+  if (typeof localStorage !== 'undefined') {
+    const providerConfig = getAiProviderConfig();
+    const hasBinaryInlineData = Array.isArray(body?.contents) &&
+      body.contents.some(c => Array.isArray(c?.parts) && c.parts.some(p => p?.inlineData));
+
+    if (providerConfig?.provider && providerConfig.provider !== 'gemini' && !hasBinaryInlineData) {
+      try {
+        const systemPrompt = (body?.systemInstruction?.parts || [])
+          .map(p => p?.text || '')
+          .filter(Boolean)
+          .join('\n');
+        const prompt = (body?.contents || [])
+          .map(c => (c?.parts || []).map(p => p?.text || '').filter(Boolean).join('\n'))
+          .filter(Boolean)
+          .join('\n\n');
+        const jsonMode = body?.generationConfig?.responseMimeType === 'application/json';
+        const maxTokens = body?.generationConfig?.maxOutputTokens || 2048;
+
+        const llmRes = await callUniversalLlm({
+          prompt,
+          systemPrompt,
+          temperature: typeof temperature === 'number' ? temperature : 0.7,
+          maxTokens,
+          jsonMode,
+          geminiFallbackApiKey: apiKey
+        });
+
+        const normalizedPayload = {
+          candidates: [
+            {
+              content: {
+                parts: [{ text: llmRes.text || '' }]
+              }
+            }
+          ],
+          _provider: llmRes.provider,
+          _model: llmRes.model,
+          _fallbackUsed: llmRes.fallbackUsed
+        };
+
+        if (promptHash) {
+          setCachedGeminiResponse(promptHash, normalizedPayload, cacheTtlSeconds * 1000);
+        }
+
+        return new Response(JSON.stringify(normalizedPayload), {
+          status: 200,
+          headers: {
+            'Content-Type': 'application/json',
+            'X-IELTS-AI-Provider': llmRes.provider || 'universal'
+          }
+        });
+      } catch (providerErr) {
+        if (!providerConfig.autoFallback || !apiKey) {
+          throw providerErr;
+        }
+        console.warn(`[AI Provider] ${providerConfig.provider} failed, falling back to Gemini endpoint:`, providerErr.message);
+      }
     }
   }
 
