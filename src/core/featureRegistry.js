@@ -1387,28 +1387,19 @@ export function dispatchFeatureAction(quickAction, handlers = {}) {
   return false;
 }
 
-/**
- * Ánh xạ danh mục tính năng sang URL slug trên GitBook
- */
-export const GITBOOK_CATEGORY_SLUGS = {
-  ai_evaluation: 'ai-evaluation',
-  practice_tools: 'practice-tools',
-  exam_simulation: 'exam-simulation',
-  theory_vocab: 'theory-vocab',
-  analytics_profile: 'analytics-profile',
-  shortcuts_ux: 'shortcuts-ux'
-};
+import {
+  GITBOOK_CATEGORY_SLUGS,
+  getGitBookBaseUrl,
+  GITBOOK_DOCS_BASE_URL,
+  GITBOOK_FEATURES_BASE_URL
+} from './gitbookConfig.js';
 
-// Helper xác định URL Base của GitBook hỗ trợ cấu hình động từ .env
-export const getGitBookBaseUrl = () => {
-  if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_GITBOOK_URL) {
-    return import.meta.env.VITE_GITBOOK_URL.replace(/\/+$/, '');
-  }
-  return 'https://vneconomics.gitbook.io/vneconomics-docs';
+export {
+  GITBOOK_CATEGORY_SLUGS,
+  getGitBookBaseUrl,
+  GITBOOK_DOCS_BASE_URL,
+  GITBOOK_FEATURES_BASE_URL
 };
-
-export const GITBOOK_DOCS_BASE_URL = getGitBookBaseUrl();
-export const GITBOOK_FEATURES_BASE_URL = `${getGitBookBaseUrl()}/huong-dan-su-dung-and-tinh-nang-he-thong`;
 
 /**
  * Sinh đường dẫn GitBook Deep Link chính xác theo danh mục hoặc tính năng cụ thể

@@ -10,10 +10,14 @@ const STORE_NAME = 'audio_blobs';
 // In-memory fallback if IndexedDB is blocked (e.g. private browsing)
 const memoryCache = new Map();
 const objectUrlCache = new Map();
+let audioDbPromise = null;
 
 function openDB() {
-  return new Promise((resolve, reject) => {
+  if (audioDbPromise) return audioDbPromise;
+
+  audioDbPromise = new Promise((resolve, reject) => {
     if (typeof window === 'undefined' || !window.indexedDB) {
+      audioDbPromise = null;
       return reject(new Error('IndexedDB not supported'));
     }
 
@@ -26,9 +30,24 @@ function openDB() {
       }
     };
 
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error || new Error('Failed to open audio IndexedDB'));
+    request.onsuccess = () => {
+      const db = request.result;
+      db.onversionchange = () => {
+        try { db.close(); } catch (e) {}
+        audioDbPromise = null;
+      };
+      db.onclose = () => {
+        audioDbPromise = null;
+      };
+      resolve(db);
+    };
+    request.onerror = () => {
+      audioDbPromise = null;
+      reject(request.error || new Error('Failed to open audio IndexedDB'));
+    };
   });
+
+  return audioDbPromise;
 }
 
 /**

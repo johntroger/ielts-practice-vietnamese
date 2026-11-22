@@ -5,22 +5,26 @@
  */
 
 const DB_NAME = 'IELTS_WEB_DB';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 
 import { stripEphemeralMedia, safeSet, safeGet } from './storageService.js';
 
 export const STORES = {
   KEYVAL: 'keyval',
   DIAGNOSTIC_RECORDS: 'diagnostic_records',
-  SUBMISSIONS_ARCHIVE: 'submissions_archive'
+  SUBMISSIONS_ARCHIVE: 'submissions_archive',
+  TASKS_ARCHIVE: 'tasks_archive'
 };
 
 // In-memory fallback stores when IndexedDB is unavailable (Node.js, Private Mode)
 const memoryStores = {
   [STORES.KEYVAL]: new Map(),
   [STORES.DIAGNOSTIC_RECORDS]: new Map(),
-  [STORES.SUBMISSIONS_ARCHIVE]: new Map()
+  [STORES.SUBMISSIONS_ARCHIVE]: new Map(),
+  [STORES.TASKS_ARCHIVE]: new Map()
 };
+
+let dbInstancePromise = null;
 
 /**
  * Checks if IndexedDB is supported in the current environment.
@@ -38,8 +42,11 @@ export function isIndexedDbSupported() {
  * @returns {Promise<IDBDatabase>}
  */
 export function openIeltsDb() {
-  return new Promise((resolve, reject) => {
+  if (dbInstancePromise) return dbInstancePromise;
+
+  dbInstancePromise = new Promise((resolve, reject) => {
     if (!isIndexedDbSupported()) {
+      dbInstancePromise = null;
       return reject(new Error('IndexedDB is not supported in this environment'));
     }
 
@@ -63,14 +70,74 @@ export function openIeltsDb() {
         if (!db.objectStoreNames.contains(STORES.SUBMISSIONS_ARCHIVE)) {
           db.createObjectStore(STORES.SUBMISSIONS_ARCHIVE, { keyPath: 'id' });
         }
+
+        // Tasks & Media offline archive
+        if (!db.objectStoreNames.contains(STORES.TASKS_ARCHIVE)) {
+          db.createObjectStore(STORES.TASKS_ARCHIVE);
+        }
       };
 
-      request.onsuccess = () => resolve(request.result);
-      request.onerror = () => reject(request.error || new Error('Failed to open IndexedDB'));
+      request.onsuccess = () => {
+        const db = request.result;
+        db.onversionchange = () => {
+          try { db.close(); } catch (e) {}
+          dbInstancePromise = null;
+        };
+        db.onclose = () => {
+          dbInstancePromise = null;
+        };
+        resolve(db);
+      };
+      request.onerror = () => {
+        dbInstancePromise = null;
+        reject(request.error || new Error('Failed to open IndexedDB'));
+      };
     } catch (err) {
+      dbInstancePromise = null;
       reject(err);
     }
   });
+
+  return dbInstancePromise;
+}
+
+/**
+ * Batch-puts multiple items in a single IndexedDB readwrite transaction.
+ * Eliminates N+1 transaction overhead during history persistence & migration.
+ */
+async function idbPutBatch(storeName, items = []) {
+  if (!Array.isArray(items) || items.length === 0) return true;
+  const sanitizedItems = items
+    .filter(item => item && item.id)
+    .map(item => stripEphemeralMedia(item));
+  if (sanitizedItems.length === 0) return true;
+
+  if (!isIndexedDbSupported()) {
+    if (!memoryStores[storeName]) memoryStores[storeName] = new Map();
+    for (const item of sanitizedItems) {
+      memoryStores[storeName].set(item.id, item);
+    }
+    return true;
+  }
+
+  try {
+    const db = await openIeltsDb();
+    return new Promise((resolve) => {
+      const transaction = db.transaction(storeName, 'readwrite');
+      const store = transaction.objectStore(storeName);
+      for (const item of sanitizedItems) {
+        store.put(item);
+      }
+      transaction.oncomplete = () => resolve(true);
+      transaction.onerror = () => resolve(false);
+    });
+  } catch (err) {
+    if (!memoryStores[storeName]) memoryStores[storeName] = new Map();
+    for (const item of sanitizedItems) {
+      memoryStores[storeName].set(item.id, item);
+    }
+    return true;
+  }
 }
 
 /**
@@ -389,12 +456,8 @@ export async function saveTwoTierSubmissions(key, fullSubmissions) {
     // 1. Persist full detailed records into IndexedDB KEYVAL store
     await idbSet(STORES.KEYVAL, key, fullSubmissions);
 
-    // 2. Index each individual item into SUBMISSIONS_ARCHIVE for direct lookup by ID
-    for (const item of fullSubmissions) {
-      if (item && item.id) {
-        await idbSet(STORES.SUBMISSIONS_ARCHIVE, item.id, item);
-      }
-    }
+    // 2. Index all items into SUBMISSIONS_ARCHIVE in a single batch transaction
+    await idbPutBatch(STORES.SUBMISSIONS_ARCHIVE, fullSubmissions);
 
     // 3. Create lightweight summary array for LocalStorage (< 50KB total for hundreds of essays)
     const lightweight = fullSubmissions.map(createLightweightSubmission);
@@ -523,13 +586,9 @@ export async function migrateSubmissionsToIndexedDb() {
         if (!idbData || !Array.isArray(idbData) || idbData.length < localData.length || hasHeavyFields) {
           const mergedData = (Array.isArray(idbData) && idbData.length >= localData.length) ? idbData : localData;
           
-          // Save full data into IndexedDB
+          // Save full data into IndexedDB in a single batch transaction
           await idbSet(STORES.KEYVAL, key, mergedData);
-          for (const item of mergedData) {
-            if (item && item.id) {
-              await idbSet(STORES.SUBMISSIONS_ARCHIVE, item.id, item);
-            }
-          }
+          await idbPutBatch(STORES.SUBMISSIONS_ARCHIVE, mergedData);
 
           // Shrink LocalStorage to lightweight summaries
           const lightweight = mergedData.map(createLightweightSubmission);

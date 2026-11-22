@@ -43,7 +43,7 @@ import {
 } from 'lucide-react';
 import { openModal } from '../core/modalStore';
 import { useAppStore } from '../core/appStore';
-import { GITBOOK_FEATURES_BASE_URL } from '../core/featureRegistry';
+import { GITBOOK_FEATURES_BASE_URL } from '../core/gitbookConfig';
 import WebsiteQRCodeModal from './WebsiteQRCodeModal';
 import { getTheme, toggleTheme, subscribeTheme } from '../utils/themeService';
 import { useTranslation } from '../i18n/index.js';

@@ -4,7 +4,7 @@
  * Encapsulates Two-Tier state hydration, auto-persistence, and history CRUD operations.
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   TaskRepository,
   SubmissionRepository,
@@ -13,6 +13,22 @@ import {
   BackupRepository
 } from '../repositories/index.js';
 import { INITIAL_TASKS } from '../data/sampleTasks.js';
+import { isEnglish } from '../i18n/i18nService.js';
+
+/**
+ * Skips running an effect on the initial mount so read-from-storage states
+ * do not immediately write back to localStorage / IndexedDB on page load.
+ */
+function useAfterMountEffect(effect, deps) {
+  const mountedRef = useRef(false);
+  useEffect(() => {
+    if (!mountedRef.current) {
+      mountedRef.current = true;
+      return;
+    }
+    return effect();
+  }, deps);
+}
 
 export function useStudyData(currentUser = null) {
   // Tasks
@@ -63,20 +79,20 @@ export function useStudyData(currentUser = null) {
     return () => { isMounted = false; };
   }, []);
 
-  // 2. Auto-Persistence Effects
-  useEffect(() => {
+  // 2. Auto-Persistence Effects (skip initial mount to eliminate boot write thrashing)
+  useAfterMountEffect(() => {
     TaskRepository.saveAllTasks(allTasks);
   }, [allTasks]);
 
-  useEffect(() => {
+  useAfterMountEffect(() => {
     TaskRepository.saveCommunityTasks(communityTasks);
   }, [communityTasks]);
 
-  useEffect(() => {
+  useAfterMountEffect(() => {
     localStorage.setItem('ielts_current_task_id', currentTaskId);
   }, [currentTaskId]);
 
-  useEffect(() => {
+  useAfterMountEffect(() => {
     const timer = setTimeout(() => {
       StudyProfileRepository.saveEssaysDrafts(essays);
       setLastSaved(new Date());
@@ -84,46 +100,46 @@ export function useStudyData(currentUser = null) {
     return () => clearTimeout(timer);
   }, [essays]);
 
-  useEffect(() => {
+  useAfterMountEffect(() => {
     const timer = setTimeout(() => {
       StudyProfileRepository.saveOutlinesDrafts(outlines);
     }, 400);
     return () => clearTimeout(timer);
   }, [outlines]);
 
-  useEffect(() => {
+  useAfterMountEffect(() => {
     SubmissionRepository.saveSubmissions(SUBMISSION_STORAGE_KEYS.WRITING, submissions);
   }, [submissions]);
 
-  useEffect(() => {
+  useAfterMountEffect(() => {
     SubmissionRepository.saveSubmissions(SUBMISSION_STORAGE_KEYS.READING, readingHistory);
   }, [readingHistory]);
 
-  useEffect(() => {
+  useAfterMountEffect(() => {
     SubmissionRepository.saveSubmissions(SUBMISSION_STORAGE_KEYS.LISTENING, listeningHistory);
   }, [listeningHistory]);
 
-  useEffect(() => {
+  useAfterMountEffect(() => {
     SubmissionRepository.saveSubmissions(SUBMISSION_STORAGE_KEYS.SPEAKING, speakingHistory);
   }, [speakingHistory]);
 
-  useEffect(() => {
+  useAfterMountEffect(() => {
     StudyProfileRepository.saveVocabList(vocabList);
   }, [vocabList]);
 
-  useEffect(() => {
+  useAfterMountEffect(() => {
     StudyProfileRepository.saveMistakes(mistakes);
   }, [mistakes]);
 
-  useEffect(() => {
+  useAfterMountEffect(() => {
     StudyProfileRepository.savePersonalNotes(personalNotes);
   }, [personalNotes]);
 
-  useEffect(() => {
+  useAfterMountEffect(() => {
     StudyProfileRepository.saveStreakCount(streakCount);
   }, [streakCount]);
 
-  useEffect(() => {
+  useAfterMountEffect(() => {
     StudyProfileRepository.saveMasteredIds(masteredIds);
   }, [masteredIds]);
 
@@ -228,7 +244,7 @@ export function useStudyData(currentUser = null) {
     if (data.vocabList) setVocabList(data.vocabList);
     if (data.mistakes) setMistakes(data.mistakes);
     if (data.personalNotes) setPersonalNotes(data.personalNotes);
-    alert('Đã khôi phục dữ liệu thành công!');
+    alert(isEnglish() ? 'Data restored successfully!' : 'Đã khôi phục dữ liệu thành công!');
   };
 
   const handleClearAllLocalData = async () => {
@@ -244,7 +260,7 @@ export function useStudyData(currentUser = null) {
     setVocabList([]);
     setMistakes([]);
     setPersonalNotes({});
-    alert('Đã khôi phục toàn bộ cài đặt gốc.');
+    alert(isEnglish() ? 'All local data has been reset to factory defaults.' : 'Đã khôi phục toàn bộ cài đặt gốc.');
   };
 
   return {

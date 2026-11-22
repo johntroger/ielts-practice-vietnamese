@@ -775,6 +775,8 @@ export function useSpeechEngine({
       ) {
         stream = await navigator.mediaDevices.getUserMedia({
           audio: {
+            channelCount: 1,
+            sampleRate: 48000,
             echoCancellation: true,
             noiseSuppression: true,
             autoGainControl: true

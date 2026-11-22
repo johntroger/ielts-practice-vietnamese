@@ -456,7 +456,17 @@ export default {
         return new Response('R2 Bucket Not Configured', { status: 404, headers: CORS_HEADERS });
       }
 
-      const objectKey = path.replace('/api/r2/', '');
+      const objectKey = path.replace('/api/r2/', '').replace(/^\/+/, '');
+      const allowedR2Prefixes = ['tasks/', 'audio/', 'media/', 'images/'];
+      if (
+        !objectKey ||
+        objectKey.includes('..') ||
+        objectKey.includes('\\') ||
+        !allowedR2Prefixes.some(prefix => objectKey.startsWith(prefix))
+      ) {
+        return new Response('Forbidden Media Path', { status: 403, headers: CORS_HEADERS });
+      }
+
       const object = await env.IELTS_R2_BUCKET.get(objectKey);
 
       if (!object) {
@@ -477,9 +487,45 @@ export default {
         const reqJson = await request.json();
         const targetModel = String(reqJson.model || 'gemini-3.6-flash').replace(/^models\//, '').trim();
         const payloadBody = reqJson.body || reqJson.payload;
-        const effectiveApiKey = (reqJson.apiKey || env.GEMINI_API_KEY || '').trim();
+        const userSuppliedKey = (reqJson.apiKey || '').trim();
+        const effectiveApiKey = (userSuppliedKey || env.GEMINI_API_KEY || '').trim();
         const apiVersion = reqJson.apiVersion === 'v1' ? 'v1' : 'v1beta';
         const ttl = Math.max(60, Math.min(604800, Number(reqJson.cacheTtlSeconds) || 86400));
+
+        // Guard Worker-hosted GEMINI_API_KEY against unauthorized third-party origin abuse & IP flooding
+        if (!userSuppliedKey && env.GEMINI_API_KEY) {
+          const originHeader = (request.headers.get('Origin') || request.headers.get('Referer') || '').toLowerCase();
+          const allowedCustom = (env.ALLOWED_ORIGIN || '').toLowerCase();
+          const isAllowedOrigin =
+            originHeader.includes('localhost') ||
+            originHeader.includes('127.0.0.1') ||
+            originHeader.includes('.vercel.app') ||
+            (allowedCustom && originHeader.includes(allowedCustom));
+          if (!isAllowedOrigin) {
+            return new Response(JSON.stringify({ error: { message: 'Forbidden: Origin not authorized for shared AI key' } }), {
+              status: 403,
+              headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
+            });
+          }
+
+          const clientIp = (request.headers.get('CF-Connecting-IP') || 'unknown').replace(/[^a-z0-9.:_-]/gi, '');
+          const minuteBucket = Math.floor(Date.now() / 60000);
+          const rateKey = new Request(`${url.origin}/__ratelimit/ai/${clientIp}/${minuteBucket}`, { method: 'GET' });
+          const rateRes = await caches.default.match(rateKey);
+          const currentCount = rateRes ? Number(await rateRes.text()) || 0 : 0;
+          if (currentCount >= 20) {
+            return new Response(JSON.stringify({ error: { message: 'Rate limit exceeded (20 requests/min). Please provide your own Gemini API key in Settings.' } }), {
+              status: 429,
+              headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
+            });
+          }
+          ctx.waitUntil(
+            caches.default.put(rateKey, new Response(String(currentCount + 1), {
+              status: 200,
+              headers: { 'Cache-Control': 'public, max-age=65' }
+            }))
+          );
+        }
 
         if (!effectiveApiKey) {
           return new Response(JSON.stringify({ error: { message: 'Missing Gemini API Key in request or Worker environment' } }), {

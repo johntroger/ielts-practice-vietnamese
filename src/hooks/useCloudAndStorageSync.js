@@ -139,22 +139,50 @@ export function useCloudAndStorageSync({
     }
   }, [setAllTasks, setCommunityTasks, setCurrentTaskId]);
 
-  // 3. Fetch from Cloud when user logs in with Bi-directional Auto-Sync
+  const submissionsRef = useRef(submissions);
+  submissionsRef.current = submissions;
+  const vocabListRef = useRef(vocabList);
+  vocabListRef.current = vocabList;
+  const allTasksRef = useRef(allTasks);
+  allTasksRef.current = allTasks;
+  const masteredIdsRef = useRef(masteredIds);
+  masteredIdsRef.current = masteredIds;
+
+  // 3. Fetch from Cloud when user logs in with Bi-directional Merge & Auto-Sync
   useEffect(() => {
     if (currentUser) {
       fetchUserSubmissions(currentUser.id).then(cloudSubs => {
+        const localSubs = submissionsRef.current || [];
         if (cloudSubs && cloudSubs.length > 0) {
-          setSubmissions(cloudSubs);
-        } else if (submissions && submissions.length > 0) {
-          saveUserSubmissionsBatch(currentUser.id, submissions);
+          const cloudIds = new Set(cloudSubs.map(s => s.id));
+          const localOnlySubs = localSubs.filter(s => s?.id && !cloudIds.has(s.id));
+          if (localOnlySubs.length > 0) {
+            setSubmissions([...localOnlySubs, ...cloudSubs]);
+            saveUserSubmissionsBatch(currentUser.id, localOnlySubs);
+          } else {
+            setSubmissions(cloudSubs);
+          }
+        } else if (localSubs.length > 0) {
+          saveUserSubmissionsBatch(currentUser.id, localSubs);
         }
       });
 
       fetchUserVocab(currentUser.id).then(cloudVocab => {
+        const localVocab = vocabListRef.current || [];
         if (cloudVocab && cloudVocab.length > 0) {
-          setVocabList(cloudVocab);
-        } else if (vocabList && vocabList.length > 0) {
-          saveUserVocabBatch(currentUser.id, vocabList);
+          const cloudIds = new Set(cloudVocab.map(v => v.id));
+          const cloudPhrases = new Set(cloudVocab.map(v => (v.phrase || '').trim().toLowerCase()));
+          const localOnlyVocab = localVocab.filter(
+            v => v?.id && !cloudIds.has(v.id) && !cloudPhrases.has((v.phrase || '').trim().toLowerCase())
+          );
+          if (localOnlyVocab.length > 0) {
+            setVocabList([...localOnlyVocab, ...cloudVocab]);
+            saveUserVocabBatch(currentUser.id, localOnlyVocab);
+          } else {
+            setVocabList(cloudVocab);
+          }
+        } else if (localVocab.length > 0) {
+          saveUserVocabBatch(currentUser.id, localVocab);
         }
       });
 
@@ -166,7 +194,7 @@ export function useCloudAndStorageSync({
             return [...newToAdd, ...prev];
           });
         } else {
-          const localCustom = (allTasks || []).filter(t => t.isOwnTask || t.id?.startsWith('task-') || t.id?.startsWith('custom-'));
+          const localCustom = (allTasksRef.current || []).filter(t => t.isOwnTask || t.id?.startsWith('task-') || t.id?.startsWith('custom-'));
           if (localCustom.length > 0) {
             saveUserCustomTasksBatch(currentUser.id, localCustom, currentUser.email);
           }
@@ -174,14 +202,15 @@ export function useCloudAndStorageSync({
       });
 
       fetchUserMasteredItems(currentUser.id).then(cloudMastered => {
+        const localMastered = masteredIdsRef.current || [];
         if (cloudMastered && cloudMastered.length > 0) {
           setMasteredIds(prev => {
             const combined = Array.from(new Set([...prev, ...cloudMastered]));
             safeSet('ielts_mastered_items', combined);
             return combined;
           });
-        } else if (masteredIds && masteredIds.length > 0) {
-          saveUserMasteredItems(currentUser.id, masteredIds);
+        } else if (localMastered.length > 0) {
+          saveUserMasteredItems(currentUser.id, localMastered);
         }
       });
 

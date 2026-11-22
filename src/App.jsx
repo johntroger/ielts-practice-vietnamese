@@ -33,7 +33,7 @@ import { auditAndCleanWebsiteContent } from './services/deduplicationService';
 import { trackSkillView } from './services/analyticsService.js';
 import { useTranslation } from './i18n';
 import { addVocabUnique } from './utils/vocabDuplicate';
-import { GITBOOK_FEATURES_BASE_URL } from './core/featureRegistry';
+import { GITBOOK_FEATURES_BASE_URL } from './core/gitbookConfig';
 
 export default function App() {
   const { t, language } = useTranslation();
@@ -83,6 +83,9 @@ export default function App() {
     trackSkillView(activeSkill);
   }, [activeSkill]);
 
+  const allTasksRef = React.useRef(allTasks);
+  allTasksRef.current = allTasks;
+
   // Real-time synchronization across browser tabs, windows and Supabase Cloud
   useEffect(() => {
     let bc = null;
@@ -126,7 +129,7 @@ export default function App() {
             setCommunityTasks(prev => {
               let next;
               if (isPublic) {
-                const found = allTasks.find(t => t.id === taskId);
+                const found = allTasksRef.current.find(t => t.id === taskId);
                 if (found && !prev.some(t => t.id === taskId)) {
                   next = [{ ...found, isPublic: true, isCommunity: true }, ...prev];
                 } else {
