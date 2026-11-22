@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Lock, CheckCircle2, Unlock, ChevronDown, Swords } from 'lucide-react';
+import { Lock, CheckCircle2, Unlock, ChevronDown, ChevronLeft, ChevronRight, Swords } from 'lucide-react';
 import { getWallet } from '../../services/gamification/atlasWalletService';
 import * as eventBus from '../../services/gamification/eventBus';
 
@@ -72,22 +72,82 @@ export default function BatchSelectorStrip({
       ? batches.find(b => b.batchIndex === selectedBatchIndex) || batches[0]
       : null;
 
-  // Build windowed pills when > 5 batches so UI never overflows even with 100+ batches
-  const visibleBatches = showDropdown
-    ? batches.filter((b) => {
-        if (b.batchIndex === 1) return true;
-        if (typeof selectedBatchIndex === 'number') {
-          if (b.batchIndex === selectedBatchIndex) return true;
-          if (b.batchIndex === selectedBatchIndex + 1) return true;
-        }
-        return false;
-      })
-    : batches;
+  const currentNumericIndex =
+    typeof selectedBatchIndex === 'number' ? selectedBatchIndex : 1;
+  const canGoPrevBatch = typeof selectedBatchIndex === 'number' && currentNumericIndex > 1;
+  const canGoNextBatch =
+    typeof selectedBatchIndex === 'number' && currentNumericIndex < batches.length;
 
   return (
     <div className="space-y-1.5">
-      <div className="flex items-center justify-between gap-1.5">
-        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar touch-pan-x flex-1 min-w-0 py-0.5">
+      {showDropdown ? (
+        /* Scalable Stepper + Full-Width Dropdown (> 5 batches): Zero clipping on 260px sidebars & narrow phones */
+        <div className="space-y-1.5">
+          <div className="flex items-center gap-1.5">
+            <button
+              type="button"
+              disabled={!canGoPrevBatch}
+              onClick={() => onSelectBatch(Math.max(1, currentNumericIndex - 1))}
+              aria-label={isEn ? 'Previous batch' : 'Lô trước'}
+              className={`${
+                isMobileSheet ? 'w-9 h-9' : 'w-7 h-7'
+              } rounded-xl bg-slate-900 hover:bg-slate-800 disabled:opacity-35 text-slate-200 border border-slate-700 flex items-center justify-center shrink-0 cursor-pointer disabled:cursor-not-allowed active:scale-95 transition-all`}
+            >
+              <ChevronLeft className="w-3.5 h-3.5" />
+            </button>
+
+            <div className="relative flex-1 min-w-0">
+              <select
+                value={selectedBatchIndex === 'personal' ? 'personal' : String(selectedBatchIndex)}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  onSelectBatch(val === 'personal' ? 'personal' : Number(val));
+                }}
+                aria-label={isEn ? 'Select batch' : 'Chọn Lô bài tập'}
+                className={`w-full appearance-none rounded-xl border font-black cursor-pointer focus:outline-none transition-colors truncate ${
+                  selectedBatchIndex === 'personal'
+                    ? 'bg-amber-950/60 border-amber-500/50 text-amber-200 focus:border-amber-400'
+                    : activeBatch && !activeBatch.isUnlocked
+                    ? 'bg-amber-950/50 border-amber-500/50 text-amber-200 focus:border-amber-400'
+                    : 'bg-indigo-600/20 border-indigo-500/50 text-indigo-100 focus:border-indigo-400'
+                } ${
+                  isMobileSheet
+                    ? 'pl-3 pr-8 min-h-[36px] text-xs'
+                    : 'pl-2.5 pr-7 h-7 text-[11px]'
+                }`}
+              >
+                {personalCount > 0 && (
+                  <option value="personal" className="bg-slate-900 text-amber-200">
+                    {isEn ? `📒 Personal Vault (${personalCount})` : `📒 Sổ Tay & Tự Tạo (${personalCount})`}
+                  </option>
+                )}
+                {batches.map((b) => (
+                  <option key={b.batchId} value={String(b.batchIndex)} className="bg-slate-900 text-slate-100">
+                    {isEn
+                      ? `${b.isCompleted ? '✅' : b.isUnlocked ? '🔓' : '🔒'} Batch ${b.batchIndex}/${batches.length} (${b.isUnlocked ? `${b.completedCount}/${b.totalCount}` : `${b.costGold} 🪙`})`
+                      : `${b.isCompleted ? '✅' : b.isUnlocked ? '🔓' : '🔒'} Lô ${b.batchIndex}/${batches.length} (${b.isUnlocked ? `${b.completedCount}/${b.totalCount}` : `${b.costGold} 🪙`})`}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown className="w-3.5 h-3.5 text-slate-300 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
+            </div>
+
+            <button
+              type="button"
+              disabled={!canGoNextBatch}
+              onClick={() => onSelectBatch(Math.min(batches.length, currentNumericIndex + 1))}
+              aria-label={isEn ? 'Next batch' : 'Lô tiếp theo'}
+              className={`${
+                isMobileSheet ? 'w-9 h-9' : 'w-7 h-7'
+              } rounded-xl bg-slate-900 hover:bg-slate-800 disabled:opacity-35 text-slate-200 border border-slate-700 flex items-center justify-center shrink-0 cursor-pointer disabled:cursor-not-allowed active:scale-95 transition-all`}
+            >
+              <ChevronRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </div>
+      ) : (
+        /* Compact Direct Pills (<= 5 batches): Flex-wrap so no pill is ever clipped */
+        <div className="flex flex-wrap items-center gap-1.5 py-0.5">
           {personalCount > 0 && (
             <button
               type="button"
@@ -104,7 +164,7 @@ export default function BatchSelectorStrip({
             </button>
           )}
 
-          {visibleBatches.map((b) => {
+          {batches.map((b) => {
             const isSelected = selectedBatchIndex === b.batchIndex;
             return (
               <button
@@ -142,39 +202,7 @@ export default function BatchSelectorStrip({
             );
           })}
         </div>
-
-        {showDropdown && (
-          <div className="relative shrink-0">
-            <select
-              value={selectedBatchIndex === 'personal' ? 'personal' : String(selectedBatchIndex)}
-              onChange={(e) => {
-                const val = e.target.value;
-                onSelectBatch(val === 'personal' ? 'personal' : Number(val));
-              }}
-              aria-label={isEn ? 'Select batch' : 'Chọn Lô bài tập'}
-              className={`appearance-none rounded-xl bg-slate-900 border border-slate-700 font-black text-indigo-300 cursor-pointer focus:outline-none focus:border-indigo-400 ${
-                isMobileSheet
-                  ? 'pl-2.5 pr-7 min-h-[36px] text-xs max-w-[138px]'
-                  : 'pl-2 pr-6 py-1 text-[10px] max-w-[118px]'
-              }`}
-            >
-              {personalCount > 0 && (
-                <option value="personal">
-                  {isEn ? `📒 Personal Vault (${personalCount})` : `📒 Sổ Tay & Tự Tạo (${personalCount})`}
-                </option>
-              )}
-              {batches.map((b) => (
-                <option key={b.batchId} value={String(b.batchIndex)}>
-                  {isEn
-                    ? `Batch ${b.batchIndex}/${batches.length} (${b.isUnlocked ? `${b.completedCount}/${b.totalCount}` : `🔒 ${b.costGold}g`})`
-                    : `Lô ${b.batchIndex}/${batches.length} (${b.isUnlocked ? `${b.completedCount}/${b.totalCount}` : `🔒 ${b.costGold}🪙`})`}
-                </option>
-              ))}
-            </select>
-            <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
-          </div>
-        )}
-      </div>
+      )}
 
       {/* Compact Active Batch Progress Bar */}
       {activeBatch && activeBatch.isUnlocked && (
