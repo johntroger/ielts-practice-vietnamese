@@ -39,9 +39,9 @@ import {
 import { useAudioEngine } from '../hooks/useAudioEngine.js';
 import { useYouTubeAudioEngine } from '../hooks/useYouTubeAudioEngine.js';
 import { useVisualViewport } from '../hooks/useVisualViewport.js';
-import { getAudioPlayableUrl, deleteAudioBlob } from '../utils/audioStorage.js';
+import { deleteAudioBlob } from '../utils/audioStorage.js';
 import { useTranslation } from '../i18n/index.js';
-import { safeGet, safeSet } from '../utils/storageService.js';
+import { safeGet, safeSet, safeRemove } from '../utils/storageService.js';
 import {
   submitRealSprintScore,
   getCurrentUserTotalXp
@@ -66,10 +66,41 @@ import MusicLyricsCanvas from './music/MusicLyricsCanvas.jsx';
 import MusicSessionSummaryCard from './music/MusicSessionSummaryCard.jsx';
 import MusicCustomSongModal from './music/MusicCustomSongModal.jsx';
 
-const CUSTOM_SONGS_STORAGE_KEY = 'ielts_music_custom_songs_v1';
+const LEGACY_CUSTOM_SONGS_KEY = 'ielts_music_custom_songs_v1';
 const MUSIC_RESUME_STORAGE_KEY = 'ielts_music_resume_v1';
 const MUSIC_COMPLETED_STORAGE_KEY = 'ielts_music_completed_v1';
 const MUSIC_BATCH_STORAGE_KEY = 'ielts_music_batch_v1';
+
+/**
+ * Returns the per-account storage key for custom linked songs.
+ * Each user account has its own isolated key so custom songs are strictly private to that account.
+ */
+function getAccountCustomSongsKey(userId) {
+  return userId ? `ielts_music_custom_songs_v2_${userId}` : null;
+}
+
+function loadAccountCustomSongs(userId) {
+  if (!userId) return [];
+  const accountKey = getAccountCustomSongsKey(userId);
+  const stored = safeGet(accountKey, null);
+  if (Array.isArray(stored)) {
+    return stored.filter(
+      (s) => s && (!s.ownerUserId || s.ownerUserId === userId) && !s.localAudioId
+    );
+  }
+
+  // One-time migration from legacy key (only link-based tracks without local file blobs), then purge legacy global key
+  const legacyList = safeGet(LEGACY_CUSTOM_SONGS_KEY, []);
+  if (Array.isArray(legacyList) && legacyList.length > 0) {
+    const migrated = legacyList
+      .filter((s) => s && !s.localAudioId && (!s.ownerUserId || s.ownerUserId === userId))
+      .map((s) => ({ ...s, ownerUserId: userId }));
+    safeSet(accountKey, migrated);
+    safeRemove(LEGACY_CUSTOM_SONGS_KEY);
+    return migrated;
+  }
+  return [];
+}
 
 export default function MusicListeningStudioModal({
   isOpen,
@@ -83,13 +114,42 @@ export default function MusicListeningStudioModal({
 }) {
   const { isEn } = useTranslation();
 
-  // 1. Custom songs, completed state, Sharded Expansion Bank & Progressive Batch State
-  const [customSongs, setCustomSongs] = useState(() => safeGet(CUSTOM_SONGS_STORAGE_KEY, []));
+  // 1. Per-account custom songs, completed state, Sharded Expansion Bank & Progressive Batch State
+  const [customSongs, setCustomSongs] = useState(() => loadAccountCustomSongs(currentUser?.id));
   const [completedMap, setCompletedMap] = useState(() => safeGet(MUSIC_COMPLETED_STORAGE_KEY, {}));
   const [selectedBatchIndex, setSelectedBatchIndex] = useState(() =>
     safeGet(MUSIC_BATCH_STORAGE_KEY, 1)
   );
   const [isCustomModalOpen, setIsCustomModalOpen] = useState(false);
+
+  // Reload customSongs whenever the active user account changes or cloud sync completes
+  useEffect(() => {
+    const nextList = loadAccountCustomSongs(currentUser?.id);
+    setCustomSongs(nextList);
+    if (!currentUser?.id || nextList.length === 0) {
+      setSelectedBatchIndex((prev) => {
+        if (prev === 'personal') {
+          safeSet(MUSIC_BATCH_STORAGE_KEY, 1);
+          return 1;
+        }
+        return prev;
+      });
+    }
+
+    const handleCloudSynced = (payload) => {
+      if (currentUser?.id && Array.isArray(payload?.musicCustomSongs)) {
+        setCustomSongs(
+          payload.musicCustomSongs.filter(
+            (s) => s && (!s.ownerUserId || s.ownerUserId === currentUser.id) && !s.localAudioId
+          )
+        );
+      }
+    };
+    const unsub = eventBus.on('cloud_batch_progress_synced', handleCloudSynced);
+    return () => {
+      if (typeof unsub === 'function') unsub();
+    };
+  }, [currentUser?.id]);
 
   const [expansionPlaceholders, setExpansionPlaceholders] = useState([]);
   const [hydratedExpansionById, setHydratedExpansionById] = useState({});
@@ -385,21 +445,8 @@ export default function MusicListeningStudioModal({
     );
   }, [customSongs, musicBatches, filteredTracks, selectedTrackId]);
 
-  // Hydrate local IndexedDB audio URL if currentTrack is a local custom song
-  const [resolvedAudioSrc, setResolvedAudioSrc] = useState(currentTrack?.audioUrl || '');
-  useEffect(() => {
-    let active = true;
-    if (currentTrack?.localAudioId) {
-      getAudioPlayableUrl(currentTrack.localAudioId).then((url) => {
-        if (active && url) setResolvedAudioSrc(url);
-      });
-    } else {
-      setResolvedAudioSrc(currentTrack?.audioUrl || '');
-    }
-    return () => {
-      active = false;
-    };
-  }, [currentTrack]);
+  // Resolve direct online audio URL for non-YouTube tracks (0 local file storage used)
+  const resolvedAudioSrc = currentTrack?.audioUrl || '';
 
   // Build deterministic exercise blueprint for current track + mode + difficulty + seed
   const blueprint = useMemo(() => {
@@ -793,19 +840,32 @@ export default function MusicListeningStudioModal({
     setTimeout(() => setIsCopiedLink(false), 2000);
   };
 
-  // Add custom song handler -> opens Personal Vault tab automatically
+  // Add custom song handler -> strictly scoped to currentUser.id & synced privately to account cloud metadata
   const handleAddCustomSong = (newTrack) => {
-    const updated = [newTrack, ...customSongs];
+    if (!currentUser?.id) {
+      onOpenAuth?.();
+      return;
+    }
+    const accountKey = getAccountCustomSongsKey(currentUser.id);
+    const taggedTrack = {
+      ...newTrack,
+      ownerUserId: currentUser.id,
+      ownerEmail: currentUser.email || ''
+    };
+    const updated = [taggedTrack, ...customSongs].slice(0, 20);
     setCustomSongs(updated);
-    safeSet(CUSTOM_SONGS_STORAGE_KEY, updated);
+    if (accountKey) {
+      safeSet(accountKey, updated);
+    }
+    eventBus.emit('batch_progress_updated');
     setSelectedGenre('all');
     setSelectedBatchIndex('personal');
     safeSet(MUSIC_BATCH_STORAGE_KEY, 'personal');
-    setSelectedTrackId(newTrack.id);
+    setSelectedTrackId(taggedTrack.id);
     handleResetSession();
   };
 
-  // Delete custom song handler
+  // Delete custom song handler -> strictly scoped to currentUser.id
   const handleDeleteCustomSong = (e, track) => {
     e.stopPropagation();
     if (track.localAudioId) {
@@ -813,7 +873,11 @@ export default function MusicListeningStudioModal({
     }
     const updated = customSongs.filter(s => s.id !== track.id);
     setCustomSongs(updated);
-    safeSet(CUSTOM_SONGS_STORAGE_KEY, updated);
+    const accountKey = getAccountCustomSongsKey(currentUser?.id);
+    if (accountKey) {
+      safeSet(accountKey, updated);
+    }
+    eventBus.emit('batch_progress_updated');
     if (selectedTrackId === track.id) {
       if (updated.length > 0) {
         setSelectedTrackId(updated[0].id);
@@ -1468,15 +1532,15 @@ export default function MusicListeningStudioModal({
               />
             )}
 
-            {/* 3.3. Interactive Karaoke & Dictation Lyrics Canvas + Official YouTube Pip when playing US-UK Hit */}
+            {/* 3.3. Interactive Karaoke & Dictation Lyrics Canvas + Single Responsive Official YouTube Stream Player */}
             <div className="relative flex-1 flex flex-col min-h-0 overflow-hidden">
               {isYouTubeTrack && (
-                <div className="bg-slate-950 border-b border-slate-800 px-3 py-1.5 flex items-center justify-between gap-2 lg:hidden shrink-0">
+                <div className="bg-slate-950 border-b border-slate-800 px-3 py-1.5 flex items-center justify-between gap-2 shrink-0 lg:p-0 lg:bg-black lg:block lg:absolute lg:bottom-3 lg:right-4 lg:z-20 lg:w-56 lg:h-[126px] lg:rounded-xl lg:overflow-hidden lg:shadow-2xl lg:border-2 lg:border-slate-700">
                   <div
                     ref={ytAudioEngine.containerRef}
-                    className="w-28 h-16 rounded-lg overflow-hidden bg-black shrink-0"
+                    className="w-28 h-16 lg:w-full lg:h-full rounded-lg lg:rounded-none overflow-hidden bg-black shrink-0"
                   />
-                  <div className="min-w-0 flex-1 text-xs text-slate-300">
+                  <div className="min-w-0 flex-1 text-xs text-slate-300 lg:hidden">
                     <div className="font-bold text-white truncate">{currentTrack?.title}</div>
                     <div className="text-[11px] text-rose-400 font-semibold">
                       {isEn ? 'Official YouTube Stream' : 'Phát trực tiếp từ YouTube Official'}
@@ -1503,13 +1567,6 @@ export default function MusicListeningStudioModal({
                 onReplayLine={handleReplayLine}
                 onPracticeLinePronunciation={handlePracticeLinePronunciation}
               />
-
-              {/* Desktop Compact YouTube Mini-Player Pip (Bottom-Right) */}
-              {isYouTubeTrack && (
-                <div className="hidden lg:block absolute bottom-3 right-4 z-20 w-56 h-[126px] rounded-xl overflow-hidden shadow-2xl border-2 border-slate-700 bg-black">
-                  <div ref={ytAudioEngine.containerRef} className="w-full h-full" />
-                </div>
-              )}
             </div>
 
             {/* 3.4. Sticky Music Dictation Audio Dock */}
@@ -1690,11 +1747,16 @@ export default function MusicListeningStudioModal({
         </div>
       )}
 
-      {/* Custom Song Importer Modal */}
+      {/* Custom Song Importer Modal (Link-Only & Per-Account Private) */}
       <MusicCustomSongModal
         isOpen={isCustomModalOpen}
         onClose={() => setIsCustomModalOpen(false)}
         onAddCustomSong={handleAddCustomSong}
+        currentUser={currentUser}
+        onOpenAuth={() => {
+          audioEngine.pause();
+          onOpenAuth?.();
+        }}
       />
     </div>
   );

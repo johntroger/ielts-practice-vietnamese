@@ -185,13 +185,15 @@ export function useCloudAndStorageSync({
         }
       });
 
-      // Sync Atlas Wallet (Gold, Diamonds, Unlocked Batches) & Pronunciation/Conversation Progress
+      // Sync Atlas Wallet (Gold, Diamonds, Unlocked Batches), Pronunciation/Conversation & Private Custom Music Songs
       const pronKey = `ielts_pronunciation_passed_ids_v1_${currentUser.id}`;
+      const musicCustomKey = `ielts_music_custom_songs_v2_${currentUser.id}`;
       fetchUserWalletAndBatchProgress(currentUser.id).then(cloudData => {
         const localWallet = getWallet();
         const localPronPassed = safeGet(pronKey, []);
         const localConvStats = safeGet('ielts_conversation_stats_v1', { totalXpEarned: 0, completedCount: 0, bestScores: {}, streak: 0 });
         const localShadowStats = safeGet('ielts_shadowing_stats_v1', { totalXpEarned: 0, completedCount: 0, bestScores: {}, streak: 0 });
+        const localMusicCustom = safeGet(musicCustomKey, []);
 
         if (cloudData && typeof cloudData === 'object') {
           const cloudWallet = cloudData.wallet || {};
@@ -243,9 +245,27 @@ export function useCloudAndStorageSync({
           const mergedConvBest = mergeBestScores(localConvStats.bestScores, cloudData.convBestScores);
           const mergedShadowBest = mergeBestScores(localShadowStats.bestScores, cloudData.shadowBestScores);
 
+          // Merge user's private link-based custom songs (strictly scoped to currentUser.id, max 20 songs)
+          const customSongMap = new Map();
+          [
+            ...(Array.isArray(localMusicCustom) ? localMusicCustom : []),
+            ...(Array.isArray(cloudData.musicCustomSongs) ? cloudData.musicCustomSongs : [])
+          ].forEach((song) => {
+            if (
+              song &&
+              song.id &&
+              (!song.ownerUserId || song.ownerUserId === currentUser.id) &&
+              !song.localAudioId
+            ) {
+              customSongMap.set(song.id, { ...song, ownerUserId: currentUser.id });
+            }
+          });
+          const mergedMusicCustom = Array.from(customSongMap.values()).slice(0, 20);
+
           isApplyingCloudWalletRef.current = true;
           saveWallet(mergedWallet);
           safeSet(pronKey, mergedPronPassed);
+          safeSet(musicCustomKey, mergedMusicCustom);
           safeSet('ielts_conversation_stats_v1', {
             ...localConvStats,
             bestScores: mergedConvBest,
@@ -259,7 +279,8 @@ export function useCloudAndStorageSync({
           eventBus.emit('cloud_batch_progress_synced', {
             pronPassedIds: mergedPronPassed,
             convBestScores: mergedConvBest,
-            shadowBestScores: mergedShadowBest
+            shadowBestScores: mergedShadowBest,
+            musicCustomSongs: mergedMusicCustom
           });
           setTimeout(() => {
             isApplyingCloudWalletRef.current = false;
@@ -271,6 +292,7 @@ export function useCloudAndStorageSync({
             pronPassedIds: Array.isArray(localPronPassed) ? localPronPassed : [],
             convBestScores: localConvStats.bestScores || {},
             shadowBestScores: localShadowStats.bestScores || {},
+            musicCustomSongs: Array.isArray(localMusicCustom) ? localMusicCustom.slice(0, 20) : [],
             updatedAt: new Date().toISOString()
           });
         }
@@ -290,16 +312,19 @@ export function useCloudAndStorageSync({
       if (pushTimer) clearTimeout(pushTimer);
       pushTimer = setTimeout(() => {
         const pronKey = `ielts_pronunciation_passed_ids_v1_${currentUser.id}`;
+        const musicCustomKey = `ielts_music_custom_songs_v2_${currentUser.id}`;
         const localWallet = getWallet();
         const localPronPassed = safeGet(pronKey, []);
         const localConvStats = safeGet('ielts_conversation_stats_v1', { bestScores: {} });
         const localShadowStats = safeGet('ielts_shadowing_stats_v1', { bestScores: {} });
+        const localMusicCustom = safeGet(musicCustomKey, []);
 
         saveUserWalletAndBatchProgress(currentUser.id, {
           wallet: localWallet,
           pronPassedIds: Array.isArray(localPronPassed) ? localPronPassed : [],
           convBestScores: localConvStats.bestScores || {},
           shadowBestScores: localShadowStats.bestScores || {},
+          musicCustomSongs: Array.isArray(localMusicCustom) ? localMusicCustom.slice(0, 20) : [],
           updatedAt: new Date().toISOString()
         });
       }, 1200);
