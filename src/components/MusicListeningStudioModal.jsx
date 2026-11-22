@@ -1002,14 +1002,16 @@ export default function MusicListeningStudioModal({
               <span className="hidden md:inline">{isEn ? 'Vocab & Focus' : 'Từ vựng'}</span>
             </button>
 
-            {/* Custom Song (.LRC) Importer Button */}
+            {/* Custom YouTube Song Importer Button (Visible on both Mobile & Desktop) */}
             <button
               type="button"
               onClick={() => setIsCustomModalOpen(true)}
-              className="hidden sm:inline-flex items-center space-x-1 px-2 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-[11px] font-extrabold whitespace-nowrap transition-colors cursor-pointer shrink-0"
+              className="inline-flex items-center space-x-1 px-2 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-[11px] font-extrabold whitespace-nowrap transition-colors cursor-pointer shrink-0"
+              title={isEn ? 'Add personal song via YouTube link' : 'Thêm bài hát cá nhân bằng link YouTube'}
             >
-              <Plus className="w-3 h-3" />
-              <span className="hidden xl:inline">{isEn ? 'Custom (.LRC)' : 'Tự nạp (.LRC)'}</span>
+              <Plus className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline xl:hidden">YouTube</span>
+              <span className="hidden xl:inline">{isEn ? 'Add YouTube' : 'Thêm YouTube'}</span>
             </button>
           </div>
 
@@ -1620,21 +1622,34 @@ export default function MusicListeningStudioModal({
             className="w-full max-h-[85dvh] bg-white dark:bg-slate-900 rounded-t-3xl border-t border-slate-200 dark:border-slate-800 flex flex-col shadow-2xl overflow-hidden animate-in slide-in-from-bottom-4 duration-200"
           >
             {/* Mobile Sheet Header */}
-            <div className="px-4 py-3 bg-slate-950 text-white border-b border-slate-800 flex items-center justify-between shrink-0">
-              <div className="flex items-center space-x-2">
-                <ListMusic className="w-4 h-4 text-rose-400" />
-                <span className="font-black text-sm">
-                  {isEn ? 'Songs & Music Bank Batches' : 'Danh Sách Bài Hát & Lô Nhạc'}
+            <div className="px-4 py-3 bg-slate-950 text-white border-b border-slate-800 flex items-center justify-between gap-2 shrink-0">
+              <div className="flex items-center space-x-2 min-w-0">
+                <ListMusic className="w-4 h-4 text-rose-400 shrink-0" />
+                <span className="font-black text-sm truncate">
+                  {isEn ? 'Songs & Batches' : 'Danh Sách & Lô Nhạc'}
                 </span>
               </div>
-              <button
-                type="button"
-                onClick={() => setIsMobileLibraryOpen(false)}
-                className="p-1.5 rounded-xl bg-slate-900 text-slate-300 hover:text-white cursor-pointer"
-                aria-label={isEn ? 'Close song sheet' : 'Đóng danh sách bài hát'}
-              >
-                <X className="w-5 h-5" />
-              </button>
+              <div className="flex items-center space-x-2 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsMobileLibraryOpen(false);
+                    setIsCustomModalOpen(true);
+                  }}
+                  className="inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-extrabold cursor-pointer active:scale-95 transition-all"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>{isEn ? 'Add YouTube' : 'Thêm YouTube'}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsMobileLibraryOpen(false)}
+                  className="p-1.5 rounded-xl bg-slate-900 text-slate-300 hover:text-white cursor-pointer"
+                  aria-label={isEn ? 'Close song sheet' : 'Đóng danh sách bài hát'}
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
             </div>
 
             {/* Batch Selector inside Mobile Sheet */}
