@@ -32,7 +32,8 @@ export default function MusicAudioControlDock({
   isAutoLoopLine = false,
   onToggleAutoLoopLine,
   isAutoPauseLine = false,
-  onToggleAutoPauseLine
+  onToggleAutoPauseLine,
+  isKeyboardOpen = false
 }) {
   const { isEn } = useTranslation();
   const [isSpeedOpen, setIsSpeedOpen] = useState(false);
@@ -55,7 +56,7 @@ export default function MusicAudioControlDock({
 
   const progressPct = duration > 0 ? Math.min(100, Math.max(0, (currentTime / duration) * 100)) : 0;
 
-  // Detect if we are currently in an instrumental Intro or long Instrumental Gap (> 6s before next line)
+  // Detect if we are currently in an instrumental Intro or long Instrumental Gap (> 5s before next line)
   const firstLine = lines[0];
   const nextUpcomingLine = lines.find(l => l.start > currentTime + 1.5);
   const isDuringIntro = firstLine && firstLine.start > 3.5 && currentTime < firstLine.start - 1.5;
@@ -86,8 +87,84 @@ export default function MusicAudioControlDock({
     onSelectLineIndex?.(nextIdx, true);
   };
 
+  // ULTRA-SLIM MOBILE VIRTUAL KEYBOARD COMPANION BAR
+  // Preserves maximum vertical typing space when phone keyboard is open
+  if (isKeyboardOpen) {
+    return (
+      <div className="bg-slate-950 text-slate-100 border-t border-slate-800 px-2.5 py-1.5 shrink-0 select-none z-20 flex items-center justify-between gap-1.5">
+        <div className="flex items-center space-x-1.5">
+          <button
+            type="button"
+            onClick={togglePlay}
+            className={`w-9 h-9 rounded-full flex items-center justify-center text-white shadow-md active:scale-95 cursor-pointer shrink-0 ${
+              isPlaying ? 'bg-emerald-600' : 'bg-gradient-to-r from-rose-600 to-purple-600'
+            }`}
+            aria-label={isPlaying ? (isEn ? 'Pause' : 'Tạm dừng') : (isEn ? 'Play' : 'Phát')}
+          >
+            {isLoading ? (
+              <RefreshCw className="w-4 h-4 animate-spin" />
+            ) : isPlaying ? (
+              <Pause className="w-4 h-4 fill-current" />
+            ) : (
+              <Play className="w-4 h-4 fill-current translate-x-0.5" />
+            )}
+          </button>
+
+          <button
+            type="button"
+            onClick={onReplayActiveLine}
+            className="h-9 px-2.5 rounded-xl bg-slate-900 text-amber-300 border border-amber-500/40 text-xs font-extrabold flex items-center space-x-1 active:scale-95 cursor-pointer shrink-0"
+          >
+            <RotateCcw className="w-3.5 h-3.5" />
+            <span>{isEn ? 'Replay' : 'Nghe lại'}</span>
+          </button>
+        </div>
+
+        <div className="flex items-center space-x-1.5">
+          <button
+            type="button"
+            onClick={onToggleAutoLoopLine}
+            className={`h-9 px-2 rounded-xl border text-[11px] font-extrabold flex items-center space-x-1 cursor-pointer ${
+              isAutoLoopLine
+                ? 'bg-emerald-500/20 border-emerald-400 text-emerald-300'
+                : 'bg-slate-900 border-slate-800 text-slate-400'
+            }`}
+          >
+            <Repeat className="w-3.5 h-3.5" />
+            <span>{isEn ? 'Loop' : 'Lặp'}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={onToggleAutoPauseLine}
+            className={`h-9 px-2 rounded-xl border text-[11px] font-extrabold flex items-center space-x-1 cursor-pointer ${
+              isAutoPauseLine
+                ? 'bg-amber-500/20 border-amber-400 text-amber-300'
+                : 'bg-slate-900 border-slate-800 text-slate-400'
+            }`}
+          >
+            <PauseCircle className="w-3.5 h-3.5" />
+            <span>{isEn ? 'Pause' : 'Dừng'}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              const rates = [0.75, 0.85, 1.0, 1.15];
+              const nextRate = rates[(rates.indexOf(playbackRate) + 1) % rates.length];
+              changePlaybackRate?.(nextRate);
+            }}
+            className="h-9 px-2 rounded-xl bg-slate-900 text-slate-200 border border-slate-800 text-[11px] font-mono font-bold cursor-pointer"
+          >
+            {playbackRate}x
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="bg-slate-950 text-slate-100 border-t border-slate-800 px-3 sm:px-5 py-2.5 shrink-0 select-none shadow-2xl z-20">
+    <div className="bg-slate-950 text-slate-100 border-t border-slate-800 px-3 sm:px-5 pt-2 pb-[max(0.625rem,env(safe-area-inset-bottom))] shrink-0 select-none shadow-2xl z-20">
       {/* Error Banner */}
       {errorMessage && (
         <div className="mb-2 px-3 py-1.5 rounded-xl bg-amber-600/90 text-white text-xs flex items-center justify-between font-semibold">
@@ -107,17 +184,17 @@ export default function MusicAudioControlDock({
 
       {/* Floating Skip Intro / Instrumental Solo Banner */}
       {skipTargetLine && (
-        <div className="mb-2 flex items-center justify-between px-3 py-1.5 rounded-xl bg-gradient-to-r from-indigo-900/90 via-purple-900/90 to-rose-900/90 border border-purple-500/40 text-xs animate-in fade-in duration-200">
-          <div className="flex items-center space-x-2 min-w-0">
+        <div className="mb-2 flex items-center justify-between px-2.5 sm:px-3 py-1.5 rounded-xl bg-gradient-to-r from-indigo-900/90 via-purple-900/90 to-rose-900/90 border border-purple-500/40 text-[11px] sm:text-xs animate-in fade-in duration-200">
+          <div className="flex items-center space-x-1.5 sm:space-x-2 min-w-0">
             <Sparkles className="w-3.5 h-3.5 text-amber-300 shrink-0 animate-pulse" />
             <span className="text-slate-200 font-medium truncate">
               {isDuringIntro
                 ? (isEn
-                    ? `Instrumental intro playing • Vocals begin at ${formatClock(skipTargetLine.start)}`
-                    : `Đang phát nhạc dạo đầu • Ca sĩ vào lời lúc ${formatClock(skipTargetLine.start)}`)
+                    ? `Intro • Vocals at ${formatClock(skipTargetLine.start)}`
+                    : `Nhạc dạo • Vào lời lúc ${formatClock(skipTargetLine.start)}`)
                 : (isEn
-                    ? `Instrumental interlude • Next lyric line at ${formatClock(skipTargetLine.start)}`
-                    : `Đoạn nhạc cụ dạo giữa bài • Câu hát tiếp theo lúc ${formatClock(skipTargetLine.start)}`)}
+                    ? `Interlude • Next line at ${formatClock(skipTargetLine.start)}`
+                    : `Nhạc dạo giữa bài • Câu tiếp lúc ${formatClock(skipTargetLine.start)}`)}
             </span>
           </div>
           <button
@@ -131,30 +208,28 @@ export default function MusicAudioControlDock({
             <FastForward className="w-3.5 h-3.5 fill-current" />
             <span>
               {isDuringIntro
-                ? (isEn ? 'Skip Intro' : 'Bỏ qua nhạc dạo')
-                : (isEn ? 'Skip to Vocal' : 'Tới câu hát')}
+                ? (isEn ? 'Skip Intro' : 'Bỏ nhạc dạo')
+                : (isEn ? 'Skip' : 'Tới lời')}
             </span>
           </button>
         </div>
       )}
 
       {/* Interactive Scrubber Timeline with Lyric Line Markers */}
-      <div className="mb-2 flex items-center space-x-2.5">
-        <span className="font-mono text-[11px] font-bold text-emerald-400 w-10 text-right shrink-0">
+      <div className="mb-2 flex items-center space-x-2">
+        <span className="font-mono text-[11px] font-bold text-emerald-400 w-9 sm:w-10 text-right shrink-0">
           {formatClock(currentTime)}
         </span>
 
         <div
           onClick={handleProgressBarClick}
-          className="group relative flex-1 h-2.5 bg-slate-800 hover:h-3 rounded-full overflow-hidden cursor-pointer transition-all"
+          className="group relative flex-1 h-2.5 sm:h-2.5 bg-slate-800 hover:h-3 rounded-full overflow-hidden cursor-pointer transition-all"
           title={isEn ? 'Click anywhere to seek song timeline' : 'Bấm vị trí bất kỳ để tua bài hát'}
         >
-          {/* Buffer progress */}
           <div
             className="absolute left-0 top-0 bottom-0 bg-slate-700/70 transition-all duration-300"
             style={{ width: `${bufferedPercent}%` }}
           />
-          {/* Lyric Line Tick Markers */}
           {duration > 0 &&
             lines.map((line, idx) => {
               const leftPct = Math.min(99.5, Math.max(0.5, (line.start / duration) * 100));
@@ -169,30 +244,29 @@ export default function MusicAudioControlDock({
                 />
               );
             })}
-          {/* Active Playback Progress */}
           <div
             className="absolute left-0 top-0 bottom-0 bg-gradient-to-r from-rose-500 via-purple-500 to-emerald-400 rounded-full transition-all duration-100"
             style={{ width: `${progressPct}%` }}
           />
         </div>
 
-        <span className="font-mono text-[11px] text-slate-400 w-10 shrink-0">
+        <span className="font-mono text-[11px] text-slate-400 w-9 sm:w-10 shrink-0">
           {formatClock(duration)}
         </span>
       </div>
 
-      {/* Main Transport & Dictation Ergonomics Row */}
-      <div className="flex flex-wrap items-center justify-between gap-2">
+      {/* Main Transport & Dictation Ergonomics Row — Optimized for both 375px Mobile & Desktop */}
+      <div className="flex items-center justify-between gap-1.5 sm:gap-2">
         {/* Left: Playback Transport Buttons */}
-        <div className="flex items-center space-x-1.5 sm:space-x-2">
+        <div className="flex items-center space-x-1 sm:space-x-2 shrink-0">
           <button
             type="button"
             onClick={handlePrevLine}
             disabled={activeLineIndex <= 0}
-            className="p-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 disabled:opacity-40 text-slate-300 hover:text-white border border-slate-800 transition-colors cursor-pointer"
+            className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-slate-900 hover:bg-slate-800 disabled:opacity-40 text-slate-300 hover:text-white border border-slate-800 flex items-center justify-center transition-colors cursor-pointer"
             title={isEn ? 'Previous lyric line' : 'Câu hát trước'}
           >
-            <SkipBack className="w-4 h-4" />
+            <SkipBack className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           </button>
 
           <button
@@ -218,34 +292,34 @@ export default function MusicAudioControlDock({
             type="button"
             onClick={handleNextLine}
             disabled={activeLineIndex >= lines.length - 1}
-            className="p-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 disabled:opacity-40 text-slate-300 hover:text-white border border-slate-800 transition-colors cursor-pointer"
+            className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-slate-900 hover:bg-slate-800 disabled:opacity-40 text-slate-300 hover:text-white border border-slate-800 flex items-center justify-center transition-colors cursor-pointer"
             title={isEn ? 'Next lyric line' : 'Câu hát tiếp theo'}
           >
-            <SkipForward className="w-4 h-4" />
+            <SkipForward className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           </button>
 
           {/* Replay Active Line Button (Tab shortcut) */}
           <button
             type="button"
             onClick={onReplayActiveLine}
-            className="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-amber-300 border border-amber-500/30 text-xs font-bold transition-all active:scale-95 cursor-pointer"
+            className="h-8 sm:h-9 px-2 sm:px-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-amber-300 border border-amber-500/30 text-[11px] sm:text-xs font-bold flex items-center space-x-1 transition-all active:scale-95 cursor-pointer"
             title={isEn ? 'Replay current line from beginning (Shortcut: Tab)' : 'Nghe lại câu hiện tại từ đầu (Phím tắt: Tab)'}
           >
             <RotateCcw className="w-3.5 h-3.5 shrink-0" />
-            <span className="hidden sm:inline">{isEn ? 'Replay Line' : 'Nghe lại câu'}</span>
-            <kbd className="px-1.5 py-0.2 rounded bg-slate-800 text-amber-200 font-mono text-[10px] border border-slate-700">
+            <span className="hidden xs:inline sm:inline">{isEn ? 'Replay' : 'Nghe lại'}</span>
+            <kbd className="hidden md:inline-block px-1.5 py-0.2 rounded bg-slate-800 text-amber-200 font-mono text-[10px] border border-slate-700">
               Tab
             </kbd>
           </button>
         </div>
 
-        {/* Center/Right: Dictation Assist Switches (Auto-Loop Line, Auto-Pause Line, Speed, Volume) */}
-        <div className="flex items-center flex-wrap gap-1.5 sm:gap-2">
+        {/* Right: Dictation Assist Switches (Single scrollable strip on very small phones) */}
+        <div className="flex items-center space-x-1 sm:space-x-1.5 overflow-x-auto scrollbar-none shrink">
           {/* 1. Auto-Loop Current Line Switch */}
           <button
             type="button"
             onClick={onToggleAutoLoopLine}
-            className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
+            className={`h-8 sm:h-9 px-2 sm:px-2.5 rounded-xl border text-[11px] sm:text-xs font-bold flex items-center space-x-1 transition-all cursor-pointer shrink-0 ${
               isAutoLoopLine
                 ? 'bg-emerald-500/20 border-emerald-400 text-emerald-300 shadow-xs'
                 : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200 hover:bg-slate-800'
@@ -257,9 +331,9 @@ export default function MusicAudioControlDock({
             }
           >
             <Repeat className={`w-3.5 h-3.5 shrink-0 ${isAutoLoopLine ? 'text-emerald-400' : ''}`} />
-            <span>{isEn ? 'Loop Line' : 'Lặp câu'}</span>
+            <span>{isEn ? 'Loop' : 'Lặp'}</span>
             <span
-              className={`px-1.5 py-0.2 rounded text-[9px] font-black uppercase ${
+              className={`hidden sm:inline px-1.5 py-0.2 rounded text-[9px] font-black uppercase ${
                 isAutoLoopLine ? 'bg-emerald-500 text-slate-950' : 'bg-slate-800 text-slate-400'
               }`}
             >
@@ -271,7 +345,7 @@ export default function MusicAudioControlDock({
           <button
             type="button"
             onClick={onToggleAutoPauseLine}
-            className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
+            className={`h-8 sm:h-9 px-2 sm:px-2.5 rounded-xl border text-[11px] sm:text-xs font-bold flex items-center space-x-1 transition-all cursor-pointer shrink-0 ${
               isAutoPauseLine
                 ? 'bg-amber-500/20 border-amber-400 text-amber-300 shadow-xs'
                 : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200 hover:bg-slate-800'
@@ -283,9 +357,10 @@ export default function MusicAudioControlDock({
             }
           >
             <PauseCircle className={`w-3.5 h-3.5 shrink-0 ${isAutoPauseLine ? 'text-amber-400' : ''}`} />
-            <span>{isEn ? 'Auto-Pause' : 'Tự dừng'}</span>
+            <span className="hidden sm:inline">{isEn ? 'Auto-Pause' : 'Tự dừng'}</span>
+            <span className="sm:hidden">{isEn ? 'Pause' : 'Dừng'}</span>
             <span
-              className={`px-1.5 py-0.2 rounded text-[9px] font-black uppercase ${
+              className={`hidden sm:inline px-1.5 py-0.2 rounded text-[9px] font-black uppercase ${
                 isAutoPauseLine ? 'bg-amber-500 text-slate-950' : 'bg-slate-800 text-slate-400'
               }`}
             >
@@ -294,11 +369,11 @@ export default function MusicAudioControlDock({
           </button>
 
           {/* 3. Playback Speed Selector */}
-          <div className="relative">
+          <div className="relative shrink-0">
             <button
               type="button"
               onClick={() => setIsSpeedOpen(prev => !prev)}
-              className="px-2.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 text-xs font-mono font-bold cursor-pointer"
+              className="h-8 sm:h-9 px-2 sm:px-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 text-[11px] sm:text-xs font-mono font-bold cursor-pointer"
               title={isEn ? 'Adjust song speed' : 'Chỉnh tốc độ phát nhạc'}
             >
               {playbackRate}x
@@ -329,11 +404,11 @@ export default function MusicAudioControlDock({
             )}
           </div>
 
-          {/* 4. Mute / Volume Toggle */}
+          {/* 4. Mute / Volume Toggle (Hidden on extra-small phones where hardware buttons exist) */}
           <button
             type="button"
             onClick={toggleMute}
-            className="p-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white border border-slate-800 transition-colors cursor-pointer"
+            className="hidden sm:flex w-9 h-9 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white border border-slate-800 items-center justify-center transition-colors cursor-pointer shrink-0"
             title={isMuted ? (isEn ? 'Unmute' : 'Bật âm') : (isEn ? 'Mute' : 'Tắt âm')}
           >
             {isMuted || volume === 0 ? (

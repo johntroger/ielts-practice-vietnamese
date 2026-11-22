@@ -254,6 +254,11 @@ const MusicLineCard = memo(function MusicLineCard({
                     <input
                       ref={(el) => registerInputRef?.(`${lineIdx}:${tok.tokenIndex}`, el)}
                       type="text"
+                      inputMode="text"
+                      autoComplete="off"
+                      autoCorrect="off"
+                      autoCapitalize="none"
+                      spellCheck={false}
                       value={rawVal}
                       disabled={isLineRevealed}
                       onFocus={() => onSeekToLine?.(lineIdx, false)}
@@ -261,14 +266,14 @@ const MusicLineCard = memo(function MusicLineCard({
                         onWordInputChange?.(lineIdx, tok.tokenIndex, e.target.value, tok.coreWord)
                       }
                       onKeyDown={(e) => handleKeyDownInBlank(e, tok.tokenIndex)}
-                      style={{ width: `${charWidth}ch` }}
+                      style={{ width: `${charWidth}ch`, maxWidth: '100%' }}
                       placeholder={'_'.repeat(Math.min(8, Math.max(3, tok.coreWord?.length || 4)))}
                       aria-label={
                         isEn
                           ? `Blank word in line ${lineIdx + 1}`
                           : `Ô điền từ dòng ${lineIdx + 1}`
                       }
-                      className={`px-2 py-0.5 rounded-lg border-2 font-bold text-center text-sm sm:text-base transition-all focus:outline-none ${
+                      className={`px-2 py-1 sm:py-0.5 rounded-lg border-2 font-bold text-center text-base transition-all focus:outline-none ${
                         isSolved
                           ? 'bg-emerald-100/90 dark:bg-emerald-900/60 border-emerald-500 text-emerald-900 dark:text-emerald-100 shadow-2xs'
                           : ev.isNearMiss
@@ -304,6 +309,11 @@ const MusicLineCard = memo(function MusicLineCard({
             <input
               ref={(el) => registerInputRef?.(`${lineIdx}:sentence`, el)}
               type="text"
+              inputMode="text"
+              autoComplete="off"
+              autoCorrect="off"
+              autoCapitalize="none"
+              spellCheck={false}
               value={effectiveSentenceText}
               disabled={isLineRevealed}
               onFocus={() => onSeekToLine?.(lineIdx, false)}
@@ -311,10 +321,10 @@ const MusicLineCard = memo(function MusicLineCard({
               onKeyDown={handleKeyDownInSentence}
               placeholder={
                 isEn
-                  ? `Listen and type the full line (${line.wordCount} words)... Press Tab to replay`
-                  : `Nghe và gõ lại nguyên câu hát này (${line.wordCount} từ)... Bấm Tab để nghe lại`
+                  ? `Listen and type the full line (${line.wordCount} words)...`
+                  : `Nghe và gõ nguyên câu (${line.wordCount} từ)...`
               }
-              className={`w-full px-3.5 py-2 rounded-xl border-2 text-sm sm:text-base font-semibold transition-all focus:outline-none ${
+              className={`w-full px-3.5 py-2.5 sm:py-2 rounded-xl border-2 text-base font-semibold transition-all focus:outline-none ${
                 isLineCompleted
                   ? 'bg-emerald-50/90 dark:bg-emerald-950/40 border-emerald-500 text-emerald-900 dark:text-emerald-100'
                   : 'bg-slate-50 dark:bg-slate-800/90 border-purple-300 dark:border-purple-700 text-slate-900 dark:text-slate-100 focus:bg-white dark:focus:bg-slate-800 focus:border-purple-600 focus:ring-2 focus:ring-purple-500/20'

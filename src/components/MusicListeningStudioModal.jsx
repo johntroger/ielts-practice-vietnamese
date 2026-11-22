@@ -17,7 +17,9 @@ import {
   CheckCircle2,
   Eye,
   Languages,
-  Trash2
+  Trash2,
+  ListMusic,
+  SlidersHorizontal
 } from 'lucide-react';
 import {
   MUSIC_GENRES,
@@ -31,6 +33,7 @@ import {
   evaluateSentenceBlankAttempt
 } from '../utils/musicDictationGenerator.js';
 import { useAudioEngine } from '../hooks/useAudioEngine.js';
+import { useVisualViewport } from '../hooks/useVisualViewport.js';
 import { getAudioPlayableUrl, deleteAudioBlob } from '../utils/audioStorage.js';
 import { useTranslation } from '../i18n/index.js';
 import { safeGet, safeSet } from '../utils/storageService.js';
@@ -124,8 +127,11 @@ export default function MusicListeningStudioModal({
 
   const [searchQuery, setSearchQuery] = useState('');
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isMobileLibraryOpen, setIsMobileLibraryOpen] = useState(false);
+  const [isMobileOptionsOpen, setIsMobileOptionsOpen] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isCopiedLink, setIsCopiedLink] = useState(false);
+  const { isKeyboardOpen } = useVisualViewport();
 
   // Pedagogical display toggles
   const [showTranslation, setShowTranslation] = useState(true);
@@ -750,13 +756,14 @@ export default function MusicListeningStudioModal({
         {/* ================================================================= */}
         {/* 1. TOP STUDIO HEADER BAR                                          */}
         {/* ================================================================= */}
-        <div className="px-3 sm:px-5 py-2.5 bg-slate-950 text-white border-b border-slate-800 flex items-center justify-between gap-2 shrink-0">
-          {/* Left: Studio Brand & Sidebar Collapse Button */}
-          <div className="flex items-center space-x-2 sm:space-x-3 min-w-0">
+        <div className="px-2.5 sm:px-5 py-2 sm:py-2.5 bg-slate-950 text-white border-b border-slate-800 flex items-center justify-between gap-2 shrink-0">
+          {/* Left: Desktop Sidebar Collapse / Mobile Song & Batch Sheet Trigger + Brand */}
+          <div className="flex items-center space-x-1.5 sm:space-x-3 min-w-0">
+            {/* Desktop Sidebar Collapse Toggle (>= 1024px) */}
             <button
               type="button"
               onClick={() => setIsSidebarCollapsed(prev => !prev)}
-              className="p-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 transition-colors cursor-pointer"
+              className="hidden lg:flex p-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 transition-colors cursor-pointer"
               title={
                 isSidebarCollapsed
                   ? (isEn ? 'Show Song Library Sidebar' : 'Hiện danh sách bài hát')
@@ -770,14 +777,29 @@ export default function MusicListeningStudioModal({
               )}
             </button>
 
-            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-tr from-rose-600 via-pink-600 to-purple-600 flex items-center justify-center shadow-md shrink-0">
+            {/* Mobile & Tablet Song / Batch Library Drawer Button (< 1024px) */}
+            <button
+              type="button"
+              onClick={() => setIsMobileLibraryOpen(true)}
+              className="lg:hidden flex items-center space-x-1.5 px-2.5 h-9 rounded-xl bg-gradient-to-r from-rose-600/90 to-purple-600/90 hover:from-rose-500 hover:to-purple-500 text-white text-xs font-extrabold shadow-xs active:scale-95 transition-all cursor-pointer shrink-0"
+              aria-label={isEn ? 'Open Songs & Batches Library' : 'Mở danh sách Bài hát & Lô nhạc'}
+            >
+              <ListMusic className="w-4 h-4 shrink-0" />
+              <span>
+                {selectedBatchIndex === 'personal'
+                  ? (isEn ? 'My Songs' : 'Tự nạp')
+                  : (isEn ? `Batch ${selectedBatchIndex}` : `Lô ${selectedBatchIndex}`)}
+              </span>
+            </button>
+
+            <div className="hidden sm:flex w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-tr from-rose-600 via-pink-600 to-purple-600 items-center justify-center shadow-md shrink-0">
               <Music className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
             </div>
 
             <div className="min-w-0">
               <div className="flex items-center space-x-2">
                 <h2 className="font-black text-xs sm:text-base tracking-tight truncate">
-                  {isEn ? 'Music & Lyrics Dictation Studio' : 'Phòng Luyện Nghe Nhạc & Chép Lời'}
+                  {isEn ? 'Music Dictation' : 'Nghe Nhạc Chép Lời'}
                 </h2>
                 <span className="hidden md:inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-black bg-rose-500/20 text-rose-300 border border-rose-500/30">
                   /music-listening
@@ -798,9 +820,10 @@ export default function MusicListeningStudioModal({
               <span className="text-orange-300">{streakCount}d</span>
             </div>
 
-            <div className="hidden md:block">
+            <div>
               <GoldWalletHeaderBadge
                 isEn={isEn}
+                compact={true}
                 onOpenArena={() => {
                   audioEngine.pause();
                   onOpenArena?.();
@@ -860,47 +883,50 @@ export default function MusicListeningStudioModal({
         </div>
 
         {/* ================================================================= */}
-        {/* 2. 6-GENRE FILTER STRIP                                           */}
+        {/* 2. 6-GENRE FILTER STRIP (Auto-hides on mobile when keyboard opens) */}
         {/* ================================================================= */}
-        <div className="px-3 sm:px-5 py-2 bg-slate-900 text-slate-200 border-b border-slate-800 flex items-center justify-between gap-2 overflow-x-auto scrollbar-none shrink-0">
-          <div className="flex items-center space-x-1.5">
-            {MUSIC_GENRES.map((g) => {
-              const isSelected = selectedGenre === g.id;
-              return (
-                <button
-                  key={g.id}
-                  type="button"
-                  onClick={() => setSelectedGenre(g.id)}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-extrabold transition-all whitespace-nowrap cursor-pointer ${
-                    isSelected
-                      ? 'bg-gradient-to-r from-rose-600 to-purple-600 text-white shadow-sm'
-                      : 'bg-slate-800/90 hover:bg-slate-800 text-slate-300 hover:text-white'
-                  }`}
-                  title={isEn ? g.descEn : g.descVi}
-                >
-                  {isEn ? g.labelEn : g.labelVi}
-                </button>
-              );
-            })}
+        {!isKeyboardOpen && (
+          <div className="px-2.5 sm:px-5 py-1.5 sm:py-2 bg-slate-900 text-slate-200 border-b border-slate-800 flex items-center justify-between gap-2 overflow-x-auto scrollbar-none shrink-0">
+            <div className="flex items-center space-x-1.5">
+              {MUSIC_GENRES.map((g) => {
+                const isSelected = selectedGenre === g.id;
+                return (
+                  <button
+                    key={g.id}
+                    type="button"
+                    onClick={() => setSelectedGenre(g.id)}
+                    className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl text-[11px] sm:text-xs font-extrabold transition-all whitespace-nowrap cursor-pointer ${
+                      isSelected
+                        ? 'bg-gradient-to-r from-rose-600 to-purple-600 text-white shadow-sm'
+                        : 'bg-slate-800/90 hover:bg-slate-800 text-slate-300 hover:text-white'
+                    }`}
+                    title={isEn ? g.descEn : g.descVi}
+                  >
+                    <span className="sm:hidden">{isEn ? g.shortEn : g.shortVi}</span>
+                    <span className="hidden sm:inline">{isEn ? g.labelEn : g.labelVi}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setIsCustomModalOpen(true)}
+              className="flex items-center space-x-1 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-[11px] sm:text-xs font-extrabold whitespace-nowrap transition-colors cursor-pointer shrink-0"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span>{isEn ? 'Custom (.LRC)' : 'Tự nạp (.LRC)'}</span>
+            </button>
           </div>
-
-          <button
-            type="button"
-            onClick={() => setIsCustomModalOpen(true)}
-            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-extrabold whitespace-nowrap transition-colors cursor-pointer shrink-0"
-          >
-            <Plus className="w-3.5 h-3.5" />
-            <span>{isEn ? 'Custom Song (.LRC)' : 'Tự nạp nhạc (.LRC)'}</span>
-          </button>
-        </div>
+        )}
 
         {/* ================================================================= */}
-        {/* 3. MAIN WORKSPACE: LEFT SONG SIDEBAR + RIGHT DICTATION STUDIO     */}
+        {/* 3. MAIN WORKSPACE: LEFT SONG SIDEBAR (LG+) + RIGHT STUDIO         */}
         {/* ================================================================= */}
         <div className="flex-1 flex min-h-0 overflow-hidden">
-          {/* LEFT SIDEBAR: Progressive Batch Selector + Song Catalog */}
+          {/* LEFT SIDEBAR: Desktop Only (>= 1024px); Mobile uses Bottom Sheet Drawer */}
           {!isSidebarCollapsed && (
-            <aside className="w-64 sm:w-72 lg:w-80 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col shrink-0">
+            <aside className="hidden lg:flex w-72 xl:w-80 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex-col shrink-0">
               {/* Progressive Batch Unlock Selector Strip */}
               <div className="p-2.5 bg-slate-950 border-b border-slate-800">
                 <div className="flex items-center justify-between mb-1.5 px-0.5">
@@ -1057,163 +1083,269 @@ export default function MusicListeningStudioModal({
                   </div>
                 )}
 
-            {/* 3.1. Sticky 4-Mode & Difficulty Control Bar */}
-            <div className="px-3 sm:px-5 py-2.5 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2.5 shrink-0">
-              {/* 4 Dictation Mode Pills */}
-              <div className="flex items-center flex-wrap gap-1.5">
-                {MUSIC_PRACTICE_MODES.map((m) => {
-                  const isActiveMode = practiceMode === m.id;
-                  return (
-                    <button
-                      key={m.id}
-                      type="button"
-                      onClick={() => handleChangeMode(m.id)}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
-                        isActiveMode
-                          ? 'bg-slate-900 dark:bg-purple-600 text-white shadow-xs'
-                          : 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300'
-                      }`}
-                      title={isEn ? m.descEn : m.descVi}
-                    >
-                      {isEn ? m.labelEn : m.labelVi}
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Difficulty Selector + Shuffle + Reveal All + Helper Toggles */}
-              <div className="flex items-center flex-wrap gap-1.5">
-                {practiceMode !== 'full' && (
-                  <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-0.5 rounded-xl border border-slate-200 dark:border-slate-700">
-                    {MUSIC_DIFFICULTY_LEVELS.map((lv) => (
+            {/* 3.1. Sticky 4-Mode & Difficulty Control Bar (Single-Row Scrollable on Mobile) */}
+            <div className="px-2.5 sm:px-5 py-2 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 space-y-2 shrink-0">
+              <div className="flex items-center justify-between gap-2">
+                {/* 4 Dictation Mode Pills — Single horizontal scrollable strip on mobile so it never eats vertical height */}
+                <div className="flex items-center space-x-1.5 overflow-x-auto scrollbar-none flex-nowrap min-w-0">
+                  {MUSIC_PRACTICE_MODES.map((m) => {
+                    const isActiveMode = practiceMode === m.id;
+                    return (
                       <button
-                        key={lv.id}
+                        key={m.id}
                         type="button"
-                        onClick={() => handleChangeDifficulty(lv.id)}
-                        className={`px-2.5 py-1 rounded-lg text-[11px] font-extrabold transition-all cursor-pointer ${
-                          difficulty === lv.id
-                            ? 'bg-white dark:bg-slate-900 text-purple-700 dark:text-purple-300 shadow-2xs'
-                            : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+                        onClick={() => handleChangeMode(m.id)}
+                        className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-extrabold whitespace-nowrap transition-all cursor-pointer shrink-0 ${
+                          isActiveMode
+                            ? 'bg-slate-900 dark:bg-purple-600 text-white shadow-xs'
+                            : 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300'
                         }`}
+                        title={isEn ? m.descEn : m.descVi}
                       >
-                        {isEn ? lv.labelEn : lv.labelVi}
+                        <span className="sm:hidden">{isEn ? m.shortEn : m.shortVi}</span>
+                        <span className="hidden sm:inline">{isEn ? m.labelEn : m.labelVi}</span>
                       </button>
-                    ))}
-                  </div>
-                )}
+                    );
+                  })}
+                </div>
 
-                {practiceMode !== 'full' && (
-                  <button
-                    type="button"
-                    onClick={handleShuffleBlanks}
-                    className="inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-purple-50 dark:bg-purple-950/60 hover:bg-purple-100 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800 text-xs font-bold transition-colors cursor-pointer"
-                    title={isEn ? 'Randomize blank positions' : 'Đổi ngẫu nhiên vị trí các ô trống / câu trống'}
-                  >
-                    <Shuffle className="w-3.5 h-3.5" />
-                    <span className="hidden sm:inline">{isEn ? 'Shuffle' : 'Đổi ô trống'}</span>
-                  </button>
-                )}
-
-                {!isEn && (
-                  <button
-                    type="button"
-                    onClick={() => setShowTranslation(prev => !prev)}
-                    className={`inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-colors cursor-pointer ${
-                      showTranslation
-                        ? 'bg-sky-50 border-sky-200 text-sky-700'
-                        : 'bg-slate-100 border-slate-200 text-slate-500'
-                    }`}
-                    title="Bật/Tắt dịch nghĩa tiếng Việt sau khi hoàn thành câu"
-                  >
-                    <Languages className="w-3.5 h-3.5" />
-                    <span className="hidden md:inline">Dịch nghĩa</span>
-                  </button>
-                )}
-
+                {/* Mobile Collapsible Options Toggle (< 768px) */}
                 <button
                   type="button"
-                  onClick={() => setShowPhoneticTips(prev => !prev)}
-                  className={`inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-colors cursor-pointer ${
-                    showPhoneticTips
-                      ? 'bg-indigo-50 dark:bg-indigo-950/60 border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-300'
-                      : 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500'
+                  onClick={() => setIsMobileOptionsOpen(prev => !prev)}
+                  className={`md:hidden flex items-center space-x-1 px-2.5 py-1.5 rounded-xl border text-[11px] font-extrabold shrink-0 cursor-pointer transition-colors ${
+                    isMobileOptionsOpen
+                      ? 'bg-purple-600 text-white border-purple-500'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
                   }`}
-                  title={
-                    isEn
-                      ? 'Toggle Connected Speech & Phonetic Notes'
-                      : 'Bật/Tắt giải thích hiện tượng nối âm & phát âm'
-                  }
+                  aria-label={isEn ? 'Toggle difficulty and display options' : 'Mở tùy chỉnh độ khó & hiển thị'}
                 >
-                  <Sparkles className="w-3.5 h-3.5" />
-                  <span className="hidden md:inline">{isEn ? 'Phonetics' : 'Nối âm'}</span>
+                  <SlidersHorizontal className="w-3.5 h-3.5" />
+                  <span>{isEn ? 'Options' : 'Tùy chọn'}</span>
                 </button>
 
-                <button
-                  type="button"
-                  onClick={() => {
-                    const allRev = {};
-                    blueprint.lines.forEach((_, idx) => {
-                      allRev[idx] = true;
-                    });
-                    setRevealedLines(allRev);
-                  }}
-                  className="inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-rose-50 hover:text-rose-700 text-slate-600 dark:text-slate-300 text-xs font-bold transition-colors cursor-pointer"
-                  title={isEn ? 'Reveal all lyrics' : 'Hiện toàn bộ đáp án lời bài hát'}
-                >
-                  <Eye className="w-3.5 h-3.5" />
-                  <span className="hidden xl:inline">{isEn ? 'Show All' : 'Hiện đáp án'}</span>
-                </button>
+                {/* Desktop Inline Options (>= 768px) */}
+                <div className="hidden md:flex items-center flex-wrap gap-1.5 shrink-0">
+                  {practiceMode !== 'full' && (
+                    <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-0.5 rounded-xl border border-slate-200 dark:border-slate-700">
+                      {MUSIC_DIFFICULTY_LEVELS.map((lv) => (
+                        <button
+                          key={lv.id}
+                          type="button"
+                          onClick={() => handleChangeDifficulty(lv.id)}
+                          className={`px-2.5 py-1 rounded-lg text-[11px] font-extrabold transition-all cursor-pointer ${
+                            difficulty === lv.id
+                              ? 'bg-white dark:bg-slate-900 text-purple-700 dark:text-purple-300 shadow-2xs'
+                              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+                          }`}
+                        >
+                          {isEn ? lv.labelEn : lv.labelVi}
+                        </button>
+                      ))}
+                    </div>
+                  )}
 
-                <button
-                  type="button"
-                  onClick={handleResetSession}
-                  className="p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
-                  title={isEn ? 'Reset current exercise' : 'Làm lại từ đầu'}
-                >
-                  <RotateCcw className="w-3.5 h-3.5" />
-                </button>
+                  {practiceMode !== 'full' && (
+                    <button
+                      type="button"
+                      onClick={handleShuffleBlanks}
+                      className="inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-purple-50 dark:bg-purple-950/60 hover:bg-purple-100 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800 text-xs font-bold transition-colors cursor-pointer"
+                      title={isEn ? 'Randomize blank positions' : 'Đổi ngẫu nhiên vị trí các ô trống / câu trống'}
+                    >
+                      <Shuffle className="w-3.5 h-3.5" />
+                      <span>{isEn ? 'Shuffle' : 'Đổi ô trống'}</span>
+                    </button>
+                  )}
+
+                  {!isEn && (
+                    <button
+                      type="button"
+                      onClick={() => setShowTranslation(prev => !prev)}
+                      className={`inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-colors cursor-pointer ${
+                        showTranslation
+                          ? 'bg-sky-50 border-sky-200 text-sky-700'
+                          : 'bg-slate-100 border-slate-200 text-slate-500'
+                      }`}
+                    >
+                      <Languages className="w-3.5 h-3.5" />
+                      <span className="hidden lg:inline">Dịch nghĩa</span>
+                    </button>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={() => setShowPhoneticTips(prev => !prev)}
+                    className={`inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-colors cursor-pointer ${
+                      showPhoneticTips
+                        ? 'bg-indigo-50 dark:bg-indigo-950/60 border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-300'
+                        : 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500'
+                    }`}
+                  >
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span className="hidden lg:inline">{isEn ? 'Phonetics' : 'Nối âm'}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const allRev = {};
+                      blueprint.lines.forEach((_, idx) => {
+                        allRev[idx] = true;
+                      });
+                      setRevealedLines(allRev);
+                    }}
+                    className="inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-rose-50 hover:text-rose-700 text-slate-600 dark:text-slate-300 text-xs font-bold transition-colors cursor-pointer"
+                  >
+                    <Eye className="w-3.5 h-3.5" />
+                    <span className="hidden xl:inline">{isEn ? 'Show All' : 'Hiện đáp án'}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleResetSession}
+                    className="p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
+                    title={isEn ? 'Reset current exercise' : 'Làm lại từ đầu'}
+                  >
+                    <RotateCcw className="w-3.5 h-3.5" />
+                  </button>
+                </div>
               </div>
+
+              {/* Mobile Expandable Options Tray (< 768px) */}
+              {isMobileOptionsOpen && (
+                <div className="md:hidden pt-2 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center gap-1.5 animate-in fade-in duration-150">
+                  {practiceMode !== 'full' && (
+                    <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-0.5 rounded-xl border border-slate-200 dark:border-slate-700">
+                      {MUSIC_DIFFICULTY_LEVELS.map((lv) => (
+                        <button
+                          key={lv.id}
+                          type="button"
+                          onClick={() => handleChangeDifficulty(lv.id)}
+                          className={`px-2 py-1 rounded-lg text-[11px] font-extrabold transition-all cursor-pointer ${
+                            difficulty === lv.id
+                              ? 'bg-white dark:bg-slate-900 text-purple-700 dark:text-purple-300 shadow-2xs'
+                              : 'text-slate-600 dark:text-slate-400'
+                          }`}
+                        >
+                          {isEn ? lv.labelEn : lv.labelVi}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
+                  {practiceMode !== 'full' && (
+                    <button
+                      type="button"
+                      onClick={handleShuffleBlanks}
+                      className="inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800 text-[11px] font-bold cursor-pointer"
+                    >
+                      <Shuffle className="w-3.5 h-3.5" />
+                      <span>{isEn ? 'Shuffle' : 'Đổi ô trống'}</span>
+                    </button>
+                  )}
+
+                  {!isEn && (
+                    <button
+                      type="button"
+                      onClick={() => setShowTranslation(prev => !prev)}
+                      className={`inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-xl border text-[11px] font-bold cursor-pointer ${
+                        showTranslation
+                          ? 'bg-sky-50 border-sky-200 text-sky-700'
+                          : 'bg-slate-100 border-slate-200 text-slate-500'
+                      }`}
+                    >
+                      <Languages className="w-3.5 h-3.5" />
+                      <span>Dịch</span>
+                    </button>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={() => setShowPhoneticTips(prev => !prev)}
+                    className={`inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-xl border text-[11px] font-bold cursor-pointer ${
+                      showPhoneticTips
+                        ? 'bg-indigo-50 dark:bg-indigo-950/60 border-indigo-200 text-indigo-700 dark:text-indigo-300'
+                        : 'bg-slate-100 dark:bg-slate-800 border-slate-200 text-slate-500'
+                    }`}
+                  >
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>{isEn ? 'Phonetics' : 'Nối âm'}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const allRev = {};
+                      blueprint.lines.forEach((_, idx) => {
+                        allRev[idx] = true;
+                      });
+                      setRevealedLines(allRev);
+                    }}
+                    className="inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[11px] font-bold cursor-pointer"
+                  >
+                    <Eye className="w-3.5 h-3.5" />
+                    <span>{isEn ? 'Reveal All' : 'Đáp án'}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleResetSession}
+                    className="inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[11px] font-bold cursor-pointer"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5" />
+                    <span>{isEn ? 'Reset' : 'Làm lại'}</span>
+                  </button>
+                </div>
+              )}
             </div>
 
-            {/* 3.2. Progress & Song Vocab Summary Strip */}
-            <div className="px-3 sm:px-5 py-2 bg-slate-50 dark:bg-slate-900/60 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between gap-3 shrink-0">
-              <div className="flex items-center space-x-2 min-w-0">
-                <span className="font-extrabold text-xs sm:text-sm text-slate-900 dark:text-white truncate">
-                  {currentTrack
-                    ? `${isEn ? (currentTrack.titleEn || currentTrack.title) : (currentTrack.titleVi || currentTrack.title)} — ${currentTrack.artist}`
-                    : ''}
-                </span>
-                <span className="hidden sm:inline-block px-2 py-0.5 rounded-md bg-slate-200/70 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[10px] font-bold">
-                  {isEn ? currentTrack?.accentEn : (currentTrack?.accentVi || currentTrack?.accentEn)}
-                </span>
-              </div>
+            {/* 3.2. Progress & Song Vocab Summary Strip (Auto-hides on mobile when keyboard opens) */}
+            {!isKeyboardOpen && (
+              <>
+                <div className="px-2.5 sm:px-5 py-1.5 sm:py-2 bg-slate-50 dark:bg-slate-900/60 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => setIsMobileLibraryOpen(true)}
+                    className="flex items-center space-x-1.5 min-w-0 text-left lg:pointer-events-none"
+                  >
+                    <span className="font-extrabold text-xs sm:text-sm text-slate-900 dark:text-white truncate">
+                      {currentTrack
+                        ? `${isEn ? (currentTrack.titleEn || currentTrack.title) : (currentTrack.titleVi || currentTrack.title)} — ${currentTrack.artist}`
+                        : ''}
+                    </span>
+                    <span className="hidden sm:inline-block px-2 py-0.5 rounded-md bg-slate-200/70 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[10px] font-bold shrink-0">
+                      {isEn ? currentTrack?.accentEn : (currentTrack?.accentVi || currentTrack?.accentEn)}
+                    </span>
+                  </button>
 
-              <div className="flex items-center space-x-3 shrink-0">
-                <div className="text-xs font-extrabold text-slate-700 dark:text-slate-200">
-                  {isEn ? 'Progress:' : 'Tiến độ:'}{' '}
-                  <span className="text-purple-600 dark:text-purple-400">
-                    {progressStats.completedTasks}/{progressStats.totalTasks}
-                  </span>{' '}
-                  ({progressStats.progressPct}%)
+                  <div className="flex items-center space-x-2 shrink-0">
+                    <div className="text-[11px] sm:text-xs font-extrabold text-slate-700 dark:text-slate-200 whitespace-nowrap">
+                      <span className="hidden sm:inline">{isEn ? 'Progress: ' : 'Tiến độ: '}</span>
+                      <span className="text-purple-600 dark:text-purple-400">
+                        {progressStats.completedTasks}/{progressStats.totalTasks}
+                      </span>{' '}
+                      ({progressStats.progressPct}%)
+                    </div>
+                    <div className="w-16 sm:w-28 h-2 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-gradient-to-r from-rose-500 via-purple-600 to-emerald-500 transition-all duration-300"
+                        style={{ width: `${progressStats.progressPct}%` }}
+                      />
+                    </div>
+                  </div>
                 </div>
-                <div className="w-24 sm:w-32 h-2 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-gradient-to-r from-rose-500 via-purple-600 to-emerald-500 transition-all duration-300"
-                    style={{ width: `${progressStats.progressPct}%` }}
-                  />
-                </div>
-              </div>
-            </div>
 
-            <MusicSessionSummaryCard
-              track={currentTrack}
-              progressStats={progressStats}
-              onSaveVocabItem={onSaveToNotebook}
-              onResetSession={handleResetSession}
-              onShuffleBlanks={handleShuffleBlanks}
-              onClaimReward={handleClaimReward}
-              hasClaimedReward={hasClaimedReward}
-            />
+                <MusicSessionSummaryCard
+                  track={currentTrack}
+                  progressStats={progressStats}
+                  onSaveVocabItem={onSaveToNotebook}
+                  onResetSession={handleResetSession}
+                  onShuffleBlanks={handleShuffleBlanks}
+                  onClaimReward={handleClaimReward}
+                  hasClaimedReward={hasClaimedReward}
+                />
+              </>
+            )}
 
             {/* 3.3. Interactive Karaoke & Dictation Lyrics Canvas */}
             <MusicLyricsCanvas
@@ -1246,12 +1378,152 @@ export default function MusicListeningStudioModal({
               onToggleAutoLoopLine={() => setIsAutoLoopLine(prev => !prev)}
               isAutoPauseLine={isAutoPauseLine}
               onToggleAutoPauseLine={() => setIsAutoPauseLine(prev => !prev)}
+              isKeyboardOpen={isKeyboardOpen}
             />
               </>
             )}
           </div>
         </div>
       </div>
+
+      {/* Mobile & Tablet Slide-Up Song Library & Batch Selector Sheet (< 1024px) */}
+      {isMobileLibraryOpen && (
+        <div
+          className="lg:hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-xs flex items-end animate-in fade-in duration-150"
+          onClick={() => setIsMobileLibraryOpen(false)}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-h-[85dvh] bg-white dark:bg-slate-900 rounded-t-3xl border-t border-slate-200 dark:border-slate-800 flex flex-col shadow-2xl overflow-hidden animate-in slide-in-from-bottom-4 duration-200"
+          >
+            {/* Mobile Sheet Header */}
+            <div className="px-4 py-3 bg-slate-950 text-white border-b border-slate-800 flex items-center justify-between shrink-0">
+              <div className="flex items-center space-x-2">
+                <ListMusic className="w-4 h-4 text-rose-400" />
+                <span className="font-black text-sm">
+                  {isEn ? 'Songs & Music Bank Batches' : 'Danh Sách Bài Hát & Lô Nhạc'}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsMobileLibraryOpen(false)}
+                className="p-1.5 rounded-xl bg-slate-900 text-slate-300 hover:text-white cursor-pointer"
+                aria-label={isEn ? 'Close song sheet' : 'Đóng danh sách bài hát'}
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Batch Selector inside Mobile Sheet */}
+            <div className="p-3 bg-slate-900 border-b border-slate-800 shrink-0">
+              <BatchSelectorStrip
+                batches={musicBatches}
+                selectedBatchIndex={selectedBatchIndex}
+                onSelectBatch={(idx) => {
+                  handleSelectBatch(idx);
+                }}
+                personalCount={customSongs.length}
+                isEn={isEn}
+                isMobileSheet={true}
+              />
+            </div>
+
+            {/* Search Input inside Mobile Sheet */}
+            <div className="p-3 border-b border-slate-200 dark:border-slate-800 shrink-0">
+              <div className="relative">
+                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder={isEn ? 'Search song or artist...' : 'Tìm tên bài hát hoặc ca sĩ...'}
+                  className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-base text-slate-900 dark:text-white focus:outline-none focus:border-purple-500"
+                />
+              </div>
+            </div>
+
+            {/* Mobile Sheet Track List */}
+            <div className="flex-1 overflow-y-auto p-3 space-y-2 pb-[max(1rem,env(safe-area-inset-bottom))]">
+              {isViewingLockedBatch && activeBatchObj ? (
+                <BatchUnlockGateCard
+                  targetBatch={activeBatchObj}
+                  isCelebrationMode={false}
+                  compact={true}
+                  isEn={isEn}
+                  onUnlockBatch={(b) => {
+                    handlePurchaseMusicBatch(b);
+                    setIsMobileLibraryOpen(false);
+                  }}
+                  onGoToPrevBatch={(prevIdx) => handleSelectBatch(prevIdx)}
+                  onOpenAuth={() => {
+                    setIsMobileLibraryOpen(false);
+                    audioEngine.pause();
+                    onOpenAuth?.();
+                  }}
+                  onOpenArena={() => {
+                    setIsMobileLibraryOpen(false);
+                    audioEngine.pause();
+                    onOpenArena?.();
+                  }}
+                />
+              ) : (
+                filteredTracks.map((tr) => {
+                  const isCurrent = currentTrack?.id === tr.id;
+                  const doneInfo = completedMap[tr.id];
+                  const genreObj = MUSIC_GENRES.find(g => g.id === tr.genreId);
+
+                  return (
+                    <button
+                      key={tr.id}
+                      type="button"
+                      onClick={() => {
+                        handleSelectTrack(tr.id);
+                        setIsMobileLibraryOpen(false);
+                      }}
+                      className={`w-full text-left p-3.5 rounded-2xl border transition-all cursor-pointer active:scale-[0.99] ${
+                        isCurrent
+                          ? 'bg-gradient-to-r from-rose-50 via-purple-50 to-indigo-50 dark:from-slate-800 dark:to-indigo-950/70 border-purple-400 shadow-xs'
+                          : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800'
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0">
+                          <div className="font-extrabold text-sm text-slate-900 dark:text-white truncate">
+                            {isEn ? (tr.titleEn || tr.title) : (tr.titleVi || tr.title)}
+                          </div>
+                          <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 truncate mt-0.5">
+                            {tr.artist} • {tr.bpm} BPM
+                          </div>
+                        </div>
+
+                        {doneInfo ? (
+                          <span className="inline-flex items-center space-x-0.5 px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 text-xs font-black shrink-0">
+                            <CheckCircle2 className="w-3.5 h-3.5" />
+                            <span>{doneInfo.accuracy}%</span>
+                          </span>
+                        ) : (
+                          <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[11px] font-bold shrink-0">
+                            Band {tr.bandTarget}
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="mt-2 flex items-center justify-between text-[11px]">
+                        <span className="px-2 py-0.5 rounded-md bg-purple-100/70 dark:bg-purple-900/40 text-purple-800 dark:text-purple-300 font-bold">
+                          {genreObj ? (isEn ? genreObj.shortEn : genreObj.shortVi) : tr.genreId}
+                        </span>
+                        <span className="text-slate-400 font-medium">
+                          {tr.lines?.length || 0} {isEn ? 'lines' : 'câu hát'}
+                        </span>
+                      </div>
+                    </button>
+                  );
+                })
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Custom Song Importer Modal */}
       <MusicCustomSongModal
