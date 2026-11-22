@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Sparkles, Compass, Check, Copy, X, Lightbulb, ArrowRight, ExternalLink, BookOpen, Layers } from 'lucide-react';
 import { callGeminiApi } from '../services/geminiService';
-import { getGitBookBaseUrl } from '../core/featureRegistry';
+import { getGitBookBaseUrl } from '../core/gitbookConfig';
 import HeadingInfoTip from './common/HeadingInfoTip';
 import { useTranslation } from '../i18n';
 

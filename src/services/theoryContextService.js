@@ -1,4 +1,4 @@
-import { getGitBookBaseUrl } from '../core/featureRegistry.js';
+import { getGitBookBaseUrl } from '../core/gitbookConfig.js';
 import { openModal } from '../core/modalStore.js';
 import { getLanguage } from '../i18n/i18nService.js';
 

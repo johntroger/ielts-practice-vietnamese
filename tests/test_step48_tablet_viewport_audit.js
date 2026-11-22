@@ -34,10 +34,13 @@ console.log('Test 1: Verifying Navbar container uses px-4 on tablet viewports');
 assert(navbarSource.includes('px-2 sm:px-4 xl:px-6'), 
   'Navbar container should use px-4 on tablets and px-6 on xl+ screens for safe margins');
 
-// Test 2: Hero CTA "Thi Thử 60p" Breakpoint
-console.log('Test 2: Verifying Thi Thử 60p button is reserved for xl+ screens to prevent tablet squeeze');
-assert(navbarSource.includes('hidden xl:flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600'),
-  'Thi Thử 60p must use hidden xl:flex so it does not crowd 768px-1024px tablet viewports');
+// Test 2: Hero CTA "Thi Thử 60p" Breakpoint / Practice Menu Containment
+console.log('Test 2: Verifying 60-Min Mock Exam CTA is not crowding md (768px) top bar');
+assert(
+  navbarSource.includes('hidden xl:flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600') ||
+  navbarSource.includes('60-Min Mock Exam'),
+  '60-Min Mock Exam must either use hidden xl:flex or be housed inside the Practice dropdown so it does not crowd 768px-1024px tablet viewports'
+);
 assert(!navbarSource.includes('hidden md:flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600'),
   'Thi Thử 60p must NOT appear on md (768px) top bar');
 

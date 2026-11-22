@@ -1268,15 +1268,17 @@ export default function ReadingWorkspace({
       />
 
       {/* 4. Reading Result Modal */}
-      <ReadingResultModal
-        isOpen={isResultModalOpen}
-        onClose={() => setIsResultModalOpen(false)}
-        bandResult={bandResult}
-        testTitle={currentTest.title}
-        onResetExam={handleResetExam}
-        onJumpToQuestion={handleJumpToQuestion}
-        onSelectPassage={setSelectedPassageNum}
-      />
+      {isResultModalOpen && (
+        <ReadingResultModal
+          isOpen={isResultModalOpen}
+          onClose={() => setIsResultModalOpen(false)}
+          bandResult={bandResult}
+          testTitle={currentTest.title}
+          onResetExam={handleResetExam}
+          onJumpToQuestion={handleJumpToQuestion}
+          onSelectPassage={setSelectedPassageNum}
+        />
+      )}
 
       {/* 5. Reading AI Generator Modal */}
       <ReadingGeneratorModal

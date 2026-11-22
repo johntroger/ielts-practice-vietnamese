@@ -108,18 +108,20 @@ export default function EditorPane({
     setActiveTab('essay');
   };
 
-  // Compute live analytics (memoized so 1s timer ticks do not recompute heavy text analytics)
+  // Compute live analytics on deferredEssayText so keystrokes always paint at 60fps
+  const deferredEssayText = React.useDeferredValue(essayText);
+
   const paragraphs = React.useMemo(
-    () => analyzeParagraphs(essayText, task.taskNumber),
-    [essayText, task.taskNumber]
+    () => analyzeParagraphs(deferredEssayText, task.taskNumber),
+    [deferredEssayText, task.taskNumber]
   );
   const totalWords = React.useMemo(
     () => paragraphs.reduce((acc, p) => acc + p.words, 0),
     [paragraphs]
   );
   const lexicalData = React.useMemo(
-    () => analyzeLexicalDiversity(essayText),
-    [essayText]
+    () => analyzeLexicalDiversity(deferredEssayText),
+    [deferredEssayText]
   );
   const currentWpm = calculateWpm(totalWords, timeElapsed);
 
@@ -134,8 +136,8 @@ export default function EditorPane({
 
   const task2CoherenceCheck = React.useMemo(() => {
     if (isTask1) return null;
-    return analyzeTask2Coherence(essayText);
-  }, [isTask1, essayText]);
+    return analyzeTask2Coherence(deferredEssayText);
+  }, [isTask1, deferredEssayText]);
 
   const [isSentenceHeatmapOpen, setIsSentenceHeatmapOpen] = useState(false);
   const [isMoreToolsOpen, setIsMoreToolsOpen] = useState(false);
@@ -160,8 +162,8 @@ export default function EditorPane({
   }, []);
 
   const sentenceAnalysis = React.useMemo(() => {
-    return analyzeSentenceStructures(essayText);
-  }, [essayText]);
+    return analyzeSentenceStructures(deferredEssayText);
+  }, [deferredEssayText]);
 
   // Distraction-Free Zen Typing Mode
   const [isActivelyTyping, setIsActivelyTyping] = useState(false);

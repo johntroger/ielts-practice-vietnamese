@@ -284,16 +284,18 @@ export default function WritingWorkspace({
       />
 
       {/* 4. Slide-Over Panel for Vocabulary, Paraphrasing & Common Mistakes */}
-      <SlideOverToolPanel
-        isOpen={slideOverConfig.isOpen}
-        onClose={() => setSlideOverConfig(prev => ({ ...prev, isOpen: false }))}
-        initialTab={slideOverConfig.tab}
-        vocabList={vocabList}
-        mistakes={mistakes}
-        onInsertText={handleInsertSlideOverText}
-        onAddVocab={onAddVocab}
-        promptText={currentTask?.prompt}
-      />
+      {slideOverConfig.isOpen && (
+        <SlideOverToolPanel
+          isOpen={slideOverConfig.isOpen}
+          onClose={() => setSlideOverConfig(prev => ({ ...prev, isOpen: false }))}
+          initialTab={slideOverConfig.tab}
+          vocabList={vocabList}
+          mistakes={mistakes}
+          onInsertText={handleInsertSlideOverText}
+          onAddVocab={onAddVocab}
+          promptText={currentTask?.prompt}
+        />
+      )}
     </div>
   );
 }

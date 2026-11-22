@@ -57,8 +57,8 @@ it('No component has hooks called before if (!isOpen) return null while other ho
     });
     if (returnIdx === -1) return;
 
-    const beforeHooks = lines.slice(0, returnIdx).filter(l => /use[A-Z]\w+\(/.test(l));
-    const afterHooks = lines.slice(returnIdx + 1).filter(l => /use[A-Z]\w+\(/.test(l));
+    const beforeHooks = lines.slice(0, returnIdx).filter(l => /\buse[A-Z]\w+\(/.test(l));
+    const afterHooks = lines.slice(returnIdx + 1).filter(l => /\buse[A-Z]\w+\(/.test(l));
 
     assert.strictEqual(
       beforeHooks.length > 0 && afterHooks.length > 0,

@@ -7,7 +7,7 @@ import {
   ExternalLink, Monitor
 } from 'lucide-react';
 import { THEORY_HANDBOOK } from '../data/theoryHandbook';
-import { GITBOOK_DOCS_BASE_URL } from '../core/featureRegistry';
+import { GITBOOK_DOCS_BASE_URL } from '../core/gitbookConfig';
 import { useTranslation } from '../i18n';
 import { THEORY_I18N_EN } from '../services/theoryContextService';
 import HeadingInfoTip from './common/HeadingInfoTip';

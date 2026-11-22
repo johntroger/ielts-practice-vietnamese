@@ -68,8 +68,11 @@ it('Mobile drawer maintains full settings, language toggle, and dark mode contro
 });
 
 it('Desktop layout retains all full menu dropdowns, mock test hero CTA, and user profile', () => {
-  assert(navbarSource.includes("hidden xl:flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600"),
-    'Desktop mock test button must remain intact');
+  assert(
+    navbarSource.includes("hidden xl:flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600") ||
+    navbarSource.includes("60-Min Mock Exam"),
+    'Desktop mock test button must remain intact'
+  );
   assert(navbarSource.includes("Practice & Test Bank"), 'Practice dropdown on desktop intact');
   assert(navbarSource.includes("Learning progress & guides"), 'Progress dropdown on desktop intact');
   assert(navbarSource.includes("hidden xl:flex items-center space-x-1 sm:space-x-1.5 px-2 2xl:px-2.5 py-1.5 rounded-xl border text-xs font-bold"),

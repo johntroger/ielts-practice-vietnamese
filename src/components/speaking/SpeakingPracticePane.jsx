@@ -839,25 +839,27 @@ export default function SpeakingPracticePane({
       {/* ========================================================= */}
       {/* 5. TOPIC & QUESTION CREATION MODAL (AI + MANUAL)          */}
       {/* ========================================================= */}
-      <SpeakingPracticeTopicModal
-        isOpen={isTopicModalOpen}
-        onClose={() => setIsTopicModalOpen(false)}
-        part={topicModalPart}
-        apiKey={apiKey}
-        model={model}
-        existingTopics={currentExistingTopics}
-        existingQuestions={currentExistingQuestions}
-        onTopicCreated={(newTopic) => {
-          if (topicModalPart === 1 && onAddP1Topic) {
-            onAddP1Topic(newTopic);
-          } else if (topicModalPart === 2 && onAddP2Card) {
-            onAddP2Card(newTopic);
-          } else if (topicModalPart === 3 && onAddP3Set) {
-            onAddP3Set(newTopic);
-            setSelectedP3Id(newTopic.linkedPart2Id || newTopic.id);
-          }
-        }}
-      />
+      {isTopicModalOpen && (
+        <SpeakingPracticeTopicModal
+          isOpen={isTopicModalOpen}
+          onClose={() => setIsTopicModalOpen(false)}
+          part={topicModalPart}
+          apiKey={apiKey}
+          model={model}
+          existingTopics={currentExistingTopics}
+          existingQuestions={currentExistingQuestions}
+          onTopicCreated={(newTopic) => {
+            if (topicModalPart === 1 && onAddP1Topic) {
+              onAddP1Topic(newTopic);
+            } else if (topicModalPart === 2 && onAddP2Card) {
+              onAddP2Card(newTopic);
+            } else if (topicModalPart === 3 && onAddP3Set) {
+              onAddP3Set(newTopic);
+              setSelectedP3Id(newTopic.linkedPart2Id || newTopic.id);
+            }
+          }}
+        />
+      )}
 
       {/* ========================================================= */}
       {/* 6. QUICK ADD QUESTION MODAL (FOR CURRENT TOPIC)           */}
@@ -931,29 +933,31 @@ export default function SpeakingPracticePane({
       {/* ========================================================= */}
       {/* 7. SINGLE ANSWER AI EVALUATION MODAL                      */}
       {/* ========================================================= */}
-      <SpeakingSingleEvaluationModal
-        isOpen={isEvaluationModalOpen}
-        onClose={() => setIsEvaluationModalOpen(false)}
-        evaluation={singleEvaluationResult}
-        questionText={evaluationContext?.questionText || ''}
-        topicTitle={evaluationContext?.topicTitle || ''}
-        candidateTranscript={evaluationContext?.candidateTranscript || ''}
-        part={evaluationContext?.part || 1}
-        onSaveToHistoryAndCleanVoice={handleSaveEvaluationAndCleanVoice}
-        onReEvaluateWithAI={() => handleEvaluateWithAI(
-          evaluationContext?.clipKey,
-          evaluationContext?.questionText,
-          evaluationContext?.topicTitle,
-          evaluationContext?.part
-        )}
-        onReEvaluateAlgorithmically={() => handleEvaluateAlgorithmically(
-          evaluationContext?.clipKey,
-          evaluationContext?.questionText,
-          evaluationContext?.topicTitle,
-          evaluationContext?.part
-        )}
-        isEvaluatingAI={isEvaluatingSingle}
-      />
+      {isEvaluationModalOpen && (
+        <SpeakingSingleEvaluationModal
+          isOpen={isEvaluationModalOpen}
+          onClose={() => setIsEvaluationModalOpen(false)}
+          evaluation={singleEvaluationResult}
+          questionText={evaluationContext?.questionText || ''}
+          topicTitle={evaluationContext?.topicTitle || ''}
+          candidateTranscript={evaluationContext?.candidateTranscript || ''}
+          part={evaluationContext?.part || 1}
+          onSaveToHistoryAndCleanVoice={handleSaveEvaluationAndCleanVoice}
+          onReEvaluateWithAI={() => handleEvaluateWithAI(
+            evaluationContext?.clipKey,
+            evaluationContext?.questionText,
+            evaluationContext?.topicTitle,
+            evaluationContext?.part
+          )}
+          onReEvaluateAlgorithmically={() => handleEvaluateAlgorithmically(
+            evaluationContext?.clipKey,
+            evaluationContext?.questionText,
+            evaluationContext?.topicTitle,
+            evaluationContext?.part
+          )}
+          isEvaluatingAI={isEvaluatingSingle}
+        />
+      )}
 
     </div>
   );

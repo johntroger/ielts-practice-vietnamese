@@ -26,7 +26,7 @@ import {
 } from 'lucide-react';
 import { useTranslation } from '../i18n/index.js';
 import { getTheme, toggleTheme, subscribeTheme } from '../utils/themeService';
-import { GITBOOK_FEATURES_BASE_URL } from '../core/featureRegistry';
+import { GITBOOK_FEATURES_BASE_URL } from '../core/gitbookConfig';
 import { getWhitepaperData } from '../core/projectWhitepaperData';
 
 export default function AboutPage({

@@ -751,76 +751,84 @@ export default function SpeakingWorkspace({
       )}
 
       {/* 6. STEP 5: COMPREHENSIVE SPEAKING RESULT MODAL */}
-      <SpeakingResultModal
-        isOpen={isResultModalOpen && !isEvaluating}
-        onClose={() => setIsResultModalOpen(false)}
-        evaluation={currentEvaluation}
-        dialogueHistory={completedExamData?.finalTranscript || []}
-        mockPack={activeMockPack}
-        examiner={activeExaminer}
-        totalDurationSec={completedExamData?.meta?.totalDurationSec || 600}
-        onRetryExam={() => {
-          try { sessionStorage.removeItem('ielts_speaking_session_transcript'); } catch (e) {}
-          setIsResultModalOpen(false);
-          setIsInMockExamRoom(true);
-        }}
-        onSaveToVocabNotebook={onSaveToVocabNotebook}
-        onReEvaluateWithAI={handleReEvaluateWithAI}
-        onReEvaluateAlgorithmically={handleReEvaluateAlgorithmically}
-        apiKey={apiKey}
-      />
+      {isResultModalOpen && !isEvaluating && (
+        <SpeakingResultModal
+          isOpen={isResultModalOpen && !isEvaluating}
+          onClose={() => setIsResultModalOpen(false)}
+          evaluation={currentEvaluation}
+          dialogueHistory={completedExamData?.finalTranscript || []}
+          mockPack={activeMockPack}
+          examiner={activeExaminer}
+          totalDurationSec={completedExamData?.meta?.totalDurationSec || 600}
+          onRetryExam={() => {
+            try { sessionStorage.removeItem('ielts_speaking_session_transcript'); } catch (e) {}
+            setIsResultModalOpen(false);
+            setIsInMockExamRoom(true);
+          }}
+          onSaveToVocabNotebook={onSaveToVocabNotebook}
+          onReEvaluateWithAI={handleReEvaluateWithAI}
+          onReEvaluateAlgorithmically={handleReEvaluateAlgorithmically}
+          apiKey={apiKey}
+        />
+      )}
 
       {/* Speaking Mock Test Library Modal */}
-      <SpeakingMockLibraryModal
-        isOpen={isMockLibraryOpen}
-        onClose={() => setIsMockLibraryOpen(false)}
-        allMockPacks={allMockPacks}
-        selectedMockId={selectedMockId}
-        onSelectMockPack={(id) => setSelectedMockId(id)}
-        onDeleteCustomPack={handleDeleteCustomPack}
-        onOpenManualCreate={() => {
-          setGeneratorInitialMode('manual');
-          setIsGeneratorOpen(true);
-        }}
-        onOpenAiGenerate={() => {
-          setGeneratorInitialMode('ai');
-          setIsGeneratorOpen(true);
-        }}
-        masteredIds={masteredIds}
-        onToggleMastered={onToggleMastered}
-        mockFilter={mockFilter}
-        setMockFilter={setMockFilter}
-        mockPackCounts={mockPackCounts}
-      />
+      {isMockLibraryOpen && (
+        <SpeakingMockLibraryModal
+          isOpen={isMockLibraryOpen}
+          onClose={() => setIsMockLibraryOpen(false)}
+          allMockPacks={allMockPacks}
+          selectedMockId={selectedMockId}
+          onSelectMockPack={(id) => setSelectedMockId(id)}
+          onDeleteCustomPack={handleDeleteCustomPack}
+          onOpenManualCreate={() => {
+            setGeneratorInitialMode('manual');
+            setIsGeneratorOpen(true);
+          }}
+          onOpenAiGenerate={() => {
+            setGeneratorInitialMode('ai');
+            setIsGeneratorOpen(true);
+          }}
+          masteredIds={masteredIds}
+          onToggleMastered={onToggleMastered}
+          mockFilter={mockFilter}
+          setMockFilter={setMockFilter}
+          mockPackCounts={mockPackCounts}
+        />
+      )}
 
       {/* 7. STEP 6: AI / MANUAL SPEAKING MOCK TEST GENERATOR MODAL */}
-      <SpeakingGeneratorModal
-        isOpen={isGeneratorOpen}
-        onClose={() => setIsGeneratorOpen(false)}
-        apiKey={apiKey}
-        model={model}
-        initialMode={generatorInitialMode}
-        onOpenSettings={onOpenSettings}
-        onPackGenerated={handlePackGenerated}
-      />
+      {isGeneratorOpen && (
+        <SpeakingGeneratorModal
+          isOpen={isGeneratorOpen}
+          onClose={() => setIsGeneratorOpen(false)}
+          apiKey={apiKey}
+          model={model}
+          initialMode={generatorInitialMode}
+          onOpenSettings={onOpenSettings}
+          onPackGenerated={handlePackGenerated}
+        />
+      )}
 
       {/* 8. STEP 7: AI PRACTICE TOPIC & QUESTION GENERATOR MODAL */}
-      <SpeakingPracticeTopicModal
-        isOpen={isPracticeTopicModalOpen}
-        onClose={() => setIsPracticeTopicModalOpen(false)}
-        part={practicePart}
-        apiKey={apiKey}
-        model={model}
-        onTopicCreated={(newTopic) => {
-          if (practicePart === 1) {
-            handleAddP1Topic(newTopic);
-          } else if (practicePart === 2) {
-            handleAddP2Card(newTopic);
-          } else if (practicePart === 3) {
-            handleAddP3Set(newTopic);
-          }
-        }}
-      />
+      {isPracticeTopicModalOpen && (
+        <SpeakingPracticeTopicModal
+          isOpen={isPracticeTopicModalOpen}
+          onClose={() => setIsPracticeTopicModalOpen(false)}
+          part={practicePart}
+          apiKey={apiKey}
+          model={model}
+          onTopicCreated={(newTopic) => {
+            if (practicePart === 1) {
+              handleAddP1Topic(newTopic);
+            } else if (practicePart === 2) {
+              handleAddP2Card(newTopic);
+            } else if (practicePart === 3) {
+              handleAddP3Set(newTopic);
+            }
+          }}
+        />
+      )}
     </div>
   );
 }

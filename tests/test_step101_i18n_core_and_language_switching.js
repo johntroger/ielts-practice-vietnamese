@@ -51,13 +51,13 @@ function it(desc, fn) {
 }
 
 // 1. Initial State & Defaults
-it('1. Default language is Vietnamese (vi) and supported languages list is valid', () => {
-  setLanguage('vi');
-  assert.strictEqual(getLanguage(), 'vi');
-  assert.strictEqual(DEFAULT_LANGUAGE, 'vi');
-  assert.deepStrictEqual(SUPPORTED_LANGUAGES, ['vi', 'en']);
-  assert.strictEqual(isVietnamese(), true);
-  assert.strictEqual(isEnglish(), false);
+it('1. Default language is English (en) and supported languages list is valid', () => {
+  setLanguage('en');
+  assert.strictEqual(getLanguage(), 'en');
+  assert.strictEqual(DEFAULT_LANGUAGE, 'en');
+  assert.deepStrictEqual(SUPPORTED_LANGUAGES, ['en', 'vi']);
+  assert.strictEqual(isEnglish(), true);
+  assert.strictEqual(isVietnamese(), false);
 });
 
 // 2. Language Switching & Toggling
@@ -75,9 +75,9 @@ it('2. Bi-directional switching between Vietnamese and English works seamlessly'
   assert.strictEqual(getLanguage(), 'en');
   assert.strictEqual(isEnglish(), true);
 
-  // Invalid language falls back to default 'vi'
+  // Invalid language falls back to default 'en'
   setLanguage('invalid-lang-code');
-  assert.strictEqual(getLanguage(), 'vi');
+  assert.strictEqual(getLanguage(), 'en');
 });
 
 // 3. Subscriber Notification Pattern

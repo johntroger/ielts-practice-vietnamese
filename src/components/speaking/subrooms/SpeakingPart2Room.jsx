@@ -637,15 +637,17 @@ export default function SpeakingPart2Room({
       </div>
 
       {/* 5 Universal Story Archetypes Modal */}
-      <UniversalStoryArchetypesModal
-        isOpen={isArchetypesModalOpen}
-        onClose={() => setIsArchetypesModalOpen(false)}
-        currentCueCard={activeP2Card}
-        onInsertToNotes={(quadrants) => {
-          setCustomQuadrantNotes(quadrants);
-          setIsArchetypesModalOpen(false);
-        }}
-      />
+      {isArchetypesModalOpen && (
+        <UniversalStoryArchetypesModal
+          isOpen={isArchetypesModalOpen}
+          onClose={() => setIsArchetypesModalOpen(false)}
+          currentCueCard={activeP2Card}
+          onInsertToNotes={(quadrants) => {
+            setCustomQuadrantNotes(quadrants);
+            setIsArchetypesModalOpen(false);
+          }}
+        />
+      )}
 
     </div>
   );

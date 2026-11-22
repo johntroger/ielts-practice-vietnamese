@@ -2227,14 +2227,16 @@ export default function MicroDrillsModal({
         </div>
 
         {/* MANUAL DRILL CREATOR MODAL */}
-        <ManualMicroDrillModal
-          isOpen={isManualDrillModalOpen}
-          onClose={() => setIsManualDrillModalOpen(false)}
-          activeRoom={activeRoom}
-          activeTab={activeTab}
-          onDrillCreated={handleManualDrillCreated}
-          currentUser={currentUser}
-        />
+        {isManualDrillModalOpen && (
+          <ManualMicroDrillModal
+            isOpen={isManualDrillModalOpen}
+            onClose={() => setIsManualDrillModalOpen(false)}
+            activeRoom={activeRoom}
+            activeTab={activeTab}
+            onDrillCreated={handleManualDrillCreated}
+            currentUser={currentUser}
+          />
+        )}
 
       </div>
     </div>
