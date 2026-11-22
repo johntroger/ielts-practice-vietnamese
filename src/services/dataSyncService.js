@@ -83,6 +83,30 @@ export async function saveUserSubmission(userId, submission) {
   }
 }
 
+export async function saveUserSubmissionsBatch(userId, submissions = []) {
+  if (!userId || !Array.isArray(submissions) || submissions.length === 0) return null;
+  try {
+    const rows = submissions.slice(0, SUPABASE_LIMITS.MAX_SUBMISSIONS_PER_FETCH || 50).map(submission => {
+      const cleanSub = sanitizeSubmissionForCloud(submission);
+      return {
+        id: cleanSub.id || `sub-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+        user_id: userId,
+        task: cleanSub.task,
+        essay_text: cleanSub.essayText,
+        evaluation: cleanSub.evaluation,
+        stats: cleanSub.stats,
+        created_at: cleanSub.createdAtIso || new Date().toISOString()
+      };
+    });
+    const { data, error } = await supabase.from('user_submissions').upsert(rows);
+    if (error) throw error;
+    return data;
+  } catch (err) {
+    console.error('Error batch-saving submissions to Supabase:', err);
+    return null;
+  }
+}
+
 export async function deleteUserSubmission(userId, submissionId) {
   if (!userId || !submissionId) return;
   try {
@@ -148,6 +172,28 @@ export async function saveUserVocabItem(userId, vocabItem) {
     return data;
   } catch (err) {
     console.error('Error saving vocab to Supabase:', err);
+    return null;
+  }
+}
+
+export async function saveUserVocabBatch(userId, vocabItems = []) {
+  if (!userId || !Array.isArray(vocabItems) || vocabItems.length === 0) return null;
+  try {
+    const nowIso = new Date().toISOString();
+    const rows = vocabItems.slice(0, 500).map((vocabItem, idx) => ({
+      id: vocabItem.id || `v-${Date.now()}-${idx}`,
+      user_id: userId,
+      phrase: vocabItem.phrase,
+      meaning_vi: vocabItem.meaningVi || '',
+      example: vocabItem.example || '',
+      topic: vocabItem.topic || 'general',
+      created_at: nowIso
+    }));
+    const { data, error } = await supabase.from('user_vocab').upsert(rows);
+    if (error) throw error;
+    return data;
+  } catch (err) {
+    console.error('Error batch-saving vocab to Supabase:', err);
     return null;
   }
 }
@@ -381,14 +427,40 @@ export async function toggleTaskPublicity(userId, taskId, isPublic) {
   }
 }
 
-export async function deleteUserCustomTask(userId, taskId) {
-  if (!taskId) return;
+export async function saveUserCustomTasksBatch(userId, tasks = [], creatorEmail = '') {
+  if (!userId || !Array.isArray(tasks) || tasks.length === 0) return null;
   try {
-    let query = supabase.from('user_custom_tasks').delete().eq('id', taskId);
-    if (userId) {
-      query = query.or(`user_id.eq.${userId},user_id.is.null`);
-    }
-    const { error } = await query;
+    const nowIso = new Date().toISOString();
+    const defaultCreator = isUiEnglish() ? 'Member' : 'Thành viên';
+    const rows = tasks.slice(0, 50).map((task, idx) => {
+      const taskId = task.id || `task-${Date.now()}-${idx}`;
+      const cleanTask = sanitizeTaskForCloud({ ...task, id: taskId });
+      return {
+        id: taskId,
+        user_id: userId,
+        task_data: cleanTask,
+        is_public: Boolean(task.isPublic),
+        creator_email: creatorEmail || task.creatorEmail || defaultCreator,
+        created_at: nowIso
+      };
+    });
+    const { data, error } = await supabase.from('user_custom_tasks').upsert(rows);
+    if (error) throw error;
+    return data;
+  } catch (err) {
+    console.warn('Error batch-saving custom tasks to Supabase:', err);
+    return null;
+  }
+}
+
+export async function deleteUserCustomTask(userId, taskId) {
+  if (!userId || !taskId) return;
+  try {
+    const { error } = await supabase
+      .from('user_custom_tasks')
+      .delete()
+      .eq('id', taskId)
+      .eq('user_id', userId);
     if (error) {
       console.warn('Supabase delete custom task notice:', error.message);
     }
@@ -487,10 +559,18 @@ export async function fetchUserWalletAndBatchProgress(userId) {
 export async function saveUserWalletAndBatchProgress(userId, payload = {}) {
   if (!userId || !payload) return null;
   try {
+    const boundedPayload = { ...payload };
+    if (boundedPayload.wallet && Array.isArray(boundedPayload.wallet.transactions) && boundedPayload.wallet.transactions.length > 50) {
+      boundedPayload.wallet = {
+        ...boundedPayload.wallet,
+        transactions: boundedPayload.wallet.transactions.slice(0, 50)
+      };
+    }
+
     const row = {
       id: `wallet-progress-${userId}`,
       user_id: userId,
-      phrase: JSON.stringify(payload),
+      phrase: JSON.stringify(boundedPayload),
       meaning_vi: 'Atlas Wallet & Batch Progression Sync',
       topic: '_wallet_progress_meta',
       created_at: new Date().toISOString()

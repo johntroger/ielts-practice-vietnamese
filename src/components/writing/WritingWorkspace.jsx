@@ -23,11 +23,14 @@ export default function WritingWorkspace({
   mode = 'practice',
   apiKey = '',
   model = 'gemini-2.5-flash',
-  timeElapsed = 0,
-  timeRemaining = 2400,
+  timeElapsed: propTimeElapsed,
+  timeRemaining: propTimeRemaining,
+  timeElapsedRef,
+  timerResetKey = 0,
   isTimerRunning = false,
   onToggleTimer,
   onResetTimer,
+  onTimerExpire,
   isSubmitting = false,
   onSubmitEssay,
   lastSaved,
@@ -65,6 +68,42 @@ export default function WritingWorkspace({
   onOpenModal
 }) {
   const { isEn } = useTranslation();
+
+  // Isolated 1-second Writing Timer (prevents App.jsx root re-renders every second)
+  const defaultDurationSec = (currentTask?.timeLimit || 40) * 60;
+  const [localTimeRemaining, setLocalTimeRemaining] = useState(() => propTimeRemaining ?? defaultDurationSec);
+  const [localTimeElapsed, setLocalTimeElapsed] = useState(() => propTimeElapsed ?? 0);
+
+  useEffect(() => {
+    const nextDur = (currentTask?.timeLimit || 40) * 60;
+    setLocalTimeRemaining(nextDur);
+    setLocalTimeElapsed(0);
+    if (timeElapsedRef) timeElapsedRef.current = 0;
+  }, [currentTask?.id, timerResetKey]);
+
+  useEffect(() => {
+    if (!isTimerRunning) return;
+    const interval = setInterval(() => {
+      setLocalTimeRemaining(prev => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          onTimerExpire?.();
+          return 0;
+        }
+        return prev - 1;
+      });
+      setLocalTimeElapsed(prev => {
+        const next = prev + 1;
+        if (timeElapsedRef) timeElapsedRef.current = next;
+        return next;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [isTimerRunning, onTimerExpire, timeElapsedRef]);
+
+  const timeElapsed = propTimeElapsed ?? localTimeElapsed;
+  const timeRemaining = propTimeRemaining ?? localTimeRemaining;
+
   // Phase 3 UI/UX: Minimal Focus View vs Pro Studio View Mode (Defaults to clean Minimal for learners)
   const [writingViewMode, setWritingViewMode] = useState(() => safeGet('ielts_writing_view_mode', 'minimal'));
 

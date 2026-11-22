@@ -3,12 +3,12 @@ import { safeGet, safeSet } from '../utils/storageService';
 import { supabase } from '../services/supabaseClient';
 import {
   fetchUserSubmissions,
-  saveUserSubmission,
+  saveUserSubmissionsBatch,
   fetchUserVocab,
-  saveUserVocabItem,
+  saveUserVocabBatch,
   fetchUserCustomTasks,
   fetchPublicTasks,
-  saveUserCustomTask,
+  saveUserCustomTasksBatch,
   fetchUserMasteredItems,
   saveUserMasteredItems,
   fetchUserWalletAndBatchProgress,
@@ -146,7 +146,7 @@ export function useCloudAndStorageSync({
         if (cloudSubs && cloudSubs.length > 0) {
           setSubmissions(cloudSubs);
         } else if (submissions && submissions.length > 0) {
-          submissions.forEach(sub => saveUserSubmission(currentUser.id, sub));
+          saveUserSubmissionsBatch(currentUser.id, submissions);
         }
       });
 
@@ -154,7 +154,7 @@ export function useCloudAndStorageSync({
         if (cloudVocab && cloudVocab.length > 0) {
           setVocabList(cloudVocab);
         } else if (vocabList && vocabList.length > 0) {
-          vocabList.forEach(v => saveUserVocabItem(currentUser.id, v));
+          saveUserVocabBatch(currentUser.id, vocabList);
         }
       });
 
@@ -167,7 +167,9 @@ export function useCloudAndStorageSync({
           });
         } else {
           const localCustom = (allTasks || []).filter(t => t.isOwnTask || t.id?.startsWith('task-') || t.id?.startsWith('custom-'));
-          localCustom.forEach(t => saveUserCustomTask(currentUser.id, t, t.isPublic || false, currentUser.email));
+          if (localCustom.length > 0) {
+            saveUserCustomTasksBatch(currentUser.id, localCustom, currentUser.email);
+          }
         }
       });
 

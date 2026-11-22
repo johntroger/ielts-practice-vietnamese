@@ -4,7 +4,8 @@ import {
   IELTS_SPELLING_TRAPS,
   IELTS_GRAMMAR_PACK,
   IELTS_THEMATIC_VOCAB_DECKS,
-  CAMBRIDGE_SYNONYM_PAIRS
+  CAMBRIDGE_SYNONYM_PAIRS,
+  loadHaroldLevineDecks
 } from '../data/vocabGrammarSpellingData';
 import {
   fetchPublicVocabGrammarItems
@@ -276,7 +277,7 @@ export default function VocabGrammarSpellingModal({
     return IELTS_THEMATIC_VOCAB_DECKS;
   });
 
-  // Self-healing: if thematicDecks lacks Harold Levine decks from an earlier cached session
+  // Self-healing & lazy-loading: merge built-in decks + on-demand Harold Levine 22,000 decks
   useEffect(() => {
     if (thematicDecks.length < IELTS_THEMATIC_VOCAB_DECKS.length) {
       const existingIds = new Set(thematicDecks.map(d => d.id));
@@ -286,6 +287,20 @@ export default function VocabGrammarSpellingModal({
       }
     }
   }, [thematicDecks.length]);
+
+  useEffect(() => {
+    if (!isOpen || activeTab !== 'vocab') return;
+    let cancelled = false;
+    loadHaroldLevineDecks().then(haroldDecks => {
+      if (cancelled || !Array.isArray(haroldDecks) || haroldDecks.length === 0) return;
+      setThematicDecks(prev => {
+        const existingIds = new Set(prev.map(d => d.id));
+        const missing = haroldDecks.filter(d => !existingIds.has(d.id));
+        return missing.length > 0 ? [...prev, ...missing] : prev;
+      });
+    }).catch(() => {});
+    return () => { cancelled = true; };
+  }, [isOpen, activeTab]);
 
   const [activeDeckId, setActiveDeckId] = useState(thematicDecks[0]?.id || 'deck-tech');
   const [currentCardIdx, setCurrentCardIdx] = useState(0);

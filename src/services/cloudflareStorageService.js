@@ -14,6 +14,7 @@
 import { idbGet, idbSet, STORES } from '../utils/indexedDbStorage.js';
 import { safeGet, safeSet } from '../utils/storageService.js';
 import { SUPABASE_LIMITS, isBloatedBase64 } from '../utils/supabaseStorageGuard.js';
+import { supabase } from './supabaseClient.js';
 
 // Khóa cấu hình động cho phép Admin gắn URL Cloudflare không cần build lại code
 export const CF_CONFIG_KEYS = {
@@ -201,30 +202,35 @@ export async function offloadMediaToCloudflareR2(mediaInput, objectKey = `media-
   // Bước 2: Nếu đã kết nối Cloudflare Worker R2 Gateway -> Đẩy thẳng lên Cloudflare R2 (Zero Egress)
   if (isEdgeEnabled && typeof fetch === 'function') {
     try {
-      const headers = {
-        'Content-Type': 'application/json',
-        'X-IELTS-Owner-Email': 'tranthanhtung37@gmail.com'
-      };
-      if (uploadToken) {
-        headers['Authorization'] = `Bearer ${uploadToken}`;
+      let bearerToken = uploadToken || '';
+      if (!bearerToken && typeof window !== 'undefined') {
+        const { data: { session } = {} } = await supabase.auth.getSession().catch(() => ({}));
+        bearerToken = session?.access_token || '';
       }
 
-      const response = await fetch(`${edgeWorkerUrl}/api/r2/upload`, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({
-          key: objectKey,
-          dataUrl: compressedDataUrl
-        })
-      });
+      if (bearerToken) {
+        const headers = {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${bearerToken}`
+        };
 
-      if (response.ok) {
-        const result = await response.json();
-        if (result?.url) {
-          return {
-            url: resolveHybridMediaUrl(result.url),
-            storageTier: 'cloudflare_r2'
-          };
+        const response = await fetch(`${edgeWorkerUrl}/api/r2/upload`, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({
+            key: objectKey,
+            dataUrl: compressedDataUrl
+          })
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          if (result?.url) {
+            return {
+              url: resolveHybridMediaUrl(result.url),
+              storageTier: 'cloudflare_r2'
+            };
+          }
         }
       }
     } catch (err) {

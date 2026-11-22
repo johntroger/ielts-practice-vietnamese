@@ -29,7 +29,7 @@
   ],
   "rewrites": [
     {
-      "source": "/((?!assets/|audio/|banners/|mascot/|robots\\.txt|sitemap\\.xml).*)",
+      "source": "/((?!assets/|audio/|banners/|data/|mascot/|robots\\.txt|sitemap\\.xml|favicon\\.ico).*)",
       "destination": "/"
     }
   ]

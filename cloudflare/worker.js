@@ -281,16 +281,40 @@ export default {
     if (path === '/api/cache/invalidate' && request.method === 'POST') {
       try {
         const body = await request.json().catch(() => ({}));
-        const target = body.resourceKey || 'all';
+        const target = String(body.resourceKey || 'all').replace(/[^a-z0-9_-]/gi, '');
         const keysToPurge = target === 'all'
           ? Object.keys(RESOURCE_TTL_SECONDS)
-          : [target];
+          : (RESOURCE_TTL_SECONDS[target] ? [target] : []);
 
+        if (keysToPurge.length === 0) {
+          return new Response(JSON.stringify({ error: 'Invalid resourceKey' }), {
+            status: 400,
+            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
+          });
+        }
+
+        // Rate-limit / Cooldown 10s per target key to prevent cache-busting DoS on Supabase origin
         const cache = caches.default;
+        const cooldownReq = new Request(`${url.origin}/__cooldown/invalidate/${target}`, { method: 'GET' });
+        const recentPurge = await cache.match(cooldownReq);
+        if (recentPurge) {
+          return new Response(JSON.stringify({ purged: [], throttled: true }), {
+            status: 200,
+            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
+          });
+        }
+
         await Promise.all(keysToPurge.map(k => {
           const cacheUrl = new URL(`${url.origin}/api/cache/${k}`);
           return cache.delete(new Request(cacheUrl.toString(), { method: 'GET' }));
         }));
+
+        ctx.waitUntil(
+          cache.put(cooldownReq, new Response('1', {
+            status: 200,
+            headers: { 'Cache-Control': 'public, max-age=10' }
+          }))
+        );
 
         return new Response(JSON.stringify({ purged: keysToPurge }), {
           status: 200,
@@ -304,7 +328,7 @@ export default {
       }
     }
 
-    // 5. ROUTE: Tải Media lên Cloudflare R2 (`POST /api/r2/upload`) - Bảo mật quyền Owner & Kiểm duyệt MIME
+    // 5. ROUTE: Tải Media lên Cloudflare R2 (`POST /api/r2/upload`) - Xác thực Token/JWT & Kiểm duyệt MIME
     if (path === '/api/r2/upload' && request.method === 'POST') {
       if (!env.IELTS_R2_BUCKET) {
         return new Response(JSON.stringify({ error: 'R2 bucket IELTS_R2_BUCKET is not bound' }), {
@@ -313,20 +337,38 @@ export default {
         });
       }
 
-      const ownerEmailHeader = (request.headers.get('X-IELTS-Owner-Email') || '').trim().toLowerCase();
       const authHeader = request.headers.get('Authorization') || '';
+      const bearerToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7).trim() : '';
       const expectedOwner = (env.OWNER_EMAIL || 'tranthanhtung37@gmail.com').toLowerCase();
 
-      if (env.UPLOAD_SECRET_TOKEN) {
-        if (authHeader !== `Bearer ${env.UPLOAD_SECRET_TOKEN}` && ownerEmailHeader !== expectedOwner) {
-          return new Response(JSON.stringify({ error: 'Unauthorized upload token or owner identity' }), {
-            status: 401,
-            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
+      let isAuthorized = false;
+      if (env.UPLOAD_SECRET_TOKEN && bearerToken && bearerToken === env.UPLOAD_SECRET_TOKEN) {
+        isAuthorized = true;
+      } else if (bearerToken) {
+        // Verify Supabase Auth JWT against Supabase Auth API (prevents spoofable email headers)
+        try {
+          const supabaseUrl = env.SUPABASE_URL || DEFAULT_SUPABASE_URL;
+          const supabaseKey = env.SUPABASE_ANON_KEY || DEFAULT_SUPABASE_KEY;
+          const userRes = await fetch(`${supabaseUrl}/auth/v1/user`, {
+            headers: {
+              'apikey': supabaseKey,
+              'Authorization': `Bearer ${bearerToken}`
+            }
           });
+          if (userRes.ok) {
+            const userJson = await userRes.json();
+            if ((userJson?.email || '').toLowerCase() === expectedOwner) {
+              isAuthorized = true;
+            }
+          }
+        } catch (authErr) {
+          isAuthorized = false;
         }
-      } else if (ownerEmailHeader && ownerEmailHeader !== expectedOwner) {
-        return new Response(JSON.stringify({ error: 'Forbidden: Only system owner can upload media to R2' }), {
-          status: 403,
+      }
+
+      if (!isAuthorized) {
+        return new Response(JSON.stringify({ error: 'Unauthorized: Valid upload token or owner Supabase JWT required' }), {
+          status: 401,
           headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
         });
       }

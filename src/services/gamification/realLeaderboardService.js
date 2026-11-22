@@ -17,7 +17,8 @@ import {
 } from '../cloudflareStorageService.js';
 import {
   ENTITY_TYPES,
-  ARENA_ANTI_CHEAT_LIMITS
+  ARENA_ANTI_CHEAT_LIMITS,
+  validateAndSanitizeArenaProfile
 } from '../../utils/supabaseStorageGuard.js';
 
 export const REAL_LEADERBOARD_STORAGE_KEY = 'ielts_real_arena_leaderboard_v1';
@@ -385,8 +386,9 @@ export async function submitRealSprintScore({
   const cloudRecordId = `arena-score-${isOwner ? 'tranthanhtung37' : targetUserId}`;
   const isNodeTestEnv = typeof window === 'undefined' && typeof process !== 'undefined' && process.env?.ENABLE_LIVE_SUPABASE_TESTS !== 'true';
 
-  // 1. Update Cloud Supabase Record (chỉ chạy trên trình duyệt thật, tránh làm bẩn DB khi chạy unit test Node.js)
-  if (!isNodeTestEnv) {
+  // 1. Update Cloud Supabase Record (chỉ chạy cho tài khoản đã đăng nhập trên trình duyệt thật;
+  // Guest không upsert với user_id = null vì RLS UPDATE chỉ cho phép authenticated owner)
+  if (!isNodeTestEnv && currentUser?.id) {
     try {
       const { data: existingRow } = await supabase
         .from('user_custom_tasks')
@@ -400,7 +402,7 @@ export async function submitRealSprintScore({
       const baseTotal = isLegacyCloudRow ? 0 : (existingRow?.task_data?.total_xp ?? (isOwner ? DEFAULT_OWNER_PROFILE.total_xp : 0));
       const baseStreak = isLegacyCloudRow ? 0 : (existingRow?.task_data?.streak_count ?? (isOwner ? DEFAULT_OWNER_PROFILE.streak_count : 1));
 
-      const updatedTaskData = {
+      const rawTaskData = {
         type: 'arena_leaderboard_entry',
         entityType: ENTITY_TYPES.ARENA_PROFILE,
         display_name: targetName,
@@ -411,10 +413,11 @@ export async function submitRealSprintScore({
         last_updated: new Date().toISOString(),
         version_v2: true
       };
+      const updatedTaskData = validateAndSanitizeArenaProfile(rawTaskData) || rawTaskData;
 
       await supabase.from('user_custom_tasks').upsert({
         id: cloudRecordId,
-        user_id: currentUser?.id || null,
+        user_id: currentUser.id,
         task_data: updatedTaskData,
         is_public: true,
         creator_email: targetEmail,

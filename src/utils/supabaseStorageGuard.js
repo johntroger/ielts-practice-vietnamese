@@ -97,35 +97,45 @@ export function validateAndSanitizeArenaProfile(profile) {
 
   const rawMatches = Math.max(0, Math.min(ARENA_ANTI_CHEAT_LIMITS.MAX_MATCHES, Math.floor(Number(profile.matchesPlayed) || 0)));
   const rawWins = Math.max(0, Math.min(rawMatches, Math.floor(Number(profile.wins) || 0)));
-  const rawStreak = Math.max(0, Math.min(ARENA_ANTI_CHEAT_LIMITS.MAX_STREAK, Math.floor(Number(profile.streak) || 0)));
-  const rawXp = Math.max(0, Math.floor(Number(profile.xp) || 0));
+  const rawStreak = Math.max(0, Math.min(ARENA_ANTI_CHEAT_LIMITS.MAX_STREAK, Math.floor(Number(profile.streak ?? profile.streak_count) || 0)));
+  const rawTotalXp = Math.max(0, Math.floor(Number(profile.xp ?? profile.total_xp) || 0));
+  const rawWeeklyXp = Math.max(0, Math.floor(Number(profile.weekly_xp ?? profile.xp) || 0));
 
   // Tính trần XP hợp lệ theo số trận đã chơi (tránh trường hợp matchesPlayed = 1 nhưng xp = 999,999)
   const effectiveMatches = Math.max(1, rawMatches);
-  const maxPlausibleXp = Math.min(
-    ARENA_ANTI_CHEAT_LIMITS.MAX_TOTAL_XP,
-    ARENA_ANTI_CHEAT_LIMITS.BASE_GRACE_XP + effectiveMatches * ARENA_ANTI_CHEAT_LIMITS.MAX_XP_PER_MATCH
-  );
+  const maxPlausibleXp = profile.matchesPlayed !== undefined
+    ? Math.min(
+        ARENA_ANTI_CHEAT_LIMITS.MAX_TOTAL_XP,
+        ARENA_ANTI_CHEAT_LIMITS.BASE_GRACE_XP + effectiveMatches * ARENA_ANTI_CHEAT_LIMITS.MAX_XP_PER_MATCH
+      )
+    : ARENA_ANTI_CHEAT_LIMITS.MAX_TOTAL_XP;
 
-  const clampedXp = Math.min(rawXp, maxPlausibleXp);
-  const antiCheatClamped = rawXp > maxPlausibleXp;
+  const clampedXp = Math.min(rawTotalXp, maxPlausibleXp);
+  const clampedWeeklyXp = Math.min(rawWeeklyXp, maxPlausibleXp);
+  const antiCheatClamped = rawTotalXp > maxPlausibleXp || rawWeeklyXp > maxPlausibleXp;
 
   const computedWinRate = rawMatches > 0
     ? Math.min(100, Math.max(0, Math.round((rawWins / rawMatches) * 100)))
     : Math.min(100, Math.max(0, Math.round(Number(profile.winRate) || 0)));
 
+  const safeDisplayName = sanitizeSafeString(profile.displayName || profile.display_name, 45, 'Học Viên IELTS');
+
   return {
     ...profile,
     entityType: ENTITY_TYPES.ARENA_PROFILE,
     isArenaLeaderboardEntry: true,
-    displayName: sanitizeSafeString(profile.displayName, 45, 'Học Viên IELTS'),
+    displayName: safeDisplayName,
+    ...(profile.display_name !== undefined ? { display_name: safeDisplayName } : {}),
     avatar: sanitizeSafeString(profile.avatar, 16, '🧑‍🎓'),
     title: sanitizeSafeString(profile.title, 60, 'Tân Binh IELTS'),
     xp: clampedXp,
+    ...(profile.total_xp !== undefined ? { total_xp: clampedXp } : {}),
+    ...(profile.weekly_xp !== undefined ? { weekly_xp: clampedWeeklyXp } : {}),
     matchesPlayed: rawMatches,
     wins: rawWins,
     winRate: computedWinRate,
     streak: rawStreak,
+    ...(profile.streak_count !== undefined ? { streak_count: rawStreak } : {}),
     level: Math.max(1, Math.min(100, Math.floor(Number(profile.level) || 1))),
     antiCheatClamped
   };
