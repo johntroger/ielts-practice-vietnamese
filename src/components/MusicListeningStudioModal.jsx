@@ -1210,8 +1210,7 @@ export default function MusicListeningStudioModal({
                         }`}
                         title={isEn ? m.descEn : m.descVi}
                       >
-                        <span className="2xl:hidden">{isEn ? m.shortEn : m.shortVi}</span>
-                        <span className="hidden 2xl:inline">{isEn ? m.labelEn : m.labelVi}</span>
+                        <span>{isEn ? m.shortEn : m.shortVi}</span>
                       </button>
                     );
                   })}
@@ -1252,8 +1251,7 @@ export default function MusicListeningStudioModal({
                             }`}
                             title={isEn ? lv.labelEn : lv.labelVi}
                           >
-                            <span className="2xl:hidden">{shortLabel}</span>
-                            <span className="hidden 2xl:inline">{isEn ? lv.labelEn : lv.labelVi}</span>
+                            <span>{shortLabel}</span>
                           </button>
                         );
                       })}
