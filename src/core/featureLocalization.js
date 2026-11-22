@@ -44,6 +44,19 @@ export const BADGE_LOCALIZATION_EN = {
 };
 
 export const FEATURE_LOCALIZATION_EN = {
+  'feat-music-listening-studio': {
+    title: 'Music & Lyrics Dictation Studio (/music-listening)',
+    shortDesc: 'Master natural connected speech across 12 English vocal songs in 6 musical genres hosted on Cloudflare R2 with 4 dictation modes: Full Song Dictation, Sentence Blanks, Word Gap-Fill, and Hybrid Mixed.',
+    badge: 'New Release',
+    highlights: [
+      '4 Flexible Dictation Modes (/music-listening): Full Song Dictation, Sentence Blank Dictation, Inline Word Gap-Fill (Cloze), and Hybrid Mixed Sentence & Word Blanks.',
+      '6 Curated Music Genres Hosted on Cloudflare R2: Acoustic & Indie Folk, Indie Pop & Synthpop, Storytelling Pop-Rock, Classic Jazz & Soul, Country & Americana, and Alternative Rock.',
+      'Hands-Free Dictation Audio Controls: Features Auto-Loop Active Line, Auto-Pause at Line End, Skip Instrumental Intro button, and instant Tab key line replay.',
+      'Connected Speech Notes, Vocab Vault & Custom .LRC Importer: Decode phonetic linking after each line, save key vocabulary in 1 click, or import your own MP3/R2 tracks with .LRC lyrics.'
+    ],
+    usageGuide: 'Open the "Tools" menu on the Navbar and select "Music & Lyrics Dictation" or navigate directly to /music-listening.',
+    quickActionLabel: 'Open Music Dictation Studio'
+  },
   'feat-conversation-studio': {
     title: 'Conversation Roleplay & Speech Shadowing Studio (/conversation)',
     shortDesc: 'Dual-mode speaking studio combining (1) Turn-Gated Dialogue Roleplay and (2) Speech Shadowing for IELTS Speaking Part 1/2/3 sample tasks — the machine reads each sentence or paragraph first and unlocks the next segment only after meeting your minimum accuracy threshold (default 75%).',

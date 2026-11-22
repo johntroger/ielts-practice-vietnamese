@@ -76,6 +76,31 @@ export const FEATURE_CATEGORIES = [
 export const FEATURE_REGISTRY = [
   // --- NHÓM 1: CÁC TÍNH NĂNG MỚI NHẤT (PHASE 2026 RELEASES) ---
   {
+    id: 'feat-music-listening-studio',
+    version: 'v3.7',
+    status: 'new',
+    badge: 'Mới Ra Mắt',
+    category: 'practice_tools',
+    targetSkills: ['listening', 'speaking'],
+    title: 'Phòng Luyện Nghe Nhạc & Chép Lời Tiếng Anh (/music-listening)',
+    shortDesc: 'Rèn luyện phản xạ nghe nối âm (Connected Speech) qua 12 bài hát tiếng Anh thuộc 6 thể loại trên Cloudflare R2 với 4 chế độ chép lời: Chép nguyên bài, Trống nguyên câu, Điền từ trống và Kết hợp cả câu & từ.',
+    icon: 'Music',
+    shortcut: null,
+    updatedAt: '2026-11-22',
+    highlights: [
+      '4 Chế Độ Chép Lời Linh Hoạt (/music-listening): Chép Nguyên Bài (Full Song), Để Trống Nguyên Câu (Sentence Blanks), Để Trống Từ Để Điền (Word Gap-Fill) và Kết Hợp Trống Cả Câu & Từ (Hybrid Mixed).',
+      '6 Thể Loại Nhạc Lưu Trữ Trên Cloudflare R2 ($0 Băng Thông): Acoustic & Indie Folk, Indie Pop, Storytelling Pop-Rock, Classic Jazz & Soul, Country & Americana, và Alternative Rock.',
+      'Bộ Điều Khiển Nhạc Chuyên Dụng Cho Chép Lời: Tích hợp công tắc Tự lặp câu đang nghe (Auto-Loop Line), Tự dừng cuối câu (Auto-Pause), nút Bỏ qua nhạc dạo (Skip Intro) và phím tắt Tab nghe lại câu tức thì.',
+      'Giải Mã Nối Âm, Lưu Từ Vựng & Tự Nạp Nhạc (.LRC): Giải thích hiện tượng nối âm/nuốt âm sau mỗi câu, lưu từ vựng C1/B2 vào Sổ Tay và hỗ trợ tự nạp file .MP3 / link R2 kèm lời định dạng .LRC.'
+    ],
+    usageGuide: 'Mở menu "Công Cụ" trên thanh Navbar và chọn "Luyện Nghe Nhạc & Chép Lời" hoặc truy cập trực tiếp đường dẫn /music-listening.',
+    quickAction: {
+      type: 'open_modal',
+      target: 'musicListening',
+      label: 'Mở Phòng Luyện Nghe Nhạc'
+    }
+  },
+  {
     id: 'feat-conversation-studio',
     version: 'v3.6',
     status: 'new',

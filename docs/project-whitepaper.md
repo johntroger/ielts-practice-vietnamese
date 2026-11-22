@@ -1,9 +1,9 @@
 # 🏛️ Cách Vận Hành Hệ Thống & Hồ Sơ Toàn Cảnh Dự Án
 
 > **Phiên bản**: `v3.5 (2026 Living Edition)` | **Cập nhật gần nhất**: `2026-11-01`  
-> **Quy mô hệ thống**: **47+ tính năng chuyên sâu** | **Kiến trúc**: `Local-First (90%) + Cloud & AI Examiner (10%)`
+> **Quy mô hệ thống**: **48+ tính năng chuyên sâu** | **Kiến trúc**: `Local-First (90%) + Cloud & AI Examiner (10%)`
 
-[← Quay lại Trang Chủ Cẩm Nang](README.md) • [Xem Ma Trận 47+ Tính Năng ↗](features/README.md)
+[← Quay lại Trang Chủ Cẩm Nang](README.md) • [Xem Ma Trận 48+ Tính Năng ↗](features/README.md)
 
 ---
 
@@ -81,7 +81,7 @@ Hệ thống giải quyết bài toán chi phí vận hành máy chủ và tốc
 Tài liệu và lộ trình này được cập nhật liên tục theo từng cột mốc phát triển của dự án:
 
 ### 🚀 Giai đoạn 1 (Đã Hoàn Thiện & Vận Hành) — Hoàn Thiện 4 Phòng Thi CDI, Chấm Điểm Kép 0.02ms + AI & Đấu Trường Atlas Arena (`v1.0 – v3.5 (Hiện tại)` • `Đã Vận Hành 100%`)
-- Vận hành mượt mà 47+ tính năng chuyên sâu cho cả 4 kỹ năng Nghe – Nói – Đọc – Viết.
+- Vận hành mượt mà 48+ tính năng chuyên sâu cho cả 4 kỹ năng Nghe – Nói – Đọc – Viết.
 - Tích hợp Động cơ chấm máy 0.02ms, Giám khảo AI 4 tiêu chí, kiểm định đoạn văn PEEL và Bản đồ nhiệt cấu trúc câu GRA.
 - Ra mắt Đấu trường Atlas Arena 100 cấp độ, Tháp Babel, Đấu Ma (Ghost Duel), Boss Thế Giới và Ví thưởng Atlas.
 - Hoàn thiện kiến trúc Song ngữ Anh – Việt tuyệt đối (Strict Global English UI) và đường ống đồng bộ GitBook tự động.

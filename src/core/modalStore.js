@@ -40,7 +40,8 @@ let state = {
   evaluationProgress: false,
   beginnerGuide: false,
   pronunciation: false,
-  conversation: false
+  conversation: false,
+  musicListening: false
 };
 
 const listeners = new Set();

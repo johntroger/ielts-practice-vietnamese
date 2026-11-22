@@ -1,0 +1,1054 @@
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import {
+  X,
+  Music,
+  Search,
+  Shuffle,
+  RotateCcw,
+  Share2,
+  Check,
+  Maximize2,
+  Minimize2,
+  PanelLeftClose,
+  PanelLeftOpen,
+  Plus,
+  Flame,
+  Sparkles,
+  CheckCircle2,
+  Eye,
+  Languages,
+  Trash2
+} from 'lucide-react';
+import {
+  MUSIC_GENRES,
+  MUSIC_LISTENING_TRACKS
+} from '../data/musicListeningData.js';
+import {
+  MUSIC_PRACTICE_MODES,
+  MUSIC_DIFFICULTY_LEVELS,
+  buildMusicDictationBlueprint,
+  evaluateWordBlankAttempt,
+  evaluateSentenceBlankAttempt
+} from '../utils/musicDictationGenerator.js';
+import { useAudioEngine } from '../hooks/useAudioEngine.js';
+import { getAudioPlayableUrl, deleteAudioBlob } from '../utils/audioStorage.js';
+import { useTranslation } from '../i18n/index.js';
+import { safeGet, safeSet } from '../utils/storageService.js';
+import {
+  submitRealSprintScore,
+  getCurrentUserTotalXp
+} from '../services/gamification/realLeaderboardService.js';
+import {
+  calculateLevelProgress,
+  getLevelTierInfo
+} from '../services/gamification/levelEngine.js';
+import { getWallet, addGold } from '../services/gamification/atlasWalletService.js';
+import { GoldWalletHeaderBadge } from './common/BatchSelectorStrip.jsx';
+import { getUnifiedStreakCount } from '../services/gamification/leagueEngine.js';
+import { speakingSoundEffects } from '../utils/speakingSoundEffects.js';
+import { triggerHaptic } from '../utils/hapticHelper.js';
+import MusicAudioControlDock from './music/MusicAudioControlDock.jsx';
+import MusicLyricsCanvas from './music/MusicLyricsCanvas.jsx';
+import MusicSessionSummaryCard from './music/MusicSessionSummaryCard.jsx';
+import MusicCustomSongModal from './music/MusicCustomSongModal.jsx';
+
+const CUSTOM_SONGS_STORAGE_KEY = 'ielts_music_custom_songs_v1';
+const MUSIC_RESUME_STORAGE_KEY = 'ielts_music_resume_v1';
+const MUSIC_COMPLETED_STORAGE_KEY = 'ielts_music_completed_v1';
+
+export default function MusicListeningStudioModal({
+  isOpen,
+  onClose,
+  currentUser = null,
+  onSaveToNotebook,
+  onOpenPronunciation,
+  initialOptions = null
+}) {
+  const { isEn } = useTranslation();
+
+  // 1. Custom songs & mastered state
+  const [customSongs, setCustomSongs] = useState(() => safeGet(CUSTOM_SONGS_STORAGE_KEY, []));
+  const [completedMap, setCompletedMap] = useState(() => safeGet(MUSIC_COMPLETED_STORAGE_KEY, {}));
+  const [isCustomModalOpen, setIsCustomModalOpen] = useState(false);
+
+  const allTracks = useMemo(
+    () => [...customSongs, ...MUSIC_LISTENING_TRACKS],
+    [customSongs]
+  );
+
+  // 2. Parse initial URL / initialOptions parameters
+  const getInitialParam = (key, validValues, fallback) => {
+    if (initialOptions && initialOptions[key]) {
+      if (!validValues || validValues.includes(initialOptions[key])) {
+        return initialOptions[key];
+      }
+    }
+    if (typeof window !== 'undefined') {
+      const search = new URLSearchParams(window.location.search);
+      const val = search.get(key);
+      if (val && (!validValues || validValues.includes(val))) {
+        return val;
+      }
+    }
+    return fallback;
+  };
+
+  // Saved resume session
+  const savedResume = useMemo(() => safeGet(MUSIC_RESUME_STORAGE_KEY, null), []);
+
+  const [selectedGenre, setSelectedGenre] = useState(() =>
+    getInitialParam('genre', MUSIC_GENRES.map(g => g.id), savedResume?.genre || 'all')
+  );
+  const [selectedTrackId, setSelectedTrackId] = useState(() =>
+    getInitialParam('song', null, savedResume?.trackId || MUSIC_LISTENING_TRACKS[0]?.id)
+  );
+  const [practiceMode, setPracticeMode] = useState(() =>
+    getInitialParam('mode', ['full', 'sentence', 'word', 'mixed'], savedResume?.mode || 'mixed')
+  );
+  const [difficulty, setDifficulty] = useState(() =>
+    getInitialParam('level', ['easy', 'medium', 'hard'], savedResume?.difficulty || 'medium')
+  );
+  const [seed, setSeed] = useState(() => savedResume?.seed || 1);
+
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isCopiedLink, setIsCopiedLink] = useState(false);
+
+  // Pedagogical display toggles
+  const [showTranslation, setShowTranslation] = useState(true);
+  const [showPhoneticTips, setShowPhoneticTips] = useState(true);
+
+  // Dictation audio assist switches
+  const [isAutoLoopLine, setIsAutoLoopLine] = useState(false);
+  const [isAutoPauseLine, setIsAutoPauseLine] = useState(false);
+
+  // User inputs per line
+  const [wordInputs, setWordInputs] = useState(() =>
+    savedResume?.trackId === selectedTrackId && savedResume?.mode === practiceMode
+      ? (savedResume?.wordInputs || {})
+      : {}
+  );
+  const [sentenceInputs, setSentenceInputs] = useState(() =>
+    savedResume?.trackId === selectedTrackId && savedResume?.mode === practiceMode
+      ? (savedResume?.sentenceInputs || {})
+      : {}
+  );
+  const [revealedLines, setRevealedLines] = useState({});
+  const [hasClaimedReward, setHasClaimedReward] = useState(false);
+
+  // Gamification header stats
+  const [totalXp, setTotalXp] = useState(() => getCurrentUserTotalXp());
+  const [wallet, setWallet] = useState(() => getWallet());
+  const streakCount = useMemo(() => getUnifiedStreakCount(), []);
+  const levelProgress = useMemo(() => calculateLevelProgress(totalXp), [totalXp]);
+  const tierInfo = useMemo(() => getLevelTierInfo(levelProgress.level), [levelProgress.level]);
+
+  // Apply external initialOptions when deep-linked while mounted
+  useEffect(() => {
+    if (!initialOptions || typeof initialOptions !== 'object') return;
+    if (initialOptions.genre && MUSIC_GENRES.some(g => g.id === initialOptions.genre)) {
+      setSelectedGenre(initialOptions.genre);
+    }
+    if (initialOptions.song && allTracks.some(t => t.id === initialOptions.song)) {
+      setSelectedTrackId(initialOptions.song);
+    }
+    if (initialOptions.mode && ['full', 'sentence', 'word', 'mixed'].includes(initialOptions.mode)) {
+      setPracticeMode(initialOptions.mode);
+    }
+    if (initialOptions.level && ['easy', 'medium', 'hard'].includes(initialOptions.level)) {
+      setDifficulty(initialOptions.level);
+    }
+  }, [initialOptions, allTracks]);
+
+  // Sync URL address bar query params when inside /music-listening
+  useEffect(() => {
+    if (!isOpen || typeof window === 'undefined') return;
+    try {
+      const params = new URLSearchParams();
+      if (selectedGenre && selectedGenre !== 'all') params.set('genre', selectedGenre);
+      if (selectedTrackId) params.set('song', selectedTrackId);
+      if (practiceMode) params.set('mode', practiceMode);
+      if (difficulty) params.set('level', difficulty);
+      const qs = params.toString();
+      const targetUrl = qs ? `/music-listening?${qs}` : '/music-listening';
+      if (window.location.pathname + window.location.search !== targetUrl) {
+        window.history.replaceState({ modal: 'musicListening' }, '', targetUrl);
+      }
+    } catch (e) {}
+  }, [isOpen, selectedGenre, selectedTrackId, practiceMode, difficulty]);
+
+  // Filter tracks by genre and search query
+  const filteredTracks = useMemo(() => {
+    return allTracks.filter((tr) => {
+      const matchesGenre = selectedGenre === 'all' || tr.genreId === selectedGenre;
+      if (!matchesGenre) return false;
+      if (!searchQuery.trim()) return true;
+      const q = searchQuery.toLowerCase();
+      return (
+        (tr.title && tr.title.toLowerCase().includes(q)) ||
+        (tr.artist && tr.artist.toLowerCase().includes(q)) ||
+        (tr.pedagogicalFocusEn && tr.pedagogicalFocusEn.toLowerCase().includes(q))
+      );
+    });
+  }, [allTracks, selectedGenre, searchQuery]);
+
+  const currentTrack = useMemo(() => {
+    return (
+      allTracks.find(t => t.id === selectedTrackId) ||
+      filteredTracks[0] ||
+      MUSIC_LISTENING_TRACKS[0]
+    );
+  }, [allTracks, filteredTracks, selectedTrackId]);
+
+  // Hydrate local IndexedDB audio URL if currentTrack is a local custom song
+  const [resolvedAudioSrc, setResolvedAudioSrc] = useState(currentTrack?.audioUrl || '');
+  useEffect(() => {
+    let active = true;
+    if (currentTrack?.localAudioId) {
+      getAudioPlayableUrl(currentTrack.localAudioId).then((url) => {
+        if (active && url) setResolvedAudioSrc(url);
+      });
+    } else {
+      setResolvedAudioSrc(currentTrack?.audioUrl || '');
+    }
+    return () => {
+      active = false;
+    };
+  }, [currentTrack]);
+
+  // Build deterministic exercise blueprint for current track + mode + difficulty + seed
+  const blueprint = useMemo(() => {
+    return buildMusicDictationBlueprint({
+      track: currentTrack,
+      mode: practiceMode,
+      difficulty,
+      seed
+    });
+  }, [currentTrack, practiceMode, difficulty, seed]);
+
+  // Isolate activeLineIndex so lyric cards don't re-render on every timeupdate tick
+  const [activeLineIndex, setActiveLineIndex] = useState(0);
+  const activeLineIndexRef = useRef(0);
+  activeLineIndexRef.current = activeLineIndex;
+
+  const autoLoopRef = useRef(isAutoLoopLine);
+  autoLoopRef.current = isAutoLoopLine;
+  const autoPauseRef = useRef(isAutoPauseLine);
+  autoPauseRef.current = isAutoPauseLine;
+  const blueprintLinesRef = useRef(blueprint.lines);
+  blueprintLinesRef.current = blueprint.lines;
+  const pausedForLineRef = useRef(-1);
+
+  const audioEngine = useAudioEngine({
+    initialSrc: resolvedAudioSrc,
+    fallbackSrc: currentTrack?.fallbackAudioUrl || currentTrack?.audioUrl || '',
+    examMode: 'practice'
+  });
+
+  // Monitor audioEngine.currentTime for active line sync, A-B Line Loop, and Auto-Pause at Line End
+  useEffect(() => {
+    const cur = audioEngine.currentTime || 0;
+    const lines = blueprintLinesRef.current || [];
+    if (lines.length === 0) return;
+
+    const currentActiveLine = lines[activeLineIndexRef.current];
+
+    // 1. Check A-B Line Loop or Auto-Pause on the currently focused line
+    if (audioEngine.isPlaying && currentActiveLine) {
+      const lineEnd = currentActiveLine.effectiveEnd || currentActiveLine.end;
+      if (autoLoopRef.current && cur >= lineEnd) {
+        audioEngine.seek(currentActiveLine.start);
+        return;
+      }
+      if (
+        autoPauseRef.current &&
+        cur >= lineEnd &&
+        pausedForLineRef.current !== currentActiveLine.index
+      ) {
+        pausedForLineRef.current = currentActiveLine.index;
+        audioEngine.pause();
+        return;
+      }
+    }
+
+    // 2. Otherwise update activeLineIndex when song naturally crosses into another line
+    if (!autoLoopRef.current) {
+      let matchedIdx = -1;
+      for (let i = 0; i < lines.length; i++) {
+        if (cur >= lines[i].start && cur < (lines[i].end || lines[i].start + 5)) {
+          matchedIdx = i;
+          break;
+        }
+      }
+      if (matchedIdx !== -1 && matchedIdx !== activeLineIndexRef.current) {
+        setActiveLineIndex(matchedIdx);
+        pausedForLineRef.current = -1;
+      }
+    }
+  }, [audioEngine.currentTime, audioEngine.isPlaying]);
+
+  // Persist session progress automatically (Auto-Resume)
+  useEffect(() => {
+    if (!currentTrack) return;
+    safeSet(MUSIC_RESUME_STORAGE_KEY, {
+      genre: selectedGenre,
+      trackId: currentTrack.id,
+      mode: practiceMode,
+      difficulty,
+      seed,
+      wordInputs,
+      sentenceInputs,
+      updatedAt: Date.now()
+    });
+  }, [selectedGenre, currentTrack, practiceMode, difficulty, seed, wordInputs, sentenceInputs]);
+
+  // Reset session helper
+  const handleResetSession = useCallback(() => {
+    setWordInputs({});
+    setSentenceInputs({});
+    setRevealedLines({});
+    setHasClaimedReward(false);
+    setActiveLineIndex(0);
+    pausedForLineRef.current = -1;
+  }, []);
+
+  const handleSelectTrack = (trackId) => {
+    if (trackId === selectedTrackId) return;
+    setSelectedTrackId(trackId);
+    handleResetSession();
+  };
+
+  const handleChangeMode = (newMode) => {
+    if (newMode === practiceMode) return;
+    setPracticeMode(newMode);
+    handleResetSession();
+  };
+
+  const handleChangeDifficulty = (newDiff) => {
+    if (newDiff === difficulty) return;
+    setDifficulty(newDiff);
+    handleResetSession();
+  };
+
+  const handleShuffleBlanks = () => {
+    setSeed(prev => prev + 1);
+    handleResetSession();
+  };
+
+  // Seek to a specific lyric line
+  const handleSeekToLine = useCallback(
+    (lineIdx, autoPlay = true) => {
+      const targetLine = blueprint.lines[lineIdx];
+      if (!targetLine) return;
+      setActiveLineIndex(lineIdx);
+      pausedForLineRef.current = -1;
+      audioEngine.seek(targetLine.start);
+      if (autoPlay && !audioEngine.isPlaying) {
+        audioEngine.play();
+      }
+    },
+    [blueprint.lines, audioEngine]
+  );
+
+  // Replay a specific line (or currently active line) from its start timestamp
+  const handleReplayLine = useCallback(
+    (lineIdx = activeLineIndexRef.current) => {
+      const targetLine = blueprint.lines[lineIdx];
+      if (!targetLine) return;
+      setActiveLineIndex(lineIdx);
+      pausedForLineRef.current = -1;
+      audioEngine.seek(targetLine.start);
+      if (!audioEngine.isPlaying) {
+        audioEngine.play();
+      }
+    },
+    [blueprint.lines, audioEngine]
+  );
+
+  // Handle inline word blank input changes
+  const handleWordInputChange = useCallback(
+    (lineIdx, tokenIdx, value, targetCoreWord) => {
+      setWordInputs((prev) => {
+        const prevLineObj = prev[lineIdx] || {};
+        const prevVal = prevLineObj[tokenIdx] || '';
+        const wasCorrect = evaluateWordBlankAttempt(targetCoreWord, prevVal).isCorrect;
+        const isNowCorrect = evaluateWordBlankAttempt(targetCoreWord, value).isCorrect;
+
+        if (!wasCorrect && isNowCorrect) {
+          try {
+            speakingSoundEffects.playCorrectChime?.();
+            triggerHaptic('light');
+          } catch (e) {}
+        }
+
+        return {
+          ...prev,
+          [lineIdx]: {
+            ...prevLineObj,
+            [tokenIdx]: value
+          }
+        };
+      });
+    },
+    []
+  );
+
+  // Handle full sentence blank input changes
+  const handleSentenceInputChange = useCallback(
+    (lineIdx, value) => {
+      const targetLine = blueprintLinesRef.current[lineIdx];
+      setSentenceInputs((prev) => {
+        const prevVal = prev[lineIdx] || '';
+        if (targetLine) {
+          const wasPassed = evaluateSentenceBlankAttempt(targetLine.text, prevVal).isPassed;
+          const isNowPassed = evaluateSentenceBlankAttempt(targetLine.text, value).isPassed;
+          if (!wasPassed && isNowPassed) {
+            try {
+              speakingSoundEffects.playCorrectChime?.();
+              triggerHaptic('medium');
+            } catch (e) {}
+          }
+        }
+        return {
+          ...prev,
+          [lineIdx]: value
+        };
+      });
+    },
+    []
+  );
+
+  // Hint handler: fills the next missing word in a word_blank or sentence_blank line
+  const handleHintLine = useCallback(
+    (lineIdx) => {
+      const line = blueprint.lines[lineIdx];
+      if (!line) return;
+
+      if (line.lineType === 'word_blank') {
+        const currentLineInputs = wordInputs[lineIdx] || {};
+        for (const tokIdx of line.blankWordIndices) {
+          const tok = line.tokens[tokIdx];
+          if (!tok) continue;
+          const curVal = currentLineInputs[tokIdx] || '';
+          const ev = evaluateWordBlankAttempt(tok.coreWord, curVal);
+          if (!ev.isCorrect) {
+            // Reveal first 2 characters if empty, or full word if already started
+            const nextHint =
+              curVal.length === 0 && tok.coreWord.length > 2
+                ? tok.coreWord.slice(0, 2)
+                : tok.coreWord;
+            handleWordInputChange(lineIdx, tokIdx, nextHint, tok.coreWord);
+            break;
+          }
+        }
+      } else if (line.lineType === 'sentence_blank') {
+        const curText = sentenceInputs[lineIdx] || '';
+        const ev = evaluateSentenceBlankAttempt(line.text, curText);
+        const firstMissed = ev.targetDiff.find(t => t.type !== 'correct');
+        if (firstMissed) {
+          const nextSentence = curText.trim()
+            ? `${curText.trim()} ${firstMissed.text}`
+            : firstMissed.text;
+          handleSentenceInputChange(lineIdx, nextSentence);
+        }
+      }
+      handleReplayLine(lineIdx);
+    },
+    [blueprint.lines, wordInputs, sentenceInputs, handleWordInputChange, handleSentenceInputChange, handleReplayLine]
+  );
+
+  // Reveal full line answer
+  const handleRevealLine = useCallback((lineIdx) => {
+    setRevealedLines(prev => ({ ...prev, [lineIdx]: true }));
+  }, []);
+
+  // Compute real-time completion & accuracy progress across the song
+  const progressStats = useMemo(() => {
+    let completedTasks = 0;
+    let totalTasks = 0;
+    let correctScoreSum = 0;
+
+    blueprint.lines.forEach((line) => {
+      const isRev = Boolean(revealedLines[line.index]);
+      if (line.lineType === 'word_blank') {
+        const lineInputs = wordInputs[line.index] || {};
+        line.blankWordIndices.forEach((tokIdx) => {
+          totalTasks++;
+          const tok = line.tokens[tokIdx];
+          const ev = evaluateWordBlankAttempt(tok?.coreWord, lineInputs[tokIdx] || '');
+          if (ev.isCorrect) {
+            completedTasks++;
+            correctScoreSum += 100;
+          } else if (isRev) {
+            completedTasks++;
+            correctScoreSum += 50;
+          }
+        });
+      } else if (line.lineType === 'sentence_blank') {
+        totalTasks++;
+        const ev = evaluateSentenceBlankAttempt(line.text, sentenceInputs[line.index] || '');
+        if (ev.isPassed) {
+          completedTasks++;
+          correctScoreSum += ev.accuracy;
+        } else if (isRev) {
+          completedTasks++;
+          correctScoreSum += 50;
+        }
+      }
+    });
+
+    const safeTotal = Math.max(1, totalTasks);
+    const progressPct = Math.min(100, Math.round((completedTasks / safeTotal) * 100));
+    const accuracyPct =
+      completedTasks > 0 ? Math.min(100, Math.round(correctScoreSum / completedTasks)) : 0;
+    const isAllCompleted = totalTasks > 0 && completedTasks === totalTasks;
+
+    const diffMult =
+      MUSIC_DIFFICULTY_LEVELS.find(d => d.id === difficulty)?.xpMultiplier || 1.0;
+    const modeBonus =
+      practiceMode === 'full' ? 1.4 : practiceMode === 'mixed' ? 1.25 : 1.0;
+    const earnedXp = Math.round(50 * diffMult * modeBonus);
+    const earnedGold = Math.round(25 * diffMult * modeBonus);
+
+    return {
+      completedTasks,
+      totalTasks,
+      progressPct,
+      accuracyPct,
+      isAllCompleted,
+      earnedXp,
+      earnedGold
+    };
+  }, [blueprint.lines, wordInputs, sentenceInputs, revealedLines, difficulty, practiceMode]);
+
+  // Claim XP & Gold reward upon completing a song
+  const handleClaimReward = useCallback(() => {
+    if (hasClaimedReward || !currentTrack) return;
+    setHasClaimedReward(true);
+
+    try {
+      const res = submitRealSprintScore({
+        user: currentUser,
+        xpEarned: progressStats.earnedXp,
+        correctCount: progressStats.completedTasks,
+        totalQuestions: progressStats.totalTasks,
+        skill: 'listening'
+      });
+      if (res?.newTotalXp) setTotalXp(res.newTotalXp);
+
+      addGold(progressStats.earnedGold, `Music Dictation: ${currentTrack.title}`, true);
+      setWallet(getWallet());
+
+      const nextCompleted = {
+        ...completedMap,
+        [currentTrack.id]: {
+          accuracy: progressStats.accuracyPct,
+          mode: practiceMode,
+          difficulty,
+          completedAt: new Date().toISOString()
+        }
+      };
+      setCompletedMap(nextCompleted);
+      safeSet(MUSIC_COMPLETED_STORAGE_KEY, nextCompleted);
+
+      speakingSoundEffects.playCelebrationFanfare?.();
+      triggerHaptic('success');
+    } catch (e) {}
+  }, [hasClaimedReward, currentTrack, currentUser, progressStats, completedMap, practiceMode, difficulty]);
+
+  // Share deep-link URL
+  const handleShareLink = () => {
+    if (typeof window === 'undefined') return;
+    const shareUrl = window.location.href;
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(shareUrl).catch(() => {});
+    }
+    setIsCopiedLink(true);
+    setTimeout(() => setIsCopiedLink(false), 2000);
+  };
+
+  // Add custom song handler
+  const handleAddCustomSong = (newTrack) => {
+    const updated = [newTrack, ...customSongs];
+    setCustomSongs(updated);
+    safeSet(CUSTOM_SONGS_STORAGE_KEY, updated);
+    setSelectedGenre('all');
+    setSelectedTrackId(newTrack.id);
+    handleResetSession();
+  };
+
+  // Delete custom song handler
+  const handleDeleteCustomSong = (e, track) => {
+    e.stopPropagation();
+    if (track.localAudioId) {
+      deleteAudioBlob(track.localAudioId).catch(() => {});
+    }
+    const updated = customSongs.filter(s => s.id !== track.id);
+    setCustomSongs(updated);
+    safeSet(CUSTOM_SONGS_STORAGE_KEY, updated);
+    if (selectedTrackId === track.id) {
+      setSelectedTrackId(MUSIC_LISTENING_TRACKS[0]?.id);
+      handleResetSession();
+    }
+  };
+
+  // Practice speaking a song line in Pronunciation Studio (/pronunciation)
+  const handlePracticeLinePronunciation = useCallback(
+    (line) => {
+      audioEngine.pause();
+      onOpenPronunciation?.({
+        tab: 'sentences',
+        customSentence: line.text
+      });
+    },
+    [audioEngine, onOpenPronunciation]
+  );
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-xs flex items-center justify-center p-0 sm:p-3 animate-in fade-in duration-150">
+      <div
+        className={`bg-white dark:bg-slate-900 flex flex-col shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden transition-all ${
+          isFullscreen
+            ? 'w-screen h-[100dvh] rounded-none'
+            : 'w-full max-w-[1440px] h-[100dvh] sm:h-[94dvh] sm:rounded-2xl'
+        }`}
+      >
+        {/* ================================================================= */}
+        {/* 1. TOP STUDIO HEADER BAR                                          */}
+        {/* ================================================================= */}
+        <div className="px-3 sm:px-5 py-2.5 bg-slate-950 text-white border-b border-slate-800 flex items-center justify-between gap-2 shrink-0">
+          {/* Left: Studio Brand & Sidebar Collapse Button */}
+          <div className="flex items-center space-x-2 sm:space-x-3 min-w-0">
+            <button
+              type="button"
+              onClick={() => setIsSidebarCollapsed(prev => !prev)}
+              className="p-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 transition-colors cursor-pointer"
+              title={
+                isSidebarCollapsed
+                  ? (isEn ? 'Show Song Library Sidebar' : 'Hiện danh sách bài hát')
+                  : (isEn ? 'Collapse Song Sidebar for wider lyrics view' : 'Thu gọn danh sách bài hát để mở rộng khung chép lời')
+              }
+            >
+              {isSidebarCollapsed ? (
+                <PanelLeftOpen className="w-4 h-4 text-rose-400" />
+              ) : (
+                <PanelLeftClose className="w-4 h-4 text-slate-400" />
+              )}
+            </button>
+
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-tr from-rose-600 via-pink-600 to-purple-600 flex items-center justify-center shadow-md shrink-0">
+              <Music className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+            </div>
+
+            <div className="min-w-0">
+              <div className="flex items-center space-x-2">
+                <h2 className="font-black text-xs sm:text-base tracking-tight truncate">
+                  {isEn ? 'Music & Lyrics Dictation Studio' : 'Phòng Luyện Nghe Nhạc & Chép Lời'}
+                </h2>
+                <span className="hidden md:inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-black bg-rose-500/20 text-rose-300 border border-rose-500/30">
+                  /music-listening
+                </span>
+              </div>
+              <p className="hidden sm:block text-[11px] text-slate-400 truncate">
+                {isEn
+                  ? '6 Genres on Cloudflare R2 • 4 Modes: Full Song, Sentence Blanks, Word Blanks & Hybrid Mixed'
+                  : '6 Thể loại nhạc trên Cloudflare R2 • 4 Chế độ: Chép nguyên bài, Trống câu, Trống từ & Kết hợp'}
+              </p>
+            </div>
+          </div>
+
+          {/* Right: Gamification Badges (Streak, Gold, Level), Share Link, Fullscreen & Close */}
+          <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
+            <div className="hidden lg:flex items-center space-x-1.5 px-2.5 py-1 rounded-xl bg-slate-900 border border-slate-800 text-xs font-bold">
+              <Flame className="w-3.5 h-3.5 text-orange-400 fill-current" />
+              <span className="text-orange-300">{streakCount}d</span>
+            </div>
+
+            <div className="hidden md:block">
+              <GoldWalletHeaderBadge gold={wallet?.gold || 0} isEn={isEn} />
+            </div>
+
+            <div className="hidden xl:flex items-center space-x-1.5 px-2.5 py-1 rounded-xl bg-slate-900 border border-slate-800 text-xs font-bold">
+              <span className="text-amber-400">Lv.{levelProgress.level}</span>
+              <span className="text-slate-400 text-[11px]">
+                ({isEn ? tierInfo.titleEn : tierInfo.titleVi})
+              </span>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleShareLink}
+              className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 text-xs font-bold transition-colors cursor-pointer"
+              title={isEn ? 'Copy direct link to this song & mode' : 'Sao chép đường dẫn trực tiếp tới bài hát & chế độ này'}
+            >
+              {isCopiedLink ? (
+                <>
+                  <Check className="w-3.5 h-3.5 text-emerald-400" />
+                  <span className="hidden sm:inline text-emerald-400">
+                    {isEn ? 'Copied!' : 'Đã chép!'}
+                  </span>
+                </>
+              ) : (
+                <>
+                  <Share2 className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">{isEn ? 'Share' : 'Chia sẻ'}</span>
+                </>
+              )}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setIsFullscreen(prev => !prev)}
+              className="hidden sm:flex p-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 transition-colors cursor-pointer"
+              title={isFullscreen ? (isEn ? 'Exit Fullscreen' : 'Thu nhỏ') : (isEn ? 'Fullscreen' : 'Toàn màn hình')}
+            >
+              {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                audioEngine.pause();
+                onClose?.();
+              }}
+              className="p-1.5 rounded-xl bg-slate-900 hover:bg-rose-600 text-slate-300 hover:text-white border border-slate-800 transition-colors cursor-pointer"
+              aria-label={isEn ? 'Close Music Studio' : 'Đóng Phòng Luyện Nhạc'}
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+
+        {/* ================================================================= */}
+        {/* 2. 6-GENRE FILTER STRIP                                           */}
+        {/* ================================================================= */}
+        <div className="px-3 sm:px-5 py-2 bg-slate-900 text-slate-200 border-b border-slate-800 flex items-center justify-between gap-2 overflow-x-auto scrollbar-none shrink-0">
+          <div className="flex items-center space-x-1.5">
+            {MUSIC_GENRES.map((g) => {
+              const isSelected = selectedGenre === g.id;
+              return (
+                <button
+                  key={g.id}
+                  type="button"
+                  onClick={() => setSelectedGenre(g.id)}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-extrabold transition-all whitespace-nowrap cursor-pointer ${
+                    isSelected
+                      ? 'bg-gradient-to-r from-rose-600 to-purple-600 text-white shadow-sm'
+                      : 'bg-slate-800/90 hover:bg-slate-800 text-slate-300 hover:text-white'
+                  }`}
+                  title={isEn ? g.descEn : g.descVi}
+                >
+                  {isEn ? g.labelEn : g.labelVi}
+                </button>
+              );
+            })}
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setIsCustomModalOpen(true)}
+            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-extrabold whitespace-nowrap transition-colors cursor-pointer shrink-0"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>{isEn ? 'Custom Song (.LRC)' : 'Tự nạp nhạc (.LRC)'}</span>
+          </button>
+        </div>
+
+        {/* ================================================================= */}
+        {/* 3. MAIN WORKSPACE: LEFT SONG SIDEBAR + RIGHT DICTATION STUDIO     */}
+        {/* ================================================================= */}
+        <div className="flex-1 flex min-h-0 overflow-hidden">
+          {/* LEFT SIDEBAR: Song Catalog */}
+          {!isSidebarCollapsed && (
+            <aside className="w-64 sm:w-72 lg:w-80 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col shrink-0">
+              {/* Search Box */}
+              <div className="p-3 border-b border-slate-200 dark:border-slate-800">
+                <div className="relative">
+                  <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder={
+                      isEn ? 'Search song, artist, topic...' : 'Tìm bài hát, ca sĩ, chủ đề...'
+                    }
+                    className="w-full pl-8 pr-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-purple-500"
+                  />
+                </div>
+              </div>
+
+              {/* Track List */}
+              <div className="flex-1 overflow-y-auto p-2.5 space-y-2">
+                {filteredTracks.map((tr) => {
+                  const isCurrent = currentTrack?.id === tr.id;
+                  const doneInfo = completedMap[tr.id];
+                  const genreObj = MUSIC_GENRES.find(g => g.id === tr.genreId);
+
+                  return (
+                    <div
+                      key={tr.id}
+                      onClick={() => handleSelectTrack(tr.id)}
+                      className={`group relative p-3 rounded-2xl border transition-all cursor-pointer ${
+                        isCurrent
+                          ? 'bg-gradient-to-r from-rose-50 via-purple-50 to-indigo-50 dark:from-slate-800 dark:to-indigo-950/70 border-purple-400 dark:border-purple-500 shadow-xs'
+                          : 'bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/60 border-slate-200/80 dark:border-slate-800'
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0">
+                          <div className="flex items-center space-x-1.5">
+                            <span className="font-extrabold text-xs sm:text-sm text-slate-900 dark:text-white truncate">
+                              {isEn ? (tr.titleEn || tr.title) : (tr.titleVi || tr.title)}
+                            </span>
+                          </div>
+                          <div className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 truncate mt-0.5">
+                            {tr.artist} • {tr.bpm} BPM
+                          </div>
+                        </div>
+
+                        {doneInfo ? (
+                          <span className="inline-flex items-center space-x-0.5 px-1.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 text-[10px] font-black shrink-0">
+                            <CheckCircle2 className="w-3 h-3" />
+                            <span>{doneInfo.accuracy}%</span>
+                          </span>
+                        ) : (
+                          <span className="px-1.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[10px] font-bold shrink-0">
+                            Band {tr.bandTarget}
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="mt-2 flex items-center justify-between text-[10px]">
+                        <span className="px-2 py-0.5 rounded-md bg-purple-100/70 dark:bg-purple-900/40 text-purple-800 dark:text-purple-300 font-bold">
+                          {genreObj ? (isEn ? genreObj.shortEn : genreObj.shortVi) : tr.genreId}
+                        </span>
+                        <span className="text-slate-400 font-medium">
+                          {tr.lines?.length || 0} {isEn ? 'lines' : 'câu hát'}
+                        </span>
+                      </div>
+
+                      {tr.isCustom && (
+                        <button
+                          type="button"
+                          onClick={(e) => handleDeleteCustomSong(e, tr)}
+                          className="absolute top-2 right-2 p-1 rounded-lg bg-rose-100 text-rose-600 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                          title={isEn ? 'Delete custom song' : 'Xóa bài nhạc tự nạp'}
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </aside>
+          )}
+
+          {/* RIGHT WORKSPACE: Mode Toolbar + Summary + Interactive Lyrics Canvas + Audio Dock */}
+          <div className="flex-1 flex flex-col min-w-0 min-h-0 overflow-hidden">
+            {/* 3.1. Sticky 4-Mode & Difficulty Control Bar */}
+            <div className="px-3 sm:px-5 py-2.5 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2.5 shrink-0">
+              {/* 4 Dictation Mode Pills */}
+              <div className="flex items-center flex-wrap gap-1.5">
+                {MUSIC_PRACTICE_MODES.map((m) => {
+                  const isActiveMode = practiceMode === m.id;
+                  return (
+                    <button
+                      key={m.id}
+                      type="button"
+                      onClick={() => handleChangeMode(m.id)}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
+                        isActiveMode
+                          ? 'bg-slate-900 dark:bg-purple-600 text-white shadow-xs'
+                          : 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300'
+                      }`}
+                      title={isEn ? m.descEn : m.descVi}
+                    >
+                      {isEn ? m.labelEn : m.labelVi}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Difficulty Selector + Shuffle + Reveal All + Helper Toggles */}
+              <div className="flex items-center flex-wrap gap-1.5">
+                {practiceMode !== 'full' && (
+                  <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-0.5 rounded-xl border border-slate-200 dark:border-slate-700">
+                    {MUSIC_DIFFICULTY_LEVELS.map((lv) => (
+                      <button
+                        key={lv.id}
+                        type="button"
+                        onClick={() => handleChangeDifficulty(lv.id)}
+                        className={`px-2.5 py-1 rounded-lg text-[11px] font-extrabold transition-all cursor-pointer ${
+                          difficulty === lv.id
+                            ? 'bg-white dark:bg-slate-900 text-purple-700 dark:text-purple-300 shadow-2xs'
+                            : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+                        }`}
+                      >
+                        {isEn ? lv.labelEn : lv.labelVi}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {practiceMode !== 'full' && (
+                  <button
+                    type="button"
+                    onClick={handleShuffleBlanks}
+                    className="inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-purple-50 dark:bg-purple-950/60 hover:bg-purple-100 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800 text-xs font-bold transition-colors cursor-pointer"
+                    title={isEn ? 'Randomize blank positions' : 'Đổi ngẫu nhiên vị trí các ô trống / câu trống'}
+                  >
+                    <Shuffle className="w-3.5 h-3.5" />
+                    <span className="hidden sm:inline">{isEn ? 'Shuffle' : 'Đổi ô trống'}</span>
+                  </button>
+                )}
+
+                {!isEn && (
+                  <button
+                    type="button"
+                    onClick={() => setShowTranslation(prev => !prev)}
+                    className={`inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-colors cursor-pointer ${
+                      showTranslation
+                        ? 'bg-sky-50 border-sky-200 text-sky-700'
+                        : 'bg-slate-100 border-slate-200 text-slate-500'
+                    }`}
+                    title="Bật/Tắt dịch nghĩa tiếng Việt sau khi hoàn thành câu"
+                  >
+                    <Languages className="w-3.5 h-3.5" />
+                    <span className="hidden md:inline">Dịch nghĩa</span>
+                  </button>
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => setShowPhoneticTips(prev => !prev)}
+                  className={`inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-colors cursor-pointer ${
+                    showPhoneticTips
+                      ? 'bg-indigo-50 dark:bg-indigo-950/60 border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-300'
+                      : 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500'
+                  }`}
+                  title={
+                    isEn
+                      ? 'Toggle Connected Speech & Phonetic Notes'
+                      : 'Bật/Tắt giải thích hiện tượng nối âm & phát âm'
+                  }
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span className="hidden md:inline">{isEn ? 'Phonetics' : 'Nối âm'}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    const allRev = {};
+                    blueprint.lines.forEach((_, idx) => {
+                      allRev[idx] = true;
+                    });
+                    setRevealedLines(allRev);
+                  }}
+                  className="inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-rose-50 hover:text-rose-700 text-slate-600 dark:text-slate-300 text-xs font-bold transition-colors cursor-pointer"
+                  title={isEn ? 'Reveal all lyrics' : 'Hiện toàn bộ đáp án lời bài hát'}
+                >
+                  <Eye className="w-3.5 h-3.5" />
+                  <span className="hidden xl:inline">{isEn ? 'Show All' : 'Hiện đáp án'}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleResetSession}
+                  className="p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
+                  title={isEn ? 'Reset current exercise' : 'Làm lại từ đầu'}
+                >
+                  <RotateCcw className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+
+            {/* 3.2. Progress & Song Vocab Summary Strip */}
+            <div className="px-3 sm:px-5 py-2 bg-slate-50 dark:bg-slate-900/60 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between gap-3 shrink-0">
+              <div className="flex items-center space-x-2 min-w-0">
+                <span className="font-extrabold text-xs sm:text-sm text-slate-900 dark:text-white truncate">
+                  {currentTrack
+                    ? `${isEn ? (currentTrack.titleEn || currentTrack.title) : (currentTrack.titleVi || currentTrack.title)} — ${currentTrack.artist}`
+                    : ''}
+                </span>
+                <span className="hidden sm:inline-block px-2 py-0.5 rounded-md bg-slate-200/70 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[10px] font-bold">
+                  {isEn ? currentTrack?.accentEn : (currentTrack?.accentVi || currentTrack?.accentEn)}
+                </span>
+              </div>
+
+              <div className="flex items-center space-x-3 shrink-0">
+                <div className="text-xs font-extrabold text-slate-700 dark:text-slate-200">
+                  {isEn ? 'Progress:' : 'Tiến độ:'}{' '}
+                  <span className="text-purple-600 dark:text-purple-400">
+                    {progressStats.completedTasks}/{progressStats.totalTasks}
+                  </span>{' '}
+                  ({progressStats.progressPct}%)
+                </div>
+                <div className="w-24 sm:w-32 h-2 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-rose-500 via-purple-600 to-emerald-500 transition-all duration-300"
+                    style={{ width: `${progressStats.progressPct}%` }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <MusicSessionSummaryCard
+              track={currentTrack}
+              progressStats={progressStats}
+              onSaveVocabItem={onSaveToNotebook}
+              onResetSession={handleResetSession}
+              onShuffleBlanks={handleShuffleBlanks}
+              onClaimReward={handleClaimReward}
+              hasClaimedReward={hasClaimedReward}
+            />
+
+            {/* 3.3. Interactive Karaoke & Dictation Lyrics Canvas */}
+            <MusicLyricsCanvas
+              blueprint={blueprint}
+              activeLineIndex={activeLineIndex}
+              isPlaying={audioEngine.isPlaying}
+              isEn={isEn}
+              showTranslation={showTranslation}
+              showPhoneticTips={showPhoneticTips}
+              wordInputs={wordInputs}
+              sentenceInputs={sentenceInputs}
+              revealedLines={revealedLines}
+              onWordInputChange={handleWordInputChange}
+              onSentenceInputChange={handleSentenceInputChange}
+              onRevealLine={handleRevealLine}
+              onHintLine={handleHintLine}
+              onSeekToLine={handleSeekToLine}
+              onReplayLine={handleReplayLine}
+              onPracticeLinePronunciation={handlePracticeLinePronunciation}
+            />
+
+            {/* 3.4. Sticky Music Dictation Audio Dock */}
+            <MusicAudioControlDock
+              audioEngine={audioEngine}
+              lines={blueprint.lines}
+              activeLineIndex={activeLineIndex}
+              onSelectLineIndex={handleSeekToLine}
+              onReplayActiveLine={() => handleReplayLine(activeLineIndex)}
+              isAutoLoopLine={isAutoLoopLine}
+              onToggleAutoLoopLine={() => setIsAutoLoopLine(prev => !prev)}
+              isAutoPauseLine={isAutoPauseLine}
+              onToggleAutoPauseLine={() => setIsAutoPauseLine(prev => !prev)}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Custom Song Importer Modal */}
+      <MusicCustomSongModal
+        isOpen={isCustomModalOpen}
+        onClose={() => setIsCustomModalOpen(false)}
+        onAddCustomSong={handleAddCustomSong}
+      />
+    </div>
+  );
+}

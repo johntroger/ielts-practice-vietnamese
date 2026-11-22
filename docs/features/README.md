@@ -1,7 +1,7 @@
 # 🚀 Trung Tâm Hướng Dẫn & Tính Năng Nền Tảng (Feature Matrix)
 
 > **Cập nhật tự động**: Trang tài liệu này được đồng bộ trực tiếp từ Codebase (`src/core/featureRegistry.js`).  
-> **Tổng số tính năng hiện có**: **47 tính năng chuyên sâu** | **Phiên bản mới nhất**: `v3.5 (2026 Edition)`  
+> **Tổng số tính năng hiện có**: **48 tính năng chuyên sâu** | **Phiên bản mới nhất**: `v3.5 (2026 Edition)`  
 > 📄 **Hồ sơ toàn cảnh dự án & Cách vận hành**: [Xem Hồ Sơ Dự Án & Kiến Trúc Vận Hành (Project Whitepaper) ↗](../project-whitepaper.md)
 
 ---
@@ -15,7 +15,7 @@ Hệ thống **IELTS Practice Vietnamese** được thiết kế theo tiêu chu�
 | Chuyên Mục Tính Năng | Số Lượng | Trạng Thái Nổi Bật | Xem Tài Liệu |
 | :--- | :---: | :--- | :--- |
 | 🤖 **Phân Hệ AI** | **6** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](ai-evaluation.md) |
-| 🛠️ **Kho Đề Thi** | **15** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](practice-tools.md) |
+| 🛠️ **Kho Đề Thi** | **16** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](practice-tools.md) |
 | ⏱️ **Phòng Thi Thử Chuẩn CDI** | **6** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](exam-simulation.md) |
 | 📖 **Cẩm Nang Lý Thuyết** | **5** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](theory-vocab.md) |
 | 📊 **Theo Dõi Tiến Độ, Hồ Sơ Cá Nhân** | **8** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](analytics-profile.md) |
@@ -42,6 +42,11 @@ Hệ thống tích hợp toàn bộ các phím tắt tiêu chuẩn quốc tế g
 ## 🌟 Các Tính Năng Mới Cập Nhật (Release 2026)
 
 Dưới đây là các tính năng học thuật mới nhất được nâng cấp trên hệ thống:
+
+### ✦ [Phòng Luyện Nghe Nhạc & Chép Lời Tiếng Anh (/music-listening)](practice-tools.md#feat-music-listening-studio)
+- **Phiên bản**: `v3.7` | **Kỹ năng**: **Listening** • **Speaking**
+- **Tóm tắt**: Rèn luyện phản xạ nghe nối âm (Connected Speech) qua 12 bài hát tiếng Anh thuộc 6 thể loại trên Cloudflare R2 với 4 chế độ chép lời: Chép nguyên bài, Trống nguyên câu, Điền từ trống và Kết hợp cả câu & từ.
+- **Cách dùng nhanh**: Mở menu "Công Cụ" trên thanh Navbar và chọn "Luyện Nghe Nhạc & Chép Lời" hoặc truy cập trực tiếp đường dẫn /music-listening.
 
 ### ✦ [Phòng Luyện Hội Thoại & Speech Shadowing (/conversation)](practice-tools.md#feat-conversation-studio)
 - **Phiên bản**: `v3.6` | **Kỹ năng**: **Speaking** • **Listening**

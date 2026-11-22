@@ -37,6 +37,7 @@ const AdaptiveSprintModal = React.lazy(() => import('../AdaptiveSprintModal'));
 const AtlasEnglishArenaModal = React.lazy(() => import('../arena/AtlasEnglishArenaModal'));
 const PronunciationStudioModal = React.lazy(() => import('../PronunciationStudioModal'));
 const ConversationStudioModal = React.lazy(() => import('../ConversationStudioModal'));
+const MusicListeningStudioModal = React.lazy(() => import('../MusicListeningStudioModal'));
 
 // 3. System & Profile Cluster
 const SettingsModal = React.lazy(() => import('../SettingsModal'));
@@ -294,6 +295,26 @@ export default function AppModalHost({
             onSaveMistake={(m) => setMistakes(prev => [m, ...prev])}
             onOpenPronunciation={(opts) => {
               closeModal('conversation');
+              openModal('pronunciation', opts && typeof opts === 'object' ? opts : true);
+            }}
+          />
+        </WorkspaceErrorBoundary>
+      )}
+
+      {/* 2.1.d Music & Lyrics Dictation Studio (/music-listening) */}
+      {Boolean(modals.musicListening) && (
+        <WorkspaceErrorBoundary skillName="Music & Lyrics Dictation Studio">
+          <MusicListeningStudioModal
+            isOpen={Boolean(modals.musicListening)}
+            initialOptions={typeof modals.musicListening === 'object' && modals.musicListening !== null ? modals.musicListening : null}
+            onClose={() => closeModal('musicListening')}
+            currentUser={currentUser}
+            onSaveToNotebook={(v) => {
+              if (!addVocabUnique(vocabList, v, setVocabList)) return;
+              if (onSaveUserVocab) onSaveUserVocab(v);
+            }}
+            onOpenPronunciation={(opts) => {
+              closeModal('musicListening');
               openModal('pronunciation', opts && typeof opts === 'object' ? opts : true);
             }}
           />

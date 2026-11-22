@@ -38,7 +38,8 @@ import {
   Swords,
   Globe,
   Home,
-  MessageSquare
+  MessageSquare,
+  Music
 } from 'lucide-react';
 import { openModal } from '../core/modalStore';
 import { useAppStore } from '../core/appStore';
@@ -60,6 +61,7 @@ export default function Navbar({
   onOpenVocabGrammar,
   onOpenPronunciation,
   onOpenConversation,
+  onOpenMusicListening,
   onOpenDrills,
   onOpenWeeklyReport,
   onOpenMockTest,
@@ -91,6 +93,7 @@ export default function Navbar({
   const doOpenVocabGrammar = onOpenVocabGrammar || (() => openModal('vocabGrammar'));
   const doOpenPronunciation = onOpenPronunciation || (() => openModal('pronunciation'));
   const doOpenConversation = onOpenConversation || (() => openModal('conversation'));
+  const doOpenMusicListening = onOpenMusicListening || (() => openModal('musicListening'));
   const doOpenDrills = onOpenDrills || (() => openModal('drills'));
   const doOpenWeeklyReport = onOpenWeeklyReport || (() => openModal('weeklyReport'));
   const doOpenMockTest = onOpenMockTest || (() => openModal('mockTest'));
@@ -820,6 +823,23 @@ export default function Navbar({
                       </div>
                     </button>
                     <button
+                      onClick={() => { doOpenMusicListening(); setIsToolsMenuOpen(false); }}
+                      className="w-full flex items-center justify-between p-2 rounded-xl hover:bg-rose-50/70 text-left text-xs font-semibold text-slate-700 hover:text-rose-900 transition-colors cursor-pointer"
+                    >
+                      <div className="flex items-center space-x-2.5">
+                        <div className="p-1.5 rounded-lg bg-rose-100 text-rose-700">
+                          <Music className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <div className="font-bold flex items-center space-x-1.5">
+                            <span>{isEn ? 'Music & Lyrics Dictation' : 'Luyện Nghe Nhạc & Chép Lời'}</span>
+                            <span className="px-1.5 py-0.2 rounded-full text-[9px] font-black bg-rose-100 text-rose-700">R2</span>
+                          </div>
+                          <div className="text-[10px] text-slate-400 font-normal">{isEn ? '6 genres, full song, sentence & word gap-fill (/music-listening)' : '6 thể loại, chép nguyên bài, điền câu & từ (/music-listening)'}</div>
+                        </div>
+                      </div>
+                    </button>
+                    <button
                       onClick={() => { doOpenCDIDisplay(); setIsToolsMenuOpen(false); }}
                       className="w-full flex items-center space-x-2.5 p-2 rounded-xl hover:bg-blue-50 text-left text-xs font-semibold text-blue-900 transition-colors cursor-pointer border-t border-slate-100 mt-1 pt-1.5"
                     >
@@ -1410,6 +1430,18 @@ export default function Navbar({
                       <span className="truncate whitespace-nowrap">{isEn ? 'Conversation Studio (NEW)' : 'Luyện Hội Thoại Đối Đáp (MỚI)'}</span>
                     </div>
                     <span className="text-[10px] text-cyan-700 font-extrabold bg-white border border-cyan-200 px-1.5 py-0.5 rounded-full shrink-0">/conversation</span>
+                  </button>
+
+                  {/* Music & Lyrics Dictation Studio (/music-listening) */}
+                  <button
+                    onClick={() => { doOpenMusicListening(); setIsMobileDrawerOpen(false); }}
+                    className="w-full flex items-center justify-between p-2.5 rounded-xl bg-rose-50/70 hover:bg-rose-100 text-left text-xs font-bold text-rose-900 border border-rose-200/70 min-h-[44px] cursor-pointer"
+                  >
+                    <div className="flex items-center space-x-2.5 min-w-0">
+                      <Music className="w-4 h-4 text-rose-600 shrink-0" />
+                      <span className="truncate whitespace-nowrap">{isEn ? 'Music & Lyrics Dictation' : 'Luyện Nghe Nhạc & Chép Lời'}</span>
+                    </div>
+                    <span className="text-[10px] text-rose-700 font-extrabold bg-white border border-rose-200 px-1.5 py-0.5 rounded-full shrink-0">/music-listening</span>
                   </button>
 
                   {/* Import Prompts & Samples */}

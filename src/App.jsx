@@ -1287,6 +1287,123 @@ export default function App() {
     }
   }, [modals.conversation]);
 
+  // Dedicated Two-Way URL Routing & Deep-Linking for Music & Lyrics Dictation Studio (/music-listening & /luyen-nghe-nhac)
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const checkIsMusicRoute = () => {
+      const pathname = window.location.pathname.toLowerCase().replace(/\/+$/, '');
+      const hash = window.location.hash.toLowerCase();
+      const search = new URLSearchParams(window.location.search);
+
+      const isPathMatch = (
+        pathname === '/music-listening' ||
+        pathname.endsWith('/music-listening') ||
+        pathname.startsWith('/music-listening/') ||
+        pathname === '/music-dictation' ||
+        pathname.endsWith('/music-dictation') ||
+        pathname === '/luyen-nghe-nhac' ||
+        pathname.endsWith('/luyen-nghe-nhac')
+      );
+
+      const isHashMatch = (
+        hash === '#music-listening' ||
+        hash === '#music-dictation' ||
+        hash === '#luyen-nghe-nhac' ||
+        hash.startsWith('#music-listening')
+      );
+
+      const modal = search.get('modal');
+      const mode = search.get('mode');
+      const view = search.get('view');
+      const page = search.get('page');
+
+      const isSearchMatch = (
+        modal === 'musicListening' ||
+        modal === 'music-listening' ||
+        mode === 'music-listening' ||
+        view === 'music-listening' ||
+        page === 'music-listening'
+      );
+
+      return isPathMatch || isHashMatch || isSearchMatch;
+    };
+
+    const extractMusicParams = () => {
+      const search = new URLSearchParams(window.location.search);
+      const genre = search.get('genre');
+      const song = search.get('song');
+      const mode = search.get('mode');
+      const level = search.get('level');
+      return (genre || song || mode || level)
+        ? {
+            genre: genre || undefined,
+            song: song || undefined,
+            mode: mode || undefined,
+            level: level || undefined
+          }
+        : true;
+    };
+
+    if (checkIsMusicRoute()) {
+      openModal('musicListening', extractMusicParams());
+    }
+
+    const handleLocationChange = () => {
+      if (checkIsMusicRoute()) {
+        openModal('musicListening', extractMusicParams());
+      } else {
+        closeModal('musicListening');
+      }
+    };
+
+    window.addEventListener('popstate', handleLocationChange);
+    window.addEventListener('hashchange', handleLocationChange);
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange);
+      window.removeEventListener('hashchange', handleLocationChange);
+    };
+  }, [openModal, closeModal]);
+
+  // Sync address bar when modals.musicListening opens or closes
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const isMusicOpen = Boolean(modals.musicListening);
+    const pathname = window.location.pathname.toLowerCase().replace(/\/+$/, '');
+    const hash = window.location.hash.toLowerCase();
+    const isCurrentlyOnMusicUrl = (
+      pathname === '/music-listening' ||
+      pathname.endsWith('/music-listening') ||
+      pathname.startsWith('/music-listening/') ||
+      pathname === '/music-dictation' ||
+      pathname.endsWith('/music-dictation') ||
+      pathname === '/luyen-nghe-nhac' ||
+      pathname.endsWith('/luyen-nghe-nhac') ||
+      hash === '#music-listening' ||
+      hash === '#music-dictation' ||
+      hash === '#luyen-nghe-nhac' ||
+      hash.startsWith('#music-listening')
+    );
+
+    if (isMusicOpen && !isCurrentlyOnMusicUrl) {
+      try {
+        window.history.pushState({ modal: 'musicListening' }, '', '/music-listening');
+      } catch (e) {
+        window.location.hash = 'music-listening';
+      }
+    } else if (!isMusicOpen && isCurrentlyOnMusicUrl) {
+      try {
+        if (hash.startsWith('#music-') || hash === '#luyen-nghe-nhac') {
+          window.history.pushState(null, '', window.location.pathname + window.location.search);
+        } else {
+          window.history.pushState(null, '', '/');
+        }
+      } catch (e) {
+        window.history.replaceState(null, '', '/');
+      }
+    }
+  }, [modals.musicListening]);
+
   // 5. Automated Content Deduplication & Sanitization & Theme init on startup
   useEffect(() => {
     initTheme();
@@ -1562,6 +1679,7 @@ export default function App() {
           onOpenVocabGrammar={() => openModal('vocabGrammar')}
           onOpenPronunciation={() => openModal('pronunciation')}
           onOpenConversation={() => openModal('conversation')}
+          onOpenMusicListening={() => openModal('musicListening')}
           onOpenDrills={() => openModal('drills')}
           onOpenWeeklyReport={() => openModal('weeklyReport')}
           onOpenMockTest={() => openModal('mockTest')}
