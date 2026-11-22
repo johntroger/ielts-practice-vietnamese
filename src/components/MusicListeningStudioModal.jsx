@@ -1322,7 +1322,28 @@ export default function MusicListeningStudioModal({
                     </div>
                   )}
 
-                  {/* Consolidated Options Dropdown (Shuffle, Translation, Phonetics, Show All, Reset) */}
+                  {practiceMode !== 'full' && (
+                    <button
+                      type="button"
+                      onClick={handleShuffleBlanks}
+                      className="inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-purple-50 dark:bg-purple-950/60 hover:bg-purple-100 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800 text-xs font-extrabold whitespace-nowrap transition-colors cursor-pointer active:scale-95"
+                      title={
+                        isEn
+                          ? 'Shuffle to hide different words/sentences on every click'
+                          : 'Đổi ngẫu nhiên sang các từ/câu khác để luyện lại (nhấn mỗi lần đổi 1 bộ mới)'
+                      }
+                    >
+                      <Shuffle className="w-3.5 h-3.5" />
+                      <span className="hidden xl:inline">{isEn ? 'Shuffle' : 'Đổi từ'}</span>
+                      {seed > 1 && (
+                        <span className="px-1 py-0.2 rounded bg-purple-600 text-white text-[10px] font-black leading-none">
+                          #{seed}
+                        </span>
+                      )}
+                    </button>
+                  )}
+
+                  {/* Consolidated Options Dropdown (Translation, Phonetics, Show All, Reset) */}
                   <div className="relative" ref={desktopOptionsRef}>
                     <button
                       type="button"

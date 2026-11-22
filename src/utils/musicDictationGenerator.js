@@ -423,11 +423,11 @@ export function evaluateSentenceBlankAttempt(targetSentence = '', userSentence =
 /**
  * Selects which word token indices in a lyric line should be turned into inline blanks.
  */
-function selectWordBlanksForLine(line, difficulty = 'medium', rng) {
+function selectWordBlanksForLine(line, difficulty = 'medium', rng, seed = 1) {
   const tokens = String(line.text || '').trim().split(/\s+/).filter(Boolean);
   if (tokens.length === 0) return [];
 
-  const diffObj = MUSIC_DIFFICULTY_LEVELS.find(d => d.id === difficulty) || MUSIC_DIFFICULTY_LEVELS[1];
+  const isShuffledRound = Number(seed) > 1;
   const targetBlankCount = Math.max(
     1,
     Math.min(
@@ -445,14 +445,17 @@ function selectWordBlanksForLine(line, difficulty = 'medium', rng) {
   );
 
   // Score each token candidate
+  // Round 1 (seed === 1): prioritize curated keywords; Shuffle rounds (seed > 1): rotate across ALL words
   const candidates = [];
   tokens.forEach((tok, idx) => {
     const norm = normalizeWord(tok);
     if (!norm || norm.length < 2 || isFillerVocal(tok)) return;
 
     let priority = 1;
-    if (curatedKeySet.has(norm)) {
-      priority = 10; // Highest priority for curated pedagogical keywords
+    if (isShuffledRound) {
+      priority = !STOP_WORD_SET.has(norm) ? 2.5 : (difficulty === 'hard' ? 2.0 : 0.8);
+    } else if (curatedKeySet.has(norm)) {
+      priority = 10; // Highest priority for curated pedagogical keywords on initial pass
     } else if (!STOP_WORD_SET.has(norm) && norm.length >= 4) {
       priority = 6; // Content words
     } else if (!STOP_WORD_SET.has(norm)) {
@@ -467,7 +470,7 @@ function selectWordBlanksForLine(line, difficulty = 'medium', rng) {
       idx,
       tok,
       norm,
-      score: priority + rng() * 2.5
+      score: priority + rng() * (isShuffledRound ? 10 : 2.5)
     });
   });
 
@@ -605,7 +608,7 @@ export function buildMusicDictationBlueprint({
     // MODE 3: Word Gap-Fill (Cloze) — Every line has inline word blanks
     normalizedLines.forEach((line) => {
       const rawTokens = String(line.text || '').trim().split(/\s+/).filter(Boolean);
-      const blankIndices = selectWordBlanksForLine(line, difficulty, rng);
+      const blankIndices = selectWordBlanksForLine(line, difficulty, rng, seed);
       const blankSet = new Set(blankIndices);
 
       const tokens = rawTokens.map((tok, tIdx) => {
@@ -670,7 +673,7 @@ export function buildMusicDictationBlueprint({
       }
 
       if (lineType === 'word_blank') {
-        const blankIndices = selectWordBlanksForLine(line, difficulty, rng);
+        const blankIndices = selectWordBlanksForLine(line, difficulty, rng, seed);
         const blankSet = new Set(blankIndices);
         const tokens = rawTokens.map((tok, tIdx) => {
           const match = tok.match(/^([^a-zA-Z0-9'’]*)([a-zA-Z0-9'’-]+)([^a-zA-Z0-9'’]*)$/);
@@ -717,7 +720,7 @@ export function buildMusicDictationBlueprint({
       }
       if (!hasWord) {
         const targetIdx = 1;
-        const blankIndices = selectWordBlanksForLine(normalizedLines[targetIdx], difficulty, rng);
+        const blankIndices = selectWordBlanksForLine(normalizedLines[targetIdx], difficulty, rng, seed);
         const blankSet = new Set(blankIndices);
         lineBlueprints[targetIdx].lineType = 'word_blank';
         lineBlueprints[targetIdx].blankWordIndices = blankIndices;
