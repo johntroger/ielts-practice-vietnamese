@@ -76,28 +76,34 @@ const MUSIC_BATCH_STORAGE_KEY = 'ielts_music_batch_v1';
  * Each user account has its own isolated key so custom songs are strictly private to that account.
  */
 function getAccountCustomSongsKey(userId) {
-  return userId ? `ielts_music_custom_songs_v2_${userId}` : null;
+  return userId
+    ? `ielts_music_custom_songs_v2_${userId}`
+    : 'ielts_music_custom_songs_guest_v1';
 }
 
 function loadAccountCustomSongs(userId) {
-  if (!userId) return [];
   const accountKey = getAccountCustomSongsKey(userId);
   const stored = safeGet(accountKey, null);
   if (Array.isArray(stored)) {
     return stored.filter(
-      (s) => s && (!s.ownerUserId || s.ownerUserId === userId) && !s.localAudioId
+      (s) =>
+        s &&
+        !s.localAudioId &&
+        (userId ? (!s.ownerUserId || s.ownerUserId === userId) : (!s.ownerUserId || s.ownerUserId === 'guest'))
     );
   }
 
   // One-time migration from legacy key (only link-based tracks without local file blobs), then purge legacy global key
-  const legacyList = safeGet(LEGACY_CUSTOM_SONGS_KEY, []);
-  if (Array.isArray(legacyList) && legacyList.length > 0) {
-    const migrated = legacyList
-      .filter((s) => s && !s.localAudioId && (!s.ownerUserId || s.ownerUserId === userId))
-      .map((s) => ({ ...s, ownerUserId: userId }));
-    safeSet(accountKey, migrated);
-    safeRemove(LEGACY_CUSTOM_SONGS_KEY);
-    return migrated;
+  if (userId) {
+    const legacyList = safeGet(LEGACY_CUSTOM_SONGS_KEY, []);
+    if (Array.isArray(legacyList) && legacyList.length > 0) {
+      const migrated = legacyList
+        .filter((s) => s && !s.localAudioId && (!s.ownerUserId || s.ownerUserId === userId))
+        .map((s) => ({ ...s, ownerUserId: userId }));
+      safeSet(accountKey, migrated);
+      safeRemove(LEGACY_CUSTOM_SONGS_KEY);
+      return migrated;
+    }
   }
   return [];
 }
@@ -126,7 +132,7 @@ export default function MusicListeningStudioModal({
   useEffect(() => {
     const nextList = loadAccountCustomSongs(currentUser?.id);
     setCustomSongs(nextList);
-    if (!currentUser?.id || nextList.length === 0) {
+    if (nextList.length === 0) {
       setSelectedBatchIndex((prev) => {
         if (prev === 'personal') {
           safeSet(MUSIC_BATCH_STORAGE_KEY, 1);
@@ -840,24 +846,22 @@ export default function MusicListeningStudioModal({
     setTimeout(() => setIsCopiedLink(false), 2000);
   };
 
-  // Add custom song handler -> strictly scoped to currentUser.id & synced privately to account cloud metadata
+  // Add custom song handler -> works for both Guest (temporary browser) & Signed-In Users (private cloud sync)
   const handleAddCustomSong = (newTrack) => {
-    if (!currentUser?.id) {
-      onOpenAuth?.();
-      return;
-    }
-    const accountKey = getAccountCustomSongsKey(currentUser.id);
+    const accountKey = getAccountCustomSongsKey(currentUser?.id);
     const taggedTrack = {
       ...newTrack,
-      ownerUserId: currentUser.id,
-      ownerEmail: currentUser.email || ''
+      ownerUserId: currentUser?.id || 'guest',
+      ownerEmail: currentUser?.email || ''
     };
     const updated = [taggedTrack, ...customSongs].slice(0, 20);
     setCustomSongs(updated);
     if (accountKey) {
       safeSet(accountKey, updated);
     }
-    eventBus.emit('batch_progress_updated');
+    if (currentUser?.id) {
+      eventBus.emit('batch_progress_updated');
+    }
     setSelectedGenre('all');
     setSelectedBatchIndex('personal');
     safeSet(MUSIC_BATCH_STORAGE_KEY, 'personal');
