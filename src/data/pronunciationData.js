@@ -3831,9 +3831,9 @@ export function buildSentenceRhythmNodes(targetText = '', intonationText = '') {
 }
 
 export const TWISTER_GROUPS = [
-  { id: 'all', labelEn: 'All Twisters', labelVi: 'Tất cả (12)' },
-  { id: 'classic', labelEn: 'Classic Fun', labelVi: 'Kinh điển vui nhộn' },
-  { id: 'academic', labelEn: 'IELTS Academic', labelVi: 'Học thuật IELTS' }
+  { id: 'all', labelEn: 'All', labelVi: 'Tất cả' },
+  { id: 'classic', labelEn: 'Classic', labelVi: 'Vui nhộn' },
+  { id: 'academic', labelEn: 'IELTS', labelVi: 'IELTS' }
 ];
 
 export const PRONUNCIATION_TWISTER_DRILLS = [

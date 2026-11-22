@@ -2246,36 +2246,77 @@ export default function PronunciationStudioModal({
                       );
                     })() : currentDrill.type === 'twisters' ? (() => {
                       const patterns = Array.isArray(currentDrill.targetPhonemes)
-                        ? currentDrill.targetPhonemes.map(tp => {
-                            try {
-                              return { ...tp, rx: new RegExp(tp.regex, 'gi') };
-                            } catch (e) {
-                              return null;
-                            }
-                          }).filter(Boolean)
+                        ? currentDrill.targetPhonemes
+                            .map(tp => {
+                              // Strip outer capturing parens if present, convert any inner capturing groups to non-capturing
+                              const cleanSrc = String(tp.regex || '')
+                                .replace(/^\((.*)\)$/, '$1')
+                                .replace(/\((?!\?)/g, '(?:');
+                              try {
+                                return {
+                                  ...tp,
+                                  rx: new RegExp(cleanSrc, 'gi')
+                                };
+                              } catch (e) {
+                                return null;
+                              }
+                            })
+                            .filter(Boolean)
                         : [];
 
                       const highlightWord = (word) => {
                         if (patterns.length === 0) return word;
-                        for (let pIdx = 0; pIdx < patterns.length; pIdx++) {
-                          const p = patterns[pIdx];
+                        // Build non-overlapping highlight ranges (earlier pattern in list takes priority)
+                        const charColor = new Array(word.length).fill(null);
+                        patterns.forEach(p => {
                           p.rx.lastIndex = 0;
-                          if (p.rx.test(word)) {
-                            const parts = word.split(new RegExp(`(${p.regex})`, 'gi'));
-                            const colorCls =
-                              p.color === 'fuchsia'
-                                ? 'text-fuchsia-300 underline decoration-fuchsia-500/70'
-                                : 'text-cyan-300 underline decoration-cyan-500/70';
-                            return parts.map((part, i) =>
-                              part && new RegExp(`^(${p.regex})$`, 'i').test(part) ? (
-                                <span key={i} className={colorCls}>{part}</span>
-                              ) : (
-                                <span key={i}>{part}</span>
-                              )
-                            );
+                          let m;
+                          while ((m = p.rx.exec(word)) !== null) {
+                            if (m[0].length === 0) {
+                              p.rx.lastIndex += 1;
+                              continue;
+                            }
+                            let canFill = true;
+                            for (let k = m.index; k < m.index + m[0].length; k++) {
+                              if (charColor[k] !== null) {
+                                canFill = false;
+                                break;
+                              }
+                            }
+                            if (canFill) {
+                              for (let k = m.index; k < m.index + m[0].length; k++) {
+                                charColor[k] = p.color;
+                              }
+                            }
                           }
+                        });
+
+                        const runs = [];
+                        let i = 0;
+                        while (i < word.length) {
+                          const c = charColor[i];
+                          let j = i + 1;
+                          while (j < word.length && charColor[j] === c) j++;
+                          runs.push({ text: word.slice(i, j), color: c });
+                          i = j;
                         }
-                        return word;
+
+                        return runs.map((run, idx) =>
+                          run.color ? (
+                            <span
+                              key={idx}
+                              className={
+                                run.color === 'fuchsia'
+                                  ? 'text-fuchsia-300 underline decoration-fuchsia-500/70'
+                                  : 'text-cyan-300 underline decoration-cyan-500/70'
+                              }
+                            >
+                              {run.text}
+                            </span>
+                          ) : (
+                            <span key={idx}>{run.text}</span>
+                          )
+                        );
                       };
 
                       return (
