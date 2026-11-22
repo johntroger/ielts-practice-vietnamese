@@ -129,7 +129,8 @@ export default function MusicListeningStudioModal({
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobileLibraryOpen, setIsMobileLibraryOpen] = useState(false);
   const [isMobileOptionsOpen, setIsMobileOptionsOpen] = useState(false);
-  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [showVocabFocusDrawer, setShowVocabFocusDrawer] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(true);
   const [isCopiedLink, setIsCopiedLink] = useState(false);
   const { isKeyboardOpen } = useVisualViewport();
 
@@ -757,29 +758,33 @@ export default function MusicListeningStudioModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[60] bg-slate-950/80 backdrop-blur-xs flex items-center justify-center p-0 sm:p-3 animate-in fade-in duration-150">
+    <div
+      className={`fixed inset-0 z-[60] bg-slate-950/85 backdrop-blur-xs flex items-center justify-center animate-in fade-in duration-150 ${
+        isFullscreen ? 'p-0' : 'p-0 sm:p-3'
+      }`}
+    >
       <div
         className={`bg-white dark:bg-slate-900 flex flex-col shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden transition-all ${
           isFullscreen
-            ? 'w-screen h-[100dvh] rounded-none'
+            ? 'w-screen h-[100dvh] rounded-none border-0'
             : 'w-full max-w-[1440px] h-[100dvh] sm:h-[94dvh] sm:rounded-2xl'
         }`}
       >
         {/* ================================================================= */}
-        {/* 1. TOP STUDIO HEADER BAR                                          */}
+        {/* 1. UNIFIED ULTRA-SLIM TOP STUDIO HEADER BAR                       */}
         {/* ================================================================= */}
-        <div className="px-2.5 sm:px-5 py-2 sm:py-2.5 bg-slate-950 text-white border-b border-slate-800 flex items-center justify-between gap-2 shrink-0">
-          {/* Left: Desktop Sidebar Collapse / Mobile Song & Batch Sheet Trigger + Brand */}
-          <div className="flex items-center space-x-1.5 sm:space-x-3 min-w-0">
+        <div className="px-2.5 sm:px-4 py-1.5 bg-slate-950 text-white border-b border-slate-800 flex items-center justify-between gap-2 shrink-0">
+          {/* Left: Sidebar Toggle / Mobile Song Sheet + Active Song Info + Progress Pill */}
+          <div className="flex items-center space-x-1.5 sm:space-x-2.5 min-w-0 flex-1">
             {/* Desktop Sidebar Collapse Toggle (>= 1024px) */}
             <button
               type="button"
               onClick={() => setIsSidebarCollapsed(prev => !prev)}
-              className="hidden lg:flex p-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 transition-colors cursor-pointer"
+              className="hidden lg:flex p-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 transition-colors cursor-pointer shrink-0"
               title={
                 isSidebarCollapsed
                   ? (isEn ? 'Show Song Library Sidebar' : 'Hiện danh sách bài hát')
-                  : (isEn ? 'Collapse Song Sidebar for wider lyrics view' : 'Thu gọn danh sách bài hát để mở rộng khung chép lời')
+                  : (isEn ? 'Collapse Song Sidebar for maximum lyrics width' : 'Thu gọn danh sách bài hát để mở rộng tối đa khung lời nhạc')
               }
             >
               {isSidebarCollapsed ? (
@@ -793,10 +798,10 @@ export default function MusicListeningStudioModal({
             <button
               type="button"
               onClick={() => setIsMobileLibraryOpen(true)}
-              className="lg:hidden flex items-center space-x-1.5 px-2.5 h-9 rounded-xl bg-gradient-to-r from-rose-600/90 to-purple-600/90 hover:from-rose-500 hover:to-purple-500 text-white text-xs font-extrabold shadow-xs active:scale-95 transition-all cursor-pointer shrink-0"
+              className="lg:hidden flex items-center space-x-1 px-2.5 h-8 rounded-lg bg-gradient-to-r from-rose-600 to-purple-600 text-white text-xs font-extrabold shadow-xs active:scale-95 transition-all cursor-pointer shrink-0"
               aria-label={isEn ? 'Open Songs & Batches Library' : 'Mở danh sách Bài hát & Lô nhạc'}
             >
-              <ListMusic className="w-4 h-4 shrink-0" />
+              <ListMusic className="w-3.5 h-3.5 shrink-0" />
               <span>
                 {selectedBatchIndex === 'personal'
                   ? (isEn ? 'My Songs' : 'Tự nạp')
@@ -804,31 +809,67 @@ export default function MusicListeningStudioModal({
               </span>
             </button>
 
-            <div className="hidden sm:flex w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-tr from-rose-600 via-pink-600 to-purple-600 items-center justify-center shadow-md shrink-0">
-              <Music className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+            {/* Active Song Title & Artist (Tap on mobile opens song picker) */}
+            <button
+              type="button"
+              onClick={() => setIsMobileLibraryOpen(true)}
+              className="flex items-center space-x-2 min-w-0 text-left lg:pointer-events-none truncate"
+            >
+              <div className="hidden sm:flex w-7 h-7 rounded-lg bg-gradient-to-tr from-rose-600 via-pink-600 to-purple-600 items-center justify-center shrink-0">
+                <Music className="w-3.5 h-3.5 text-white" />
+              </div>
+              <div className="min-w-0 truncate">
+                <span className="font-black text-xs sm:text-sm text-white truncate">
+                  {currentTrack
+                    ? (isEn ? (currentTrack.titleEn || currentTrack.title) : (currentTrack.titleVi || currentTrack.title))
+                    : (isEn ? 'Music Dictation' : 'Nghe Nhạc Chép Lời')}
+                </span>
+                {currentTrack?.artist && (
+                  <span className="text-[11px] text-slate-400 font-semibold ml-1.5">
+                    — {currentTrack.artist}
+                  </span>
+                )}
+              </div>
+            </button>
+
+            {/* Inline Compact Progress Pill */}
+            <div className="hidden sm:flex items-center space-x-1.5 px-2 py-0.5 rounded-lg bg-slate-900 border border-slate-800 text-[11px] font-extrabold shrink-0">
+              <span className="text-purple-400">
+                {progressStats.completedTasks}/{progressStats.totalTasks}
+              </span>
+              <span className="text-slate-400">({progressStats.progressPct}%)</span>
             </div>
 
-            <div className="min-w-0">
-              <div className="flex items-center space-x-2">
-                <h2 className="font-black text-xs sm:text-base tracking-tight truncate">
-                  {isEn ? 'Music Dictation' : 'Nghe Nhạc Chép Lời'}
-                </h2>
-                <span className="hidden md:inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-black bg-rose-500/20 text-rose-300 border border-rose-500/30">
-                  /music-listening
-                </span>
-              </div>
-              <p className="hidden sm:block text-[11px] text-slate-400 truncate">
-                {isEn
-                  ? '6 Genres on Cloudflare R2 • 4 Modes: Full Song, Sentence Blanks, Word Blanks & Hybrid Mixed'
-                  : '6 Thể loại nhạc trên Cloudflare R2 • 4 Chế độ: Chép nguyên bài, Trống câu, Trống từ & Kết hợp'}
-              </p>
-            </div>
+            {/* Toggle Vocab & Listening Focus Drawer Button */}
+            <button
+              type="button"
+              onClick={() => setShowVocabFocusDrawer(prev => !prev)}
+              className={`inline-flex items-center space-x-1 px-2 py-1 rounded-lg border text-[11px] font-bold transition-colors cursor-pointer shrink-0 ${
+                showVocabFocusDrawer
+                  ? 'bg-purple-600 text-white border-purple-500'
+                  : 'bg-slate-900 hover:bg-slate-800 text-purple-300 border-slate-800'
+              }`}
+              title={isEn ? 'Toggle Song Vocabulary & Listening Focus' : 'Ẩn/Hiện Từ vựng bài hát & Trọng tâm nghe'}
+            >
+              <Sparkles className="w-3 h-3 shrink-0" />
+              <span className="hidden md:inline">{isEn ? 'Vocab & Focus' : 'Từ vựng'}</span>
+            </button>
+
+            {/* Custom Song (.LRC) Importer Button */}
+            <button
+              type="button"
+              onClick={() => setIsCustomModalOpen(true)}
+              className="hidden sm:inline-flex items-center space-x-1 px-2 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-[11px] font-extrabold whitespace-nowrap transition-colors cursor-pointer shrink-0"
+            >
+              <Plus className="w-3 h-3" />
+              <span className="hidden xl:inline">{isEn ? 'Custom (.LRC)' : 'Tự nạp (.LRC)'}</span>
+            </button>
           </div>
 
           {/* Right: Gamification Badges (Streak, Gold, Level), Share Link, Fullscreen & Close */}
-          <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
-            <div className="hidden lg:flex items-center space-x-1.5 px-2.5 py-1 rounded-xl bg-slate-900 border border-slate-800 text-xs font-bold">
-              <Flame className="w-3.5 h-3.5 text-orange-400 fill-current" />
+          <div className="flex items-center space-x-1 sm:space-x-1.5 shrink-0">
+            <div className="hidden xl:flex items-center space-x-1 px-2 py-1 rounded-lg bg-slate-900 border border-slate-800 text-[11px] font-bold">
+              <Flame className="w-3 h-3 text-orange-400 fill-current" />
               <span className="text-orange-300">{streakCount}d</span>
             </div>
 
@@ -843,41 +884,30 @@ export default function MusicListeningStudioModal({
               />
             </div>
 
-            <div className="hidden xl:flex items-center space-x-1.5 px-2.5 py-1 rounded-xl bg-slate-900 border border-slate-800 text-xs font-bold">
+            <div className="hidden 2xl:flex items-center space-x-1 px-2 py-1 rounded-lg bg-slate-900 border border-slate-800 text-[11px] font-bold">
               <span className="text-amber-400">Lv.{levelProgress.level}</span>
-              <span className="text-slate-400 text-[11px]">
-                ({isEn ? tierInfo.titleEn : tierInfo.titleVi})
-              </span>
             </div>
 
             <button
               type="button"
               onClick={handleShareLink}
-              className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 text-xs font-bold transition-colors cursor-pointer"
+              className="flex items-center space-x-1 px-2 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 text-[11px] font-bold transition-colors cursor-pointer"
               title={isEn ? 'Copy direct link to this song & mode' : 'Sao chép đường dẫn trực tiếp tới bài hát & chế độ này'}
             >
               {isCopiedLink ? (
-                <>
-                  <Check className="w-3.5 h-3.5 text-emerald-400" />
-                  <span className="hidden sm:inline text-emerald-400">
-                    {isEn ? 'Copied!' : 'Đã chép!'}
-                  </span>
-                </>
+                <Check className="w-3.5 h-3.5 text-emerald-400" />
               ) : (
-                <>
-                  <Share2 className="w-3.5 h-3.5" />
-                  <span className="hidden sm:inline">{isEn ? 'Share' : 'Chia sẻ'}</span>
-                </>
+                <Share2 className="w-3.5 h-3.5" />
               )}
             </button>
 
             <button
               type="button"
               onClick={() => setIsFullscreen(prev => !prev)}
-              className="hidden sm:flex p-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 transition-colors cursor-pointer"
-              title={isFullscreen ? (isEn ? 'Exit Fullscreen' : 'Thu nhỏ') : (isEn ? 'Fullscreen' : 'Toàn màn hình')}
+              className="hidden sm:flex p-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 transition-colors cursor-pointer"
+              title={isFullscreen ? (isEn ? 'Windowed Mode' : 'Chế độ cửa sổ') : (isEn ? 'Fullscreen Mode' : 'Toàn màn hình')}
             >
-              {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+              {isFullscreen ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
             </button>
 
             <button
@@ -886,62 +916,24 @@ export default function MusicListeningStudioModal({
                 audioEngine.pause();
                 onClose?.();
               }}
-              className="p-1.5 rounded-xl bg-slate-900 hover:bg-rose-600 text-slate-300 hover:text-white border border-slate-800 transition-colors cursor-pointer"
+              className="p-1.5 rounded-lg bg-slate-900 hover:bg-rose-600 text-slate-300 hover:text-white border border-slate-800 transition-colors cursor-pointer"
               aria-label={isEn ? 'Close Music Studio' : 'Đóng Phòng Luyện Nhạc'}
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4" />
             </button>
           </div>
         </div>
 
         {/* ================================================================= */}
-        {/* 2. 6-GENRE FILTER STRIP (Auto-hides on mobile when keyboard opens) */}
-        {/* ================================================================= */}
-        {!isKeyboardOpen && (
-          <div className="px-2.5 sm:px-5 py-1.5 sm:py-2 bg-slate-900 text-slate-200 border-b border-slate-800 flex items-center justify-between gap-2 overflow-x-auto scrollbar-none shrink-0">
-            <div className="flex items-center space-x-1.5">
-              {MUSIC_GENRES.map((g) => {
-                const isSelected = selectedGenre === g.id;
-                return (
-                  <button
-                    key={g.id}
-                    type="button"
-                    onClick={() => setSelectedGenre(g.id)}
-                    className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl text-[11px] sm:text-xs font-extrabold transition-all whitespace-nowrap cursor-pointer ${
-                      isSelected
-                        ? 'bg-gradient-to-r from-rose-600 to-purple-600 text-white shadow-sm'
-                        : 'bg-slate-800/90 hover:bg-slate-800 text-slate-300 hover:text-white'
-                    }`}
-                    title={isEn ? g.descEn : g.descVi}
-                  >
-                    <span className="sm:hidden">{isEn ? g.shortEn : g.shortVi}</span>
-                    <span className="hidden sm:inline">{isEn ? g.labelEn : g.labelVi}</span>
-                  </button>
-                );
-              })}
-            </div>
-
-            <button
-              type="button"
-              onClick={() => setIsCustomModalOpen(true)}
-              className="flex items-center space-x-1 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-[11px] sm:text-xs font-extrabold whitespace-nowrap transition-colors cursor-pointer shrink-0"
-            >
-              <Plus className="w-3.5 h-3.5" />
-              <span>{isEn ? 'Custom (.LRC)' : 'Tự nạp (.LRC)'}</span>
-            </button>
-          </div>
-        )}
-
-        {/* ================================================================= */}
-        {/* 3. MAIN WORKSPACE: LEFT SONG SIDEBAR (LG+) + RIGHT STUDIO         */}
+        {/* 2. MAIN WORKSPACE: LEFT SONG SIDEBAR (LG+) + RIGHT STUDIO         */}
         {/* ================================================================= */}
         <div className="flex-1 flex min-h-0 overflow-hidden">
           {/* LEFT SIDEBAR: Desktop Only (>= 1024px); Mobile uses Bottom Sheet Drawer */}
           {!isSidebarCollapsed && (
-            <aside className="hidden lg:flex w-72 xl:w-80 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex-col shrink-0">
+            <aside className="hidden lg:flex w-68 xl:w-76 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex-col shrink-0">
               {/* Progressive Batch Unlock Selector Strip */}
-              <div className="p-2.5 bg-slate-950 border-b border-slate-800">
-                <div className="flex items-center justify-between mb-1.5 px-0.5">
+              <div className="p-2 bg-slate-950 border-b border-slate-800">
+                <div className="flex items-center justify-between mb-1 px-0.5">
                   <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">
                     {isEn ? 'Music Bank Batches' : 'Lộ Trình Mở Lô Nhạc'}
                   </span>
@@ -961,19 +953,40 @@ export default function MusicListeningStudioModal({
                 />
               </div>
 
-              {/* Search Box */}
-              <div className="p-3 border-b border-slate-200 dark:border-slate-800">
+              {/* Search & Genre Filter inside Sidebar */}
+              <div className="p-2.5 border-b border-slate-200 dark:border-slate-800 space-y-2">
                 <div className="relative">
-                  <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder={
-                      isEn ? 'Search song, artist, topic...' : 'Tìm bài hát, ca sĩ, chủ đề...'
+                      isEn ? 'Search song, artist...' : 'Tìm bài hát, ca sĩ...'
                     }
-                    className="w-full pl-8 pr-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-purple-500"
+                    className="w-full pl-8 pr-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-purple-500"
                   />
+                </div>
+
+                {/* Compact Genre Filter Pills inside Sidebar */}
+                <div className="flex flex-wrap gap-1">
+                  {MUSIC_GENRES.map((g) => {
+                    const isSelected = selectedGenre === g.id;
+                    return (
+                      <button
+                        key={g.id}
+                        type="button"
+                        onClick={() => setSelectedGenre(g.id)}
+                        className={`px-2 py-0.5 rounded-md text-[10px] font-extrabold transition-all cursor-pointer ${
+                          isSelected
+                            ? 'bg-purple-600 text-white shadow-2xs'
+                            : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
+                        }`}
+                      >
+                        {isEn ? g.shortEn : g.shortVi}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -1311,52 +1324,17 @@ export default function MusicListeningStudioModal({
               )}
             </div>
 
-            {/* 3.2. Progress & Song Vocab Summary Strip (Auto-hides on mobile when keyboard opens) */}
-            {!isKeyboardOpen && (
-              <>
-                <div className="px-2.5 sm:px-5 py-1.5 sm:py-2 bg-slate-50 dark:bg-slate-900/60 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 shrink-0">
-                  <button
-                    type="button"
-                    onClick={() => setIsMobileLibraryOpen(true)}
-                    className="flex items-center space-x-1.5 min-w-0 text-left lg:pointer-events-none"
-                  >
-                    <span className="font-extrabold text-xs sm:text-sm text-slate-900 dark:text-white truncate">
-                      {currentTrack
-                        ? `${isEn ? (currentTrack.titleEn || currentTrack.title) : (currentTrack.titleVi || currentTrack.title)} — ${currentTrack.artist}`
-                        : ''}
-                    </span>
-                    <span className="hidden sm:inline-block px-2 py-0.5 rounded-md bg-slate-200/70 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[10px] font-bold shrink-0">
-                      {isEn ? currentTrack?.accentEn : (currentTrack?.accentVi || currentTrack?.accentEn)}
-                    </span>
-                  </button>
-
-                  <div className="flex items-center space-x-2 shrink-0">
-                    <div className="text-[11px] sm:text-xs font-extrabold text-slate-700 dark:text-slate-200 whitespace-nowrap">
-                      <span className="hidden sm:inline">{isEn ? 'Progress: ' : 'Tiến độ: '}</span>
-                      <span className="text-purple-600 dark:text-purple-400">
-                        {progressStats.completedTasks}/{progressStats.totalTasks}
-                      </span>{' '}
-                      ({progressStats.progressPct}%)
-                    </div>
-                    <div className="w-16 sm:w-28 h-2 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-gradient-to-r from-rose-500 via-purple-600 to-emerald-500 transition-all duration-300"
-                        style={{ width: `${progressStats.progressPct}%` }}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <MusicSessionSummaryCard
-                  track={currentTrack}
-                  progressStats={progressStats}
-                  onSaveVocabItem={onSaveToNotebook}
-                  onResetSession={handleResetSession}
-                  onShuffleBlanks={handleShuffleBlanks}
-                  onClaimReward={handleClaimReward}
-                  hasClaimedReward={hasClaimedReward}
-                />
-              </>
+            {/* 3.2. Collapsible Vocab & Focus Card (Only visible when toggled or 100% completed, freeing maximum vertical space for lyrics!) */}
+            {!isKeyboardOpen && (showVocabFocusDrawer || progressStats.isAllCompleted) && (
+              <MusicSessionSummaryCard
+                track={currentTrack}
+                progressStats={progressStats}
+                onSaveVocabItem={onSaveToNotebook}
+                onResetSession={handleResetSession}
+                onShuffleBlanks={handleShuffleBlanks}
+                onClaimReward={handleClaimReward}
+                hasClaimedReward={hasClaimedReward}
+              />
             )}
 
             {/* 3.3. Interactive Karaoke & Dictation Lyrics Canvas */}
@@ -1440,8 +1418,8 @@ export default function MusicListeningStudioModal({
               />
             </div>
 
-            {/* Search Input inside Mobile Sheet */}
-            <div className="p-3 border-b border-slate-200 dark:border-slate-800 shrink-0">
+            {/* Search & Genre Filters inside Mobile Sheet */}
+            <div className="p-3 border-b border-slate-200 dark:border-slate-800 space-y-2 shrink-0">
               <div className="relative">
                 <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
@@ -1451,6 +1429,26 @@ export default function MusicListeningStudioModal({
                   placeholder={isEn ? 'Search song or artist...' : 'Tìm tên bài hát hoặc ca sĩ...'}
                   className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-base text-slate-900 dark:text-white focus:outline-none focus:border-purple-500"
                 />
+              </div>
+
+              <div className="flex items-center space-x-1.5 overflow-x-auto scrollbar-none">
+                {MUSIC_GENRES.map((g) => {
+                  const isSelected = selectedGenre === g.id;
+                  return (
+                    <button
+                      key={g.id}
+                      type="button"
+                      onClick={() => setSelectedGenre(g.id)}
+                      className={`px-2.5 py-1 rounded-lg text-xs font-extrabold whitespace-nowrap cursor-pointer ${
+                        isSelected
+                          ? 'bg-purple-600 text-white'
+                          : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
+                      }`}
+                    >
+                      {isEn ? g.shortEn : g.shortVi}
+                    </button>
+                  );
+                })}
               </div>
             </div>
 

@@ -106,24 +106,24 @@ const MusicLineCard = memo(function MusicLineCard({
   return (
     <div
       data-line-index={lineIdx}
-      className={`rounded-2xl border p-3.5 sm:p-4 transition-all duration-200 ${
+      className={`rounded-xl border px-3 py-2 sm:px-3.5 sm:py-2.5 transition-all duration-200 ${
         isActive
-          ? 'bg-gradient-to-r from-rose-50/90 via-purple-50/80 to-indigo-50/80 dark:from-slate-900 dark:via-indigo-950/70 dark:to-slate-900 border-purple-400 dark:border-purple-500 shadow-md ring-2 ring-purple-400/25'
+          ? 'bg-gradient-to-r from-rose-50/90 via-purple-50/80 to-indigo-50/80 dark:from-slate-900 dark:via-indigo-950/70 dark:to-slate-900 border-purple-400 dark:border-purple-500 shadow-sm ring-2 ring-purple-400/20'
           : isLineCompleted && lineType !== 'anchor'
           ? 'bg-emerald-50/40 dark:bg-emerald-950/20 border-emerald-200/80 dark:border-emerald-800/50'
           : 'bg-white dark:bg-slate-900/90 border-slate-200/80 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
       }`}
     >
       {/* Top Meta Row: Timestamp, Section Tag, Task Type Badge & Quick Actions */}
-      <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+      <div className="flex flex-wrap items-center justify-between gap-1.5 mb-1.5">
         <div className="flex items-center space-x-2">
           {/* Clickable Timestamp Pill */}
           <button
             type="button"
             onClick={() => onSeekToLine?.(lineIdx, true)}
-            className={`inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-lg font-mono text-xs font-bold transition-all cursor-pointer ${
+            className={`inline-flex items-center space-x-1 px-2 py-0.5 rounded-md font-mono text-[11px] font-bold transition-all cursor-pointer ${
               isActive
-                ? 'bg-purple-600 text-white shadow-xs'
+                ? 'bg-purple-600 text-white shadow-2xs'
                 : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-purple-100 dark:hover:bg-purple-900/50 hover:text-purple-700'
             }`}
             title={isEn ? 'Click to play from this line' : 'Bấm để phát nhạc từ câu này'}
