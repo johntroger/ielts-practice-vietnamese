@@ -63,10 +63,6 @@ export default function MusicLyricsCanvas({
         if (nextEl && !nextEl.disabled) {
           nextEl.focus();
           scrollToActiveElement(nextEl);
-          // If advancing to a new line, seek audio to that line so learner hears it immediately
-          if (nextTarget.lineIdx !== currentLineIdx) {
-            onSeekToLine?.(nextTarget.lineIdx, true);
-          }
         }
       }
     },

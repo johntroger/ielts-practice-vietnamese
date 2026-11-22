@@ -261,8 +261,6 @@ const MusicLineCard = memo(function MusicLineCard({
                       spellCheck={false}
                       value={rawVal}
                       disabled={isLineRevealed}
-                      onClick={() => onSeekToLine?.(lineIdx, true, { skipIfAlreadyPlayingLine: true })}
-                      onFocus={() => onSeekToLine?.(lineIdx, true, { skipIfAlreadyPlayingLine: true })}
                       onChange={(e) =>
                         onWordInputChange?.(lineIdx, tok.tokenIndex, e.target.value, tok.coreWord)
                       }
@@ -317,8 +315,6 @@ const MusicLineCard = memo(function MusicLineCard({
               spellCheck={false}
               value={effectiveSentenceText}
               disabled={isLineRevealed}
-              onClick={() => onSeekToLine?.(lineIdx, true, { skipIfAlreadyPlayingLine: true })}
-              onFocus={() => onSeekToLine?.(lineIdx, true, { skipIfAlreadyPlayingLine: true })}
               onChange={(e) => onSentenceInputChange?.(lineIdx, e.target.value)}
               onKeyDown={handleKeyDownInSentence}
               placeholder={
