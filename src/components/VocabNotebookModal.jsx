@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { 
   Bookmark, 
   Plus, 
@@ -124,12 +124,26 @@ export default function VocabNotebookModal({
     });
   }, [vocabList, selectedTopic, masteryFilter, searchQuery, sortMode]);
 
-  // Sync tab with initialTab and update URL cleanly when switching to/from Irregular Verbs
+  // Sync tab with initialTab only when modal opens (never override user tab switches)
+  const wasOpenRef = useRef(false);
   useEffect(() => {
-    if (isOpen && initialTab) {
+    if (isOpen && !wasOpenRef.current && initialTab) {
       setActiveTab(initialTab);
     }
+    wasOpenRef.current = isOpen;
   }, [isOpen, initialTab]);
+
+  // Escape closes the full-screen vault when not typing in an input
+  useEffect(() => {
+    if (!isOpen) return undefined;
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape' && e.target?.tagName !== 'INPUT' && e.target?.tagName !== 'SELECT') {
+        onClose?.();
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [isOpen, onClose]);
 
   const switchTab = (nextTab) => {
     setActiveTab(nextTab);
@@ -249,13 +263,8 @@ export default function VocabNotebookModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-2 lg:p-3 overflow-hidden animate-in fade-in duration-150">
-      <div className="bg-white rounded-t-3xl sm:rounded-3xl w-full max-w-[98vw] 2xl:max-w-[1600px] shadow-2xl overflow-hidden overscroll-contain flex flex-col h-[94dvh] sm:h-[96dvh] max-h-[96dvh] animate-in slide-in-from-bottom-6 sm:zoom-in-95 duration-200 border border-slate-200 min-w-0 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:pb-0">
-        
-        {/* Mobile Swipe Grab Handle */}
-        <div className="sm:hidden pt-2.5 pb-1 flex justify-center shrink-0 bg-slate-900">
-          <div className="w-12 h-1.5 bg-slate-600 rounded-full" />
-        </div>
+    <div className="fixed inset-0 z-50 bg-white flex flex-col w-screen h-dvh overflow-hidden overscroll-contain animate-in fade-in duration-150 pb-[env(safe-area-inset-bottom)]">
+      <div className="bg-white w-full h-full flex flex-col min-w-0 overflow-hidden">
 
         {/* Header */}
         <div className="bg-slate-900 text-white p-3.5 sm:p-5 flex items-center justify-between shrink-0 min-w-0 gap-2">

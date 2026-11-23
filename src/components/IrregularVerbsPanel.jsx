@@ -428,16 +428,23 @@ export default function IrregularVerbsPanel({ vocabList = [], isEn, onAddVocab }
       {subMode === 'quiz' && !quizRunning && (
         <div className="flex-1 overflow-y-auto p-6 flex items-center justify-center">
           <div className="max-w-lg w-full bg-white border border-slate-200 rounded-2xl p-6 space-y-5 shadow-xs">
-            <div>
+            <div className="flex items-center justify-between gap-2">
               <h3 className="text-base font-bold text-slate-900">
                 {isEn ? 'Irregular Verbs V2 & V3 Drill' : 'Luyện Tập Chia Động Từ V2 & V3'}
               </h3>
+              <button
+                type="button"
+                onClick={() => { setSubMode('browse'); setQuizRunning(false); }}
+                className="text-xs font-bold text-slate-500 hover:text-slate-800 cursor-pointer shrink-0"
+              >
+                ← {isEn ? 'Reference' : 'Bảng tra cứu'}
+              </button>
+            </div>
               <p className="text-xs text-slate-500 mt-1">
                 {isEn
                   ? 'See the base form (V1) and meaning, then type Past Simple (V2) and Past Participle (V3).'
                   : 'Nhìn động từ nguyên mẫu (V1) và nghĩa, sau đó gõ dạng Quá khứ đơn (V2) và Phân từ 2 (V3).'}
               </p>
-            </div>
 
             <div className="grid grid-cols-2 gap-3">
               <label className="text-[11px] font-bold text-slate-500 space-y-1">
