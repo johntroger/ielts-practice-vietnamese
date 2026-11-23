@@ -14,7 +14,7 @@ export const track16EventDuties = {
   titleEn: 'IELTS Listening Practice: Competition Staff Duty Allocations (Track 16)',
   titleVi: 'Luyện đề IELTS Listening: Phân công nhiệm vụ Ban tổ chức (Track 16)',
   description: 'Bộ luyện thi IELTS Listening Section 2 thực chiến: Phân công nhiệm vụ điều phối thi đấu giữa Geoff, Amanda, Steve và Malik; các bẫy tự đính chính (self-correction) môn cử tạ, bóng rổ, cầu lông, thể dục dụng cụ và phương án dự phòng buổi chiều.',
-  descriptionEn: 'Authentic Cambridge IELTS Section 2 practice: Tournament staff duty assignments between Geoff, Amanda, Steve, and Malik, featuring morning responsibilities and afternoon self-correction traps across badminton, gymnastics, weightlifting, basketball, and table tennis.',
+  descriptionEn: 'Authentic IELTS Section 2 practice: Tournament staff duty assignments between Geoff, Amanda, Steve, and Malik, featuring morning responsibilities and afternoon self-correction traps across badminton, gymnastics, weightlifting, basketball, and table tennis.',
   descriptionVi: 'Bộ luyện thi IELTS Listening Section 2 thực chiến: Phân công nhiệm vụ điều phối thi đấu giữa Geoff, Amanda, Steve và Malik; các bẫy tự đính chính (self-correction) môn cử tạ, bóng rổ, cầu lông, thể dục dụng cụ và phương án dự phòng buổi chiều.',
   totalQuestions: 12,
   timeLimitMinutes: 15,

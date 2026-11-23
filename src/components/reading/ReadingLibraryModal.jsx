@@ -215,7 +215,7 @@ export default function ReadingLibraryModal({
       id: `custom-test-full-${Date.now()}`,
       title: finalTitle,
       description: isEn 
-        ? `Assembled 3-Passage mock test from library (${cleanTitle(builderP1.passage.title)} + ${cleanTitle(builderP2.passage.title)} + ${cleanTitle(builderP3.passage.title)}). Cambridge 60-min standard.`
+        ? `Assembled 3-Passage mock test from library (${cleanTitle(builderP1.passage.title)} + ${cleanTitle(builderP2.passage.title)} + ${cleanTitle(builderP3.passage.title)}). IELTS 60-min standard.`
         : `Bộ đề thi thử 3 Passages tự lắp ghép từ ngân hàng đề (${cleanTitle(builderP1.passage.title)} + ${cleanTitle(builderP2.passage.title)} + ${cleanTitle(builderP3.passage.title)}). Chuẩn thi thật 60 phút.`,
       totalQuestions: totalQ,
       timeLimitMinutes: 60,
@@ -246,7 +246,7 @@ export default function ReadingLibraryModal({
     const is101Test = Boolean(
       test.source === '101_past_papers' ||
       test.is101PastPaper ||
-      test.title?.includes('101 Past Papers') ||
+      test.title?.includes('Practice Bank') ||
       test.title?.includes('101 IELTS Reading') ||
       test.id?.startsWith('101-reading-test-') ||
       test.id?.startsWith('past-paper-101-reading-test-')
@@ -313,7 +313,7 @@ export default function ReadingLibraryModal({
     const is101 = (t) => Boolean(
       t.source === '101_past_papers' ||
       t.is101PastPaper ||
-      t.title?.includes('101 Past Papers') ||
+      t.title?.includes('Practice Bank') ||
       t.title?.includes('101 IELTS Reading') ||
       t.id?.startsWith('101-reading-test-') ||
       t.id?.startsWith('past-paper-101-reading-test-')
@@ -348,8 +348,8 @@ export default function ReadingLibraryModal({
     {
       id: 'past_papers',
       icon: BookOpen,
-      label: `📖 101 Past Papers (${stats.pastPapers})`,
-      shortLabel: '101 Papers',
+      label: `📖 Practice Bank (${stats.pastPapers})`,
+      shortLabel: 'Bank',
       count: stats.pastPapers,
       activeTheme: 'bg-teal-700 text-white border-teal-700 shadow-2xs font-bold',
       iconColor: 'text-teal-700'
@@ -366,8 +366,8 @@ export default function ReadingLibraryModal({
     {
       id: 'cambridge',
       icon: BookOpen,
-      label: `Cambridge (${stats.cambridge})`,
-      shortLabel: 'Cambridge',
+      label: `Standard (${stats.cambridge})`,
+      shortLabel: 'Standard',
       count: stats.cambridge,
       activeTheme: 'bg-blue-700 text-white border-blue-700 shadow-2xs font-bold',
       iconColor: 'text-blue-700'
@@ -517,7 +517,7 @@ export default function ReadingLibraryModal({
                 </span>
               </h2>
               <p className="text-xs text-slate-400 mt-0.5 hidden sm:block">
-                {isEn ? 'Standardized Cambridge naming, AI generated & 3-Passage 60-minute mock test builder' : 'Quản lý thư viện đề chuẩn hóa tên gọi, AI sinh & Lắp ghép đề thi 3 Passages chuẩn 60 phút'}
+                {isEn ? 'Standardized generic naming, AI generated & 3-Passage 60-minute mock test builder' : 'Quản lý thư viện đề chuẩn hóa tên gọi, AI sinh & Lắp ghép đề thi 3 Passages chuẩn 60 phút'}
               </p>
             </div>
           </div>
@@ -926,7 +926,7 @@ export default function ReadingLibraryModal({
                       <option value="">{isEn ? '-- Select a passage --' : '-- Bấm chọn bài đọc --'}</option>
                       {passageBank.map(item => (
                         <option key={item.passageKey} value={item.passageKey}>
-                          [{item.testIsCustom ? (isEn ? 'Custom' : 'Tự tạo') : 'Cambridge'}] {cleanTitle(item.passage.title)} ({item.qCount} {isEn ? 'questions' : 'câu'})
+                          [{item.testIsCustom ? (isEn ? 'Custom' : 'Tự tạo') : 'Standard'}] {cleanTitle(item.passage.title)} ({item.qCount} {isEn ? 'questions' : 'câu'})
                         </option>
                       ))}
                     </select>
@@ -986,7 +986,7 @@ export default function ReadingLibraryModal({
                       <option value="">{isEn ? '-- Select a passage --' : '-- Bấm chọn bài đọc --'}</option>
                       {passageBank.map(item => (
                         <option key={item.passageKey} value={item.passageKey}>
-                          [{item.testIsCustom ? (isEn ? 'Custom' : 'Tự tạo') : 'Cambridge'}] {cleanTitle(item.passage.title)} ({item.qCount} {isEn ? 'questions' : 'câu'})
+                          [{item.testIsCustom ? (isEn ? 'Custom' : 'Tự tạo') : 'Standard'}] {cleanTitle(item.passage.title)} ({item.qCount} {isEn ? 'questions' : 'câu'})
                         </option>
                       ))}
                     </select>
@@ -1046,7 +1046,7 @@ export default function ReadingLibraryModal({
                       <option value="">{isEn ? '-- Select a passage --' : '-- Bấm chọn bài đọc --'}</option>
                       {passageBank.map(item => (
                         <option key={item.passageKey} value={item.passageKey}>
-                          [{item.testIsCustom ? (isEn ? 'Custom' : 'Tự tạo') : 'Cambridge'}] {cleanTitle(item.passage.title)} ({item.qCount} {isEn ? 'questions' : 'câu'})
+                          [{item.testIsCustom ? (isEn ? 'Custom' : 'Tự tạo') : 'Standard'}] {cleanTitle(item.passage.title)} ({item.qCount} {isEn ? 'questions' : 'câu'})
                         </option>
                       ))}
                     </select>
@@ -1139,7 +1139,7 @@ export default function ReadingLibraryModal({
                       <span className="text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded font-black">AI</span>
                     </h4>
                     <p className="text-[11px] text-slate-500 mt-0.5">
-                      {isEn ? 'Choose from 12 academic topics, difficulty Passage 1/2/3, distractor traps and Cambridge standard questions.' : 'Tùy chọn 12 chủ đề học thuật, độ khó Passage 1/2/3, bẫy distractors và câu hỏi chuẩn Cambridge.'}
+                      {isEn ? 'Choose from 12 academic topics, difficulty Passage 1/2/3, distractor traps and IELTS standard questions.' : 'Tùy chọn 12 chủ đề học thuật, độ khó Passage 1/2/3, bẫy distractors và câu hỏi chuẩn IELTS.'}
                     </p>
                   </div>
                 </div>
@@ -1245,11 +1245,11 @@ export default function ReadingLibraryModal({
                           {/* Source Badge */}
                           {test.source === '101_past_papers' ? (
                             <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-teal-50 text-teal-800 border border-teal-200">
-                              📖 {isEn ? '101 Past Papers' : '101 Đề Past Papers'}
+                              📖 {isEn ? 'Practice Bank' : 'Ngân hàng luyện tập'}
                             </span>
                           ) : (test.isCambridge || !test.isCustom) ? (
                             <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-200">
-                              🏛️ {test.cambridgeBook ? (isEn ? `Cambridge Official (Cam ${test.cambridgeBook})` : `Chuẩn Cambridge (Cam ${test.cambridgeBook})`) : 'Cambridge Academic'}
+                              🏛️ {test.cambridgeBook ? (isEn ? 'Standard Set' : 'Bộ chuẩn') : 'Academic Set'}
                             </span>
                           ) : test.title?.includes('[Full Test') ? (
                             <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-200">
@@ -1337,7 +1337,7 @@ export default function ReadingLibraryModal({
                               <Trash2 className="w-4 h-4" />
                             </button>
                           ) : (
-                            <span className="text-[10px] text-indigo-600 font-bold">🏛️ {test.cambridgeBook ? `Cam ${test.cambridgeBook}` : 'Cambridge'}</span>
+                            <span className="text-[10px] text-indigo-600 font-bold">🏛️ {test.cambridgeBook ? 'Standard' : 'Standard'}</span>
                           )}
 
                           {onToggleMastered && (

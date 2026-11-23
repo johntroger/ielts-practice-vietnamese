@@ -14,7 +14,7 @@ export const track26PsychologicalCrisis = {
   titleEn: 'IELTS Listening Practice: Mars Habitat Psychological Conflict (Track 26)',
   titleVi: 'Luyện đề IELTS Listening: Xung đột tâm lý trong khu sinh tồn Sao Hỏa (Track 26)',
   description: 'Bộ luyện thi IELTS Listening Section 3 học thuật: Cuộc trao đổi giữa Simon và Maria về sự cố bạo lực bất ngờ tại trạm mô phỏng Sao Hỏa ở Arizona (thành viên Joe bất ngờ tấn công Martin do hội chứng tâm lý phát sinh từ sự cô lập kéo dài trong môi trường khép kín không lối thoát).',
-  descriptionEn: 'Authentic Cambridge IELTS Section 3 academic tutorial: University students Simon and Maria analyze an unexpected violent breakdown within the Arizona Mars habitat (crew member Joe assaulting Martin due to acute psychological distress and sensory confinement resulting from prolonged isolation without escape).',
+  descriptionEn: 'Authentic IELTS Section 3 academic tutorial: University students Simon and Maria analyze an unexpected violent breakdown within the Arizona Mars habitat (crew member Joe assaulting Martin due to acute psychological distress and sensory confinement resulting from prolonged isolation without escape).',
   descriptionVi: 'Bộ luyện thi IELTS Listening Section 3 học thuật: Cuộc trao đổi giữa Simon và Maria về sự cố bạo lực bất ngờ tại trạm mô phỏng Sao Hỏa ở Arizona (thành viên Joe bất ngờ tấn công Martin do hội chứng tâm lý phát sinh từ sự cô lập kéo dài trong môi trường khép kín không lối thoát).',
   totalQuestions: 10,
   timeLimitMinutes: 15,

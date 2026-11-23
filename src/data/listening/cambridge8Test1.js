@@ -1,7 +1,7 @@
 export const cambridge8Test1 = {
   "id": "cambridge-8-test-1",
-  "title": "Cambridge Practice Test 8 - Test 1: Complete Official Simulation",
-  "description": "Đề thi chính thức Cambridge 8 Test 1: Đặt vé Lễ hội âm nhạc mùa hè, Bảo tàng Khủng long, Đề cương thực địa Navajo và Bài giảng Địa lý khí hậu đô thị.",
+  "title": "Test A: Complete Official Simulation",
+  "description": "Đề thi mô phỏng: Đặt vé Lễ hội âm nhạc mùa hè, Bảo tàng Khủng long, Đề cương thực địa Navajo và Bài giảng Địa lý khí hậu đô thị.",
   "totalQuestions": 40,
   "timeLimitMinutes": 32,
   "isPublic": true,
@@ -9,7 +9,7 @@ export const cambridge8Test1 = {
   "source": "cambridge",
   "cambridgeBook": 8,
   "cambridgeTest": 1,
-  "creatorEmail": "Cambridge Assessment",
+  "creatorEmail": "Atlas Practice Bank",
   "audioUrl": "https://dn711100.ca.archive.org/0/items/IELTS8Test1/IELTS_8%2C_Test_1.mp3",
   "fallbackAudioUrl": "https://archive.org/download/IELTS8Test1/IELTS_8%2C_Test_1.mp3",
   "parts": [

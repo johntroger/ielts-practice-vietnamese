@@ -14,7 +14,7 @@ export const track15EquipmentPrep = {
   titleEn: 'IELTS Listening Practice: Sports Equipment Setup & Room Logistics (Track 15)',
   titleVi: 'Luyện đề IELTS Listening: Bố trí dụng cụ thể thao & Hậu cần thi đấu (Track 15)',
   description: 'Bộ luyện thi IELTS Listening Section 2 thực chiến: Hướng dẫn lắp đặt dụng cụ thể thao chi tiết (lưới cầu lông, vợt dự phòng, ngựa nhảy vaulting horse, thảm mat, xà kép/đơn nam nữ, bàn bóng bàn gấp gọn, tạ barbell, giá phấn chalk) và lịch xuất hiện của điều phối viên Geoff lúc 10:00.',
-  descriptionEn: 'Authentic Cambridge IELTS Section 2 practice: Setup instructions for tournament equipment (badminton nets, spare rackets, gymnastics vaulting horse, safety mats, men & women bars, folded table tennis tables, barbells, chalk stand), and coordinator Geoff\'s 10:00 am arrival.',
+  descriptionEn: 'Authentic IELTS Section 2 practice: Setup instructions for tournament equipment (badminton nets, spare rackets, gymnastics vaulting horse, safety mats, men & women bars, folded table tennis tables, barbells, chalk stand), and coordinator Geoff\'s 10:00 am arrival.',
   descriptionVi: 'Bộ luyện thi IELTS Listening Section 2 thực chiến: Hướng dẫn lắp đặt dụng cụ thể thao chi tiết (lưới cầu lông, vợt dự phòng, ngựa nhảy vaulting horse, thảm mat, xà kép/đơn nam nữ, bàn bóng bàn gấp gọn, tạ barbell, giá phấn chalk) và lịch xuất hiện của điều phối viên Geoff lúc 10:00.',
   totalQuestions: 12,
   timeLimitMinutes: 15,

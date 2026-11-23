@@ -1,7 +1,7 @@
 export const pastPaper101Test32 = {
   "id": "101-reading-test-32",
-  "title": "101 Past Papers Test 32: Animal minds: Parrot Alex, Stealth Forces in Weight Loss & Bright Children",
-  "titleEn": "101 Past Papers Test 32: Animal minds: Parrot Alex, Stealth Forces in Weight Loss & Bright Children",
+  "title": "Test AJ: Animal minds: Parrot Alex, Stealth Forces in Weight Loss & Bright Children",
+  "titleEn": "Test AJ: Animal minds: Parrot Alex, Stealth Forces in Weight Loss & Bright Children",
   "description": "Full Academic Reading Test 32: Animal minds: Parrot Alex, Stealth Forces in Weight Loss, and Bright Children.",
   "descriptionEn": "Full Academic Reading Test 32: Animal minds: Parrot Alex, Stealth Forces in Weight Loss, and Bright Children.",
   "totalQuestions": 40,

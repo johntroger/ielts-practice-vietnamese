@@ -14,7 +14,7 @@ export const track30TransportConversations = {
   titleEn: 'IELTS Listening Practice: Everyday Transport & Travel Scenarios (Track 30)',
   titleVi: 'Luyện đề IELTS Listening: Tình huống giao thông & Di chuyển hàng ngày (Track 30)',
   description: 'Bộ luyện thi IELTS Listening Section 1 giao tiếp xã hội: 5 đoạn hội thoại thực tế về giao thông công cộng và phương tiện cá nhân (chờ xe buýt trễ giờ, tàu hỏa gặp sự cố phải chuyển sang xe buýt thay thế, tắc đường do sương mù trên cao tốc đi Bristol, lời khuyên đạp xe đi làm vì sức khỏe, và tranh luận về việc mua xe máy sau khi nghỉ hưu).',
-  descriptionEn: 'Authentic Cambridge IELTS Section 1 social dialogue practice: Five everyday transport conversations covering bus frequency delays, train cancellations and replacement bus services, motorway weather gridlock, healthy bicycle commuting versus driving, and retirement motorcycle safety debates.',
+  descriptionEn: 'Authentic IELTS Section 1 social dialogue practice: Five everyday transport conversations covering bus frequency delays, train cancellations and replacement bus services, motorway weather gridlock, healthy bicycle commuting versus driving, and retirement motorcycle safety debates.',
   descriptionVi: 'Bộ luyện thi IELTS Listening Section 1 giao tiếp xã hội: 5 đoạn hội thoại thực tế về giao thông công cộng và phương tiện cá nhân (chờ xe buýt trễ giờ, tàu hỏa gặp sự cố phải chuyển sang xe buýt thay thế, tắc đường do sương mù trên cao tốc đi Bristol, lời khuyên đạp xe đi làm vì sức khỏe, và tranh luận về việc mua xe máy sau khi nghỉ hưu).',
   totalQuestions: 10,
   timeLimitMinutes: 15,

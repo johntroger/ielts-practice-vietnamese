@@ -81,8 +81,8 @@ export default function SpeakingMockLibraryModal({
                   <span>{isEn ? 'Speaking Mock Test Library' : 'Kho Đề Thi Thử IELTS Speaking'}</span>
                   <HeadingInfoTip
                     content={isEn 
-                      ? 'Official Cambridge standards, customized practice packs & AI-generated topics' 
-                      : 'Đề thi chuẩn Cambridge, đề luyện tập thủ công & đề thi AI tự sinh'}
+                      ? 'Official IELTS standards, customized practice packs & AI-generated topics' 
+                      : 'Đề thi chuẩn IELTS, đề luyện tập thủ công & đề thi AI tự sinh'}
                     title={isEn ? 'Speaking Mock Library' : 'Kho Đề Speaking'}
                     dark={true}
                     isEn={isEn}
@@ -147,7 +147,7 @@ export default function SpeakingMockLibraryModal({
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={isEn ? "Search by title, topic, Cambridge book..." : "Tìm theo tên đề thi, chủ đề, sách Cam..."}
+              placeholder={isEn ? "Search by title, topic, IELTS book..." : "Tìm theo tên đề thi, chủ đề, sách Cam..."}
               className="w-full pl-9 pr-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-hidden focus:border-purple-500 transition-colors"
             />
             {searchQuery && (
@@ -184,7 +184,7 @@ export default function SpeakingMockLibraryModal({
                   : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-white'
               }`}
             >
-              <span>🏛️ {isEn ? 'Cambridge' : 'Chuẩn Cam'} ({mockPackCounts?.cambridge ?? 0})</span>
+              <span>🏛️ {isEn ? 'Standard' : 'Bộ chuẩn'} ({mockPackCounts?.cambridge ?? 0})</span>
             </button>
 
             <button
@@ -302,7 +302,7 @@ export default function SpeakingMockLibraryModal({
 
                           {(pack.isCambridge || !pack.isCustom) && (
                             <span className="px-1.5 py-0.5 rounded text-[9px] font-black uppercase bg-blue-500/20 text-blue-300 border border-blue-500/30">
-                              🏛️ {pack.cambridgeBook ? (isEn ? `Cam ${pack.cambridgeBook}` : `Chuẩn Cam ${pack.cambridgeBook}`) : 'Cambridge'}
+                              🏛️ {pack.cambridgeBook ? (isEn ? 'Standard' : 'Bộ chuẩn') : 'Standard'}
                             </span>
                           )}
 

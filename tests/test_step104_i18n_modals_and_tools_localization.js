@@ -141,7 +141,7 @@ it('3. VocabGrammarSpellingModal.jsx integrates useTranslation and localized str
   assert.ok(content.includes("Listening Spelling Demons"));
   assert.ok(content.includes("isEn ? 'Grammar Architecture'"));
   assert.ok(content.includes("ACTIVE RECALL"));
-  assert.ok(content.includes("Cambridge Paraphrase Pairs"));
+  assert.ok(content.includes("Academic Paraphrase Pairs"));
   assert.ok(content.includes("Double Letters"));
 });
 

@@ -1,7 +1,7 @@
 export const pastPaper101Test17 = {
   "id": "101-reading-test-17",
-  "title": "101 Past Papers Test 17: MENTAL GYMNASTICS, Finding Our Way & Mystery in Easter",
-  "titleEn": "101 Past Papers Test 17: MENTAL GYMNASTICS, Finding Our Way & Mystery in Easter",
+  "title": "Test U: MENTAL GYMNASTICS, Finding Our Way & Mystery in Easter",
+  "titleEn": "Test U: MENTAL GYMNASTICS, Finding Our Way & Mystery in Easter",
   "description": "Full Academic Reading Test 17: MENTAL GYMNASTICS, Finding Our Way, and Mystery in Easter.",
   "descriptionEn": "Full Academic Reading Test 17: MENTAL GYMNASTICS, Finding Our Way, and Mystery in Easter.",
   "totalQuestions": 40,

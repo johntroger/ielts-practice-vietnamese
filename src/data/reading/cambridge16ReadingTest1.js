@@ -5,8 +5,8 @@
 
 export const cambridge16ReadingTest1 = {
   id: 'cambridge-16-reading-test-1',
-  title: 'Cambridge Practice Test 16: Canine Cognition, Djoser Step Pyramid & Future of Work',
-  description: 'Bộ đề thi thử IELTS Reading chuẩn khảo thí Cambridge 16 gồm đầy đủ 3 bài đọc học thuật với 40 câu hỏi, thời gian làm bài 60 phút.',
+  title: 'Test D: Canine Cognition, Djoser Step Pyramid & Future of Work',
+  description: 'Bộ đề thi thử IELTS Reading chuẩn khảo thí gồm đầy đủ 3 bài đọc học thuật với 40 câu hỏi, thời gian làm bài 60 phút.',
   totalQuestions: 40,
   timeLimitMinutes: 60,
   isPublic: true,
@@ -14,7 +14,7 @@ export const cambridge16ReadingTest1 = {
   source: 'cambridge',
   cambridgeBook: 16,
   cambridgeTest: 1,
-  creatorEmail: 'Cambridge Assessment',
+  creatorEmail: 'Atlas Practice Bank',
   passages: [
     {
       id: 'cam16-p1',

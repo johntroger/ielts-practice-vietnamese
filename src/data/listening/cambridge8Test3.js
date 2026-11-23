@@ -1,7 +1,7 @@
 export const cambridge8Test3 = {
   "id": "cambridge-8-test-3",
-  "title": "Cambridge Practice Test 8 - Test 3: Short-Term Rentals & National Arts Centre",
-  "description": "Đề thi chính thức Cambridge 8 Test 3: Thuê căn hộ ngắn hạn, Giới thiệu Trung tâm Nghệ thuật Quốc gia, Thảo luận chương trình Nghiên cứu Mỹ Latinh và Bài giảng Quản trị nhân bản thành công.",
+  "title": "Test C: Short-Term Rentals & National Arts Centre",
+  "description": "Đề thi mô phỏng: Thuê căn hộ ngắn hạn, Giới thiệu Trung tâm Nghệ thuật Quốc gia, Thảo luận chương trình Nghiên cứu Mỹ Latinh và Bài giảng Quản trị nhân bản thành công.",
   "totalQuestions": 40,
   "timeLimitMinutes": 32,
   "isPublic": true,
@@ -9,7 +9,7 @@ export const cambridge8Test3 = {
   "source": "cambridge",
   "cambridgeBook": 8,
   "cambridgeTest": 3,
-  "creatorEmail": "Cambridge Assessment",
+  "creatorEmail": "Atlas Practice Bank",
   "audioUrl": "https://dn710908.ca.archive.org/0/items/IELTS8Test2/IELTS_8%2C_Test_3.mp3",
   "fallbackAudioUrl": "https://archive.org/download/IELTS8Test2/IELTS_8%2C_Test_3.mp3",
   "parts": [

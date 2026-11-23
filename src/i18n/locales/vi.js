@@ -214,7 +214,7 @@ export const vi = {
     markMastered: 'Thuộc đề',
     questionsCount: '{count} câu',
     answeredProgress: 'Đã làm: {answered}/{total}',
-    cambridgeOfficial: 'Cambridge Official'
+    cambridgeOfficial: 'Standard Set'
   },
   speaking: {
     roomTitle: 'Phòng Thi Ảo IELTS Speaking',
@@ -326,7 +326,7 @@ export const vi = {
       tabAll: 'Tất cả',
       tabManual: '✍️ Thủ Công',
       tabAi: '🤖 AI Sinh',
-      tabCambridge: '🏛️ Cambridge',
+      tabCambridge: '🏛️ Standard',
       tabCommunity: 'Cộng Đồng',
       tabMastered: 'Đã Thuộc',
       bothTasks: 'Cả 2 Task',

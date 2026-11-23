@@ -14,7 +14,7 @@ export const track28MarsProjectReview = {
   titleEn: 'IELTS Listening Practice: Mars Simulation Project Review (Track 28)',
   titleVi: 'Luyện đề IELTS Listening: Tổng kết dự án mô phỏng Sao Hỏa & Báo cáo tốt nghiệp (Track 28)',
   description: 'Bộ luyện thi IELTS Listening Section 3 học thuật: Buổi hướng dẫn đồ án giữa Tiến sĩ Thornton, Simon và Maria đánh giá toàn diện kết quả dự án mô phỏng Sao Hỏa (tỷ lệ hoàn thành nhiệm vụ, sự cố sập nguồn sinh tồn 4 giờ, số liệu tài chính tiết kiệm 500.000 USD, và kế hoạch cho nhiệm vụ kéo dài một năm tiếp theo).',
-  descriptionEn: 'Authentic Cambridge IELTS Section 3 academic tutorial: Dr. Thornton reviews the completed Mars isolation project with university students Simon and Maria, evaluating crew completion rates, the 4-hour life support blackout, a $500,000 budget saving, and prospective assignments comparing human performance against prospective one-year missions.',
+  descriptionEn: 'Authentic IELTS Section 3 academic tutorial: Dr. Thornton reviews the completed Mars isolation project with university students Simon and Maria, evaluating crew completion rates, the 4-hour life support blackout, a $500,000 budget saving, and prospective assignments comparing human performance against prospective one-year missions.',
   descriptionVi: 'Bộ luyện thi IELTS Listening Section 3 học thuật: Buổi hướng dẫn đồ án giữa Tiến sĩ Thornton, Simon và Maria đánh giá toàn diện kết quả dự án mô phỏng Sao Hỏa (tỷ lệ hoàn thành nhiệm vụ, sự cố sập nguồn sinh tồn 4 giờ, số liệu tài chính tiết kiệm 500.000 USD, và kế hoạch cho nhiệm vụ kéo dài một năm tiếp theo).',
   totalQuestions: 10,
   timeLimitMinutes: 15,

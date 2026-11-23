@@ -14,7 +14,7 @@ export const track17SportsBenefits = {
   titleEn: 'IELTS Listening Practice: Athletic Motivations & Sport Benefits (Track 17)',
   titleVi: 'Luyện đề IELTS Listening: Động lực & Lợi ích tập luyện thể thao (Track 17)',
   description: 'Bộ luyện thi IELTS Listening thực chiến: Luyện nghe nhận diện quan điểm cá nhân và động lực rèn luyện thể thao giữa môn chèo thuyền (rowing - stay fit and healthy) và quần vợt (tennis - competitive, beat my friends).',
-  descriptionEn: 'Authentic Cambridge IELTS practice: Identifying personal attitudes, motivations, and sport benefits comparing rowing (staying fit and healthy) and tennis (competitiveness and beating friends).',
+  descriptionEn: 'Authentic IELTS practice: Identifying personal attitudes, motivations, and sport benefits comparing rowing (staying fit and healthy) and tennis (competitiveness and beating friends).',
   descriptionVi: 'Bộ luyện thi IELTS Listening thực chiến: Luyện nghe nhận diện quan điểm cá nhân và động lực rèn luyện thể thao giữa môn chèo thuyền (rowing - stay fit and healthy) và quần vợt (tennis - competitive, beat my friends).',
   totalQuestions: 6,
   timeLimitMinutes: 10,

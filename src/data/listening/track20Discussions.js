@@ -14,7 +14,7 @@ export const track20Discussions = {
   titleEn: 'IELTS Listening Practice: Topical Discussions on Politics, Cinema & Robotics (Track 20)',
   titleVi: 'Luyện đề IELTS Listening: Thảo luận chuyên sâu về Bầu cử, Điện ảnh & Robot (Track 20)',
   description: 'Bộ luyện thi IELTS Listening Section 3 thực chiến: Phân tích 3 đoạn đàm thoại đa chiều về tác động kinh tế của bầu cử chính phủ, góc nhìn phê bình phim khoa học viễn tưởng (phát triển nhân vật vs hiệu ứng thương mại), và giải bóng đá robot tự động cùng tiềm năng thương mại hóa.',
-  descriptionEn: 'Authentic Cambridge IELTS Section 3 practice: Analyzing 3 multidimensional discussions covering general election economic impacts, sci-fi film criticism (character depth vs commercial spectacle), and autonomous robot soccer competitions with commercialization potential.',
+  descriptionEn: 'Authentic IELTS Section 3 practice: Analyzing 3 multidimensional discussions covering general election economic impacts, sci-fi film criticism (character depth vs commercial spectacle), and autonomous robot soccer competitions with commercialization potential.',
   descriptionVi: 'Bộ luyện thi IELTS Listening Section 3 thực chiến: Phân tích 3 đoạn đàm thoại đa chiều về tác động kinh tế của bầu cử chính phủ, góc nhìn phê bình phim khoa học viễn tưởng (phát triển nhân vật vs hiệu ứng thương mại), và giải bóng đá robot tự động cùng tiềm năng thương mại hóa.',
   totalQuestions: 10,
   timeLimitMinutes: 14,

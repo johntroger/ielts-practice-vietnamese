@@ -1,9 +1,9 @@
 export const pastPaper101Test1 = {
   "id": "past-paper-101-reading-test-1",
-  "title": "101 Past Papers Test 1: Andrea Palladio, Future of Earth & Ancient Akrotiri Pottery",
-  "titleEn": "101 Past Papers Test 1: Andrea Palladio, Future of Earth & Ancient Akrotiri Pottery",
-  "description": "Bộ đề thi thử IELTS Reading học thuật thực chiến từ ngân hàng 101 Past Papers (gồm 3 bài đọc: Kiến trúc sư Andrea Palladio, Tương lai địa chất & sinh học Trái Đất, và Kỹ thuật làm gốm cổ đại Akrotiri).",
-  "descriptionEn": "Authentic IELTS Reading Academic test from 101 Past Papers bank (3 Passages: Andrea Palladio Italian Architect, The Future of Humanity and Earth, and Pottery Production in Ancient Akrotiri).",
+  "title": "Test E: Andrea Palladio, Future of Earth & Ancient Akrotiri Pottery",
+  "titleEn": "Test E: Andrea Palladio, Future of Earth & Ancient Akrotiri Pottery",
+  "description": "Bộ đề thi thử IELTS Reading học thuật thực chiến từ ngân hàng Practice Bank (gồm 3 bài đọc: Kiến trúc sư Andrea Palladio, Tương lai địa chất & sinh học Trái Đất, và Kỹ thuật làm gốm cổ đại Akrotiri).",
+  "descriptionEn": "Authentic IELTS Reading Academic test from the practice bank (3 Passages: Andrea Palladio Italian Architect, The Future of Humanity and Earth, and Pottery Production in Ancient Akrotiri).",
   "totalQuestions": 40,
   "timeLimitMinutes": 60,
   "isPublic": true,

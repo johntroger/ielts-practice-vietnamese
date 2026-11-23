@@ -123,7 +123,7 @@ export default function SpeakingMockHero({
               <span>{isEn ? 'Selected Mock Test Pack (Representative)' : 'Bộ Đề Thi Thử Đang Chọn (Đại Diện)'}</span>
             </h3>
             <span className="text-xs text-slate-400 font-medium">
-              {allMockPacks.length} {isEn ? 'Test Packs (Cambridge Standard, Manual & AI Generated)' : 'Gói đề thi (Chuẩn Cambridge, Thủ công & AI Tự Sinh)'} • {isEn ? 'Showing active test pack to maximize workspace space' : 'Chỉ hiển thị đề thi đại diện để tối ưu không gian toàn màn hình'}
+              {allMockPacks.length} {isEn ? 'Test Packs (Standard Set, Manual & AI Generated)' : 'Gói đề thi (Bộ chuẩn, Thủ công & AI Tự Sinh)'} • {isEn ? 'Showing active test pack to maximize workspace space' : 'Chỉ hiển thị đề thi đại diện để tối ưu không gian toàn màn hình'}
             </span>
           </div>
 
@@ -179,7 +179,7 @@ export default function SpeakingMockHero({
               className="bg-slate-900 border border-slate-700/80 rounded-xl px-2.5 py-1 text-xs text-purple-300 font-bold focus:outline-hidden focus:border-purple-500 flex-1 truncate cursor-pointer"
             >
               <option value="all">{isEn ? `All Tests (${mockPackCounts.all})` : `Tất Cả (${mockPackCounts.all})`}</option>
-              <option value="cambridge">🏛️ {isEn ? `Cambridge Standard (${mockPackCounts.cambridge})` : `Chuẩn Cam (${mockPackCounts.cambridge})`}</option>
+              <option value="cambridge">🏛️ {isEn ? `Standard Set (${mockPackCounts.cambridge})` : `Bộ chuẩn (${mockPackCounts.cambridge})`}</option>
               <option value="manual">✍️ {isEn ? `Manual Custom (${mockPackCounts.manual})` : `Thủ Công (${mockPackCounts.manual})`}</option>
               <option value="ai">🤖 {isEn ? `AI Generated (${mockPackCounts.ai})` : `AI Sinh (${mockPackCounts.ai})`}</option>
             </select>
@@ -207,7 +207,7 @@ export default function SpeakingMockHero({
                   : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-white'
               }`}
             >
-              <span>🏛️ {isEn ? 'Cambridge Standard' : 'Chuẩn Cambridge'} ({mockPackCounts.cambridge})</span>
+              <span>🏛️ {isEn ? 'Standard Set' : 'Bộ chuẩn'} ({mockPackCounts.cambridge})</span>
             </button>
             <button
               type="button"
@@ -286,7 +286,7 @@ export default function SpeakingMockHero({
 
               {(activeMockPack.isCambridge || !activeMockPack.isCustom) && (
                 <span className="px-2 py-1 rounded-lg text-[10px] font-black uppercase bg-blue-500/20 text-blue-300 border border-blue-500/30">
-                  🏛️ {activeMockPack.cambridgeBook ? (isEn ? `Cam ${activeMockPack.cambridgeBook}` : `Chuẩn Cam ${activeMockPack.cambridgeBook}`) : 'Cambridge Standard'}
+                  🏛️ {activeMockPack.cambridgeBook ? (isEn ? 'Standard' : 'Bộ chuẩn') : 'Standard Set'}
                 </span>
               )}
 
@@ -444,8 +444,8 @@ export default function SpeakingMockHero({
             </span>
             <span className="text-slate-400 text-xs block leading-relaxed">
               {isEn
-                ? `Examiner ${activeExaminer.name} (${activeExaminer.accent}) • 11 – 14 mins • Full 3 Parts Cambridge standard`
-                : `Giám khảo ${activeExaminer.name} (${activeExaminer.accent}) • 11 – 14 phút • Đầy đủ 3 Parts chuẩn Cambridge`}
+                ? `Examiner ${activeExaminer.name} (${activeExaminer.accent}) • 11 – 14 mins • Full 3 Parts IELTS standard`
+                : `Giám khảo ${activeExaminer.name} (${activeExaminer.accent}) • 11 – 14 phút • Đầy đủ 3 Parts chuẩn IELTS`}
             </span>
           </div>
 

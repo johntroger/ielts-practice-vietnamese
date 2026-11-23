@@ -47,7 +47,7 @@ test('TaskLibraryModal provides ✍️ Thủ Công and 🏛️ Cambridge filter 
   assert.ok(fileContent.includes('taskCounts.manual'), 'Must compute manual count');
   assert.ok(fileContent.includes('taskCounts.cambridge'), 'Must compute cambridge count');
   assert.ok(fileContent.includes('✍️ Thủ Công'), 'Must display ✍️ Thủ Công tab or badge');
-  assert.ok(fileContent.includes('🏛️ Cambridge'), 'Must display 🏛️ Cambridge tab or badge');
+  assert.ok(fileContent.includes('🏛️ Standard'), 'Must display 🏛️ Standard tab or badge');
   assert.ok(fileContent.includes('isManual: true'), 'Must set isManual: true in handleCreateManual');
 });
 

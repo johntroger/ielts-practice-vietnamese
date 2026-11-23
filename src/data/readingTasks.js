@@ -83,8 +83,8 @@ export const INITIAL_READING_TESTS = [
   pastPaper101Test34,
   {
     id: 'cambridge-academic-test-1',
-    title: 'Cambridge Practice Test 15: Roman Shipwrecks, Bilingualism & Geoengineering',
-    description: 'Bộ đề thi thử chuẩn Cambridge Academic gồm 3 bài đọc với đầy đủ 40 câu hỏi, thời gian làm bài 60 phút.',
+    title: 'Test AM: Roman Shipwrecks, Bilingualism & Geoengineering',
+    description: 'Bộ đề thi thử chuẩn Academic gồm 3 bài đọc với đầy đủ 40 câu hỏi, thời gian làm bài 60 phút.',
     totalQuestions: 40,
     timeLimitMinutes: 60,
     isPublic: true,
@@ -704,7 +704,7 @@ export const INITIAL_READING_TESTS = [
   {
     id: 'ai-comm-test-perovskite-solar',
     title: '✨ [AI Cộng Đồng] Next-Gen Perovskite Solar Cells & Energy Transition',
-    description: 'Đề thi đọc học thuật do AI thiết kế chuẩn Cambridge Academic: Cơ chế pin mặt trời Perovskite, hiệu suất chuyển đổi quang năng và bài toán kinh tế.',
+    description: 'Đề thi đọc học thuật do AI thiết kế chuẩn Academic: Cơ chế pin mặt trời Perovskite, hiệu suất chuyển đổi quang năng và bài toán kinh tế.',
     totalQuestions: 13,
     timeLimitMinutes: 20,
     isCustom: true,

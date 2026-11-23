@@ -14,7 +14,7 @@ export const track18SportsAchievements = {
   titleEn: 'IELTS Listening Practice: Sporting Achievements & Athletic Feats (Track 18)',
   titleVi: 'Luyện đề IELTS Listening: Thành tích thể thao & Kỷ lục thi đấu (Track 18)',
   description: 'Bộ luyện thi IELTS Listening Section 1/2 thực chiến: Phân tích 5 phát biểu thực tế về huyền thoại bóng đá Ryan Giggs, bảng xếp hạng huy chương Olympic London 2012, bẫy đổi ý tập gym (was going to... but decided not to bother), kỷ lục bóng rổ NBA Michael Jordan vs LeBron James, và thử thách giải chạy London Marathon.',
-  descriptionEn: 'Authentic Cambridge IELTS practice: Analyzing 5 real-world statements covering football legend Ryan Giggs, London 2012 Olympic medal standings, mind-change traps regarding gym visits, NBA playoff scoring records (Jordan vs James), and marathon endurance.',
+  descriptionEn: 'Authentic IELTS practice: Analyzing 5 real-world statements covering football legend Ryan Giggs, London 2012 Olympic medal standings, mind-change traps regarding gym visits, NBA playoff scoring records (Jordan vs James), and marathon endurance.',
   descriptionVi: 'Bộ luyện thi IELTS Listening Section 1/2 thực chiến: Phân tích 5 phát biểu thực tế về huyền thoại bóng đá Ryan Giggs, bảng xếp hạng huy chương Olympic London 2012, bẫy đổi ý tập gym (was going to... but decided not to bother), kỷ lục bóng rổ NBA Michael Jordan vs LeBron James, và thử thách giải chạy London Marathon.',
   totalQuestions: 10,
   timeLimitMinutes: 12,

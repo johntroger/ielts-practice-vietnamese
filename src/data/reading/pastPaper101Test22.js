@@ -1,7 +1,7 @@
 export const pastPaper101Test22 = {
   "id": "101-reading-test-22",
-  "title": "101 Past Papers Test 22: Voyage of going: beyond the blue line 2, European Heat Wave & The concept of childhood in the western countries",
-  "titleEn": "101 Past Papers Test 22: Voyage of going: beyond the blue line 2, European Heat Wave & The concept of childhood in the western countries",
+  "title": "Test Z: Voyage of going: beyond the blue line 2, European Heat Wave & The concept of childhood in the western countries",
+  "titleEn": "Test Z: Voyage of going: beyond the blue line 2, European Heat Wave & The concept of childhood in the western countries",
   "description": "Full Academic Reading Test 22: Voyage of going: beyond the blue line 2, European Heat Wave, and The concept of childhood in the western countries.",
   "descriptionEn": "Full Academic Reading Test 22: Voyage of going: beyond the blue line 2, European Heat Wave, and The concept of childhood in the western countries.",
   "totalQuestions": 40,

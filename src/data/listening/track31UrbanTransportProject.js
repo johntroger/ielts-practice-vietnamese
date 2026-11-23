@@ -8,7 +8,7 @@ export const track31UrbanTransportProject = {
   "titleEn": "IELTS Listening Practice: Town Transport System & Project Discussion (Track 31)",
   "titleVi": "Luyện đề IELTS Listening: Hệ thống giao thông đô thị & Thảo luận dự án (Track 31)",
   "description": "Bộ luyện thi IELTS Listening Section 3 học thuật: Sophie và bạn cùng lớp thảo luận đề án nghiên cứu hệ thống giao thông thị trấn, phân tích sự thiếu hụt xe buýt, nguy cơ cắt giảm dịch vụ đường sắt, mối quan hệ nghịch lý giữa kẹt xe và tỷ lệ tai nạn, cùng ảnh hưởng ô nhiễm không khí và thiệt hại kinh tế.",
-  "descriptionEn": "Authentic Cambridge IELTS Section 3 academic project discussion: Sophie and her peer analyze the town transport system, evaluating bus reliability shortages, railway budget cutbacks, the paradoxical traffic vs accident rate relationship, respiratory health concerns, and municipal economic loss.",
+  "descriptionEn": "Authentic IELTS Section 3 academic project discussion: Sophie and her peer analyze the town transport system, evaluating bus reliability shortages, railway budget cutbacks, the paradoxical traffic vs accident rate relationship, respiratory health concerns, and municipal economic loss.",
   "descriptionVi": "Bộ luyện thi IELTS Listening Section 3 học thuật: Sophie và bạn cùng lớp thảo luận đề án nghiên cứu hệ thống giao thông thị trấn, phân tích sự thiếu hụt xe buýt, nguy cơ cắt giảm dịch vụ đường sắt, mối quan hệ nghịch lý giữa kẹt xe và tỷ lệ tai nạn, cùng ảnh hưởng ô nhiễm không khí và thiệt hại kinh tế.",
   "totalQuestions": 10,
   "timeLimitMinutes": 15,

@@ -5,8 +5,8 @@
 
 export const cambridge20ReadingTest1 = {
   id: 'cambridge-20-reading-test-1',
-  title: 'Cambridge Practice Test 20: The Kākāpō, Resilient Elms & Stress in Decision-Making',
-  description: 'Bộ đề thi thử IELTS Reading chuẩn khảo thí Cambridge 20 (Mới nhất) gồm đầy đủ 3 bài đọc học thuật với 40 câu hỏi, thời gian làm bài 60 phút.',
+  title: 'Test A: The Kākāpō, Resilient Elms & Stress in Decision-Making',
+  description: 'Bộ đề thi thử IELTS Reading chuẩn khảo thí (Mới nhất) gồm đầy đủ 3 bài đọc học thuật với 40 câu hỏi, thời gian làm bài 60 phút.',
   totalQuestions: 40,
   timeLimitMinutes: 60,
   isPublic: true,
@@ -14,7 +14,7 @@ export const cambridge20ReadingTest1 = {
   source: 'cambridge',
   cambridgeBook: 20,
   cambridgeTest: 1,
-  creatorEmail: 'Cambridge Assessment',
+  creatorEmail: 'Atlas Practice Bank',
   passages: [
     {
       id: 'cam20-p1',

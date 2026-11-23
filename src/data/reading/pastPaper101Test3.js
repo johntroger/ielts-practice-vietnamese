@@ -1,9 +1,9 @@
 export const pastPaper101Test3 = {
   "id": "past-paper-101-reading-test-3",
-  "title": "101 Past Papers Test 3: Marine Chronometer, Modern Management & The Giant Deer",
-  "titleEn": "101 Past Papers Test 3: Marine Chronometer, Modern Management & The Giant Deer",
-  "description": "Bộ đề thi thử IELTS Reading học thuật số 3 từ 101 Past Papers (gồm 3 bài đọc: Đồng hồ hàng hải kinh độ John Harrison, Cha đẻ quản trị học hiện đại Peter Drucker, và Sự tuyệt chủng của Hươu khổng lồ Megaloceros).",
-  "descriptionEn": "Authentic IELTS Reading Academic test 3 from 101 Past Papers bank (3 Passages: Marine Chronometer, Father of Modern Management Peter Drucker, and Extinction of the Giant Deer).",
+  "title": "Test G: Marine Chronometer, Modern Management & The Giant Deer",
+  "titleEn": "Test G: Marine Chronometer, Modern Management & The Giant Deer",
+  "description": "Bộ đề thi thử IELTS Reading học thuật từ ngân hàng đề luyện tập (gồm 3 bài đọc: Đồng hồ hàng hải kinh độ John Harrison, Cha đẻ quản trị học hiện đại Peter Drucker, và Sự tuyệt chủng của Hươu khổng lồ Megaloceros).",
+  "descriptionEn": "Authentic IELTS Reading Academic test from the practice bank (3 Passages: Marine Chronometer, Father of Modern Management Peter Drucker, and Extinction of the Giant Deer).",
   "totalQuestions": 40,
   "timeLimitMinutes": 60,
   "isPublic": true,

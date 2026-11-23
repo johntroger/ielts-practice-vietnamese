@@ -126,7 +126,7 @@ for (const pack of cambridgeSpeakingPacks) {
   assert(pack.id, 'Speaking pack must have an id');
   assert(pack.isCambridge === true, `Speaking pack ${pack.id} must have isCambridge === true`);
   assert(Number.isInteger(pack.cambridgeBook), `Speaking pack ${pack.id} must have integer cambridgeBook`);
-  assert(pack.title.includes('Cambridge') || pack.title.includes('Full Mock'), `Speaking pack title should reference Cambridge or Mock`);
+  assert(pack.title.startsWith('Test ') || pack.title.includes('Full Mock'), `Speaking pack title should use generic Test X or Full Mock naming`);
   
   if (pack.customPart1) {
     assert(Array.isArray(pack.customPart1.questions), `Custom part 1 in ${pack.id} must have questions`);

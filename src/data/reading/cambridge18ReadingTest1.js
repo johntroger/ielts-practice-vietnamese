@@ -5,8 +5,8 @@
 
 export const cambridge18ReadingTest1 = {
   id: 'cambridge-18-reading-test-1',
-  title: 'Cambridge Practice Test 18: Urban Farming, Forest Schools & Space Debris',
-  description: 'Bộ đề thi thử IELTS Reading chuẩn khảo thí Cambridge 18 gồm đầy đủ 3 bài đọc học thuật với 40 câu hỏi, thời gian làm bài 60 phút.',
+  title: 'Test B: Urban Farming, Forest Schools & Space Debris',
+  description: 'Bộ đề thi thử IELTS Reading chuẩn khảo thí gồm đầy đủ 3 bài đọc học thuật với 40 câu hỏi, thời gian làm bài 60 phút.',
   totalQuestions: 40,
   timeLimitMinutes: 60,
   isPublic: true,
@@ -14,7 +14,7 @@ export const cambridge18ReadingTest1 = {
   source: 'cambridge',
   cambridgeBook: 18,
   cambridgeTest: 1,
-  creatorEmail: 'Cambridge Assessment',
+  creatorEmail: 'Atlas Practice Bank',
   passages: [
     {
       id: 'cam18-p1',

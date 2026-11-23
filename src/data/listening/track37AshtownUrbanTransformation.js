@@ -8,7 +8,7 @@ export const track37AshtownUrbanTransformation = {
   "titleEn": "IELTS Listening Practice: Ashtown 25-Year Transformation & Survey Review (Track 37)",
   "titleVi": "Luyện đề IELTS Listening: Khảo sát Chuyển đổi Đô thị 25 năm tại Ashtown (Track 37)",
   "description": "Bộ luyện thi IELTS Listening Section 3 học thuật: Jane và Bill phân tích kết quả khảo sát về 25 năm chuyển đổi kinh tế, giao thông và cơ sở hạ tầng tại thị trấn Ashtown, đánh giá mạng lưới xe buýt, làn xe đạp, cơ cấu lao động giáo dục đại học và tình trạng tái quy hoạch 5 công trình công cộng.",
-  "descriptionEn": "Authentic Cambridge IELTS Section 3 academic survey debrief: Jane and Bill analyze survey findings documenting 25 years of structural shifts in Ashtown across transit routes, cycling infrastructure, higher-education employment, and the current operational status of five landmark civic buildings.",
+  "descriptionEn": "Authentic IELTS Section 3 academic survey debrief: Jane and Bill analyze survey findings documenting 25 years of structural shifts in Ashtown across transit routes, cycling infrastructure, higher-education employment, and the current operational status of five landmark civic buildings.",
   "descriptionVi": "Bộ luyện thi IELTS Listening Section 3 học thuật: Jane và Bill phân tích kết quả khảo sát về 25 năm chuyển đổi kinh tế, giao thông và cơ sở hạ tầng tại thị trấn Ashtown, đánh giá mạng lưới xe buýt, làn xe đạp, cơ cấu lao động giáo dục đại học và tình trạng tái quy hoạch 5 công trình công cộng.",
   "totalQuestions": 10,
   "timeLimitMinutes": 16,

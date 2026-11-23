@@ -78,12 +78,12 @@ export default function CambridgeSynonymsStage({
               >
                 <div className="flex items-center flex-wrap gap-1.5">
                   <h3 className="font-extrabold text-sm sm:text-base text-slate-800 leading-snug group-hover:text-[#004646] transition-colors flex items-center space-x-1">
-                    <span>{pair.category || (isEn ? 'Cambridge Paraphrase' : 'Chuyên đề Paraphrase')}</span>
+                    <span>{pair.category || (isEn ? 'Academic Paraphrase' : 'Chuyên đề Paraphrase')}</span>
                     <ChevronDown className={`w-3.5 h-3.5 text-slate-400 group-hover:text-[#004646] shrink-0 transition-transform duration-200 ${isQuickJumpOpen ? 'rotate-180' : ''}`} />
                   </h3>
                 </div>
                 <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5 group-hover:text-[#004646] transition-colors flex items-center space-x-1">
-                  <span>{isEn ? `${totalItems} Cambridge keyword transformations` : `${totalItems} cặp biến đổi từ khóa Reading`}</span>
+                  <span>{isEn ? `${totalItems} IELTS keyword transformations` : `${totalItems} cặp biến đổi từ khóa Reading`}</span>
                   <span className="text-[#27c4b5] font-bold">• {isEn ? 'Click to jump' : 'Bấm để chọn bài'}</span>
                 </p>
               </button>
@@ -107,7 +107,7 @@ export default function CambridgeSynonymsStage({
                 onClick={() => onSaveToNotebook({
                   word: pair.questionStem,
                   meaning: `Paraphrase: ${pair.passageMatch}`,
-                  tag: 'Cambridge Paraphrase'
+                  tag: 'Academic Paraphrase'
                 })}
                 className="p-1.5 sm:p-2 rounded-xl bg-slate-50 hover:bg-amber-50 text-slate-600 hover:text-amber-700 border border-[#d9e3e4] transition cursor-pointer"
                 title={isEn ? "Save to notebook" : "Lưu vào sổ tay"}

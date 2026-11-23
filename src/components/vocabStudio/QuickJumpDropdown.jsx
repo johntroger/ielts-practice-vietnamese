@@ -110,8 +110,8 @@ export default function QuickJumpDropdown({
       placeholderVi: 'Tìm cụm từ vựng hoặc collocation...'
     },
     synonyms: {
-      en: 'Cambridge Paraphrase Pairs',
-      vi: 'Cặp Paraphrase Cambridge',
+      en: 'Academic Paraphrase Pairs',
+      vi: 'Cặp Paraphrase IELTS',
       placeholderEn: 'Search synonym keyword transformation...',
       placeholderVi: 'Tìm từ đồng nghĩa hoặc câu hỏi...'
     }

@@ -14,7 +14,7 @@ export const track29IntonationAttitude = {
   titleEn: 'IELTS Listening Practice: Intonation, Stress & Speaker Attitude (Track 29)',
   titleVi: 'Luyện đề IELTS Listening: Ngữ điệu, Trọng âm câu & Thái độ người nói (Track 29)',
   description: 'Bộ luyện thi IELTS Listening Section 3 học thuật: Phân tích 6 cặp câu đối chiếu (1A-1B đến 6A-6B) để nhận diện thái độ cảm xúc, sự nhấn giọng có chủ đích (emotive stress), sự ngạc nhiên, bi kịch và tính trang trọng trong phát ngôn tiếng Anh chuẩn khảo thí.',
-  descriptionEn: 'Authentic Cambridge IELTS Section 3 phonological analysis: Examine six comparative utterance pairs (1A–1B through 6A–6B) to distinguish expressive emotional emphasis, dramatic pitch inflection, and speaker attitude from neutral, matter-of-fact delivery.',
+  descriptionEn: 'Authentic IELTS Section 3 phonological analysis: Examine six comparative utterance pairs (1A–1B through 6A–6B) to distinguish expressive emotional emphasis, dramatic pitch inflection, and speaker attitude from neutral, matter-of-fact delivery.',
   descriptionVi: 'Bộ luyện thi IELTS Listening Section 3 học thuật: Phân tích 6 cặp câu đối chiếu (1A-1B đến 6A-6B) để nhận diện thái độ cảm xúc, sự nhấn giọng có chủ đích (emotive stress), sự ngạc nhiên, bi kịch và tính trang trọng trong phát ngôn tiếng Anh chuẩn khảo thí.',
   totalQuestions: 10,
   timeLimitMinutes: 15,

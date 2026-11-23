@@ -5,8 +5,8 @@
 
 export const cambridge17ReadingTest1 = {
   id: 'cambridge-17-reading-test-1',
-  title: 'Cambridge Practice Test 17: London Underground, Modern Stadiums & Royal Escapes',
-  description: 'Bộ đề thi thử IELTS Reading chuẩn khảo thí Cambridge 17 gồm đầy đủ 3 bài đọc học thuật với 40 câu hỏi, thời gian làm bài 60 phút.',
+  title: 'Test C: London Underground, Modern Stadiums & Royal Escapes',
+  description: 'Bộ đề thi thử IELTS Reading chuẩn khảo thí gồm đầy đủ 3 bài đọc học thuật với 40 câu hỏi, thời gian làm bài 60 phút.',
   totalQuestions: 40,
   timeLimitMinutes: 60,
   isPublic: true,
@@ -14,7 +14,7 @@ export const cambridge17ReadingTest1 = {
   source: 'cambridge',
   cambridgeBook: 17,
   cambridgeTest: 1,
-  creatorEmail: 'Cambridge Assessment',
+  creatorEmail: 'Atlas Practice Bank',
   passages: [
     {
       id: 'cam17-p1',

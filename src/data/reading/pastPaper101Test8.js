@@ -1,9 +1,9 @@
 export const pastPaper101Test8 = {
   "id": "past-paper-101-reading-test-8",
-  "title": "101 Past Papers Test 8: Finches on Islands, Flight from Reality & Communicating Conflict",
-  "titleEn": "101 Past Papers Test 8: Finches on Islands, Flight from Reality & Communicating Conflict",
-  "description": "Bộ đề thi thử IELTS Reading học thuật số 8 từ 101 Past Papers (gồm 3 bài đọc: Sự tiến hóa của chim sẻ trên quần đảo Galapagos, Nguy cơ từ thiết bị điện tử trên máy bay, và Các phong cách giao tiếp & giải quyết xung đột).",
-  "descriptionEn": "Authentic IELTS Reading Academic test 8 from 101 Past Papers bank (3 Passages: Finches on Islands, Flight from reality?, and Communicating Conflict!).",
+  "title": "Test L: Finches on Islands, Flight from Reality & Communicating Conflict",
+  "titleEn": "Test L: Finches on Islands, Flight from Reality & Communicating Conflict",
+  "description": "Bộ đề thi thử IELTS Reading học thuật từ ngân hàng đề luyện tập (gồm 3 bài đọc: Sự tiến hóa của chim sẻ trên quần đảo Galapagos, Nguy cơ từ thiết bị điện tử trên máy bay, và Các phong cách giao tiếp & giải quyết xung đột).",
+  "descriptionEn": "Authentic IELTS Reading Academic test from the practice bank (3 Passages: Finches on Islands, Flight from reality?, and Communicating Conflict!).",
   "totalQuestions": 40,
   "timeLimitMinutes": 60,
   "isPublic": true,

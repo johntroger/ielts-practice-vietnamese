@@ -14,7 +14,7 @@ export const track14RoomSchedule = {
   titleEn: 'IELTS Listening Practice: Sports Competition Room Scheduling & Setup (Track 14)',
   titleVi: 'Luyện đề IELTS Listening: Lịch thi đấu & Sắp xếp phòng thi (Track 14)',
   description: 'Bộ luyện thi IELTS Listening Section 2 thực chiến: Phân bổ 3 phòng thi đấu (Dean, Carsley, Forster) cho 5 bộ môn (Badminton, Gymnastics, Weightlifting, Basketball, Table tennis), bẫy tự sửa thông tin (Self-Correction Trap) buổi chiều và thủ tục nhận chìa khóa kho tại Reception.',
-  descriptionEn: 'Authentic Cambridge IELTS Section 2 practice: Room scheduling and setup instructions for three competition halls (Dean, Carsley, Forster) across five sports, featuring an afternoon self-correction trap and storeroom key logistics.',
+  descriptionEn: 'Authentic IELTS Section 2 practice: Room scheduling and setup instructions for three competition halls (Dean, Carsley, Forster) across five sports, featuring an afternoon self-correction trap and storeroom key logistics.',
   descriptionVi: 'Bộ luyện thi IELTS Listening Section 2 thực chiến: Phân bổ 3 phòng thi đấu (Dean, Carsley, Forster) cho 5 bộ môn (Badminton, Gymnastics, Weightlifting, Basketball, Table tennis), bẫy tự sửa thông tin (Self-Correction Trap) buổi chiều và thủ tục nhận chìa khóa kho tại Reception.',
   totalQuestions: 10,
   timeLimitMinutes: 12,

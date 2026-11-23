@@ -462,7 +462,7 @@ export default function Navbar({
               <button
                 onClick={doOpenGenerator}
                 className="hidden min-[1720px]:flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border border-red-200 bg-red-50/90 hover:bg-red-100 text-red-700 text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer shrink-0 group"
-                title={isEn ? "Generate New Writing Prompt with AI (Task 1 & Task 2 Cambridge)" : "Sinh Đề Thi Writing Mới Bằng AI (Task 1 & Task 2 chuẩn Cambridge)"}
+                title={isEn ? "Generate New Writing Prompt with AI (Task 1 & Task 2 IELTS)" : "Sinh Đề Thi Writing Mới Bằng AI (Task 1 & Task 2 chuẩn IELTS)"}
               >
                 <Sparkles className="w-3.5 h-3.5 text-red-600 group-hover:scale-110 transition-transform shrink-0" />
                 <span>{isEn ? 'AI Prompt Gen' : 'Sinh Đề (AI)'}</span>
@@ -676,7 +676,7 @@ export default function Navbar({
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="font-bold truncate whitespace-nowrap">{isEn ? 'Test Library' : 'Thư Viện Đề Thi'}</div>
-                        <div className="text-[10px] text-slate-400 font-normal truncate whitespace-nowrap">{isEn ? 'Writing, Reading, Listening Cambridge tests' : 'Đề Writing, Reading, Listening chuẩn Cambridge'}</div>
+                        <div className="text-[10px] text-slate-400 font-normal truncate whitespace-nowrap">{isEn ? 'Writing, Reading, Listening IELTS tests' : 'Đề Writing, Reading, Listening chuẩn IELTS'}</div>
                       </div>
                     </button>
                     {SHOW_AI_GENERATOR_BUTTONS && (
@@ -938,7 +938,7 @@ export default function Navbar({
                           <span>{isEn ? 'Growth Forecast (ETA)' : 'Dự Báo Tăng Trưởng (ETA)'}</span>
                           <span className="px-1.5 py-0.2 rounded-full text-[9px] font-black bg-purple-100 text-purple-700">{isEn ? 'New' : 'Mới'}</span>
                         </div>
-                        <div className="text-[10px] text-slate-400 font-normal">{isEn ? 'Forecast target band date based on Cambridge standards' : 'Dự báo ngày đạt Target Band theo chuẩn Cambridge'}</div>
+                        <div className="text-[10px] text-slate-400 font-normal">{isEn ? 'Forecast target band date based on IELTS standards' : 'Dự báo ngày đạt Target Band theo chuẩn IELTS'}</div>
                       </div>
                     </button>
                     <div className="pt-1 border-t border-slate-100 px-2.5 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
@@ -1320,14 +1320,14 @@ export default function Navbar({
                     <span className="text-[10px] text-amber-700 font-bold bg-amber-200 px-1.5 py-0.5 rounded shrink-0">{isEn ? 'NEW' : 'MỚI'}</span>
                   </button>
 
-                  {/* Cambridge Test Library */}
+                  {/* IELTS Test Library */}
                   <button
                     onClick={() => { doOpenLibrary(); setIsMobileDrawerOpen(false); }}
                     className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 border border-slate-100 min-h-[44px] cursor-pointer"
                   >
                     <div className="flex items-center space-x-2.5 min-w-0">
                       <BookOpen className="w-4 h-4 text-blue-600 shrink-0" />
-                      <span className="truncate whitespace-nowrap">{isEn ? 'Cambridge Standard Test Library' : 'Thư Viện Đề Thi Chuẩn Cambridge'}</span>
+                      <span className="truncate whitespace-nowrap">{isEn ? 'Standard Test Library' : 'Thư Viện Đề Thi Chuẩn'}</span>
                     </div>
                   </button>
 

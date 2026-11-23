@@ -1,9 +1,9 @@
 export const pastPaper101Test4 = {
   "id": "past-paper-101-reading-test-4",
-  "title": "101 Past Papers Test 4: Oregon Agriculture, Intelligence & Paper vs Computer",
-  "titleEn": "101 Past Papers Test 4: Oregon Agriculture, Intelligence & Paper vs Computer",
-  "description": "Bộ đề thi thử IELTS Reading học thuật số 4 từ 101 Past Papers (gồm 3 bài đọc: Nông nghiệp sinh thái tại Oregon, Lịch sử và tranh cãi bài test IQ, và Cuộc đối đầu giữa Giấy và Máy tính văn phòng).",
-  "descriptionEn": "Authentic IELTS Reading Academic test 4 from 101 Past Papers bank (3 Passages: New Agriculture in Oregon, Intelligence and Giftedness, and Paper or Computer).",
+  "title": "Test H: Oregon Agriculture, Intelligence & Paper vs Computer",
+  "titleEn": "Test H: Oregon Agriculture, Intelligence & Paper vs Computer",
+  "description": "Bộ đề thi thử IELTS Reading học thuật từ ngân hàng đề luyện tập (gồm 3 bài đọc: Nông nghiệp sinh thái tại Oregon, Lịch sử và tranh cãi bài test IQ, và Cuộc đối đầu giữa Giấy và Máy tính văn phòng).",
+  "descriptionEn": "Authentic IELTS Reading Academic test from the practice bank (3 Passages: New Agriculture in Oregon, Intelligence and Giftedness, and Paper or Computer).",
   "totalQuestions": 40,
   "timeLimitMinutes": 60,
   "isPublic": true,

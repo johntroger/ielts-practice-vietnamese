@@ -13,7 +13,7 @@ import { safeGet } from '../../utils/storageService';
 import { DEFAULT_OWNER_PROFILE } from '../../services/gamification/realLeaderboardService';
 
 /**
- * Custom hook encapsulating all multi-skill statistics, Cambridge band projections,
+ * Custom hook encapsulating all multi-skill statistics, IELTS band projections,
  * Atlas Titan level progression, and mastered repertoire resolution for UserProfileModal.
  */
 export function useProfileAnalytics({
@@ -193,7 +193,7 @@ export function useProfileAnalytics({
           skillBadgeColor: 'bg-emerald-50 text-emerald-700 border-emerald-200',
           typeBadge: readingTest.type === 'general' ? 'General Training' : 'Academic Reading',
           typeBadgeColor: 'bg-emerald-100 text-emerald-800',
-          category: readingTest.isCustom ? (isEn ? 'Custom Test (AI)' : 'Đề tự tạo (AI)') : 'Cambridge Official',
+          category: readingTest.isCustom ? (isEn ? 'Custom Test (AI)' : 'Đề tự tạo (AI)') : 'Standard Set',
           title: formatTestTitle(readingTest.title, isEn),
           description: formatTestDescription(readingTest.description, isEn, readingTest) || (readingTest.passages?.map(p => p.title).join(' • ') || ''),
           statText: isEn
@@ -214,7 +214,7 @@ export function useProfileAnalytics({
           skillBadgeColor: 'bg-indigo-50 text-indigo-700 border-indigo-200',
           typeBadge: 'Listening Test',
           typeBadgeColor: 'bg-indigo-100 text-indigo-800',
-          category: listeningTest.isCustom ? 'AI Audio' : 'Cambridge Official',
+          category: listeningTest.isCustom ? 'AI Audio' : 'Standard Set',
           title: formatTestTitle(listeningTest.title, isEn),
           description: formatTestDescription(listeningTest.description, isEn, listeningTest) || (isEn ? `${listeningTest.parts?.length || 4} audio parts` : `${listeningTest.parts?.length || 4} phần nghe`),
           statText: isEn
@@ -237,7 +237,7 @@ export function useProfileAnalytics({
           typeBadgeColor: 'bg-purple-100 text-purple-800',
           category: spkPack.difficulty || ('Target ' + spkPack.targetBand),
           title: spkPack.title,
-          description: spkPack.summary || (isEn ? 'Complete 3 Parts official Cambridge mock pack' : 'Trọn bộ 3 Parts chuẩn khảo thí Cambridge'),
+          description: spkPack.summary || (isEn ? 'Complete 3 Parts official IELTS mock pack' : 'Trọn bộ 3 Parts chuẩn khảo thí IELTS'),
           statText: isEn
             ? `Tested: ${sHistory.length} time(s)${bestBand > 0 ? ` • Highest Band: ${bestBand.toFixed(1)}` : ''}`
             : `Đã thi: ${sHistory.length} lần${bestBand > 0 ? ` • Band cao nhất: ${bestBand.toFixed(1)}` : ''}`,
@@ -254,7 +254,7 @@ export function useProfileAnalytics({
           skillBadgeColor: 'bg-purple-50 text-purple-700 border-purple-200',
           typeBadge: 'Part 1 Topic',
           typeBadgeColor: 'bg-purple-100 text-purple-800',
-          category: p1Topic.isCustom ? 'AI Custom' : 'Cambridge',
+          category: p1Topic.isCustom ? 'AI Custom' : 'Standard',
           title: p1Topic.title,
           description: p1Topic.questions?.[0]?.question ? `"${p1Topic.questions[0].question}"` : (isEn ? 'Part 1 interview questions set' : 'Bộ câu hỏi phỏng vấn Part 1'),
           statText: isEn ? `${p1Topic.questions?.length || 3} questions` : `${p1Topic.questions?.length || 3} câu hỏi`,

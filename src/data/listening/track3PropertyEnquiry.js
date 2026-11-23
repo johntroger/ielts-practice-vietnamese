@@ -12,7 +12,7 @@
 export const track3PropertyEnquiry = {
   id: 'ielts-listening-track3-property',
   title: 'IELTS Listening Practice: House Enquiry & Viewing Form (Track 3)',
-  description: 'Đề thi thử IELTS Listening Part 1 chuẩn khảo thí Cambridge: Cuộc gọi tìm hiểu nhà đất tại Church Hill Road, đặt lịch hẹn xem nhà, ghi chép số điện thoại và đánh vần tên riêng.',
+  description: 'Đề thi thử IELTS Listening Part 1 chuẩn khảo thí: Cuộc gọi tìm hiểu nhà đất tại Church Hill Road, đặt lịch hẹn xem nhà, ghi chép số điện thoại và đánh vần tên riêng.',
   totalQuestions: 12,
   timeLimitMinutes: 12,
   isPublic: true,

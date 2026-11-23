@@ -1,9 +1,9 @@
 export const pastPaper101Test2 = {
   "id": "past-paper-101-reading-test-2",
-  "title": "101 Past Papers Test 2: Save the Turtles, CSR & TV Addiction",
-  "titleEn": "101 Past Papers Test 2: Save the Turtles, CSR & TV Addiction",
-  "description": "Bộ đề thi thử IELTS Reading học thuật thực chiến số 2 từ 101 Past Papers (gồm 3 bài đọc: Bảo tồn Rùa biển Leatherback, Trách nhiệm xã hội của doanh nghiệp CSR, và Cơ chế tâm lý nghiện truyền hình).",
-  "descriptionEn": "Authentic IELTS Reading Academic test 2 from 101 Past Papers bank (3 Passages: Save the Turtles, Corporate Social Responsibility, and TV Addiction).",
+  "title": "Test F: Save the Turtles, CSR & TV Addiction",
+  "titleEn": "Test F: Save the Turtles, CSR & TV Addiction",
+  "description": "Bộ đề thi thử IELTS Reading học thuật thực chiến số 2 từ ngân hàng đề luyện tập (gồm 3 bài đọc: Bảo tồn Rùa biển Leatherback, Trách nhiệm xã hội của doanh nghiệp CSR, và Cơ chế tâm lý nghiện truyền hình).",
+  "descriptionEn": "Authentic IELTS Reading Academic test from the practice bank (3 Passages: Save the Turtles, Corporate Social Responsibility, and TV Addiction).",
   "totalQuestions": 40,
   "timeLimitMinutes": 60,
   "isPublic": true,

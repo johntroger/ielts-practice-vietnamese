@@ -1,9 +1,9 @@
 export const pastPaper101Test7 = {
   "id": "past-paper-101-reading-test-7",
-  "title": "101 Past Papers Test 7: Dinosaurs' Footprints, Cookbooks & Lessons from the Past",
-  "titleEn": "101 Past Papers Test 7: Dinosaurs' Footprints, Cookbooks & Lessons from the Past",
-  "description": "Bộ đề thi thử IELTS Reading học thuật số 7 từ 101 Past Papers (gồm 3 bài đọc: Dấu chân Khủng long và Sự tuyệt chủng, Sách nấu ăn thực sự dạy chúng ta điều gì, và Bài học từ quá khứ của Jared Diamond).",
-  "descriptionEn": "Authentic IELTS Reading Academic test 7 from 101 Past Papers bank (3 Passages: The Dinosaurs' Footprints and Extinction, What Cookbooks Really Teach Us, and Learning Lessons from the Past).",
+  "title": "Test K: Dinosaurs' Footprints, Cookbooks & Lessons from the Past",
+  "titleEn": "Test K: Dinosaurs' Footprints, Cookbooks & Lessons from the Past",
+  "description": "Bộ đề thi thử IELTS Reading học thuật từ ngân hàng đề luyện tập (gồm 3 bài đọc: Dấu chân Khủng long và Sự tuyệt chủng, Sách nấu ăn thực sự dạy chúng ta điều gì, và Bài học từ quá khứ của Jared Diamond).",
+  "descriptionEn": "Authentic IELTS Reading Academic test from the practice bank (3 Passages: The Dinosaurs' Footprints and Extinction, What Cookbooks Really Teach Us, and Learning Lessons from the Past).",
   "totalQuestions": 40,
   "timeLimitMinutes": 60,
   "isPublic": true,

@@ -157,7 +157,7 @@ export const CURATED_LISTENING_AUDIO_SOURCES = [
     speakers: '1 người (Giảng viên đại học)',
     context: 'Bài giảng quản trị phân tích lý do các doanh nghiệp thường thất bại khi cố gắng sao chép quy trình thành công từ chi nhánh này sang chi nhánh khác.',
     suggestedParts: [4],
-    aiReasoning: 'Độc thoại học thuật chuyên sâu về quản trị vận hành, chuyển giao nhân sự và rủi ro khi sao chép máy móc. Đúng chuẩn 100% bài thi Part 4 của Cambridge IELTS.',
+    aiReasoning: 'Độc thoại học thuật chuyên sâu về quản trị vận hành, chuyển giao nhân sự và rủi ro khi sao chép máy móc. Đúng chuẩn 100% bài thi Part 4 của IELTS IELTS.',
     recommendedQuestionTypes: ['Lecture Notes Completion (ONE WORD ONLY)', 'Multiple Choice'],
     sampleTranscriptSnippet: 'Compared to introducing new business processes, attempts to copy existing processes are far more frequent. Yet success results from a complex combination of factors...'
   }

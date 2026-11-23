@@ -14,7 +14,7 @@ export const track22SpaceExpeditions = {
   titleEn: 'IELTS Listening Practice: Tutorial on Space Exploration Research Projects (Track 22)',
   titleVi: 'Luyện đề IELTS Listening: Buổi hướng dẫn đề tài Thám hiểm không gian (Track 22)',
   description: 'Bộ luyện thi IELTS Listening Section 3 thực chiến: Buổi thảo luận học thuật giữa hai sinh viên Simon, Maria và giảng viên hướng dẫn Dr. Thornton để lựa chọn đề tài nghiên cứu (tàu thăm dò Sao Diêm Vương Pluto, mô phỏng sinh tồn Sao Hỏa tại sa mạc Arizona, hay chương trình thám hiểm Mặt Trăng của Trung Quốc).',
-  descriptionEn: 'Authentic Cambridge IELTS Section 3 practice: Academic tutorial between university students Simon, Maria, and their supervisor Dr. Thornton selecting a research topic across three space initiatives (Pluto flyby, Arizona Mars desert simulation, or Chinese robotic lunar exploration).',
+  descriptionEn: 'Authentic IELTS Section 3 practice: Academic tutorial between university students Simon, Maria, and their supervisor Dr. Thornton selecting a research topic across three space initiatives (Pluto flyby, Arizona Mars desert simulation, or Chinese robotic lunar exploration).',
   descriptionVi: 'Bộ luyện thi IELTS Listening Section 3 thực chiến: Buổi thảo luận học thuật giữa hai sinh viên Simon, Maria và giảng viên hướng dẫn Dr. Thornton để lựa chọn đề tài nghiên cứu (tàu thăm dò Sao Diêm Vương Pluto, mô phỏng sinh tồn Sao Hỏa tại sa mạc Arizona, hay chương trình thám hiểm Mặt Trăng của Trung Quốc).',
   totalQuestions: 10,
   timeLimitMinutes: 15,

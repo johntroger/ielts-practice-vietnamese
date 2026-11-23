@@ -754,7 +754,7 @@ export default function ListeningWorkspace({
                     </span>
                   ) : (
                     <span className="hidden sm:inline-flex px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold border border-emerald-200 shrink-0">
-                      {t('listening.cambridgeOfficial', 'Cambridge Official')}
+                      {t('listening.cambridgeOfficial', 'Standard Set')}
                     </span>
                   )}
                 </div>
@@ -882,7 +882,7 @@ export default function ListeningWorkspace({
                       {SHOW_AI_GENERATOR_BUTTONS && (
                         <button type="button" onClick={() => { setIsToolsMenuOpen(false); setIsGeneratorOpen(true); }} className="w-full px-2.5 py-2 text-left text-xs font-semibold text-slate-700 hover:bg-purple-50 hover:text-purple-900 rounded-xl flex items-center space-x-2.5 cursor-pointer transition-colors">
                           <div className="p-1.5 rounded-lg bg-purple-100 text-purple-700 shrink-0"><Sparkles className="w-4 h-4" /></div>
-                          <div><div className="font-bold">{t('listening.generateAi', 'Sinh Đề Bằng AI')}</div><div className="text-[10px] text-slate-400 font-normal">{isEn ? 'Generate new audio scripts & questions' : 'Tự tạo đề nghe chuẩn Cambridge'}</div></div>
+                          <div><div className="font-bold">{t('listening.generateAi', 'Sinh Đề Bằng AI')}</div><div className="text-[10px] text-slate-400 font-normal">{isEn ? 'Generate new audio scripts & questions' : 'Tự tạo đề nghe chuẩn IELTS'}</div></div>
                         </button>
                       )}
 
@@ -1635,7 +1635,7 @@ export default function ListeningWorkspace({
         isEn={isEn}
       />
 
-      {/* 9. Comprehensive Cambridge Test Report Modal */}
+      {/* 9. Comprehensive IELTS Test Report Modal */}
       {isResultModalOpen && (
         <ListeningResultModal
           isOpen={isResultModalOpen}
@@ -1693,7 +1693,7 @@ export default function ListeningWorkspace({
         />
       )}
 
-      {/* 11. Listening Library Modal (Browse Cambridge & AI generated tests) */}
+      {/* 11. Listening Library Modal (Browse IELTS & AI generated tests) */}
       {isLibraryOpen && (
         <ListeningLibraryModal
           isOpen={isLibraryOpen}

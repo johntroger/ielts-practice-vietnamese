@@ -1,9 +1,9 @@
 export const pastPaper101Test6 = {
   "id": "past-paper-101-reading-test-6",
-  "title": "101 Past Papers Test 6: Otters, Bird Migration 2 & Talc Powder",
-  "titleEn": "101 Past Papers Test 6: Otters, Bird Migration 2 & Talc Powder",
-  "description": "Bộ đề thi thử IELTS Reading học thuật số 6 từ 101 Past Papers (gồm 3 bài đọc: Tập tính và sinh thái loài Rái cá, Cơ chế định vị trong di cư của loài chim, và Ứng dụng công nghiệp của bột Talc).",
-  "descriptionEn": "Authentic IELTS Reading Academic test 6 from 101 Past Papers bank (3 Passages: Otter, Bird Migration 2, and Talc Powder).",
+  "title": "Test J: Otters, Bird Migration 2 & Talc Powder",
+  "titleEn": "Test J: Otters, Bird Migration 2 & Talc Powder",
+  "description": "Bộ đề thi thử IELTS Reading học thuật từ ngân hàng đề luyện tập (gồm 3 bài đọc: Tập tính và sinh thái loài Rái cá, Cơ chế định vị trong di cư của loài chim, và Ứng dụng công nghiệp của bột Talc).",
+  "descriptionEn": "Authentic IELTS Reading Academic test from the practice bank (3 Passages: Otter, Bird Migration 2, and Talc Powder).",
   "totalQuestions": 40,
   "timeLimitMinutes": 60,
   "isPublic": true,

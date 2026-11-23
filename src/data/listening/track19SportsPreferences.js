@@ -14,7 +14,7 @@ export const track19SportsPreferences = {
   titleEn: 'IELTS Listening Practice: Sports Preferences & Leisure Constraints (Track 19)',
   titleVi: 'Luyện đề IELTS Listening: Sở thích thể thao & Rào cản sinh hoạt (Track 19)',
   description: 'Bộ luyện thi IELTS Listening Section 1/2 thực chiến: Phân tích 4 phát biểu thể hiện sở thích, mong muốn và các rào cản sinh hoạt thực tế (bộ môn khúc côn cầu hockey, cấu trúc ước muốn về địa điểm bơi lội, bẫy thiếu thời gian đi câu cá, và sự hào hứng đón chờ video games).',
-  descriptionEn: 'Authentic Cambridge IELTS practice: Analyzing 4 statements on personal leisure pursuits, preferences, and constraints, covering hockey adoration, swimming venue limitations, fishing time restrictions, and anticipation of upcoming video games.',
+  descriptionEn: 'Authentic IELTS practice: Analyzing 4 statements on personal leisure pursuits, preferences, and constraints, covering hockey adoration, swimming venue limitations, fishing time restrictions, and anticipation of upcoming video games.',
   descriptionVi: 'Bộ luyện thi IELTS Listening Section 1/2 thực chiến: Phân tích 4 phát biểu thể hiện sở thích, mong muốn và các rào cản sinh hoạt thực tế (bộ môn khúc côn cầu hockey, cấu trúc ước muốn về địa điểm bơi lội, bẫy thiếu thời gian đi câu cá, và sự hào hứng đón chờ video games).',
   totalQuestions: 10,
   timeLimitMinutes: 12,

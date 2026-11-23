@@ -214,7 +214,7 @@ export const en = {
     markMastered: 'Master',
     questionsCount: '{count} questions',
     answeredProgress: 'Answered: {answered}/{total}',
-    cambridgeOfficial: 'Cambridge Official'
+    cambridgeOfficial: 'Standard Set'
   },
   speaking: {
     roomTitle: 'IELTS Speaking Virtual Studio',
@@ -326,7 +326,7 @@ export const en = {
       tabAll: 'All',
       tabManual: '✍️ Manual',
       tabAi: '🤖 AI Generated',
-      tabCambridge: '🏛️ Cambridge',
+      tabCambridge: '🏛️ Standard',
       tabCommunity: 'Community',
       tabMastered: 'Mastered',
       bothTasks: 'Both Tasks',

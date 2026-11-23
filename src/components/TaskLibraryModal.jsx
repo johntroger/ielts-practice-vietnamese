@@ -167,8 +167,8 @@ export default function TaskLibraryModal({
     {
       id: 'cambridge',
       icon: BookOpen,
-      label: `${t('modals.library.tabCambridge', null, '🏛️ Cambridge')} (${taskCounts.cambridge})`,
-      shortLabel: t('modals.library.tabCambridge', null, '🏛️ Cambridge'),
+      label: `${t('modals.library.tabCambridge', null, '🏛️ Standard')} (${taskCounts.cambridge})`,
+      shortLabel: t('modals.library.tabCambridge', null, '🏛️ Standard'),
       count: taskCounts.cambridge,
       activeTheme: 'bg-blue-600 text-white border-blue-600 shadow-2xs font-bold',
       iconColor: 'text-blue-500'
@@ -736,7 +736,7 @@ export default function TaskLibraryModal({
               setCategoryFilter('all');
               setSortBy('rating_desc');
             }}
-            placeholder={isEn ? "Search prompts by title, keyword, Cambridge topic..." : "Tìm đề bài theo tiêu đề, từ khóa, chủ đề Cambridge..."}
+            placeholder={isEn ? "Search prompts by title, keyword, topic..." : "Tìm đề bài theo tiêu đề, từ khóa, chủ đề..."}
           />
         </div>
 
@@ -759,7 +759,7 @@ export default function TaskLibraryModal({
                     required
                     value={manualTitle}
                     onChange={(e) => setManualTitle(e.target.value)}
-                    placeholder={isEn ? "E.g. Cambridge 18 Test 2 - Remote Working" : "Vd: Cambridge 18 Test 2 - Remote Working"}
+                    placeholder={isEn ? "E.g. Test B - Remote Working" : "Vd: Test B - Remote Working"}
                     className="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-red-500/20"
                   />
                 </div>
@@ -894,7 +894,7 @@ export default function TaskLibraryModal({
                         )}
                         {(t.isCambridge || (!t.isCustom && !t.isAiGenerated)) && (
                           <span className="text-[10px] text-indigo-800 bg-indigo-50 px-1.5 py-0.5 rounded border border-indigo-200 font-bold flex items-center space-x-1 shadow-2xs">
-                            <span>🏛️ {t.cambridgeBook ? (isEn ? `Cambridge (Cam ${t.cambridgeBook})` : `Chuẩn Cambridge (Cam ${t.cambridgeBook})`) : (isEn ? 'Cambridge Official' : 'Chuẩn Cambridge')}</span>
+                            <span>🏛️ {t.cambridgeBook ? (isEn ? 'Standard Set' : 'Bộ chuẩn') : (isEn ? 'Standard Set' : 'Bộ chuẩn')}</span>
                           </span>
                         )}
                         {t.imageUrl && (

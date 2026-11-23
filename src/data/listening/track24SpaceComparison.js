@@ -14,7 +14,7 @@ export const track24SpaceComparison = {
   titleEn: 'IELTS Listening Practice: Comparing Space Missions & Project Decisions (Track 24)',
   titleVi: 'Luyện đề IELTS Listening: So sánh các dự án không gian & Ra quyết định nghiên cứu (Track 24)',
   description: 'Bộ luyện thi IELTS Listening Section 3 học thuật: Cuộc thảo luận giữa giảng viên hướng dẫn Dr. Thornton và hai sinh viên Simon, Maria nhằm đánh giá các phương án nghiên cứu khoa học vũ trụ (sứ mệnh Sao Diêm Vương Pluto, mô phỏng sinh tồn Sao Hỏa tại sa mạc Arizona, hay dự án thám hiểm Mặt Trăng tự hành của Trung Quốc).',
-  descriptionEn: 'Authentic Cambridge IELTS Section 3 academic tutorial: University students Simon and Maria confer with their academic supervisor Dr. Thornton to evaluate three prospective space science projects (the Pluto flyby, the Arizona desert Mars human isolation simulation, or the Chinese automated lunar expedition).',
+  descriptionEn: 'Authentic IELTS Section 3 academic tutorial: University students Simon and Maria confer with their academic supervisor Dr. Thornton to evaluate three prospective space science projects (the Pluto flyby, the Arizona desert Mars human isolation simulation, or the Chinese automated lunar expedition).',
   descriptionVi: 'Bộ luyện thi IELTS Listening Section 3 học thuật: Cuộc thảo luận giữa giảng viên hướng dẫn Dr. Thornton và hai sinh viên Simon, Maria nhằm đánh giá các phương án nghiên cứu khoa học vũ trụ (sứ mệnh Sao Diêm Vương Pluto, mô phỏng sinh tồn Sao Hỏa tại sa mạc Arizona, hay dự án thám hiểm Mặt Trăng tự hành của Trung Quốc).',
   totalQuestions: 10,
   timeLimitMinutes: 15,

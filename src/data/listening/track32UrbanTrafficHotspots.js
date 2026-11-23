@@ -8,7 +8,7 @@ export const track32UrbanTrafficHotspots = {
   "titleEn": "IELTS Listening Practice: Town Traffic Hotspots & Map Analysis (Track 32)",
   "titleVi": "Luyện đề IELTS Listening: Bản đồ điểm nóng kẹt xe & Phân tích nút giao đô thị (Track 32)",
   "description": "Bộ luyện thi IELTS Listening Section 3 học thuật: Sophie và Robert phân tích bản đồ các điểm nghẽn giao thông trọng yếu trong thị trấn (ngã tư Starview Cinema giữa East Road và Station Road, vòng xuyến gần Arts Centre, luồng người đi làm từ Liverton và Scottsfield, cùng điểm nghẽn Tòa thị chính bên cạnh Central Park do xe tải giao hàng giờ cao điểm).",
-  "descriptionEn": "Authentic Cambridge IELTS Section 3 academic project discussion: Sophie and Robert map and diagnose major municipal congestion hotspots, examining the Starview Cinema junction, the Arts Centre roundabout, commuter arteries from Liverton and Scottsfield, and Town Hall freight congestion near Central Park.",
+  "descriptionEn": "Authentic IELTS Section 3 academic project discussion: Sophie and Robert map and diagnose major municipal congestion hotspots, examining the Starview Cinema junction, the Arts Centre roundabout, commuter arteries from Liverton and Scottsfield, and Town Hall freight congestion near Central Park.",
   "descriptionVi": "Bộ luyện thi IELTS Listening Section 3 học thuật: Sophie và Robert phân tích bản đồ các điểm nghẽn giao thông trọng yếu trong thị trấn (ngã tư Starview Cinema giữa East Road và Station Road, vòng xuyến gần Arts Centre, luồng người đi làm từ Liverton và Scottsfield, cùng điểm nghẽn Tòa thị chính bên cạnh Central Park do xe tải giao hàng giờ cao điểm).",
   "totalQuestions": 10,
   "timeLimitMinutes": 15,

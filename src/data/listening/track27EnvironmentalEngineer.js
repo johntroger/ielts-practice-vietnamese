@@ -14,7 +14,7 @@ export const track27EnvironmentalEngineer = {
   titleEn: 'IELTS Listening Practice: Environmental Engineer & Psychological Isolation (Track 27)',
   titleVi: 'Luyện đề IELTS Listening: Kỹ sư môi trường & Tâm lý học cách ly (Track 27)',
   description: 'Bộ luyện thi IELTS Listening Section 3 học thuật: Cuộc thảo luận giữa Tiến sĩ Thornton, Simon và Maria về tâm lý học cách ly trong trạm mô phỏng Sao Hỏa ở Arizona, tầm quan trọng sống còn của kỹ sư môi trường Joe và bài toán xử lý khủng hoảng nhân sự khi hệ thống sinh tồn phụ thuộc hoàn toàn vào anh.',
-  descriptionEn: 'Authentic Cambridge IELTS Section 3 academic tutorial: Dr. Thornton, Simon, and Maria discuss the psychological implications of long-term isolation in the Arizona Mars project, evaluating why environmental engineer Joe is irreplaceable despite an emotional altercation because habitat life support hinges entirely upon his technical expertise.',
+  descriptionEn: 'Authentic IELTS Section 3 academic tutorial: Dr. Thornton, Simon, and Maria discuss the psychological implications of long-term isolation in the Arizona Mars project, evaluating why environmental engineer Joe is irreplaceable despite an emotional altercation because habitat life support hinges entirely upon his technical expertise.',
   descriptionVi: 'Bộ luyện thi IELTS Listening Section 3 học thuật: Cuộc thảo luận giữa Tiến sĩ Thornton, Simon và Maria về tâm lý học cách ly trong trạm mô phỏng Sao Hỏa ở Arizona, tầm quan trọng sống còn của kỹ sư môi trường Joe và bài toán xử lý khủng hoảng nhân sự khi hệ thống sinh tồn phụ thuộc hoàn toàn vào anh.',
   totalQuestions: 10,
   timeLimitMinutes: 15,

@@ -4,7 +4,7 @@
 export const HAROLD_LEVINE_22000_DECKS = [
   {
     "id": "deck-hl-w1",
-    "topicName": "Harold Levine • Week 1 (Academic Core)",
+    "topicName": "Core Word List • Week 1 (Academic Core)",
     "color": "teal",
     "cards": [
       {
@@ -251,7 +251,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w2",
-    "topicName": "Harold Levine • Week 2 (Academic Core)",
+    "topicName": "Core Word List • Week 2 (Academic Core)",
     "color": "teal",
     "cards": [
       {
@@ -498,7 +498,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w3",
-    "topicName": "Harold Levine • Week 3 (Academic Core)",
+    "topicName": "Core Word List • Week 3 (Academic Core)",
     "color": "teal",
     "cards": [
       {
@@ -745,7 +745,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w4",
-    "topicName": "Harold Levine • Week 4 (Academic Core)",
+    "topicName": "Core Word List • Week 4 (Academic Core)",
     "color": "teal",
     "cards": [
       {
@@ -980,7 +980,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w5",
-    "topicName": "Harold Levine • Week 5 (Academic Core)",
+    "topicName": "Core Word List • Week 5 (Academic Core)",
     "color": "teal",
     "cards": [
       {
@@ -1191,7 +1191,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w6",
-    "topicName": "Harold Levine • Week 6 (Academic Core)",
+    "topicName": "Core Word List • Week 6 (Academic Core)",
     "color": "teal",
     "cards": [
       {
@@ -1366,7 +1366,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w7",
-    "topicName": "Harold Levine • Week 7 (Academic Core)",
+    "topicName": "Core Word List • Week 7 (Academic Core)",
     "color": "teal",
     "cards": [
       {
@@ -1553,7 +1553,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w8",
-    "topicName": "Harold Levine • Week 8 (Academic Core)",
+    "topicName": "Core Word List • Week 8 (Academic Core)",
     "color": "teal",
     "cards": [
       {
@@ -1788,7 +1788,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w9",
-    "topicName": "Harold Levine • Week 9 (Academic Core)",
+    "topicName": "Core Word List • Week 9 (Academic Core)",
     "color": "teal",
     "cards": [
       {
@@ -1987,7 +1987,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w10",
-    "topicName": "Harold Levine • Week 10 (Academic Core)",
+    "topicName": "Core Word List • Week 10 (Academic Core)",
     "color": "teal",
     "cards": [
       {
@@ -2198,7 +2198,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w11",
-    "topicName": "Harold Levine • Week 11 (Academic Core)",
+    "topicName": "Core Word List • Week 11 (Academic Core)",
     "color": "teal",
     "cards": [
       {
@@ -2397,7 +2397,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w12",
-    "topicName": "Harold Levine • Week 12 (Academic Core)",
+    "topicName": "Core Word List • Week 12 (Academic Core)",
     "color": "teal",
     "cards": [
       {
@@ -2632,7 +2632,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w13",
-    "topicName": "Harold Levine • Week 13 (Academic Core)",
+    "topicName": "Core Word List • Week 13 (Academic Core)",
     "color": "teal",
     "cards": [
       {
@@ -2879,7 +2879,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w14",
-    "topicName": "Harold Levine • Week 14 (Academic Core)",
+    "topicName": "Core Word List • Week 14 (Academic Core)",
     "color": "teal",
     "cards": [
       {
@@ -3114,7 +3114,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w15",
-    "topicName": "Harold Levine • Week 15 (Academic Core)",
+    "topicName": "Core Word List • Week 15 (Academic Core)",
     "color": "teal",
     "cards": [
       {
@@ -3349,7 +3349,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w16",
-    "topicName": "Harold Levine • Week 16 (Academic Core)",
+    "topicName": "Core Word List • Week 16 (Academic Core)",
     "color": "teal",
     "cards": [
       {
@@ -3596,7 +3596,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w17",
-    "topicName": "Harold Levine • Week 17 (Academic Core)",
+    "topicName": "Core Word List • Week 17 (Academic Core)",
     "color": "teal",
     "cards": [
       {
@@ -3819,7 +3819,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w18",
-    "topicName": "Harold Levine • Week 18 (Academic Core)",
+    "topicName": "Core Word List • Week 18 (Academic Core)",
     "color": "teal",
     "cards": [
       {
@@ -4042,7 +4042,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w19",
-    "topicName": "Harold Levine • Week 19 (Academic Core)",
+    "topicName": "Core Word List • Week 19 (Academic Core)",
     "color": "teal",
     "cards": [
       {
@@ -4253,7 +4253,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w20",
-    "topicName": "Harold Levine • Week 20 (Academic Core)",
+    "topicName": "Core Word List • Week 20 (Academic Core)",
     "color": "teal",
     "cards": [
       {
@@ -4464,7 +4464,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w21",
-    "topicName": "Harold Levine • Week 21 (Academic Core)",
+    "topicName": "Core Word List • Week 21 (Academic Core)",
     "color": "teal",
     "cards": [
       {
@@ -4687,7 +4687,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w22",
-    "topicName": "Harold Levine • Week 22 (Academic Core)",
+    "topicName": "Core Word List • Week 22 (Academic Core)",
     "color": "teal",
     "cards": [
       {
@@ -4910,7 +4910,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w23",
-    "topicName": "Harold Levine • Week 23 (Academic Core)",
+    "topicName": "Core Word List • Week 23 (Academic Core)",
     "color": "teal",
     "cards": [
       {
@@ -5133,7 +5133,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w24",
-    "topicName": "Harold Levine • Week 24 (Academic Core)",
+    "topicName": "Core Word List • Week 24 (Academic Core)",
     "color": "teal",
     "cards": [
       {
@@ -5356,7 +5356,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w25",
-    "topicName": "Harold Levine • Week 25 (Academic Core)",
+    "topicName": "Core Word List • Week 25 (Academic Core)",
     "color": "teal",
     "cards": [
       {
@@ -5567,7 +5567,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w26",
-    "topicName": "Harold Levine • Week 26 (Academic Core)",
+    "topicName": "Core Word List • Week 26 (Academic Core)",
     "color": "teal",
     "cards": [
       {
@@ -5790,7 +5790,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w27",
-    "topicName": "Harold Levine • Week 27 (Word Roots & Prefixes)",
+    "topicName": "Core Word List • Week 27 (Word Roots & Prefixes)",
     "color": "purple",
     "cards": [
       {
@@ -5869,7 +5869,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w27",
-    "topicName": "Harold Levine • Week 27 (Word Roots & Prefixes)",
+    "topicName": "Core Word List • Week 27 (Word Roots & Prefixes)",
     "color": "purple",
     "cards": [
       {
@@ -6356,7 +6356,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w28",
-    "topicName": "Harold Levine • Week 28 (Word Roots & Prefixes)",
+    "topicName": "Core Word List • Week 28 (Word Roots & Prefixes)",
     "color": "purple",
     "cards": [
       {
@@ -6423,7 +6423,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w28",
-    "topicName": "Harold Levine • Week 28 (Word Roots & Prefixes)",
+    "topicName": "Core Word List • Week 28 (Word Roots & Prefixes)",
     "color": "purple",
     "cards": [
       {
@@ -6538,7 +6538,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w29",
-    "topicName": "Harold Levine • Week 29 (Word Roots & Prefixes)",
+    "topicName": "Core Word List • Week 29 (Word Roots & Prefixes)",
     "color": "purple",
     "cards": [
       {
@@ -6773,7 +6773,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w30",
-    "topicName": "Harold Levine • Week 30 (Word Roots & Prefixes)",
+    "topicName": "Core Word List • Week 30 (Word Roots & Prefixes)",
     "color": "purple",
     "cards": [
       {
@@ -6864,7 +6864,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w30",
-    "topicName": "Harold Levine • Week 30 (Word Roots & Prefixes)",
+    "topicName": "Core Word List • Week 30 (Word Roots & Prefixes)",
     "color": "purple",
     "cards": [
       {
@@ -6955,7 +6955,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w31",
-    "topicName": "Harold Levine • Week 31 (Word Roots & Prefixes)",
+    "topicName": "Core Word List • Week 31 (Word Roots & Prefixes)",
     "color": "purple",
     "cards": [
       {
@@ -7034,7 +7034,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w31",
-    "topicName": "Harold Levine • Week 31 (Word Roots & Prefixes)",
+    "topicName": "Core Word List • Week 31 (Word Roots & Prefixes)",
     "color": "purple",
     "cards": [
       {
@@ -7269,7 +7269,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w32",
-    "topicName": "Harold Levine • Week 32 (Word Roots & Prefixes)",
+    "topicName": "Core Word List • Week 32 (Word Roots & Prefixes)",
     "color": "purple",
     "cards": [
       {
@@ -7492,7 +7492,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w33",
-    "topicName": "Harold Levine • Week 33 (Word Roots & Prefixes)",
+    "topicName": "Core Word List • Week 33 (Word Roots & Prefixes)",
     "color": "purple",
     "cards": [
       {
@@ -7715,7 +7715,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w34",
-    "topicName": "Harold Levine • Week 34 (Word Roots & Prefixes)",
+    "topicName": "Core Word List • Week 34 (Word Roots & Prefixes)",
     "color": "purple",
     "cards": [
       {
@@ -7938,7 +7938,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w35",
-    "topicName": "Harold Levine • Week 35 (Word Roots & Prefixes)",
+    "topicName": "Core Word List • Week 35 (Word Roots & Prefixes)",
     "color": "purple",
     "cards": [
       {
@@ -8137,7 +8137,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w36",
-    "topicName": "Harold Levine • Week 36 (Word Roots & Prefixes)",
+    "topicName": "Core Word List • Week 36 (Word Roots & Prefixes)",
     "color": "purple",
     "cards": [
       {
@@ -8360,7 +8360,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w37",
-    "topicName": "Harold Levine • Week 37 (Word Roots & Prefixes)",
+    "topicName": "Core Word List • Week 37 (Word Roots & Prefixes)",
     "color": "purple",
     "cards": [
       {
@@ -8583,7 +8583,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w38",
-    "topicName": "Harold Levine • Week 38 (Word Roots & Prefixes)",
+    "topicName": "Core Word List • Week 38 (Word Roots & Prefixes)",
     "color": "purple",
     "cards": [
       {
@@ -8770,7 +8770,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w39",
-    "topicName": "Harold Levine • Week 39 (Word Roots & Prefixes)",
+    "topicName": "Core Word List • Week 39 (Word Roots & Prefixes)",
     "color": "purple",
     "cards": [
       {
@@ -8993,7 +8993,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w40",
-    "topicName": "Harold Levine • Week 40 (Word Roots & Prefixes)",
+    "topicName": "Core Word List • Week 40 (Word Roots & Prefixes)",
     "color": "purple",
     "cards": [
       {
@@ -9180,7 +9180,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w41",
-    "topicName": "Harold Levine • Week 41 (Word Roots & Prefixes)",
+    "topicName": "Core Word List • Week 41 (Word Roots & Prefixes)",
     "color": "purple",
     "cards": [
       {
@@ -9319,7 +9319,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w42",
-    "topicName": "Harold Levine • Week 42 (Word Roots & Prefixes)",
+    "topicName": "Core Word List • Week 42 (Word Roots & Prefixes)",
     "color": "purple",
     "cards": [
       {
@@ -9542,7 +9542,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w43",
-    "topicName": "Harold Levine • Week 43 (Word Roots & Prefixes)",
+    "topicName": "Core Word List • Week 43 (Word Roots & Prefixes)",
     "color": "purple",
     "cards": [
       {
@@ -9777,7 +9777,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w44",
-    "topicName": "Harold Levine • Week 44 (Word Roots & Prefixes)",
+    "topicName": "Core Word List • Week 44 (Word Roots & Prefixes)",
     "color": "purple",
     "cards": [
       {
@@ -10036,7 +10036,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w45",
-    "topicName": "Harold Levine • Week 45 (Word Roots & Prefixes)",
+    "topicName": "Core Word List • Week 45 (Word Roots & Prefixes)",
     "color": "purple",
     "cards": [
       {
@@ -10175,7 +10175,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w46",
-    "topicName": "Harold Levine • Week 46 (Word Roots & Prefixes)",
+    "topicName": "Core Word List • Week 46 (Word Roots & Prefixes)",
     "color": "purple",
     "cards": [
       {
@@ -10290,7 +10290,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w47",
-    "topicName": "Harold Levine • Week 47 (Word Roots & Prefixes)",
+    "topicName": "Core Word List • Week 47 (Word Roots & Prefixes)",
     "color": "purple",
     "cards": [
       {
@@ -10441,7 +10441,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w48",
-    "topicName": "Harold Levine • Week 48 (Word Roots & Prefixes)",
+    "topicName": "Core Word List • Week 48 (Word Roots & Prefixes)",
     "color": "purple",
     "cards": [
       {
@@ -10556,7 +10556,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w49",
-    "topicName": "Harold Levine • Week 49 (Word Roots & Prefixes)",
+    "topicName": "Core Word List • Week 49 (Word Roots & Prefixes)",
     "color": "purple",
     "cards": [
       {
@@ -10599,7 +10599,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w49",
-    "topicName": "Harold Levine • Week 49 (Word Roots & Prefixes)",
+    "topicName": "Core Word List • Week 49 (Word Roots & Prefixes)",
     "color": "purple",
     "cards": [
       {
@@ -10654,7 +10654,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w50",
-    "topicName": "Harold Levine • Week 50 (Word Roots & Prefixes)",
+    "topicName": "Core Word List • Week 50 (Word Roots & Prefixes)",
     "color": "purple",
     "cards": [
       {
@@ -10721,7 +10721,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w51",
-    "topicName": "Harold Levine • Week 51 (Word Roots & Prefixes)",
+    "topicName": "Core Word List • Week 51 (Word Roots & Prefixes)",
     "color": "purple",
     "cards": [
       {
@@ -10836,7 +10836,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w52",
-    "topicName": "Harold Levine • Week 52 (Word Roots & Prefixes)",
+    "topicName": "Core Word List • Week 52 (Word Roots & Prefixes)",
     "color": "purple",
     "cards": [
       {
@@ -10951,7 +10951,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w53",
-    "topicName": "Harold Levine • Week 53 (Word Roots & Prefixes)",
+    "topicName": "Core Word List • Week 53 (Word Roots & Prefixes)",
     "color": "purple",
     "cards": [
       {
@@ -11054,7 +11054,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w54",
-    "topicName": "Harold Levine • Week 54 (Word Roots & Prefixes)",
+    "topicName": "Core Word List • Week 54 (Word Roots & Prefixes)",
     "color": "purple",
     "cards": [
       {
@@ -11181,7 +11181,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w55",
-    "topicName": "Harold Levine • Week 55 (Word Roots & Prefixes)",
+    "topicName": "Core Word List • Week 55 (Word Roots & Prefixes)",
     "color": "purple",
     "cards": [
       {
@@ -11296,7 +11296,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w56",
-    "topicName": "Harold Levine • Week 56 (Word Roots & Prefixes)",
+    "topicName": "Core Word List • Week 56 (Word Roots & Prefixes)",
     "color": "purple",
     "cards": [
       {
@@ -11531,7 +11531,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w59",
-    "topicName": "Harold Levine • Week 59 (Word Roots & Prefixes)",
+    "topicName": "Core Word List • Week 59 (Word Roots & Prefixes)",
     "color": "purple",
     "cards": [
       {
@@ -11670,7 +11670,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w60",
-    "topicName": "Harold Levine • Week 60 (Word Roots & Prefixes)",
+    "topicName": "Core Word List • Week 60 (Word Roots & Prefixes)",
     "color": "purple",
     "cards": [
       {
@@ -11797,7 +11797,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w61",
-    "topicName": "Harold Levine • Week 61 (Word Roots & Prefixes)",
+    "topicName": "Core Word List • Week 61 (Word Roots & Prefixes)",
     "color": "purple",
     "cards": [
       {
@@ -11924,7 +11924,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w62",
-    "topicName": "Harold Levine • Week 62 (Word Roots & Prefixes)",
+    "topicName": "Core Word List • Week 62 (Word Roots & Prefixes)",
     "color": "purple",
     "cards": [
       {
@@ -12063,7 +12063,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w63",
-    "topicName": "Harold Levine • Week 63 (Word Roots & Prefixes)",
+    "topicName": "Core Word List • Week 63 (Word Roots & Prefixes)",
     "color": "purple",
     "cards": [
       {
@@ -12190,7 +12190,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w64",
-    "topicName": "Harold Levine • Week 64 (Word Roots & Prefixes)",
+    "topicName": "Core Word List • Week 64 (Word Roots & Prefixes)",
     "color": "purple",
     "cards": [
       {
@@ -12497,7 +12497,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w65",
-    "topicName": "Harold Levine • Week 65 (Word Roots & Prefixes)",
+    "topicName": "Core Word List • Week 65 (Word Roots & Prefixes)",
     "color": "purple",
     "cards": [
       {
@@ -12888,7 +12888,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w66",
-    "topicName": "Harold Levine • Week 66 (Word Roots & Prefixes)",
+    "topicName": "Core Word List • Week 66 (Word Roots & Prefixes)",
     "color": "purple",
     "cards": [
       {
@@ -13255,7 +13255,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w58",
-    "topicName": "Harold Levine • Week 58 (Word Roots & Prefixes)",
+    "topicName": "Core Word List • Week 58 (Word Roots & Prefixes)",
     "color": "purple",
     "cards": [
       {
@@ -13358,7 +13358,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w67",
-    "topicName": "Harold Levine • Week 67 (Word Roots & Prefixes)",
+    "topicName": "Core Word List • Week 67 (Word Roots & Prefixes)",
     "color": "purple",
     "cards": [
       {
@@ -13389,7 +13389,7 @@ export const HAROLD_LEVINE_22000_DECKS = [
   },
   {
     "id": "deck-hl-w69",
-    "topicName": "Harold Levine • Week 69 (Word Roots & Prefixes)",
+    "topicName": "Core Word List • Week 69 (Word Roots & Prefixes)",
     "color": "purple",
     "cards": [
       {

@@ -1,7 +1,7 @@
 export const pastPaper101Test24 = {
   "id": "101-reading-test-24",
-  "title": "101 Past Papers Test 24: Ambergris, Global warming: Prevent poles from melting & Sunset for the Oil Business",
-  "titleEn": "101 Past Papers Test 24: Ambergris, Global warming: Prevent poles from melting & Sunset for the Oil Business",
+  "title": "Test AB: Ambergris, Global warming: Prevent poles from melting & Sunset for the Oil Business",
+  "titleEn": "Test AB: Ambergris, Global warming: Prevent poles from melting & Sunset for the Oil Business",
   "description": "Full Academic Reading Test 24: Ambergris, Global warming: Prevent poles from melting, and Sunset for the Oil Business.",
   "descriptionEn": "Full Academic Reading Test 24: Ambergris, Global warming: Prevent poles from melting, and Sunset for the Oil Business.",
   "totalQuestions": 40,

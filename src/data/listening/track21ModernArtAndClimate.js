@@ -14,7 +14,7 @@ export const track21ModernArtAndClimate = {
   titleEn: 'IELTS Listening Practice: Perspectives on Modern Art & Climate Change (Track 21)',
   titleVi: 'Luyện đề IELTS Listening: Đa chiều quan điểm về Nghệ thuật hiện đại & Biến đổi khí hậu (Track 21)',
   description: 'Bộ luyện thi IELTS Listening Section 3 thực chiến: Phân tích 6 phát biểu quan điểm đối lập chia làm 2 chủ đề lớn (Nghệ thuật đương đại: thờ ơ, chỉ trích lãng phí, hay tôn vinh sáng tạo; và Biến đổi khí hậu: hành động khẩn cấp, phủ nhận hoài nghi, hay lập trường chờ đợi bằng chứng khoa học).',
-  descriptionEn: 'Authentic Cambridge IELTS Section 3 practice: Analyzing 6 contrasting perspectives across two prominent debate topics: Modern Art (indifference, harsh critique of commercial waste, vs defense of contemporary creativity) and Combating Climate Change (urgent intervention, climate skepticism, vs cautious scientific agnosticism).',
+  descriptionEn: 'Authentic IELTS Section 3 practice: Analyzing 6 contrasting perspectives across two prominent debate topics: Modern Art (indifference, harsh critique of commercial waste, vs defense of contemporary creativity) and Combating Climate Change (urgent intervention, climate skepticism, vs cautious scientific agnosticism).',
   descriptionVi: 'Bộ luyện thi IELTS Listening Section 3 thực chiến: Phân tích 6 phát biểu quan điểm đối lập chia làm 2 chủ đề lớn (Nghệ thuật đương đại: thờ ơ, chỉ trích lãng phí, hay tôn vinh sáng tạo; và Biến đổi khí hậu: hành động khẩn cấp, phủ nhận hoài nghi, hay lập trường chờ đợi bằng chứng khoa học).',
   totalQuestions: 10,
   timeLimitMinutes: 15,

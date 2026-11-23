@@ -1,7 +1,7 @@
 export const pastPaper101Test14 = {
   "id": "101-reading-test-14",
-  "title": "101 Past Papers Test 14: Traditional Farming System in Africa, Griffith and American films & The Persuaders",
-  "titleEn": "101 Past Papers Test 14: Traditional Farming System in Africa, Griffith and American films & The Persuaders",
+  "title": "Test R: Traditional Farming System in Africa, Griffith and American films & The Persuaders",
+  "titleEn": "Test R: Traditional Farming System in Africa, Griffith and American films & The Persuaders",
   "description": "Full Academic Reading Test 14: Traditional Farming System in Africa, Griffith and American films, and The Persuaders.",
   "descriptionEn": "Full Academic Reading Test 14: Traditional Farming System in Africa, Griffith and American films, and The Persuaders.",
   "totalQuestions": 40,

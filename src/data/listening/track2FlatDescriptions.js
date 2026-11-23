@@ -14,11 +14,11 @@
 export const track2FlatDescriptions = {
   id: 'ielts-listening-track2-flats',
   title: 'IELTS Listening Practice: Rental Property & Flat Inspection (Multi-Format Master)',
-  description: 'Bộ luyện thi IELTS Listening tổng hợp đa dạng 5 dạng bài thực chiến: Note Completion, Pick Multiple (A-E), Matching, Sentence Completion & Short Answer. Giúp học viên làm quen với toàn bộ format thi Cambridge.',
+  description: 'Bộ luyện thi IELTS Listening tổng hợp đa dạng 5 dạng bài thực chiến: Note Completion, Pick Multiple (A-E), Matching, Sentence Completion & Short Answer. Giúp học viên làm quen với toàn bộ format thi IELTS.',
   totalQuestions: 16,
   timeLimitMinutes: 15,
   isPublic: true,
-  isCambridge: false,
+  isIELTS: false,
   source: 'cloudflare_r2',
   audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track2-flat-descriptions.mp3',
   fallbackAudioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track2-flat-descriptions.mp3',

@@ -258,8 +258,8 @@ export default function ListeningLibraryModal({
     {
       id: 'cambridge',
       icon: Bookmark,
-      label: `📚 Cambridge (${stats.cambridge})`,
-      shortLabel: 'Cambridge',
+      label: `📚 Standard (${stats.cambridge})`,
+      shortLabel: 'Standard',
       count: stats.cambridge,
       activeTheme: 'bg-emerald-600 text-white border-emerald-600 shadow-2xs font-bold',
       iconColor: 'text-emerald-600'
@@ -431,7 +431,7 @@ export default function ListeningLibraryModal({
                 </span>
               </div>
               <p className="text-xs text-slate-500 hidden sm:block truncate">
-                {isEn ? 'Official Cambridge tests & native AI-generated conversation tests' : 'Đề thi chính thức Cambridge & đề hội thoại bản xứ sinh bằng AI'}
+                {isEn ? 'Official standard tests & native AI-generated conversation tests' : 'Đề thi chính thức & đề hội thoại bản xứ sinh bằng AI'}
               </p>
             </div>
           </div>
@@ -801,7 +801,7 @@ export default function ListeningLibraryModal({
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 pt-1">
               <input
                 type="text"
-                placeholder={isEn ? "Custom test title (e.g. Cambridge Practice Full Test 01)..." : "Tên đề thi tùy chỉnh (Ví dụ: Cambridge Practice Full Test 01)..."}
+                placeholder={isEn ? "Custom test title (e.g. Practice Full Test 01)..." : "Tên đề thi tùy chỉnh (Ví dụ: Practice Full Test 01)..."}
                 value={assembledTitle}
                 onChange={(e) => setAssembledTitle(e.target.value)}
                 className="flex-1 px-3 py-1.5 text-xs rounded-xl border border-purple-200 bg-white text-slate-800 focus:outline-none focus:ring-1 focus:ring-purple-500"
@@ -876,7 +876,7 @@ export default function ListeningLibraryModal({
                             }`}>
                               {test.isCustom 
                                 ? '✨ AI Audio Test' 
-                                : (isEn ? `📚 Cambridge Standard${test.cambridgeBook ? ` (Book ${test.cambridgeBook})` : ''}` : `📚 Chuẩn Cambridge${test.cambridgeBook ? ` (Cam ${test.cambridgeBook})` : ''}`)}
+                                : (isEn ? '📚 Standard Set' : '📚 Bộ chuẩn')}
                             </span>
                           )}
 

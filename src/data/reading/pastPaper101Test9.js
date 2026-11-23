@@ -1,9 +1,9 @@
 export const pastPaper101Test9 = {
   "id": "past-paper-101-reading-test-9",
-  "title": "101 Past Papers Test 9: Agriculture & Tourism, Ancient Cosmetics & Asian Satellite Tech",
-  "titleEn": "101 Past Papers Test 9: Agriculture & Tourism, Ancient Cosmetics & Asian Satellite Tech",
-  "description": "Bộ đề thi thử IELTS Reading học thuật số 9 từ 101 Past Papers (gồm 3 bài đọc: Du lịch nông nghiệp tại Wisconsin, Mỹ phẩm và nước hoa thời cổ đại, và Công nghệ vệ tinh không gian Châu Á).",
-  "descriptionEn": "Authentic IELTS Reading Academic test 9 from 101 Past Papers bank (3 Passages: Agriculture and Tourism, Cosmetics in Ancient Past, and Asian Space 2 Satellite Technology).",
+  "title": "Test M: Agriculture & Tourism, Ancient Cosmetics & Asian Satellite Tech",
+  "titleEn": "Test M: Agriculture & Tourism, Ancient Cosmetics & Asian Satellite Tech",
+  "description": "Bộ đề thi thử IELTS Reading học thuật từ ngân hàng đề luyện tập (gồm 3 bài đọc: Du lịch nông nghiệp tại Wisconsin, Mỹ phẩm và nước hoa thời cổ đại, và Công nghệ vệ tinh không gian Châu Á).",
+  "descriptionEn": "Authentic IELTS Reading Academic test from the practice bank (3 Passages: Agriculture and Tourism, Cosmetics in Ancient Past, and Asian Space 2 Satellite Technology).",
   "totalQuestions": 40,
   "timeLimitMinutes": 60,
   "isPublic": true,

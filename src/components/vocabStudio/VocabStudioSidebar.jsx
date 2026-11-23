@@ -71,7 +71,7 @@ export default function VocabStudioSidebar({
     spelling: isEn ? '100 Spelling Traps' : '100 Bẫy chính tả',
     grammar: isEn ? 'Grammar Architecture' : 'Ngữ pháp điểm tựa',
     vocab: isEn ? 'Thematic Vocab' : 'Từ vựng chủ đề',
-    synonyms: isEn ? 'Cambridge Paraphrase' : 'Cặp từ Paraphrase'
+    synonyms: isEn ? 'Academic Paraphrase' : 'Cặp từ Paraphrase'
   };
 
   return (
@@ -179,7 +179,7 @@ export default function VocabStudioSidebar({
                 </optgroup>
               )}
               {hlPart1Decks.length > 0 && (
-                <optgroup label={isEn ? `Harold Levine 22,000 Words • Part 1 (${hlPart1Decks.length} Weeks)` : `Harold Levine 22.000 Từ • Phần 1 (${hlPart1Decks.length} Tuần)`}>
+                <optgroup label={isEn ? `Core Word List 22,000 Words • Part 1 (${hlPart1Decks.length} Weeks)` : `Bộ Từ Vựng Cốt Lõi 22.000 Từ • Phần 1 (${hlPart1Decks.length} Tuần)`}>
                   {hlPart1Decks.map(deck => (
                     <option key={deck.id} value={deck.id}>
                       🎓 {getDeckLabel(deck)}
@@ -188,7 +188,7 @@ export default function VocabStudioSidebar({
                 </optgroup>
               )}
               {hlPart2Decks.length > 0 && (
-                <optgroup label={isEn ? `Harold Levine 22,000 Words • Part 2 (${hlPart2Decks.length} Weeks)` : `Harold Levine 22.000 Từ • Phần 2 (${hlPart2Decks.length} Tuần)`}>
+                <optgroup label={isEn ? `Core Word List 22,000 Words • Part 2 (${hlPart2Decks.length} Weeks)` : `Bộ Từ Vựng Cốt Lõi 22.000 Từ • Phần 2 (${hlPart2Decks.length} Tuần)`}>
                   {hlPart2Decks.map(deck => (
                     <option key={deck.id} value={deck.id}>
                       ⚡ {getDeckLabel(deck)}

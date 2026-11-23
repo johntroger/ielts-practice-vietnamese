@@ -561,7 +561,7 @@ export const SPEAKING_PART3_QUESTIONS = [
 export const SPEAKING_MOCK_TEST_PACKS = [
   {
     id: 'cambridge-20-mock-test-1',
-    title: 'Cambridge 20 Test 1: Dining Out, High-Stakes Decisions & Crisis Intuition',
+    title: 'Test A: Dining Out, High-Stakes Decisions & Crisis Intuition',
     difficulty: 'Medium - Hard',
     targetBand: '7.5 - 9.0',
     estTime: '12 - 14 phút',
@@ -643,7 +643,7 @@ export const SPEAKING_MOCK_TEST_PACKS = [
   },
   {
     id: 'cambridge-19-mock-test-1',
-    title: 'Cambridge 19 Test 1: Video Games, Complex Devices & AI Usability',
+    title: 'Test B: Video Games, Complex Devices & AI Usability',
     difficulty: 'Medium - Hard',
     targetBand: '7.5 - 9.0',
     estTime: '12 - 14 phút',
@@ -736,7 +736,7 @@ export const SPEAKING_MOCK_TEST_PACKS = [
   },
   {
     id: 'cambridge-18-mock-test-1',
-    title: 'Cambridge 18 Test 1: Daily Keys, Historic Sites & Cultural Heritage',
+    title: 'Test C: Daily Keys, Historic Sites & Cultural Heritage',
     difficulty: 'Medium - Hard',
     targetBand: '7.0 - 8.5',
     estTime: '12 - 14 phút',
@@ -818,7 +818,7 @@ export const SPEAKING_MOCK_TEST_PACKS = [
   },
   {
     id: 'cambridge-17-mock-test-1',
-    title: 'Cambridge 17 Test 1: Nutrition & Cooking, Public Amenities & Quality of Life',
+    title: 'Test D: Nutrition & Cooking, Public Amenities & Quality of Life',
     difficulty: 'Medium',
     targetBand: '7.0 - 8.5',
     estTime: '12 - 14 phút',
@@ -900,7 +900,7 @@ export const SPEAKING_MOCK_TEST_PACKS = [
   },
   {
     id: 'cambridge-16-mock-test-1',
-    title: 'Cambridge 16 Test 1: Naming Traditions, Health Articles & Preventive Wellbeing',
+    title: 'Test E: Naming Traditions, Health Articles & Preventive Wellbeing',
     difficulty: 'Medium - Hard',
     targetBand: '7.5 - 9.0',
     estTime: '12 - 14 phút',

@@ -1,7 +1,7 @@
 export const pastPaper101Test31 = {
   "id": "101-reading-test-31",
-  "title": "101 Past Papers Test 31: Food for thought 2, Saving the British Bitterns & E-training",
-  "titleEn": "101 Past Papers Test 31: Food for thought 2, Saving the British Bitterns & E-training",
+  "title": "Test AI: Food for thought 2, Saving the British Bitterns & E-training",
+  "titleEn": "Test AI: Food for thought 2, Saving the British Bitterns & E-training",
   "description": "Full Academic Reading Test 31: Food for thought 2, Saving the British Bitterns, and E-training.",
   "descriptionEn": "Full Academic Reading Test 31: Food for thought 2, Saving the British Bitterns, and E-training.",
   "totalQuestions": 40,

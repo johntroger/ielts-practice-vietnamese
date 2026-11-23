@@ -1,7 +1,7 @@
 export const cambridge8Test2 = {
   "id": "cambridge-8-test-2",
-  "title": "Cambridge Practice Test 8 - Test 2: Moving Company & Honey Bees Survey",
-  "description": "Đề thi chính thức Cambridge 8 Test 2: Báo cáo bảo hiểm hàng chuyển nhà, Công viên Nông nghiệp Agricultural Park, Nghiên cứu ong mật châu Á và Khảo sát dịch vụ y tế tại châu Phi.",
+  "title": "Test B: Moving Company & Honey Bees Survey",
+  "description": "Đề thi mô phỏng: Báo cáo bảo hiểm hàng chuyển nhà, Công viên Nông nghiệp Agricultural Park, Nghiên cứu ong mật châu Á và Khảo sát dịch vụ y tế tại châu Phi.",
   "totalQuestions": 40,
   "timeLimitMinutes": 32,
   "isPublic": true,
@@ -9,7 +9,7 @@ export const cambridge8Test2 = {
   "source": "cambridge",
   "cambridgeBook": 8,
   "cambridgeTest": 2,
-  "creatorEmail": "Cambridge Assessment",
+  "creatorEmail": "Atlas Practice Bank",
   "audioUrl": "https://dn710908.ca.archive.org/0/items/IELTS8Test2/IELTS_8%2C_Test_2.mp3",
   "fallbackAudioUrl": "https://archive.org/download/IELTS8Test2/IELTS_8%2C_Test_2.mp3",
   "parts": [

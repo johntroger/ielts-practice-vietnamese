@@ -1,7 +1,7 @@
 export const pastPaper101Test10 = {
   "id": "101-reading-test-10",
-  "title": "101 Past Papers Test 10: Koalas, Antarctica - in from the cold? & Language Strategy in Multinational Company",
-  "titleEn": "101 Past Papers Test 10: Koalas, Antarctica - in from the cold? & Language Strategy in Multinational Company",
+  "title": "Test N: Koalas, Antarctica - in from the cold? & Language Strategy in Multinational Company",
+  "titleEn": "Test N: Koalas, Antarctica - in from the cold? & Language Strategy in Multinational Company",
   "description": "Full Academic Reading Test 10: Koalas, Antarctica - in from the cold?, and Language Strategy in Multinational Company.",
   "descriptionEn": "Full Academic Reading Test 10: Koalas, Antarctica - in from the cold?, and Language Strategy in Multinational Company.",
   "totalQuestions": 40,
