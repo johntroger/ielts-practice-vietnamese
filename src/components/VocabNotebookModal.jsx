@@ -19,6 +19,8 @@ import {
 } from 'lucide-react';
 import VocabPracticePanel from './VocabPracticePanel';
 import IrregularVerbsPanel from './IrregularVerbsPanel';
+import { PhrasePronunciationBar, ExampleWithAudio } from './VocabPronunciationParts';
+import { useIpaLookup } from '../utils/ipaService';
 import { getMasteryLevel } from '../utils/vocabPractice';
 import { speakText } from '../utils/speechAudio';
 import { IELTS_TOPICS } from '../data/topics';
@@ -147,19 +149,28 @@ export default function VocabNotebookModal({
     }
   };
 
+  const totalPages = Math.max(1, Math.ceil(filteredVocabs.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const pagedVocabs = filteredVocabs.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+  const currentCard = dueItems[currentCardIndex] || null;
+
+  const visiblePhrases = useMemo(
+    () => [
+      ...pagedVocabs.flatMap(v => [v.phrase, v.collocation].filter(Boolean)),
+      ...(currentCard ? [currentCard.phrase] : [])
+    ],
+    [pagedVocabs, currentCard]
+  );
+  const { getWordIpa, getPhraseIpa } = useIpaLookup(isOpen ? visiblePhrases : []);
+
   if (!isOpen) return null;
 
-  const currentCard = dueItems[currentCardIndex] || null;
   const existingPhrase = phrase.trim()
     ? vocabList.find(v => normalizePhrase(v.phrase) === normalizePhrase(phrase))
     : null;
   const editDuplicate = editingId && editPhrase.trim()
     ? vocabList.find(v => v.id !== editingId && normalizePhrase(v.phrase) === normalizePhrase(editPhrase))
     : null;
-
-  const totalPages = Math.max(1, Math.ceil(filteredVocabs.length / PAGE_SIZE));
-  const currentPage = Math.min(page, totalPages);
-  const pagedVocabs = filteredVocabs.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
   // Compact page list: 1 … 4 5 [6] 7 8 … 20
   const pageNumbers = [];
@@ -575,6 +586,13 @@ export default function VocabNotebookModal({
                               >
                                 <Volume2 className="w-3.5 h-3.5" />
                               </button>
+                              <button
+                                onClick={() => speakText(v.phrase, { rate: 0.65 })}
+                                className="px-1 py-0.5 rounded text-[9px] font-bold text-slate-400 hover:text-amber-600 hover:bg-amber-50 transition-colors cursor-pointer"
+                                title={isEn ? 'Listen slowly (0.65x)' : 'Nghe chậm (0.65x)'}
+                              >
+                                0.7x
+                              </button>
                               {onUpdateVocab && v.id && (
                                 <button
                                   onClick={() => startEditVocab(v)}
@@ -600,6 +618,13 @@ export default function VocabNotebookModal({
                             </div>
                           </div>
 
+                          <PhrasePronunciationBar
+                            phrase={v.phrase}
+                            ipa={v.ipa || getPhraseIpa(v.phrase)}
+                            getWordIpa={getWordIpa}
+                            isEn={isEn}
+                          />
+
                           <p className="text-xs text-slate-600 font-medium">
                             {getLocalizedVocabMeaning(v, isEn)}
                           </p>
@@ -622,11 +647,7 @@ export default function VocabNotebookModal({
                             </div>
                           )}
 
-                          {v.example && (
-                            <p className="text-[11px] text-slate-500 italic bg-slate-50 p-2 rounded border border-slate-100">
-                              "{v.example}"
-                            </p>
-                          )}
+                          <ExampleWithAudio example={v.example} isEn={isEn} />
                         </>
                       )}
                     </div>
@@ -724,14 +745,30 @@ export default function VocabNotebookModal({
                       <div className="text-2xl font-black text-white tracking-wide px-4">
                         {currentCard.phrase}
                       </div>
-                      <button
-                        onClick={(e) => { e.stopPropagation(); speakText(currentCard.phrase); }}
-                        className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-amber-300 cursor-pointer"
-                        aria-label={isEn ? 'Listen' : 'Nghe phát âm'}
-                        title={isEn ? 'Listen' : 'Nghe phát âm'}
-                      >
-                        <Volume2 className="w-4 h-4" />
-                      </button>
+                      <PhrasePronunciationBar
+                        phrase={currentCard.phrase}
+                        ipa={currentCard.ipa || getPhraseIpa(currentCard.phrase)}
+                        getWordIpa={getWordIpa}
+                        isEn={isEn}
+                        dark
+                      />
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={(e) => { e.stopPropagation(); speakText(currentCard.phrase); }}
+                          className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-amber-300 cursor-pointer"
+                          aria-label={isEn ? 'Listen' : 'Nghe phát âm'}
+                          title={isEn ? 'Listen' : 'Nghe phát âm'}
+                        >
+                          <Volume2 className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); speakText(currentCard.phrase, { rate: 0.65 }); }}
+                          className="px-2.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-amber-300 text-[11px] font-bold cursor-pointer"
+                          title={isEn ? 'Listen slowly' : 'Nghe chậm'}
+                        >
+                          0.7x
+                        </button>
+                      </div>
                       <p className="text-xs text-slate-400 pt-2">
                         {isEn ? '(Recall the meaning and how to use it in IELTS...)' : '(Thử nhớ nghĩa tiếng Việt và cách dùng trong IELTS...)'}
                       </p>
@@ -744,11 +781,9 @@ export default function VocabNotebookModal({
                       <div className="text-xl font-bold text-amber-300">
                         {getLocalizedVocabMeaning(currentCard, isEn)}
                       </div>
-                      {currentCard.example && (
-                        <div className="text-xs text-slate-300 italic bg-white/10 p-2.5 rounded-xl border border-white/10 max-w-sm">
-                          "{currentCard.example}"
-                        </div>
-                      )}
+                      <div className="max-w-sm">
+                        <ExampleWithAudio example={currentCard.example} isEn={isEn} dark />
+                      </div>
                     </div>
                   )}
                 </div>

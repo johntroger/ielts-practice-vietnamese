@@ -6,6 +6,8 @@ import { normalizeVocabPhrase } from '../utils/vocabDuplicate';
 import { initSrsItem } from '../utils/srsService';
 import { speakText, stopSpeech } from '../utils/speechAudio';
 import { playArenaSfx } from '../utils/audioHelper';
+import { getCachedWordIpa } from '../utils/ipaService';
+import { ExampleWithAudio } from './VocabPronunciationParts';
 
 const PAGE_SIZE = 24;
 
@@ -351,26 +353,34 @@ export default function IrregularVerbsPanel({ vocabList = [], isEn, onAddVocab }
                       </div>
 
                       <div className="grid grid-cols-3 gap-1.5 bg-slate-50 rounded-lg p-2 border border-slate-100 text-center">
-                        <div>
-                          <div className="text-[9px] font-bold text-slate-400 uppercase">V1</div>
-                          <div className="text-xs font-black text-slate-900">{v.v1}</div>
-                        </div>
-                        <div>
-                          <div className="text-[9px] font-bold text-slate-400 uppercase">V2</div>
-                          <div className="text-xs font-bold text-indigo-700">{v.v2}</div>
-                        </div>
-                        <div>
-                          <div className="text-[9px] font-bold text-slate-400 uppercase">V3</div>
-                          <div className="text-xs font-bold text-emerald-700">{v.v3}</div>
-                        </div>
+                        {[
+                          { label: 'V1', form: v.v1, color: 'text-slate-900 font-black', ipa: getCachedWordIpa(v.v1) },
+                          { label: 'V2', form: v.v2, color: 'text-indigo-700 font-bold', ipa: v.v1 === 'read' ? '/red/' : getCachedWordIpa(v.v2.split('/')[0].trim()) },
+                          { label: 'V3', form: v.v3, color: 'text-emerald-700 font-bold', ipa: v.v1 === 'read' ? '/red/' : getCachedWordIpa(v.v3.split('/')[0].trim()) }
+                        ].map((col) => (
+                          <button
+                            key={col.label}
+                            type="button"
+                            onClick={() => speakText(col.form.split('/')[0].trim(), { rate: 0.85 })}
+                            title={isEn ? `Listen ${col.label}: ${col.form}` : `Nghe ${col.label}: ${col.form}`}
+                            className="group/cell rounded-md p-1 hover:bg-white hover:shadow-2xs transition-all cursor-pointer flex flex-col items-center"
+                          >
+                            <div className="text-[9px] font-bold text-slate-400 uppercase inline-flex items-center gap-0.5">
+                              <span>{col.label}</span>
+                              <Volume2 className="w-2.5 h-2.5 opacity-60 group-hover/cell:text-indigo-600 group-hover/cell:opacity-100" />
+                            </div>
+                            <div className={`text-xs ${col.color}`}>{col.form}</div>
+                            {col.ipa && (
+                              <div className="text-[10px] font-mono text-slate-500 leading-tight">{col.ipa}</div>
+                            )}
+                          </button>
+                        ))}
                       </div>
 
                       <div className="text-xs font-medium text-slate-700">
                         {isEn ? v.meaningEn : v.meaningVi}
                       </div>
-                      {v.example && (
-                        <div className="text-[11px] italic text-slate-500">"{v.example}"</div>
-                      )}
+                      <ExampleWithAudio example={v.example} isEn={isEn} />
                     </div>
                   );
                 })}
