@@ -17,6 +17,11 @@ const PATTERN_META = {
     en: 'AAA · All 3 same',
     vi: 'AAA · 3 dạng giống nhau'
   },
+  AAB: {
+    badge: 'bg-rose-100 text-rose-700 border-rose-200',
+    en: 'AAB · V1 = V2',
+    vi: 'AAB · V1 = V2'
+  },
   ABB: {
     badge: 'bg-blue-100 text-blue-700 border-blue-200',
     en: 'ABB · V2 = V3',
