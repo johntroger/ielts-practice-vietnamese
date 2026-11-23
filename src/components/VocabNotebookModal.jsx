@@ -18,6 +18,7 @@ import {
   Pencil
 } from 'lucide-react';
 import VocabPracticePanel from './VocabPracticePanel';
+import IrregularVerbsPanel from './IrregularVerbsPanel';
 import { getMasteryLevel } from '../utils/vocabPractice';
 import { speakText } from '../utils/speechAudio';
 import { IELTS_TOPICS } from '../data/topics';
@@ -290,7 +291,7 @@ export default function VocabNotebookModal({
 
           <button
             onClick={() => setActiveTab('practice')}
-            className={`flex items-center space-x-1.5 px-4 py-2.5 rounded-t-xl text-xs font-bold transition-all cursor-pointer ${
+            className={`flex items-center space-x-1.5 px-4 py-2.5 rounded-t-xl text-xs font-bold transition-all cursor-pointer shrink-0 ${
               activeTab === 'practice'
                 ? 'bg-white text-emerald-700 border-t-2 border-emerald-500 shadow-2xs'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
@@ -299,11 +300,28 @@ export default function VocabNotebookModal({
             <Dumbbell className="w-3.5 h-3.5 text-emerald-600" />
             <span>{isEn ? 'Practice' : 'Luyện Tập'}</span>
           </button>
+
+          <button
+            onClick={() => setActiveTab('irregular')}
+            className={`flex items-center space-x-1.5 px-4 py-2.5 rounded-t-xl text-xs font-bold transition-all cursor-pointer shrink-0 ${
+              activeTab === 'irregular'
+                ? 'bg-white text-indigo-700 border-t-2 border-indigo-500 shadow-2xs'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
+            }`}
+          >
+            <Layers className="w-3.5 h-3.5 text-indigo-600" />
+            <span>{isEn ? 'Irregular Verbs' : 'Động Từ Bất Quy Tắc'}</span>
+          </button>
         </div>
 
         {/* TAB 3: ACTIVE RECALL PRACTICE */}
         {activeTab === 'practice' && (
           <VocabPracticePanel vocabList={vocabList} isEn={isEn} onUpdateVocab={onUpdateVocab} />
+        )}
+
+        {/* TAB 4: IRREGULAR VERBS (OPEN TO ALL USERS) */}
+        {activeTab === 'irregular' && (
+          <IrregularVerbsPanel vocabList={vocabList} isEn={isEn} onAddVocab={onAddVocab} />
         )}
 
         {/* TAB 1: TRUYỀN THỐNG (LIST VIEW) */}
