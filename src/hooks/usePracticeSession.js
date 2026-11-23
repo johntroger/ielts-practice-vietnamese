@@ -424,9 +424,12 @@ export function usePracticeSession({
     // Prep & Speaking timers
     prepSecondsRemaining,
     isPrepping,
+    setIsPrepping,
     handleStartPart2Prep,
     speakSecondsElapsed,
+    setSpeakSecondsElapsed,
     isPart2Speaking,
+    setIsPart2Speaking,
     handleTogglePart2Speaking,
 
     // Recording & Mic

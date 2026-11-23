@@ -96,9 +96,12 @@ export default function SpeakingPracticePane({
   const {
     prepSecondsRemaining,
     isPrepping,
+    setIsPrepping,
     handleStartPart2Prep,
     speakSecondsElapsed,
+    setSpeakSecondsElapsed,
     isPart2Speaking,
+    setIsPart2Speaking,
     handleTogglePart2Speaking,
     activeRecordClipKey,
     setActiveRecordClipKey,
