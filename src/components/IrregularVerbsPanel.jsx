@@ -61,8 +61,9 @@ export default function IrregularVerbsPanel({ vocabList = [], isEn, onAddVocab }
 
   // Browse state
   const [query, setQuery] = useState('');
-  const [pattern, setPattern] = useState('all'); // 'all' | 'AAA' | 'ABB' | 'ABA' | 'ABC'
+  const [pattern, setPattern] = useState('all'); // 'all' | 'AAA' | 'AAB' | 'ABB' | 'ABA' | 'ABC'
   const [ieltsOnly, setIeltsOnly] = useState(false);
+  const [savedOnly, setSavedOnly] = useState(false);
   const [sortAz, setSortAz] = useState(true);
   const [page, setPage] = useState(1);
 
@@ -86,11 +87,17 @@ export default function IrregularVerbsPanel({ vocabList = [], isEn, onAddVocab }
     [vocabList]
   );
 
+  const savedCount = useMemo(
+    () => IRREGULAR_VERBS.filter(item => savedSet.has(normalizeVocabPhrase(`${item.v1} – ${item.v2} – ${item.v3}`))).length,
+    [savedSet]
+  );
+
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     const list = IRREGULAR_VERBS.filter(item => {
       if (pattern !== 'all' && item.pattern !== pattern) return false;
       if (ieltsOnly && !item.ielts) return false;
+      if (savedOnly && !savedSet.has(normalizeVocabPhrase(`${item.v1} – ${item.v2} – ${item.v3}`))) return false;
       if (q) {
         const hit =
           item.v1.toLowerCase().includes(q) ||
@@ -106,7 +113,7 @@ export default function IrregularVerbsPanel({ vocabList = [], isEn, onAddVocab }
       return [...list].sort((a, b) => a.v1.localeCompare(b.v1, 'en'));
     }
     return list;
-  }, [query, pattern, ieltsOnly, sortAz]);
+  }, [query, pattern, ieltsOnly, savedOnly, savedSet, sortAz]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
@@ -289,12 +296,24 @@ export default function IrregularVerbsPanel({ vocabList = [], isEn, onAddVocab }
             {/* Pattern pills */}
             <div className="flex flex-wrap items-center gap-1.5">
               <button
-                onClick={() => { setPattern('all'); setPage(1); }}
+                onClick={() => { setPattern('all'); setSavedOnly(false); setPage(1); }}
                 className={`px-2.5 py-1 rounded-lg text-[11px] font-bold cursor-pointer border ${
-                  pattern === 'all' ? 'bg-slate-900 border-slate-900 text-white' : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'
+                  pattern === 'all' && !savedOnly ? 'bg-slate-900 border-slate-900 text-white' : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'
                 }`}
               >
                 {isEn ? `All (${IRREGULAR_VERBS.length})` : `Tất cả (${IRREGULAR_VERBS.length})`}
+              </button>
+              <button
+                onClick={() => { setSavedOnly(v => !v); setPage(1); }}
+                className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold cursor-pointer border transition-colors ${
+                  savedOnly
+                    ? 'bg-emerald-600 border-emerald-600 text-white'
+                    : 'bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100'
+                }`}
+                title={isEn ? 'Show only irregular verbs saved to your vault' : 'Chỉ hiện các động từ đã lưu vào sổ tay'}
+              >
+                <Check className="w-3 h-3" />
+                <span>{isEn ? `Saved (${savedCount})` : `Đã lưu (${savedCount})`}</span>
               </button>
               {Object.entries(PATTERN_META).map(([key, meta]) => (
                 <button
@@ -313,7 +332,11 @@ export default function IrregularVerbsPanel({ vocabList = [], isEn, onAddVocab }
           <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4">
             {paged.length === 0 ? (
               <div className="text-center py-12 text-xs text-slate-400">
-                {isEn ? 'No irregular verbs match your filter.' : 'Không tìm thấy động từ bất quy tắc phù hợp.'}
+                {savedOnly && savedCount === 0
+                  ? (isEn
+                    ? 'No irregular verbs saved yet. Click "+ Save" on the verbs you want to focus on, then turn this filter back on.'
+                    : 'Chưa có động từ bất quy tắc nào được lưu. Hãy bấm "+ Lưu" trên các từ bạn cần dùng rồi bật lại bộ lọc này.')
+                  : (isEn ? 'No irregular verbs match your filter.' : 'Không tìm thấy động từ bất quy tắc phù hợp.')}
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
@@ -473,21 +496,39 @@ export default function IrregularVerbsPanel({ vocabList = [], isEn, onAddVocab }
               </label>
             </div>
 
-            <label className="flex items-center gap-2 text-xs font-semibold text-slate-700 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={ieltsOnly}
-                onChange={e => setIeltsOnly(e.target.checked)}
-                className="rounded border-slate-300"
-              />
-              <span>{isEn ? 'Focus on IELTS Core verbs only' : 'Chỉ luyện các động từ trọng tâm IELTS'}</span>
-            </label>
+            <div className="space-y-2">
+              <label className="flex items-center gap-2 text-xs font-semibold text-slate-700 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={ieltsOnly}
+                  onChange={e => setIeltsOnly(e.target.checked)}
+                  className="rounded border-slate-300"
+                />
+                <span>{isEn ? 'Focus on IELTS Core verbs only' : 'Chỉ luyện các động từ trọng tâm IELTS'}</span>
+              </label>
+
+              <label className={`flex items-center gap-2 text-xs font-semibold cursor-pointer ${savedCount === 0 ? 'text-slate-400' : 'text-emerald-700'}`}>
+                <input
+                  type="checkbox"
+                  checked={savedOnly}
+                  disabled={savedCount === 0}
+                  onChange={e => setSavedOnly(e.target.checked)}
+                  className="rounded border-slate-300"
+                />
+                <span>
+                  {isEn
+                    ? `Focus on Saved verbs only (${savedCount})`
+                    : `Chỉ luyện các động từ đã lưu (${savedCount})`}
+                </span>
+              </label>
+            </div>
 
             <button
               onClick={() => startQuiz()}
-              className="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold cursor-pointer"
+              disabled={filtered.length === 0}
+              className="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              {isEn ? `Start Quiz (${Math.min(quizSize, filtered.length || IRREGULAR_VERBS.length)} verbs)` : `Bắt đầu (${Math.min(quizSize, filtered.length || IRREGULAR_VERBS.length)} từ)`}
+              {isEn ? `Start Quiz (${Math.min(quizSize, filtered.length)} verbs)` : `Bắt đầu (${Math.min(quizSize, filtered.length)} từ)`}
             </button>
           </div>
         </div>
