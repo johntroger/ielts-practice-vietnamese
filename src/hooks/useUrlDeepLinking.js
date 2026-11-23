@@ -101,14 +101,26 @@ export function useUrlDeepLinking({
     }
   }, [modals.atlasArena]);
 
-  // 2. Vocab Vault (/vocab-vault & /so-tay-tu-vung)
+  // 2. Vocab Vault (/vocab-vault, /so-tay-tu-vung) & Irregular Verbs (/irregular-verbs, /dong-tu-bat-quy-tac)
   useRouteListener(
     () => {
       const pathname = window.location.pathname.toLowerCase().replace(/\/+$/, '');
       const hash = window.location.hash.toLowerCase();
-      return ['/vocab-vault', '/so-tay-tu-vung'].includes(pathname) || hash === '#vocab-vault';
+      return (
+        ['/vocab-vault', '/so-tay-tu-vung', '/irregular-verbs', '/dong-tu-bat-quy-tac'].includes(pathname) ||
+        hash === '#vocab-vault' ||
+        hash === '#irregular-verbs'
+      );
     },
-    () => openModal('notebook'),
+    () => {
+      const pathname = window.location.pathname.toLowerCase().replace(/\/+$/, '');
+      const hash = window.location.hash.toLowerCase();
+      const isIrregular =
+        pathname === '/irregular-verbs' ||
+        pathname === '/dong-tu-bat-quy-tac' ||
+        hash === '#irregular-verbs';
+      openModal('notebook', isIrregular ? { tab: 'irregular' } : true);
+    },
     () => closeModal('notebook'),
     [openModal, closeModal]
   );
@@ -122,11 +134,16 @@ export function useUrlDeepLinking({
     }
     const isOpen = Boolean(modals.notebook);
     const pathname = window.location.pathname.toLowerCase().replace(/\/+$/, '');
-    const onVaultUrl = pathname === '/vocab-vault' || pathname === '/so-tay-tu-vung';
+    const onIrregularUrl = pathname === '/irregular-verbs' || pathname === '/dong-tu-bat-quy-tac';
+    const onVaultUrl = pathname === '/vocab-vault' || pathname === '/so-tay-tu-vung' || onIrregularUrl;
+    const targetUrl =
+      modals.notebook && typeof modals.notebook === 'object' && modals.notebook.tab === 'irregular'
+        ? '/irregular-verbs'
+        : '/vocab-vault';
 
     try {
       if (isOpen && !onVaultUrl) {
-        window.history.pushState({ modal: 'notebook' }, '', '/vocab-vault');
+        window.history.pushState({ modal: 'notebook' }, '', targetUrl);
       } else if (!isOpen && onVaultUrl) {
         window.history.pushState(null, '', '/');
       }

@@ -48,6 +48,7 @@ const MASTERY_LABELS = {
 export default function VocabNotebookModal({
   isOpen,
   initialOpenAdd = false,
+  initialTab,
   onClose,
   vocabList = [],
   onAddVocab,
@@ -57,11 +58,11 @@ export default function VocabNotebookModal({
 }) {
   const { t, isEn } = useTranslation();
 
-  const [activeTab, setActiveTab] = useState('list'); // 'list' | 'srs'
+  const [activeTab, setActiveTab] = useState(initialTab || 'list'); // 'list' | 'srs' | 'practice' | 'irregular'
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTopic, setSelectedTopic] = useState('all');
   const [masteryFilter, setMasteryFilter] = useState('all'); // 'all' | 'due' | 'new' | 'learning' | 'familiar' | 'mastered'
-  const [isAdding, setIsAdding] = useState(false);
+  const [isAdding, setIsAdding] = useState(Boolean(initialOpenAdd));
   const [sortMode, setSortMode] = useState('newest'); // 'newest' | 'az' | 'za'
   const [page, setPage] = useState(1);
   const PAGE_SIZE = 24;
@@ -120,6 +121,31 @@ export default function VocabNotebookModal({
       return 0; // 'newest' keeps stored order (newest first)
     });
   }, [vocabList, selectedTopic, masteryFilter, searchQuery, sortMode]);
+
+  // Sync tab with initialTab and update URL cleanly when switching to/from Irregular Verbs
+  useEffect(() => {
+    if (isOpen && initialTab) {
+      setActiveTab(initialTab);
+    }
+  }, [isOpen, initialTab]);
+
+  const switchTab = (nextTab) => {
+    setActiveTab(nextTab);
+    if (nextTab === 'srs') {
+      setIsFlipped(false);
+      setCurrentCardIndex(0);
+    }
+    if (typeof window !== 'undefined') {
+      try {
+        const pathname = window.location.pathname.toLowerCase().replace(/\/+$/, '');
+        if (nextTab === 'irregular' && pathname !== '/irregular-verbs' && pathname !== '/dong-tu-bat-quy-tac') {
+          window.history.replaceState({ modal: 'notebook', tab: 'irregular' }, '', '/irregular-verbs');
+        } else if (nextTab !== 'irregular' && (pathname === '/irregular-verbs' || pathname === '/dong-tu-bat-quy-tac')) {
+          window.history.replaceState({ modal: 'notebook' }, '', '/vocab-vault');
+        }
+      } catch (e) {}
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -257,7 +283,7 @@ export default function VocabNotebookModal({
         {/* Tab Navigation (List vs Flashcard SRS) */}
         <div className="flex items-center border-b border-slate-200 bg-slate-100 px-3 sm:px-5 pt-2 shrink-0 space-x-2 overflow-x-auto no-scrollbar">
           <button
-            onClick={() => setActiveTab('list')}
+            onClick={() => switchTab('list')}
             className={`flex items-center space-x-1.5 px-4 py-2.5 rounded-t-xl text-xs font-bold transition-all cursor-pointer ${
               activeTab === 'list'
                 ? 'bg-white text-slate-900 border-t-2 border-amber-500 shadow-2xs'
@@ -269,11 +295,7 @@ export default function VocabNotebookModal({
           </button>
 
           <button
-            onClick={() => {
-              setActiveTab('srs');
-              setIsFlipped(false);
-              setCurrentCardIndex(0);
-            }}
+            onClick={() => switchTab('srs')}
             className={`flex items-center space-x-1.5 px-4 py-2.5 rounded-t-xl text-xs font-bold transition-all cursor-pointer ${
               activeTab === 'srs'
                 ? 'bg-white text-red-600 border-t-2 border-red-500 shadow-2xs'
@@ -290,7 +312,7 @@ export default function VocabNotebookModal({
           </button>
 
           <button
-            onClick={() => setActiveTab('practice')}
+            onClick={() => switchTab('practice')}
             className={`flex items-center space-x-1.5 px-4 py-2.5 rounded-t-xl text-xs font-bold transition-all cursor-pointer shrink-0 ${
               activeTab === 'practice'
                 ? 'bg-white text-emerald-700 border-t-2 border-emerald-500 shadow-2xs'
@@ -302,7 +324,7 @@ export default function VocabNotebookModal({
           </button>
 
           <button
-            onClick={() => setActiveTab('irregular')}
+            onClick={() => switchTab('irregular')}
             className={`flex items-center space-x-1.5 px-4 py-2.5 rounded-t-xl text-xs font-bold transition-all cursor-pointer shrink-0 ${
               activeTab === 'irregular'
                 ? 'bg-white text-indigo-700 border-t-2 border-indigo-500 shadow-2xs'

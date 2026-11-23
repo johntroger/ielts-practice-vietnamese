@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
-import { Search, Volume2, Plus, Check, Dumbbell, BookOpen, RotateCw, Flame, X } from 'lucide-react';
+import { Search, Volume2, Plus, Check, Dumbbell, BookOpen, RotateCw, Flame, X, Share2 } from 'lucide-react';
 import { IRREGULAR_VERBS } from '../data/irregularVerbsData';
 import { shuffle, normalizeAnswer } from '../utils/vocabPractice';
 import { normalizeVocabPhrase } from '../utils/vocabDuplicate';
@@ -41,6 +41,16 @@ function matchesForm(expected, given) {
 
 export default function IrregularVerbsPanel({ vocabList = [], isEn, onAddVocab }) {
   const [subMode, setSubMode] = useState('browse'); // 'browse' | 'quiz'
+  const [copiedLink, setCopiedLink] = useState(false);
+
+  const handleCopyShareLink = async () => {
+    try {
+      const url = `${window.location.origin}/irregular-verbs`;
+      await navigator.clipboard.writeText(url);
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2000);
+    } catch (e) {}
+  };
 
   // Browse state
   const [query, setQuery] = useState('');
@@ -212,9 +222,19 @@ export default function IrregularVerbsPanel({ vocabList = [], isEn, onAddVocab }
           </button>
         </div>
 
-        <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full">
-          {isEn ? 'Open to all learners · Grouped by pattern' : 'Mở cho tất cả học viên · Phân nhóm theo quy luật'}
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full">
+            {isEn ? 'Open to all learners · Grouped by pattern' : 'Mở cho tất cả học viên · Phân nhóm theo quy luật'}
+          </span>
+          <button
+            onClick={handleCopyShareLink}
+            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-white border border-slate-200 text-slate-600 hover:border-indigo-400 hover:text-indigo-700 cursor-pointer transition-colors"
+            title={isEn ? 'Copy shareable link (/irregular-verbs)' : 'Sao chép link chia sẻ (/irregular-verbs)'}
+          >
+            {copiedLink ? <Check className="w-3 h-3 text-emerald-600" /> : <Share2 className="w-3 h-3" />}
+            <span>{copiedLink ? (isEn ? 'Copied!' : 'Đã chép link!') : (isEn ? 'Share' : 'Chia sẻ')}</span>
+          </button>
+        </div>
       </div>
 
       {/* === BROWSE MODE === */}

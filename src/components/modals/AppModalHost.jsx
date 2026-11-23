@@ -474,6 +474,7 @@ export default function AppModalHost({
         <VocabNotebookModal
           isOpen={Boolean(modals.notebook)}
           initialOpenAdd={Boolean(modals.notebook && typeof modals.notebook === 'object' && modals.notebook.openAdd)}
+          initialTab={modals.notebook && typeof modals.notebook === 'object' ? modals.notebook.tab : undefined}
           onClose={() => closeModal('notebook')}
           vocabList={vocabList}
           onAddVocab={(v) => {
