@@ -7,6 +7,7 @@ const CACHE_KEY = 'ielts_ipa_cache_v1';
 const LOCAL_IPA = {
   // Irregular verbs V1 / V2 / V3
   abide: '/əˈbaɪd/', abode: '/əˈbəʊd/', abided: '/əˈbaɪdɪd/',
+  alight: '/əˈlaɪt/', alit: '/əˈlɪt/', alighted: '/əˈlaɪtɪd/',
   arise: '/əˈraɪz/', arose: '/əˈrəʊz/', arisen: '/əˈrɪzən/',
   awake: '/əˈweɪk/', awoke: '/əˈwəʊk/', awoken: '/əˈwəʊkən/',
   be: '/biː/', was: '/wɒz/', were: '/wɜː/', been: '/biːn/',
@@ -14,15 +15,20 @@ const LOCAL_IPA = {
   beat: '/biːt/', beaten: '/ˈbiːtən/',
   become: '/bɪˈkʌm/', became: '/bɪˈkeɪm/',
   befall: '/bɪˈfɔːl/', befell: '/bɪˈfel/', befallen: '/bɪˈfɔːlən/',
+  beget: '/bɪˈɡet/', begot: '/bɪˈɡɒt/', begotten: '/bɪˈɡɒtən/',
   begin: '/bɪˈɡɪn/', began: '/bɪˈɡæn/', begun: '/bɪˈɡʌn/',
   behold: '/bɪˈhəʊld/', beheld: '/bɪˈheld/',
   bend: '/bend/', bent: '/bent/',
+  bereave: '/bɪˈriːv/', bereft: '/bɪˈreft/', bereaved: '/bɪˈriːvd/',
+  beseech: '/bɪˈsiːtʃ/', besought: '/bɪˈsɔːt/', beseeched: '/bɪˈsiːtʃt/',
   beset: '/bɪˈset/',
+  bespeak: '/bɪˈspiːk/', bespoke: '/bɪˈspəʊk/', bespoken: '/bɪˈspəʊkən/',
   bet: '/bet/',
-  bid: '/bɪd/',
+  bid: '/bɪd/', bide: '/baɪd/', bided: '/ˈbaɪdɪd/',
   bind: '/baɪnd/', bound: '/baʊnd/',
   bite: '/baɪt/', bit: '/bɪt/', bitten: '/ˈbɪtən/',
   bleed: '/bliːd/', bled: '/bled/',
+  bless: '/bles/', blessed: '/blest/', blest: '/blest/',
   blow: '/bləʊ/', blew: '/bluː/', blown: '/bləʊn/',
   break: '/breɪk/', broke: '/brəʊk/', broken: '/ˈbrəʊkən/',
   breed: '/briːd/', bred: '/bred/',
@@ -31,15 +37,21 @@ const LOCAL_IPA = {
   build: '/bɪld/', built: '/bɪlt/',
   burn: '/bɜːn/', burnt: '/bɜːnt/', burned: '/bɜːnd/',
   burst: '/bɜːst/',
+  bust: '/bʌst/', busted: '/ˈbʌstɪd/',
   buy: '/baɪ/', bought: '/bɔːt/',
   cast: '/kɑːst/',
   catch: '/kætʃ/', caught: '/kɔːt/',
+  chide: '/tʃaɪd/', chid: '/tʃɪd/', chidden: '/ˈtʃɪdən/', chided: '/ˈtʃaɪdɪd/',
   choose: '/tʃuːz/', chose: '/tʃəʊz/', chosen: '/ˈtʃəʊzən/',
+  cleave: '/kliːv/', cleft: '/kleft/', clove: '/kləʊv/', cloven: '/ˈkləʊvən/',
   cling: '/klɪŋ/', clung: '/klʌŋ/',
+  clothe: '/kləʊð/', clothed: '/kləʊðd/', clad: '/klæd/',
   come: '/kʌm/', came: '/keɪm/',
   cost: '/kɒst/',
   creep: '/kriːp/', crept: '/krept/',
+  crow: '/krəʊ/', crowed: '/krəʊd/', crew: '/kruː/',
   cut: '/kʌt/',
+  dare: '/deə/', dared: '/deəd/', durst: '/dɜːst/',
   deal: '/diːl/', dealt: '/delt/',
   dig: '/dɪɡ/', dug: '/dʌɡ/',
   dive: '/daɪv/', dived: '/daɪvd/', dove: '/dəʊv/',
@@ -67,7 +79,10 @@ const LOCAL_IPA = {
   forgive: '/fəˈɡɪv/', forgave: '/fəˈɡeɪv/', forgiven: '/fəˈɡɪvən/',
   forsake: '/fəˈseɪk/', forsook: '/fəˈsʊk/', forsaken: '/fəˈseɪkən/',
   freeze: '/friːz/', froze: '/frəʊz/', frozen: '/ˈfrəʊzən/',
+  gainsay: '/ˌɡeɪnˈseɪ/', gainsaid: '/ˌɡeɪnˈsed/',
   get: '/ɡet/', got: '/ɡɒt/', gotten: '/ˈɡɒtən/',
+  gild: '/ɡɪld/', gilded: '/ˈɡɪldɪd/', gilt: '/ɡɪlt/',
+  gird: '/ɡɜːd/', girded: '/ˈɡɜːdɪd/', girt: '/ɡɜːt/',
   give: '/ɡɪv/', gave: '/ɡeɪv/', given: '/ˈɡɪvən/',
   go: '/ɡəʊ/', went: '/went/', gone: '/ɡɒn/',
   grind: '/ɡraɪnd/', ground: '/ɡraʊnd/',
@@ -75,14 +90,18 @@ const LOCAL_IPA = {
   hang: '/hæŋ/', hung: '/hʌŋ/',
   have: '/hæv/', had: '/hæd/',
   hear: '/hɪə/', heard: '/hɜːd/',
+  heave: '/hiːv/', heaved: '/hiːvd/', hove: '/həʊv/',
+  hew: '/hjuː/', hewed: '/hjuːd/', hewn: '/hjuːn/',
   hide: '/haɪd/', hid: '/hɪd/', hidden: '/ˈhɪdən/',
   hit: '/hɪt/',
   hold: '/həʊld/', held: '/held/',
   hurt: '/hɜːt/',
+  input: '/ˈɪnpʊt/',
   keep: '/kiːp/', kept: '/kept/',
   kneel: '/niːl/', knelt: '/nelt/',
   knit: '/nɪt/', knitted: '/ˈnɪtɪd/',
   know: '/nəʊ/', knew: '/njuː/', known: '/nəʊn/',
+  lade: '/leɪd/', laded: '/ˈleɪdɪd/', laden: '/ˈleɪdən/',
   lay: '/leɪ/', laid: '/leɪd/',
   lead: '/liːd/', led: '/led/',
   lean: '/liːn/', leant: '/lent/', leaned: '/liːnd/',
@@ -116,6 +135,7 @@ const LOCAL_IPA = {
   quit: '/kwɪt/',
   read: '/riːd/',
   rebuild: '/ˌriːˈbɪld/', rebuilt: '/ˌriːˈbɪlt/',
+  rend: '/rend/', rent: '/rent/',
   repay: '/rɪˈpeɪ/', repaid: '/rɪˈpeɪd/',
   reset: '/ˌriːˈset/',
   rethink: '/ˌriːˈθɪŋk/', rethought: '/ˌriːˈθɔːt/',
@@ -124,6 +144,7 @@ const LOCAL_IPA = {
   ride: '/raɪd/', rode: '/rəʊd/', ridden: '/ˈrɪdən/',
   ring: '/rɪŋ/', rang: '/ræŋ/', rung: '/rʌŋ/',
   rise: '/raɪz/', rose: '/rəʊz/', risen: '/ˈrɪzən/',
+  rive: '/raɪv/', rived: '/raɪvd/', riven: '/ˈrɪvən/',
   run: '/rʌn/', ran: '/ræn/',
   saw: '/sɔː/', sawed: '/sɔːd/', sawn: '/sɔːn/',
   say: '/seɪ/', said: '/sed/',
@@ -138,6 +159,7 @@ const LOCAL_IPA = {
   shear: '/ʃɪə/', sheared: '/ʃɪəd/', shorn: '/ʃɔːn/',
   shed: '/ʃed/',
   shine: '/ʃaɪn/', shone: '/ʃɒn/',
+  shoe: '/ʃuː/', shod: '/ʃɒd/',
   shoot: '/ʃuːt/', shot: '/ʃɒt/',
   show: '/ʃəʊ/', showed: '/ʃəʊd/', shown: '/ʃəʊn/',
   shrink: '/ʃrɪŋk/', shrank: '/ʃræŋk/', shrunk: '/ʃrʌŋk/',
@@ -152,6 +174,8 @@ const LOCAL_IPA = {
   slink: '/slɪŋk/', slunk: '/slʌŋk/',
   slit: '/slɪt/',
   smell: '/smel/', smelt: '/smelt/', smelled: '/smeld/',
+  smite: '/smaɪt/', smote: '/sməʊt/', smitten: '/ˈsmɪtən/',
+  sneak: '/sniːk/', sneaked: '/sniːkt/', snuck: '/snʌk/',
   sow: '/səʊ/', sowed: '/səʊd/', sown: '/səʊn/',
   speak: '/spiːk/', spoke: '/spəʊk/', spoken: '/ˈspəʊkən/',
   speed: '/spiːd/', sped: '/sped/', speeded: '/ˈspiːdɪd/',
@@ -165,15 +189,18 @@ const LOCAL_IPA = {
   spread: '/spred/',
   spring: '/sprɪŋ/', sprang: '/spræŋ/', sprung: '/sprʌŋ/',
   stand: '/stænd/', stood: '/stʊd/',
+  stave: '/steɪv/', staved: '/steɪvd/', stove: '/stəʊv/',
   steal: '/stiːl/', stole: '/stəʊl/', stolen: '/ˈstəʊlən/',
   stick: '/stɪk/', stuck: '/stʌk/',
   sting: '/stɪŋ/', stung: '/stʌŋ/',
   stink: '/stɪŋk/', stank: '/stæŋk/', stunk: '/stʌŋk/',
+  strew: '/struː/', strewed: '/struːd/', strewn: '/struːn/',
   stride: '/straɪd/', strode: '/strəʊd/', stridden: '/ˈstrɪdən/',
   strike: '/straɪk/', struck: '/strʌk/',
   string: '/strɪŋ/', strung: '/strʌŋ/',
   strive: '/straɪv/', strove: '/strəʊv/', striven: '/ˈstrɪvən/',
   swear: '/sweə/', swore: '/swɔː/', sworn: '/swɔːn/',
+  sweat: '/swet/', sweated: '/ˈswetɪd/',
   sweep: '/swiːp/', swept: '/swept/',
   swell: '/swel/', swelled: '/sweld/', swollen: '/ˈswəʊlən/',
   swim: '/swɪm/', swam: '/swæm/', swum: '/swʌm/',
@@ -240,10 +267,31 @@ export function tokenizePhraseWords(phrase) {
     .filter(w => /[a-zA-Z]/.test(w));
 }
 
+const COMPOUND_PREFIXES = [
+  ['inter', 'ˌɪntə'],
+  ['under', 'ˌʌndə'],
+  ['over', 'ˌəʊvə'],
+  ['fore', 'fɔː'],
+  ['out', 'ˌaʊt'],
+  ['mis', 'ˌmɪs'],
+  ['pre', 'ˌpriː'],
+  ['re', 'ˌriː'],
+  ['un', 'ʌn'],
+  ['in', 'ɪn']
+];
+
 export function getCachedWordIpa(word) {
   const key = String(word || '').toLowerCase().trim();
   if (!key) return '';
   if (LOCAL_IPA[key]) return LOCAL_IPA[key];
+  for (const [pref, prefIpa] of COMPOUND_PREFIXES) {
+    if (key.startsWith(pref) && key.length > pref.length + 1) {
+      const stem = key.slice(pref.length);
+      if (LOCAL_IPA[stem]) {
+        return `/${prefIpa}${LOCAL_IPA[stem].replace(/^\/|\/$/g, '')}/`;
+      }
+    }
+  }
   const cache = loadCache();
   return cache[key] || '';
 }

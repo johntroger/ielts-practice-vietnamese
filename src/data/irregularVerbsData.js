@@ -2,7 +2,9 @@
  * Curated Irregular Verbs dataset for the Vocab Vault's Irregular Verbs tab.
  * Open to all users. Patterns: AAA (V1=V2=V3), AAB (V1=V2), ABB (V2=V3), ABA (V1=V3), ABC (all distinct).
  */
-export const IRREGULAR_VERBS = [
+import { EXTENDED_IRREGULAR_VERBS } from './irregularVerbsExtended.js';
+
+const CORE_IRREGULAR_VERBS = [
   // === AAA (V1 = V2 = V3) ===
   { v1: 'beset', v2: 'beset', v3: 'beset', pattern: 'AAA', ielts: true, meaningVi: 'bủa vây, gây khốn đốn', meaningEn: 'to trouble or threaten persistently', example: 'Public hospitals were beset by severe staffing shortages.' },
   { v1: 'bet', v2: 'bet', v3: 'bet', pattern: 'AAA', ielts: false, meaningVi: 'cá cược, đánh cược', meaningEn: 'to risk money on a result', example: 'Few investors are willing to bet against renewable energy.' },
@@ -215,3 +217,10 @@ export const IRREGULAR_VERBS = [
   { v1: 'write', v2: 'wrote', v3: 'written', pattern: 'ABC', ielts: false, meaningVi: 'viết', meaningEn: 'to compose text', example: 'Students wrote structured essays under timed conditions.' },
   { v1: 'rewrite', v2: 'rewrote', v3: 'rewritten', pattern: 'ABC', ielts: true, meaningVi: 'viết lại, sửa đổi lại', meaningEn: 'to write again or revise substantially', example: 'Lawmakers rewrote the privacy bill to close loopholes.' }
 ];
+
+const seen = new Set();
+export const IRREGULAR_VERBS = [...CORE_IRREGULAR_VERBS, ...EXTENDED_IRREGULAR_VERBS].filter(v => {
+  if (seen.has(v.v1)) return false;
+  seen.add(v.v1);
+  return true;
+});
