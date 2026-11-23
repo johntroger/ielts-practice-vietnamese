@@ -237,12 +237,12 @@ export default function Navbar({
   return (
     <>
       <header className="bg-white/95 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-40 shadow-xs shrink-0 overflow-x-clip">
-      <div className="w-full max-w-full px-2 sm:px-4 xl:px-6">
+      <div className="w-full max-w-full px-2 sm:px-4 2xl:px-6">
         {/* ROW 1: Brand (Left) + Tools/Settings/Menu (Right) */}
-        <div className="flex items-center justify-between h-14 sm:h-16 gap-1.5 sm:gap-2">
+        <div className="flex items-center justify-between h-14 sm:h-16 gap-2 sm:gap-3 xl:gap-4">
           
           {/* 1. LEFT ZONE: Brand & Skills Switcher */}
-          <div className="flex items-center space-x-1.5 sm:space-x-3.5 min-w-0">
+          <div className="flex items-center space-x-1.5 sm:space-x-2.5 2xl:space-x-3.5 shrink-0">
             {/* Logo with QR Code Popup Trigger */}
             <button
               type="button"
@@ -445,7 +445,7 @@ export default function Navbar({
             <button
               type="button"
               onClick={doOpenDrills}
-              className="hidden md:flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 xl:px-3 py-1.5 rounded-xl border border-amber-200 bg-amber-50/90 hover:bg-amber-100 text-amber-800 hover:text-amber-950 text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer shrink-0"
+              className="hidden md:flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 2xl:px-3 py-1.5 rounded-xl border border-amber-200 bg-amber-50/90 hover:bg-amber-100 text-amber-800 hover:text-amber-950 text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer shrink-0"
               title={isEn ? "Targeted Reflex Studio (/micro-drills) - Deliberate sentence, dictation & scanning practice" : "Phòng Luyện Phản Xạ (/micro-drills) - Luyện câu đơn, ghép ý, dictation & scanning"}
               aria-label={isEn ? "Open Targeted Reflex Studio (/micro-drills)" : "Mở Phòng Luyện Phản Xạ (/micro-drills)"}
             >
@@ -455,7 +455,7 @@ export default function Navbar({
           </div>
 
           {/* 2. RIGHT ZONE: Actions & Mobile Hamburger */}
-          <div className="flex items-center gap-1 sm:gap-1.5 xl:gap-1.5 2xl:gap-2 shrink-0 pr-0.5 sm:pr-1">
+          <div className="flex items-center gap-1 sm:gap-1.5 2xl:gap-2 shrink-0 pr-0.5 sm:pr-1">
             
             {/* Sinh Đề Bằng AI (Hiển thị khi activeSkill === 'writing' trên màn hình siêu rộng >= 1720px - Tạm thời ẩn theo yêu cầu) */}
             {SHOW_AI_GENERATOR_BUTTONS && activeSkill === 'writing' && (
@@ -470,7 +470,7 @@ export default function Navbar({
             )}
 
             {/* Desktop Menus Group (1-Click Fast Switching & Zero Duplicates) */}
-            <div ref={desktopMenuRef} className="flex items-center gap-1 sm:gap-1.5 xl:gap-2">
+            <div ref={desktopMenuRef} className="flex items-center gap-1 sm:gap-1.5">
               {/* 0. Shadowing Dropdown (Pronunciation, Conversation & Music Listening) — Replaces Mock Test Hero CTA */}
               <div className="relative hidden xl:block">
                 <button
@@ -482,7 +482,7 @@ export default function Navbar({
                     setIsToolsMenuOpen(false);
                     setIsProgressMenuOpen(false);
                   }}
-                  className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-rose-600 hover:from-indigo-700 hover:via-purple-700 hover:to-rose-700 text-white text-xs font-black shadow-xs active:scale-95 transition-all cursor-pointer shrink-0"
+                  className="flex items-center space-x-1.5 px-2.5 2xl:px-3 py-1.5 rounded-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-rose-600 hover:from-indigo-700 hover:via-purple-700 hover:to-rose-700 text-white text-xs font-black shadow-xs active:scale-95 transition-all cursor-pointer shrink-0"
                   title={isEn ? "Shadowing Hub: Pronunciation, Conversation & Music Listening" : "Phòng Luyện Shadowing: Phát Âm, Hội Thoại & Nghe Nhạc"}
                 >
                   <Headphones className="w-3.5 h-3.5 text-amber-200 shrink-0" />
@@ -574,7 +574,7 @@ export default function Navbar({
                     setIsToolsMenuOpen(false);
                     setIsProgressMenuOpen(false);
                   }}
-                  className={`flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-2xs cursor-pointer ${
+                  className={`flex items-center space-x-1 2xl:space-x-1.5 px-2 2xl:px-3 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-2xs cursor-pointer ${
                     isPracticeMenuOpen ? 'bg-slate-100 text-slate-900 border-slate-300' : 'bg-slate-50 hover:bg-slate-100 text-slate-800 border-slate-200'
                   }`}
                   title={isEn ? "Practice & Test Bank" : "Luyện tập & Đề thi"}
@@ -749,7 +749,7 @@ export default function Navbar({
                     setIsPracticeMenuOpen(false);
                     setIsProgressMenuOpen(false);
                   }}
-                  className={`flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-2xs cursor-pointer ${
+                  className={`flex items-center space-x-1 2xl:space-x-1.5 px-2 2xl:px-3 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-2xs cursor-pointer ${
                     isToolsMenuOpen ? 'bg-slate-100 text-slate-900 border-slate-300' : 'bg-slate-50 hover:bg-slate-100 text-slate-800 border-slate-200'
                   }`}
                   title={isEn ? "Vocabulary & error correction tools" : "Công cụ bổ trợ từ vựng & sửa lỗi"}
@@ -887,7 +887,7 @@ export default function Navbar({
                     setIsPracticeMenuOpen(false);
                     setIsToolsMenuOpen(false);
                   }}
-                  className={`flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-2xs cursor-pointer ${
+                  className={`flex items-center space-x-1 2xl:space-x-1.5 px-2 2xl:px-3 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-2xs cursor-pointer ${
                     isProgressMenuOpen ? 'bg-slate-100 text-slate-900 border-slate-300' : 'bg-slate-50 hover:bg-slate-100 text-slate-800 border-slate-200'
                   }`}
                   title={isEn ? "Learning progress & guides" : "Tiến độ học tập & Hướng dẫn"}
@@ -994,17 +994,17 @@ export default function Navbar({
 
             {/* Quick Navigation Hub: Atlas Arena & Home (/about) */}
             <div className="hidden sm:flex items-center space-x-1 sm:space-x-1.5 shrink-0">
-              {/* Atlas Arena (Compact 'Arena' label on mobile, full on tablet/desktop) */}
+              {/* Atlas Arena (Compact 'Arena' label on mobile/xl, full on 2xl+) */}
               <button
                 type="button"
                 onClick={() => openModal('atlasArena')}
-                className="flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 h-9 sm:h-10 rounded-xl border border-purple-200 bg-purple-50/90 hover:bg-purple-100 text-purple-700 hover:text-purple-900 text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer shrink-0 whitespace-nowrap"
+                className="flex items-center space-x-1 2xl:space-x-1.5 px-2 sm:px-2.5 2xl:px-3 h-9 sm:h-10 rounded-xl border border-purple-200 bg-purple-50/90 hover:bg-purple-100 text-purple-700 hover:text-purple-900 text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer shrink-0 whitespace-nowrap"
                 title={isEn ? "Atlas English Arena (fast-paced micro-sprint & relative leagues)" : "Đấu Trường Anh Ngữ Atlas (Phản xạ nhịp độ cao & BXH)"}
                 aria-label={isEn ? "Open Atlas English Arena" : "Mở Đấu Trường Anh Ngữ Atlas"}
               >
                 <Swords className="w-3.5 h-3.5 text-purple-600 fill-current shrink-0" />
-                <span className="hidden sm:inline font-extrabold">{isEn ? 'Atlas Arena' : 'Atlas Arena'}</span>
-                <span className="sm:hidden font-extrabold text-[11px]">{isEn ? 'Arena' : 'Arena'}</span>
+                <span className="hidden 2xl:inline font-extrabold">{isEn ? 'Atlas Arena' : 'Atlas Arena'}</span>
+                <span className="2xl:hidden font-extrabold text-[11px] sm:text-xs">{isEn ? 'Arena' : 'Arena'}</span>
               </button>
 
               {/* About Page (/about) Link Button - Compact Home Icon */}
@@ -1106,7 +1106,7 @@ export default function Navbar({
               title={user ? (isEn ? `View Profile: ${user.email}` : `Xem trang cá nhân: ${user.email}`) : (isEn ? "Sign in or register account" : "Đăng nhập hoặc đăng ký tài khoản")}
             >
               <User className={`w-3.5 h-3.5 shrink-0 ${user ? 'text-red-600' : 'text-slate-300'}`} />
-              <span className="max-w-[70px] 2xl:max-w-[100px] truncate text-[11px]">
+              <span className="max-w-[64px] 2xl:max-w-[100px] truncate text-[11px]">
                 {user ? (user.email.split('@')[0]) : (isEn ? 'Account' : 'Tài Khoản')}
               </span>
             </button>
