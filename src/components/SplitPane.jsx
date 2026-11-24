@@ -78,10 +78,10 @@ export default function SplitPane({ leftPane, rightPane, defaultSplit = 50 }) {
   }, []);
 
   return (
-    <div className="flex flex-col flex-1 w-full min-h-0 h-full overflow-hidden">
+    <div className="flex flex-col flex-1 w-full md:min-h-0 md:h-full md:overflow-hidden">
       
       {/* MOBILE ONLY (< 768px): Segmented View Controller */}
-      <div className="md:hidden bg-slate-50/90 backdrop-blur-xs p-1.5 flex items-center justify-center border-b border-slate-200 gap-1.5 shadow-2xs shrink-0 z-10">
+      <div className="md:hidden bg-slate-50/95 backdrop-blur-xs p-1.5 flex items-center justify-center border-b border-slate-200 gap-1.5 shadow-2xs shrink-0 sticky top-14 sm:top-16 z-20">
         <button
           onClick={() => setMobileTab('editor')}
           className={`flex-1 flex items-center justify-center space-x-1.5 py-2 px-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
@@ -122,13 +122,13 @@ export default function SplitPane({ leftPane, rightPane, defaultSplit = 50 }) {
       {/* Main Two-Pane Container */}
       <div 
         ref={containerRef} 
-        className="flex flex-col md:flex-row flex-1 w-full h-full min-h-0 relative overflow-hidden"
+        className="flex flex-col md:flex-row flex-1 w-full md:h-full md:min-h-0 relative md:overflow-hidden"
       >
         {/* Left Pane (Prompt / Chart / Notes) */}
         <div 
-          className={`w-full md:h-full overflow-y-auto bg-white border-b md:border-b-0 md:border-r border-slate-200 transition-all ${
+          className={`w-full md:h-full md:overflow-y-auto bg-white border-b md:border-b-0 md:border-r border-slate-200 transition-all ${
             mobileTab === 'editor' ? 'hidden md:block' : 'block'
-          } ${mobileTab === 'both' ? 'max-h-[40dvh] shrink-0 md:shrink md:max-h-none' : 'flex-1 min-h-0'}`}
+          } ${mobileTab === 'both' ? 'max-h-[42dvh] overflow-y-auto shrink-0 md:shrink md:max-h-none' : 'flex-1 md:min-h-0'}`}
           style={{ width: isTabletOrDesktop ? `${splitRatio}%` : '100%' }}
         >
           {leftPane}
@@ -146,7 +146,7 @@ export default function SplitPane({ leftPane, rightPane, defaultSplit = 50 }) {
 
         {/* Right Pane (Editor / Stats / Tools) */}
         <div 
-          className={`w-full md:h-full overflow-y-auto bg-slate-50/50 flex flex-col flex-1 min-h-0 transition-all ${
+          className={`w-full md:h-full md:overflow-y-auto bg-slate-50/50 flex flex-col flex-1 md:min-h-0 transition-all ${
             mobileTab === 'prompt' ? 'hidden md:flex' : 'flex'
           }`}
           style={{ width: isTabletOrDesktop ? `${100 - splitRatio}%` : '100%' }}

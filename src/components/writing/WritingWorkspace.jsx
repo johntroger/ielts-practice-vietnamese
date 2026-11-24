@@ -170,7 +170,7 @@ export default function WritingWorkspace({
   };
 
   return (
-    <div className="flex-1 flex flex-col min-h-0 h-full overflow-hidden" data-writing-view={writingViewMode}>
+    <div className="flex-1 flex flex-col md:min-h-0 md:h-full md:overflow-hidden" data-writing-view={writingViewMode}>
       {/* 1. Writing Workspace Sub-Header Toolbar */}
       <WritingSubHeaderToolbar
         currentTask={currentTask}

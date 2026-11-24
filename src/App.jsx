@@ -680,7 +680,7 @@ export default function App() {
     <div 
       data-cdi-font={cdiFontSize}
       data-cdi-contrast={cdiContrast}
-      className={`${isAboutViewOpen ? 'min-h-[100dvh] overflow-y-auto' : 'h-[100dvh] overflow-hidden'} flex flex-col bg-slate-50 text-slate-900 font-sans selection:bg-red-100 selection:text-red-900 relative overflow-x-hidden w-full max-w-full`}>
+      className={`${isAboutViewOpen ? 'min-h-[100dvh] overflow-y-auto' : activeSkill === 'writing' ? 'min-h-[100dvh] md:h-[100dvh] md:overflow-hidden' : 'h-[100dvh] overflow-hidden'} flex flex-col bg-slate-50 text-slate-900 font-sans selection:bg-red-100 selection:text-red-900 relative overflow-x-clip w-full max-w-full`}>
       
       {isAboutViewOpen ? (
         <React.Suspense fallback={
